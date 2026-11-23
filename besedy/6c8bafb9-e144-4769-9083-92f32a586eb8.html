@@ -1,0 +1,2482 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>XML Database Block Processing Functions · Архив Claude</title><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/memory.css"><script defer src="../data/6c8bafb9-e144-4769-9083-92f32a586eb8.js"></script><script defer src="../assets/app.js"></script></head><body data-root="../"><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../index.html">Беседы</a><a href="../temy.html">Темы</a><a href="../pamyat.html">Память</a><a href="../zapisi.html">Записи без текста</a></nav></div></header><div class="layout"><main class="conversation"><div class="breadcrumbs"><a href="../index.html">Беседы</a><span> / 2025-04-12</span></div><div class="chat-heading"><h1>XML Database Block Processing Functions</h1><p class="muted">2025-04-12 · 14 реплик · 3 ветвей</p></div><details class="chat-memory memory-related"><summary>Связанные записи памяти · 1</summary><ul><li><a href="../pamyat/areas/eldamo.html">eldamo</a></li></ul></details><div class="branch-toolbar"><label for="branch">Ветка</label><select id="branch"><option value="0">Главная ветвь</option><option value="1">Ветвь 1</option><option value="2">Ветвь 2</option></select><a id="fork-link" href="#" hidden>К точке развилки</a><a class="mobile-files" href="#files-panel">К файлам</a></div><p id="branch-summary" class="muted branch-summary" aria-live="polite"></p><div id="messages"><article class="message user" id="m-e1fdc7da-3b8c-4460-ae11-2f8809cab7ab"><header><span class="role">Вы</span><time>2025-04-12 17:14:52</time><a class="message-link" href="#m-e1fdc7da-3b8c-4460-ae11-2f8809cab7ab" title="Ссылка на реплику">#1</a></header><div class="prose"><p>Я загружу сейчас два файла с программным кодом: в этом сообщении один файл, затем в следующем сообщении другой файл, после чего задам необходимую обработку. Сначала типичный блрк базы данных xml: <code>&lt;word cat=&quot;PT_SR&quot; gloss=&quot;*to deliver&quot; l=&quot;q&quot; page-id=&quot;3741161233&quot; speech=&quot;vb&quot; v=&quot;etelehta-&quot;&gt;     &lt;class form=&quot;weak-verb&quot;/&gt;     &lt;element l=&quot;q&quot; v=&quot;et(e)-&quot;/&gt;     &lt;element l=&quot;mq&quot; v=&quot;lehta-&quot;/&gt;     &lt;related l=&quot;q&quot; v=&quot;eterúna-&quot;&gt;replaced&lt;/related&gt;     &lt;ref gloss=&quot;*deliver&quot; source=&quot;VT43/23.3907&quot; v=&quot;etelehta&quot;&gt;       &lt;inflect form=&quot;aorist&quot;/&gt;     &lt;/ref&gt;     &lt;word cat=&quot;PT_SR&quot; gloss=&quot;*to deliver&quot; l=&quot;q&quot; page-id=&quot;1144268691&quot; speech=&quot;vb&quot; v=&quot;eterúna-&quot;&gt;       &lt;class form=&quot;a-verb&quot;/&gt;       &lt;element l=&quot;q&quot; v=&quot;et(e)-&quot;/&gt;       &lt;element l=&quot;q&quot; v=&quot;rúna-&quot;/&gt;       &lt;ref gloss=&quot;*deliver&quot; source=&quot;VT43/23.3301&quot; v=&quot;etrúna&quot;&gt;         &lt;inflect form=&quot;aorist&quot;/&gt;       &lt;/ref&gt;       &lt;ref gloss=&quot;*deliver&quot; source=&quot;VT43/23.3306&quot; v=&quot;eterúna&quot;&gt;         &lt;element source=&quot;VT43/23.3605&quot; v=&quot;rúna&quot;/&gt;         &lt;inflect form=&quot;aorist&quot;/&gt;       &lt;/ref&gt;       &lt;ref source=&quot;VT43/23.3712&quot; v=&quot;et·a·rúna&quot;&gt;         &lt;inflect form=&quot;imperative&quot; variant=&quot;infixed-imperative&quot;/&gt;       &lt;/ref&gt;       &lt;ref source=&quot;VT43/23.3803&quot; v=&quot;et·á·rúna&quot;&gt;         &lt;inflect form=&quot;imperative&quot; variant=&quot;infixed-imperative&quot;/&gt;       &lt;/ref&gt;       &lt;ref mark=&quot;-&quot; source=&quot;VT44/05.3603&quot; v=&quot;eterunna&quot;&gt;         &lt;change source=&quot;VT44/09.0801&quot; v=&quot;eterúna&quot;/&gt;         &lt;inflect form=&quot;aorist&quot;/&gt;       &lt;/ref&gt;       &lt;ref gloss=&quot;*deliver&quot; source=&quot;VT44/09.0801&quot; v=&quot;eterúna&quot;&gt;         &lt;inflect form=&quot;aorist&quot;/&gt;       &lt;/ref&gt;     &lt;/word&gt;   &lt;/word&gt;</code> В этом прикреплённом файле библиотека функций для обработки таких блоков. Если применить функцию c:print-inflect-value к полю form и variant, будет выводится переведённое значение соответствующего поля.</p>
+<details><summary>вложение: common.xq (26781 байт)</summary>
+<pre><code>module namespace c=&quot;common.xq&quot;;
+
+declare function c:normalize-for-sort($value as xs:string?) as xs:string {
+    let $w0 := replace(replace($value, &#39;yá²&#39;, &#39;yá%²&#39;), &#39;yá¹&#39;, &#39;yá%¹&#39;)
+    let $w1 := translate(lower-case($w0), &#39;χƕıǝçƀɟḷḹẏýṣṃṇṛṝñŋᴬᴱᴵᴼᵁáéíóúäëïöüāēīōūâêîôûŷăĕĭŏŭãæǣǭęχřš¹²³⁴⁵⁶⁷⁸⁹ .?-–~·‘’[]{}()!̆,`¯̯̥́̄̂&#39;, 
+                                          &#39;hhiecbjllyysmnrrnnaeiouaeiouaeiouaeiouaeiouyaeiouaaeoexrs123456789&#39;)
+    let $w2 := replace($w1, &#39;ð&#39;, &#39;dzz&#39;)
+    let $w3 := replace($w2, &#39;þ&#39;, &#39;tzz&#39;)
+    let $w4 := replace($w3, &#39;θ&#39;, &#39;tzz&#39;)
+    let $w5 := replace($w4, &#39;ʒ&#39;, &#39;hzz&#39;)
+    let $w6 := replace($w5, &#39;ɣ&#39;, &#39;hzz&#39;)
+    return $w6
+};
+
+declare function c:normalize-for-index($value as xs:string?) as xs:string {
+    let $w1 := translate(lower-case($value), &#39;ƕıǝðþθʒɣçƀɟḷḹẏýṣṃṇṛṝñŋᴬᴱᴵᴼᵁáéíóúäëïöüāēīōūâêîôûăĕĭŏŭæǣǭχřš¹²³⁴⁵⁶⁷⁸⁹ .?-–·‘’[]{}()!̆,`¯̯̥́̄̂&#39;, 
+                                             &#39;hietttggcbjllyysmnrrnnaeiouaeiouaeiouaeiouaeiouaeiouaeoxrs&#39;)
+    return $w1
+};
+
+declare function c:normalize-for-match($value as xs:string?) as xs:string {
+    normalize-space(translate(lower-case($value), &#39;-ë¹²³⁴⁵⁶⁷⁸⁹,!.?&#39;, &#39; e&#39;))
+};
+
+declare function c:derive-css($word as element()?) as xs:string {
+    if (contains($word/@mark, &#39;-&#39;)) then &#39;deleted&#39;
+    else if (contains($word/@mark, &#39;|&#39;)) then &#39;deleted-section&#39;
+    else &#39;&#39;
+};
+
+(: gloss :)
+
+declare function c:get-neo-gloss($word as element()?) as xs:string? {
+    if ($word/@ngloss) then $word/@ngloss/string()
+    else c:get-gloss($word)
+};
+
+declare function c:get-gloss($word as element()?) as xs:string? {
+    let $gloss :=
+        if ($word/@gloss) then $word/@gloss/string()
+        else if (count($word[not(ref)]/word/@gloss)=1) then string($word/word/@gloss)
+        else if (count($word[not(ref)]/*/ref[not(inflect) or c:is-root($word)][not(correction)]/@gloss)=1) then $word[not(ref)]/*/ref[not(inflect) or c:is-root($word)][not(correction)]/@gloss/string()
+        else
+            let $glosses := $word/ref[@gloss]
+                [not(inflect) or c:is-root($word)]
+                [not(correction)]
+                [not(@mark/contains(., &#39;-&#39;)) or $word/@mark/contains(., &#39;-&#39;)]
+            return
+                if (count(distinct-values($glosses/@gloss/lower-case(.))) gt 1)
+                then &#39;ERROR:MULTIGLOSS&#39;
+                else $glosses[1]/@gloss/string()
+    return $gloss
+};
+
+declare function c:print-neo-gloss($word as element()?) as node()* {
+    let $gloss := c:get-neo-gloss($word)
+    let $css := () (: c:derive-css($word) :)
+    return
+        if ($gloss and $css) then (text{&#39; “&#39;}, &lt;span class=&quot;{$css}&quot;&gt;{$gloss}&lt;/span&gt;, text{&#39;”&#39;})
+        else if ($gloss) then text{concat(&#39; “&#39;, $gloss, &#39;”&#39;)}
+        else ()
+};
+
+declare function c:print-gloss($word as element()?) as node()* {
+    let $gloss := c:get-gloss($word)
+    let $css := () (: c:derive-css($word) :)
+    let $display-gloss := 
+        if ($gloss = &#39;[unglossed]&#39;) then 
+            &#39;[толкование отсутствует]&#39;
+        else 
+            $gloss
+    return
+        if ($display-gloss and $css) then (text{&#39; &quot;&#39;}, &lt;span class=&quot;{$css}&quot;&gt;{$display-gloss}&lt;/span&gt;, text{&#39;&quot;&#39;})
+        else if ($display-gloss) then text{concat(&#39; &quot;&#39;, $display-gloss, &#39;&quot;&#39;)}
+        else ()
+};
+
+declare function c:print-gloss-no-space($word as element()?) as node()? {
+    let $gloss := c:get-gloss($word)
+    let $css := c:derive-css($word)
+    return
+        if ($gloss and $css) then &lt;span class=&quot;{$css}&quot;&gt;“{$gloss}”&lt;/span&gt;
+        else if ($gloss) then text{concat(&#39;“&#39;, $gloss, &#39;”&#39;)}
+        else ()
+};
+
+(: lang :)
+
+declare function c:get-lang($ref as element()*) as xs:string? {
+    $ref/ancestor-or-self::*[@l][1]/@l/string()
+};
+
+declare function c:get-langs($ref as element()*) as xs:string* {
+    tokenize(c:get-lang($ref), &#39;\s&#39;)
+};
+
+declare function c:is-primitive($ref as element()*) as xs:boolean {
+    let $lang := c:get-lang($ref) return
+    $lang = (&#39;p&#39;, &#39;mp&#39;, &#39;ep&#39;, &#39;np&#39;)
+};
+
+declare function c:is-neo($ref as element()*) as xs:boolean {
+    let $lang := c:get-lang($ref) return
+    $lang = (&#39;ns&#39;, &#39;nq&#39;, &#39;np&#39;)
+};
+
+declare function c:is-neo-lang($ref as element()*) as xs:boolean {
+    let $lang := c:get-lang($ref) return
+    $lang = (&#39;nq&#39;, &#39;q&#39;, &#39;mq&#39;, &#39;eq&#39;, &#39;ns&#39;, &#39;s&#39;, &#39;n&#39;, &#39;en&#39;, &#39;g&#39;, &#39;np&#39;, &#39;p&#39;, &#39;mp&#39;, &#39;ep&#39;)
+};
+
+declare function c:get-neo-lang($ref as element()*) as xs:string {
+    let $lang := c:get-lang($ref) return
+    if ($lang = (&#39;nq&#39;, &#39;q&#39;, &#39;mq&#39;, &#39;eq&#39;)) then &#39;nq&#39;
+    else if ($lang = (&#39;ns&#39;, &#39;s&#39;, &#39;n&#39;, &#39;en&#39;, &#39;g&#39;)) then &#39;ns&#39;
+    else if ($lang = (&#39;np&#39;, &#39;p&#39;, &#39;mp&#39;, &#39;ep&#39;)) then &#39;np&#39;
+    else &#39;&#39;
+};
+
+declare function c:get-neo-lang-with-fallback($ref as element()*) as xs:string {
+    let $lang := c:get-lang($ref) return
+    if ($lang = (&#39;nq&#39;, &#39;q&#39;, &#39;mq&#39;, &#39;eq&#39;)) then &#39;nq&#39;
+    else if ($lang = (&#39;ns&#39;, &#39;s&#39;, &#39;n&#39;, &#39;en&#39;, &#39;g&#39;)) then &#39;ns&#39;
+    else if ($lang = (&#39;np&#39;, &#39;p&#39;, &#39;mp&#39;, &#39;ep&#39;)) then &#39;np&#39;
+    else $lang
+};
+
+declare function c:get-neo-lang-group($lang as xs:string) as xs:string* {
+    if ($lang = &#39;nq&#39;) then (&#39;nq&#39;, &#39;q&#39;, &#39;mq&#39;, &#39;eq&#39;)
+    else if ($lang = &#39;ns&#39;) then (&#39;ns&#39;, &#39;s&#39;, &#39;n&#39;, &#39;en&#39;, &#39;g&#39;)
+    else if ($lang = &#39;np&#39;) then (&#39;np&#39;, &#39;p&#39;, &#39;mp&#39;, &#39;ep&#39;)
+    else $lang
+};
+
+declare function c:is-root($ref as element()*) as xs:boolean {
+    let $speech := c:get-speech($ref) return
+    $speech = &#39;root&#39;
+};
+
+declare function c:other-lang($ref1 as element()?, $ref2 as element()) as xs:boolean {
+    c:get-lang($ref1) != c:get-lang($ref2) 
+};
+
+declare function c:convert-lang($lang as xs:string?) as xs:string {
+    if ($lang=&#39;p&#39;)
+        then &#39;✶&#39;
+    else if ($lang=&#39;mp&#39;)
+        then &#39;ᴹ✶&#39;
+    else if ($lang=&#39;ep&#39;)
+        then &#39;ᴱ✶&#39;
+    else if ($lang=&#39;np&#39;)
+        then &#39;ᴺ✶&#39;
+    else if ($lang=&#39;mq&#39;)
+        then &#39;ᴹQ. &#39;
+    else if ($lang=&#39;maq&#39;)
+        then &#39;ᴹAQ. &#39;
+    else if ($lang=&#39;nq&#39;)
+        then &#39;ᴺQ. &#39;
+    else if ($lang=&#39;mt&#39;)
+        then &#39;ᴹT. &#39;
+    else if ($lang=&#39;ns&#39;)
+        then &#39;ᴺS. &#39;
+    else if ($lang=&#39;ln&#39;)
+        then &#39;ᴸN. &#39;
+    else if ($lang=&#39;lon&#39;)
+        then &#39;ᴸON. &#39;
+    else if ($lang=&#39;en&#39;)
+        then &#39;ᴱN. &#39;
+    else if ($lang=&#39;eon&#39;)
+        then &#39;ᴱON. &#39;
+    else if ($lang=&#39;eoq&#39;)
+        then &#39;ᴱOQ. &#39;
+    else if ($lang=&#39;eilk&#39;)
+        then &#39;ᴱIlk. &#39;
+    else if ($lang=&#39;et&#39;)
+        then &#39;ᴱT. &#39;
+    else if ($lang=&#39;eq&#39;)
+        then &#39;ᴱQ. &#39;
+    else if ($lang=&#39;ad&#39;)
+        then &#39;Ad. &#39;
+    else if ($lang=&#39;pad&#39;)
+        then &#39;✶Ad. &#39;
+    else if ($lang=&#39;kh&#39;)
+        then &#39;Kh. &#39;
+    else if ($lang=&#39;ed&#39;)
+        then &#39;Ed. &#39;
+    else if ($lang=&#39;edan&#39;)
+        then &#39;ED. &#39;
+    else if ($lang=&#39;av&#39;)
+        then &#39;Av. &#39;
+    else if ($lang=&#39;un&#39;)
+        then &#39;Un. &#39;
+    else if ($lang=&#39;norths&#39;)
+        then &#39;North S. &#39;
+    else if (string-length($lang) = 1 or string-length($lang) = 2)
+        then concat(upper-case($lang), &#39;. &#39;)
+    else
+        concat(upper-case(substring($lang, 1, 1)), substring($lang, 2), &#39;. &#39;)
+};
+
+declare function c:print-lang($ref as element()?) as xs:string {
+    let $lang := c:get-lang($ref)
+    let $converted := c:convert-lang(string($lang))
+    let $speech := c:get-speech($ref)
+    return if ($speech = &#39;root&#39;) then translate($converted, &#39;✶&#39;, &#39;√&#39;) else $converted
+};
+
+declare function c:print-lang2($ref as element()?) as xs:string {
+    translate(c:print-lang($ref), &#39; &#39;, &#39;&#39;)
+};
+
+declare function c:lang-words($root as element(), $id) as element()* {
+    if ($id = &#39;nq&#39;) then
+        (xdb:key($root, &#39;language&#39;, &#39;nq&#39;) | xdb:key($root, &#39;language&#39;, &#39;q&#39;) | xdb:key($root, &#39;language&#39;, &#39;mq&#39;) | xdb:key($root, &#39;language&#39;, &#39;eq&#39;))
+        [not(combine)]
+        (: [starts-with(c:normalize-spelling(lower-case(c:normalize-for-sort(@v))), &#39;ah&#39;)] :)
+    else if ($id = &#39;ns&#39;) then
+        (xdb:key($root, &#39;language&#39;, &#39;ns&#39;) | xdb:key($root, &#39;language&#39;, &#39;s&#39;) | xdb:key($root, &#39;language&#39;, &#39;n&#39;) | xdb:key($root, &#39;language&#39;, &#39;en&#39;) | xdb:key($root, &#39;language&#39;, &#39;g&#39;))
+        [not(combine)]
+    else if ($id = &#39;np&#39;) then 
+        (xdb:key($root, &#39;language&#39;, &#39;np&#39;) | xdb:key($root, &#39;language&#39;, &#39;p&#39;) | xdb:key($root, &#39;language&#39;, &#39;mp&#39;) | xdb:key($root, &#39;language&#39;, &#39;ep&#39;))
+        [not(combine)]
+    else xdb:key($root, &#39;language&#39;, $id)
+};
+
+(: source :)
+
+declare function c:print-source($ref as element()?) as xs:string {
+    c:short-ref($ref/@source)
+};
+
+declare function c:short-ref($source) as xs:string {
+    $source/replace(replace(substring-before(concat(., &#39;.&#39;), &#39;.&#39;), &#39;/0&#39;, &#39;/&#39;), &#39;/0&#39;, &#39;/&#39;)
+};
+
+declare function c:print-source-link($ref as element(), $short-mode as xs:boolean) as element() {
+    let $link := concat(&#39;../references/ref-&#39;, substring-before($ref/@source, &#39;/&#39;), &#39;.html#&#39;, $ref/@source)
+    let $src := c:print-full-source($ref)
+    return &lt;a href=&quot;{$link}&quot; style=&quot;color: black&quot;&gt;{
+        if ($short-mode) then c:print-source($ref) else c:print-full-source($ref)
+    }&lt;/a&gt;
+};
+
+declare function c:print-sources($refs as element()*) as xs:string {
+    let $sources := distinct-values($refs[
+        not(contains(@source, &#39;I/&#39;) or contains(@source, &#39;I1/&#39;) or contains(@source, &#39;I2/&#39;)) 
+        or starts-with(@source, &#39;TI/&#39;) or starts-with(@source, &#39;TAI/&#39;)
+    ]/c:print-source(.))
+    let $source-list := &lt;list&gt; {
+        for $source in $sources return
+        &lt;source b=&quot;{substring-before($source, &#39;/&#39;)}&quot; p=&quot;{substring-after($source, &#39;/&#39;)}&quot;/&gt;
+    } &lt;/list&gt;
+    let $books := distinct-values($source-list/source/@b)
+    let $book-pages :=
+        for $book in $books return concat(
+            $book, &#39;/&#39;,
+            string-join($source-list/source[@b = $book]/@p, &#39;, &#39;)
+        )
+    return concat(&#39; ✧ &#39;, string-join($book-pages, &#39;; &#39;))
+};
+
+declare function c:print-full-source($ref as element()) as xs:string {
+    if (ends-with(translate(lower-case($ref/@source), &#39;-äë¹²³&#39;, &#39; ae&#39;), concat(&#39;i/&#39;,  translate(lower-case($ref/../@v), &#39;-äë¹²³&#39;, &#39; ae&#39;), &#39;.001&#39;)))
+    then substring-before($ref/@source, &#39;/&#39;)
+    else if (ends-with(translate($ref/@source, &#39;¹²³&#39;, &#39;&#39;), concat(&#39;I1/&#39;,  translate($ref/../@v, &#39;¹²³&#39;, &#39;&#39;), &#39;.001&#39;)))
+    then substring-before($ref/@source, &#39;/&#39;)
+    else if (ends-with(translate($ref/@source, &#39;¹²³&#39;, &#39;&#39;), concat(&#39;I2/&#39;,  translate($ref/../@v, &#39;¹²³&#39;, &#39;&#39;), &#39;.001&#39;)))
+    then substring-before($ref/@source, &#39;/&#39;)
+    else if (ends-with(translate($ref/@source, &#39;¹²³&#39;, &#39;&#39;), concat(&#39;1A/&#39;,  translate($ref/../@v, &#39;¹²³&#39;, &#39;&#39;), &#39;.001&#39;)))
+    then substring-before($ref/@source, &#39;/&#39;)
+    else if (ends-with(translate($ref/@source, &#39;¹²³&#39;, &#39;&#39;), concat(&#39;2A/&#39;,  translate($ref/../@v, &#39;¹²³&#39;, &#39;&#39;), &#39;.001&#39;)))
+    then substring-before($ref/@source, &#39;/&#39;)
+    else $ref/@source/string()
+};
+
+declare function c:print-full-sources($refs as element()*) as xs:string {
+    let $sources := distinct-values($refs/c:print-full-source(.))
+    return concat(&#39; ✧ &#39;, string-join($sources, &#39;, &#39;))
+};
+
+(: speech :)
+
+declare function c:get-speech($ref as element()?) as xs:string? {
+    $ref/ancestor-or-self::*[@speech][1]/@speech/string()
+};
+
+declare function c:display-speech($ref as element()?) as xs:string? {
+    let $speech := c:get-speech($ref)
+    return if (empty($speech)) then ()
+    else if (contains($speech, &#39; &#39;)) then
+        let $tokens := tokenize($speech, &#39;\s+&#39;)
+        let $translated := 
+            for $token in $tokens
+            return c:translate-speech-term($token)
+        return concat(&#39; &#39;, string-join($translated, &#39;. и &#39;), &#39;.&#39;)
+    else concat(&#39; &#39;, c:translate-speech-term($speech), &#39;.&#39;)
+};
+
+declare function c:translate-speech-term($term as xs:string) as xs:string {
+    let $term := replace($term, &#39;\?$&#39;, &#39;&#39;) (: Удаляем знак вопроса в конце, если есть :)
+    let $result :=
+        if ($term = &#39;masc-name&#39;) then &#39;м&#39;
+        else if ($term = &#39;fem-name&#39;) then &#39;ж&#39;
+        else if ($term = &#39;place-name&#39;) then &#39;геогр&#39;
+        else if ($term = &#39;proper-name&#39;) then &#39;им&#39;
+        else if ($term = &#39;cardinal&#39;) then &#39;к. числ&#39;
+        else if ($term = &#39;adv&#39;) then &#39;нареч&#39;
+        else if ($term = &#39;adj&#39;) then &#39;прил&#39;
+        else if ($term = &#39;n&#39;) then &#39;сущ&#39;
+        else if ($term = &#39;v&#39;) then &#39;гл&#39;
+        else if ($term = &#39;pron&#39;) then &#39;мест&#39;
+        else if ($term = &#39;prep&#39;) then &#39;предл&#39;
+        else if ($term = &#39;conj&#39;) then &#39;союз&#39;
+        else if ($term = &#39;interj&#39;) then &#39;межд&#39;
+        else if ($term = &#39;num&#39;) then &#39;числ&#39;
+        else if ($term = &#39;part&#39;) then &#39;част&#39;
+        else if ($term = &#39;prefix&#39;) then &#39;приставка&#39;
+        else if ($term = &#39;suffix&#39;) then &#39;суффикс&#39;
+        else $term (: Если нет соответствия, оставляем как есть :)
+    return 
+        if (ends-with($term, &#39;?&#39;)) then concat($result, &#39;?&#39;)
+        else $result
+};
+
+declare function c:get-page-id($ref as element()?) as xs:string? {
+    let $top-word := $ref/ancestor-or-self::word[not(ancestor::word)][@page-id]
+    return $top-word/@page-id/string()
+};
+
+declare function c:is-word($ref as element()?) as xs:boolean {
+    let $speech := c:get-speech($ref)
+    return
+    if (not($speech)) then false()
+    else if ($speech=&#39;phrase&#39;) then false()
+    else if ($speech=&#39;text&#39;) then false()
+    else if ($speech=&#39;grammar&#39;) then false()
+    else if (ends-with($speech, &#39;-name&#39;)) then false()
+    else if (starts-with($speech, &#39;phone&#39;)) then false()
+    else true()
+};
+
+(: word :)
+
+declare function c:print-wordlet($ref as attribute()?, $postfix as xs:string) as node()* {
+    if ($ref) then
+        let $has-brackets := starts-with($ref, &#39;[&#39;) and ends-with($ref, &#39;]&#39;)
+        let $word-text := if ($has-brackets) then substring-before(substring-after($ref, &#39;[&#39;), &#39;]&#39;) else string($ref)
+        let $start := if ($has-brackets) then text {&#39;[&#39;} else ()
+        let $end := if ($has-brackets) then text {&#39;]&#39;} else ()
+        return
+            if (starts-with($ref/../../@mark, &#39;-&#39;)) then
+                (&lt;span class=&quot;deleted&quot;&gt;{($start, if ($has-brackets) then text{$word-text} else &lt;i&gt;{$word-text}&lt;/i&gt;, $end)}&lt;/span&gt;, text{$postfix})
+            else if (starts-with($ref/../../@mark, &#39;|&#39;)) then
+                (&lt;span class=&quot;deleted-section&quot;&gt;{($start, if ($has-brackets) then text{$word-text} else &lt;i&gt;{$word-text}&lt;/i&gt;, $end)}&lt;/span&gt;, text{$postfix})
+            else
+                ($start, if ($has-brackets) then text{$word-text} else &lt;i&gt;{$word-text}&lt;/i&gt;, $end, text{$postfix})
+    else ()
+};
+
+declare function c:has-brackets($ref as node()?) as xs:boolean {
+    starts-with($ref/@v, &#39;[&#39;) and ends-with($ref/@v, &#39;]&#39;) and not(contains(substring-after($ref/@v, &#39;[&#39;), &#39;[&#39;))
+};
+
+declare function c:print-link-to-word($ref as element(), $text) as element() {
+    let $word := c:get-word($ref) return
+    if (starts-with($ref/@v, &#39;ø&#39;)) then &lt;span&gt;{$text}&lt;/span&gt; else
+    if ($ref/@v=&#39;?&#39; or $ref/@rule=&#39;?&#39;) then &lt;span&gt; ? &lt;/span&gt; else
+    if (not($word)) then &lt;span&gt; !!! &lt;/span&gt; else
+    &lt;a title=&quot;{c:print-lang($word)}({string($word/@order)}) {string($word/@v)}&quot; href=&quot;{c:to-word-link($word)}&quot;&gt;{$text}&lt;/a&gt;
+};
+
+declare function c:print-word($word as element()?, $control as element()?) as node()* {
+    let $show-lang := $control/@show-lang
+    let $show-link := $control/@show-link
+    let $show-gloss := $control/@show-gloss
+    let $hide-mark := $control/@hide-mark
+    let $normalize := $control/@normalize
+    let $is-neo := $control/@is-neo
+    let $style := $control/@style
+    let $has-brackets := c:has-brackets($word)
+    return
+    if (not($word)) then () else
+    let $primary-style := if ($style = &#39;bold&#39;) then &#39;primary&#39;
+                          else if ($style = &#39;none&#39; or $has-brackets) then &#39;none&#39;
+                          else &#39;secondary&#39;
+    let $css := concat($primary-style, &#39; &#39;, c:derive-css($word))
+    let $link := 
+        if (not($show-link)) then
+            ()
+        else if ($show-link = &#39;parent&#39;) then
+            c:to-word-link($word/ancestor-or-self::word[1])
+        else if (name($word) = &#39;ref&#39;) then 
+            concat(&#39;../references/ref-&#39;, substring-before($word/@source, &#39;/&#39;), &#39;.html#&#39;, $word/@source)
+        else
+            c:to-word-link($word)
+    let $value := if ($normalize = &#39;true&#39;)
+        then c:normalize-spelling($word/@v/string())
+        else $word/@v/string()
+    return (
+        if (not($hide-mark) and c:is-primitive($word)) then text {$word/translate(@mark, &#39;-|&#39;, &#39;&#39;)} else (),
+        if ($show-lang) then text {c:print-lang($word)} else (),
+        if (not($hide-mark) and not(c:is-primitive($word))) then text {$word/translate(@mark, &#39;-|&#39;, &#39;&#39;)} else (),
+        (
+            &lt;span class=&quot;{$css}&quot;&gt;{
+                if ($link) then &lt;a href=&quot;{$link}&quot;&gt;{$value}&lt;/a&gt;
+                else $value
+            }&lt;/span&gt;,
+            if ($show-gloss and $is-neo) then c:print-neo-gloss($word)
+            else if ($show-gloss) then c:print-gloss($word) else ()
+        )
+    )
+};
+
+declare function c:normalize-spelling($value) as xs:string {
+    let $v1 := translate(replace(replace(replace($value, &#39;q&#39;, &#39;qu&#39;), &#39;quu&#39;, &#39;qu&#39;), &#39;ks&#39;, &#39;x&#39;), &#39;k&#39;, &#39;c&#39;)
+    let $v22 := replace($v1, &#39;oa&#39;, &#39;öa&#39;)
+    let $v2 := replace($v22, &#39;ea&#39;, &#39;ëa&#39;)
+    let $v3 := if ($v2 = &#39;nye&#39; or $v2 = &#39;lye&#39; or $v2 = &#39;tye&#39;) then $v2
+        else if (string-length(translate($v2, &#39;¹²³⁴&#39;, &#39;&#39;)) &lt; 3) then $v2
+        else if (ends-with($v2, &#39;e&#39;)) then concat(substring($v2, 1, string-length($v2) - 1), &#39;ë&#39;)
+        else if (ends-with($v2, &#39;e)&#39;)) then concat(substring($v2, 1, string-length($v2) - 2), &#39;ë)&#39;)
+        else if (ends-with($v2, &#39;e¹&#39;)) then concat(substring($v2, 1, string-length($v2) - 2), &#39;ë¹&#39;)
+        else if (ends-with($v2, &#39;e²&#39;)) then concat(substring($v2, 1, string-length($v2) - 2), &#39;ë²&#39;)
+        else if (ends-with($v2, &#39;e³&#39;)) then concat(substring($v2, 1, string-length($v2) - 2), &#39;ë³&#39;)
+        else if (ends-with($v2, &#39;e⁴&#39;)) then concat(substring($v2, 1, string-length($v2) - 2), &#39;ë⁴&#39;)
+        else $v2
+    return $v3
+};
+
+declare function c:to-word-link($word) as xs:string {
+    concat(&#39;../words/word-&#39;, xdb:hashcode($word), &#39;.html&#39;)
+    (: concat(&#39;../entries/entry-&#39;, c:get-lang($word), &#39;-&#39;, translate($word/@v, &#39; &#39;, &#39;_&#39;), &#39;.html&#39;) :)
+};
+
+declare function c:word-lookup($root as element()?, $l, $v) as element()* {
+    let $generic-words := $root/xdb:key($root, &#39;word&#39;, $v)
+    return $generic-words[c:get-lang(.) = $l]
+};
+
+declare function c:get-word($ref as element()?) as element()* {
+    let $ref-lang := c:get-lang($ref)
+    let $generic-words := $ref/xdb:key($ref, &#39;word&#39;, $ref/@v)
+    let $words :=
+        if ($ref/@l) then $generic-words[c:get-lang(.) = $ref-lang]
+        else if (count($generic-words) = 1) then $generic-words
+        else $generic-words[c:get-lang(.) = $ref-lang]
+    return $words
+};
+
+declare function c:get-ref($ref as element()?) as element()? {
+    let $refs := $ref/xdb:key($ref, &#39;ref&#39;, $ref/@source)
+    return if (count($refs) gt 1) then () else $refs
+};
+
+declare function c:majority-value($values as node()*) as xs:string? {
+    let $groups :=
+        &lt;groups&gt; {
+            for $value in distinct-values($values) return
+            &lt;group&gt; {
+                for $item in $values[. = $value] return &lt;item&gt;{$value}&lt;/item&gt;
+            } &lt;/group&gt;
+        } &lt;/groups&gt; 
+    let $ordered-groups :=
+        &lt;groups&gt; {
+            for $group in $groups/group order by -1 * count($group/item) return $group
+        } &lt;/groups&gt; 
+    let $distinct := distinct-values($values)
+    return $ordered-groups/group[1]/item[1]/string()
+};
+
+declare function c:print-word-elements($elements as element()*, $word, $control) as node()* {
+    let $result :=
+        for $element in $elements
+        let $element-ref := c:get-word($element)
+        return
+            &lt;span&gt; { (
+                if ($element/@v=&#39;?&#39;) then &lt;i&gt;?&lt;/i&gt;
+                else if (not(count($element-ref) = 1)) then (
+                    &lt;i&gt;{$element/@v/string()}&lt;/i&gt;,
+                    &#39; (ERROR:MISMATCH)&#39;
+                ) else (
+                    if (c:get-lang($element-ref) != c:get-lang($word)) then c:print-lang($
+… [обрезано: показано 20000 из 25787 знаков]
+</code></pre>
+</details>
+<details class="references"><summary>Сведения о вложениях · 1</summary><ul><li><span>common.xq</span> <code>a7fee703-eba3-4286-9c90-101daeeb1cd5</code></li></ul></details></div></article><article class="message assistant" id="m-7b154a3c-679b-4bd6-afe5-00573d7980e5"><header><span class="role">Claude</span><time>2025-04-12 17:15:00</time><a class="message-link" href="#m-7b154a3c-679b-4bd6-afe5-00573d7980e5" title="Ссылка на реплику">#2</a></header><div class="prose"><p>Отлично, я получил первый файл <code>common.xq</code> с библиотекой функций для обработки XML-блоков. Это модуль XQuery с пространством имен <code>c=&quot;common.xq&quot;</code>, который содержит множество полезных функций для работы с данными о словах в вашей базе данных.</p>
+<p>Я вижу различные группы функций:</p>
+<ul>
+<li>Функции нормализации текста (<code>c:normalize-for-sort</code>, <code>c:normalize-for-index</code>, <code>c:normalize-for-match</code>)</li>
+<li>Функции для работы с глоссами (пояснениями) (<code>c:get-neo-gloss</code>, <code>c:get-gloss</code>, <code>c:print-neo-gloss</code>, и т.д.)</li>
+<li>Функции для определения и отображения языка (<code>c:get-lang</code>, <code>c:get-langs</code>, <code>c:is-primitive</code>, и т.д.)</li>
+<li>Функции для обработки источников (<code>c:print-source</code>, <code>c:short-ref</code>, <code>c:print-source-link</code>, и т.д.)</li>
+<li>Функции для обработки части речи (<code>c:get-speech</code>, <code>c:display-speech</code>, <code>c:translate-speech-term</code>)</li>
+<li>Функции для отображения и обработки слов (<code>c:print-word</code>, <code>c:normalize-spelling</code>, и т.д.)</li>
+<li>Функции для обработки грамматической информации (<code>c:print-inflect-value</code>, <code>c:translate-grammar-term</code>, и т.д.)</li>
+</ul>
+<p>В конце файла я вижу важную функцию <code>c:print-inflect-value</code>, которая переводит значения полей form и variant с английского на русский с помощью карты переводов, определенной в функции <code>c:grammar-translations()</code>.</p>
+<p>Жду второй файл, чтобы помочь с необходимой обработкой данных.</p>
+</div></article><article class="message user" id="m-98738dd2-0673-451d-8918-01ec79892562"><header><span class="role">Вы</span><time>2025-04-12 17:15:55</time><a class="message-link" href="#m-98738dd2-0673-451d-8918-01ec79892562" title="Ссылка на реплику">#3</a></header><div class="prose"><p>Это основной программный код для получения веб-страницы из блока word исходной базы данных. Здесь функция c:print-inflect-value для обработки полей form и variant нигде не используется. Поэтому если идёт вывод этих полей, выводится их исходное значение из базы данных без обработки и перевода. Перепиши все соответствующие места в коде этого приложенного файла так, чтобы поля form и variant выводились в переводе.</p>
+<details><summary>вложение: word-page.xq (67950 байт)</summary>
+<pre><code>import module namespace c = &quot;common.xq&quot; at &quot;common.xq&quot;;
+
+declare function local:print-deriv($deriv as node()?) as element() {
+    &lt;span&gt;
+{c:print-word($deriv/c:get-ref(.), &lt;print-word show-link=&quot;parent&quot; show-lang=&quot;y&quot;/&gt;)}
+&amp;gt;
+{c:print-wordlet($deriv/@i1, &#39; &amp;gt; &#39;)}
+{c:print-wordlet($deriv/@i2, &#39; &amp;gt; &#39;)}
+{c:print-wordlet($deriv/@i3, &#39; &amp;gt; &#39;)}
+{c:print-word($deriv/parent::ref, &lt;print-word show-link=&quot;parent&quot; show-lang=&quot;y&quot;/&gt;)}
+    &lt;/span&gt;
+};
+
+declare function local:is-match($s1 as xs:string?, $s2 as xs:string?) as xs:boolean {
+    not(c:normalize-for-match($s1) != c:normalize-for-match($s2))
+};
+
+declare function local:print-ref($ref as element(), $ref-set) as element()* {
+    let $other-ref := $ref-set/@other-ref
+    let $deref := if ($other-ref) then c:get-ref($ref) else $ref/ancestor-or-self::ref
+    let $show-notes := $ref-set/@show-notes
+    let $show-mark := $ref-set/@show-mark
+    let $show-lang := $ref-set/@show-lang
+    let $show-gloss := $ref-set/@gloss
+    let $show-rule := $ref-set/@show-rule
+    let $show-value := $ref-set/@v
+    let $short-mode := $ref-set/@short-mode
+
+    let $notes := $ref[$show-notes]/string()
+    return
+    if ($deref) then
+    &lt;span&gt;{c:print-source-link($deref, $short-mode)}{
+        let $do-print-lang := $show-lang != $deref/@l return
+        if ($show-rule) then (
+            text {&#39; (&#39;}, 
+            let $deriv-ref := c:get-ref($deref/deriv[1])
+            return c:print-word($deriv-ref, local:print-word-control($do-print-lang)), 
+            text {&#39; &amp;gt; &#39;},
+            c:print-wordlet($deref/deriv[1]/@i1, &#39; &amp;gt; &#39;),
+            c:print-wordlet($deref/deriv[1]/@i2, &#39; &amp;gt; &#39;),
+            c:print-wordlet($deref/deriv[1]/@i3, &#39; &amp;gt; &#39;),
+            c:print-word($deref, local:print-word-control($do-print-lang)), 
+            if ($deref/deriv[1]/string()) then (&#39;; &#39;, xdb:html($deref/deriv[1])) else (), 
+            text {&#39;)&#39;}
+        ) else 
+        if (not($show-value) and not($show-mark != $deref/@mark) and not($show-lang != $deref/@l)) then () else 
+        let $do-print-word :=
+            (not(local:is-match($deref/@v, $show-value) and not($deref/@mark))) or
+            ($show-mark and $deref/@mark)
+        let $do-print-gloss := $deref/@gloss != $show-gloss
+        let $do-print-notes := $notes != &#39;&#39;
+        return if ($do-print-word or $do-print-gloss or $do-print-notes) then (
+            text {&#39; (&#39;}, 
+            if ($do-print-word) then c:print-word($deref, local:print-word-control($do-print-lang)) else (), 
+            if ($do-print-word and $do-print-gloss) then text{&#39; &#39;} else (),
+            if ($do-print-gloss) then text {c:print-gloss-no-space($deref)} else (), 
+            if ($do-print-notes and ($do-print-gloss or $do-print-word)) then text{&#39;, &#39;} else (),
+            if ($do-print-notes) then xdb:html($notes) else (),
+            text {&#39;)&#39;}
+        ) else ()
+    }&lt;/span&gt; else ()
+};
+
+declare function local:print-ref-set($refs as element()*, $ref-set as element()) as node()* { (
+    if ($refs) then text{&#39; ✧&amp;#160;&#39;} else (),
+    let $group := &lt;div&gt;{for $ref in $refs return local:print-ref($ref, $ref-set)}&lt;/div&gt;
+    for $item in $group/*
+    return ($item/node(), if ($item/following-sibling::*) then text {&#39;; &#39;} else ())
+) };
+
+declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {
+    &lt;print-word&gt; { (
+        if ($show-lang) then attribute show-lang {&#39;y&#39;} else (),
+        if ($show-link) then attribute show-link {$show-link} else ()
+    ) } &lt;/print-word&gt;
+};
+
+declare function local:print-word-control($show-lang as xs:boolean) as element() {
+    local:print-word-control($show-lang, ())
+};
+
+declare function local:ref-sig($ref as element()*, $ref-name) as xs:string {
+    let $att-values :=
+        &lt;element&gt;{$ref/@*[not(name()=&#39;source&#39;)][$ref-name != &#39;element&#39; or not(name()=&#39;gloss&#39;)]/string()}:{
+            $ref/*[name()=$ref-name]/@*[not(name()=&#39;source&#39;) and not(name()=&#39;v&#39;)]/string()}:{
+            $ref/*[name()=$ref-name]/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:change-sig($ref as element()*, $ref-name) as xs:string {
+    let $change-element := $ref/*[name()=$ref-name]
+    let $change := $change-element
+    let $att-values :=
+        &lt;element&gt;{$ref-name}:{$ref/@v/string()}:{$ref/@gloss/string()}:{
+        $change-element/text()
+        }:{$change/@v/string()}:{$ref/@change/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:element-sig($ref as element()*) as xs:string {
+    let $element := $ref/c:get-ref($ref)/..
+    let $att-values :=
+        &lt;element&gt;
+            {$element/@*/string()}:{name($ref)}:{
+            $ref/@*[not(name()=&#39;source&#39;) and not(name()=&#39;v&#39;)]/string()}:{
+            $ref/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:print-element-in($word as element()?, $pubmode) as node()* {
+    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;element-in-ref&#39;, @source)[c:get-ref(.)]
+    let $element-ins := xdb:key($word, &#39;element-in&#39;, $word/@v)[element[@v = $word/@v]/@l = c:get-lang($word) or
+        (not(element[@v = $word/@v]/@l) and c:get-lang(.) = c:get-lang($word))]
+    let $unmatched := $element-in-refs/..[not(@v = $element-ins/@v)]
+    return (
+        &lt;ul&gt; { (
+        for $element-in in $element-ins
+        let $control := &lt;ref-set short-mode=&quot;{$pubmode}&quot;&gt;{if (c:get-speech($element-in) = &#39;phrase&#39; or c:get-speech($element-in) = &#39;text&#39;) then () else $element-in/@v}&lt;/ref-set&gt;
+        let $is-neo := c:is-neo($element-in)
+        order by $element-in/@l, c:normalize-for-sort($element-in/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo&#39;} else () }
+                {c:print-word($element-in, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($element-in)}
+                {local:print-ref-set($element-in-refs[c:get-ref(.)[../@v = $element-in/@v]], $control)}
+            &lt;/li&gt;,
+        for $element-in in $unmatched
+        let $control := &lt;ref-set short-mode=&quot;{$pubmode}&quot;&gt;{if (c:get-speech($element-in) = &#39;phrase&#39; or c:get-speech($element-in) = &#39;text&#39;) then () else $element-in/@v}&lt;/ref-set&gt;
+        let $is-neo := c:is-neo($element-in)
+        order by $element-in/@l, c:normalize-for-sort($element-in/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo&#39;} else () }
+                {c:print-word($element-in, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($element-in)}
+                {local:print-ref-set($element-in-refs[c:get-ref(.)[../@v = $element-in/@v]], $control)}
+            &lt;/li&gt;
+        ) } &lt;/ul&gt;
+    )
+};
+
+declare function local:print-derivations($word as element()?, $priors as element()*, $pubmode) as node()* {
+    let $deriv-refs := $word/ref[c:get-ref(.)]/deriv[c:get-ref(.)]
+    let $derivs := $deriv-refs/c:get-ref(.)/.. | $word/deriv/c:get-word(.)
+    return (
+        for $deriv in $derivs[not(xdb:hashcode(.) = $priors/xdb:hashcode(.))]
+        let $deriv-link := $word/deriv[xdb:hashcode(c:get-word(.)) = xdb:hashcode($deriv)]
+        let $deriv-mark := $deriv-link/@mark/string()
+        let $refs := $deriv-refs[xdb:key($word, &#39;ref&#39;, @source)[../@v = $deriv/@v]]
+        let $value := $deriv/@v/string()
+        let $is-neo := c:is-neo(c:get-word($deriv))
+        return
+            &lt;li&gt;
+                { attribute class { if ($is-neo) then &#39;neo c-bullet&#39; else &#39;c-bullet&#39; } }
+                &amp;lt; 
+                {c:print-word($deriv, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {$deriv-mark}
+                {c:print-gloss($deriv)}
+                {local:print-ref-set($refs, &lt;ref-set short-mode=&quot;{$pubmode}&quot; v=&quot;{$value}&quot; other-ref=&quot;y&quot;/&gt;)}
+                &lt;ul&gt;{(
+                    for $ref in $refs[@i1 or . != &#39;&#39;]
+                    return
+                    &lt;li style=&quot;list-style-type:none; text-indent: -1em;&quot;&gt;{(
+                        &#39; &amp;lt; &#39;,
+                        c:print-wordlet($ref/@i3, &#39; &amp;lt; &#39;),
+                        c:print-wordlet($ref/@i2, &#39; &amp;lt; &#39;),
+                        c:print-wordlet($ref/@i1, &#39; &amp;lt; &#39;),
+                        &lt;i&gt;{$ref/@v/string()}&lt;/i&gt;,
+                        if ($ref != &#39;&#39;) then (&#39;, &#39;, xdb:html($ref/string())) else (),
+                        local:print-ref-set($ref, &lt;ref-set short-mode=&quot;{$pubmode}&quot; other-ref=&quot;y&quot;/&gt;)
+                    )}&lt;/li&gt;,
+                    if (xdb:hashcode($word) = xdb:hashcode($deriv)) then () else local:print-derivations($deriv, ($priors, $word), $pubmode))
+                }&lt;/ul&gt;
+            &lt;/li&gt;
+    )
+};
+
+declare function local:print-derivatives($word as element()?, $pubmode) as node()* {
+    if (c:get-speech($word) = &#39;phoneme&#39;) then () else
+    local:print-derivatives($word, true(), (), $pubmode)
+};
+
+declare function local:print-derivatives($word as element()?, $top-level as xs:boolean, $priors as element()*, $pubmode) as node()* {
+    let $is-root := c:is-root($word)
+    let $deriv-only := ($top-level and not($is-root)) or c:get-speech($word) = &#39;phoneme&#39;
+    let $deriv-to-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;deriv-to-ref&#39;, @source)[c:get-ref(.)]
+    let $word-derivs := xdb:key($word, &#39;deriv-to&#39;, $word/@v)[deriv/c:get-word(.)/xdb:hashcode(.) = $word/xdb:hashcode(.)]
+    let $deriv-tos := $deriv-to-refs/.. | $word-derivs
+    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;element-in-ref&#39;, @source)[c:get-ref(.)]
+    let $word-elements := xdb:key($word, &#39;element-in&#39;, $word/@v)
+        [element/c:get-word(.)/xdb:hashcode(.) = $word/xdb:hashcode(.)]
+    let $element-ins := if ($deriv-only) then () else $element-in-refs/.. | $word-elements
+    return (
+        if ($top-level and ($deriv-tos or $element-ins)) then &lt;p&gt;&lt;u&gt;Производные&lt;/u&gt;&lt;/p&gt; else (),
+        &lt;ul&gt; { (
+        if (not($top-level) and not($deriv-tos) and (count($element-ins) gt 3)) then
+            &lt;li&gt;
+                ⇒ {count($element-ins)} compounds
+            &lt;/li&gt;
+        else
+        let $child-derivs := $deriv-tos[not(c:get-speech(.) = &#39;phrase&#39; or c:get-speech(.) = &#39;text&#39;)] |
+            $element-ins[not(c:get-speech(.) = &#39;phrase&#39; or c:get-speech(.) = &#39;text&#39;)][not(xdb:hashcode(.) = $deriv-tos/xdb:hashcode(.))]
+        for $deriv-to in $child-derivs
+        let $is-neo := c:is-neo($deriv-to)
+        order by c:get-lang($deriv-to), c:normalize-for-sort($deriv-to/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo c-bullet&#39;} else attribute class {&#39;c-bullet&#39;} }
+                {$word/derivatives/@no-roots}
+                {if (xdb:hashcode($deriv-to) = $deriv-tos/xdb:hashcode(.)) then &#39;&amp;gt; &#39; else &#39;⇒ &#39;}
+                {c:print-word($deriv-to, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($deriv-to)}
+                {local:print-ref-set(($deriv-to-refs|$element-in-refs)[c:get-ref(.)[xdb:hashcode(..) = xdb:hashcode($deriv-to)]], &lt;ref-set short-mode=&quot;{$pubmode}&quot;/&gt;)}
+                {if (xdb:hashcode($word) = xdb:hashcode($deriv-to)) then ()
+                else if ($word/derivatives/@no-roots and c:is-root($deriv-to)) then ()
+                else
+                let $print-derivatives := local:print-derivatives($deriv-to, false(), ($priors, $child-derivs), $pubmode) return
+                if (string($print-derivatives) != &#39;&#39; and not(contains(string($print-derivatives), &#39; compounds&#39;)) and $priors[xdb:hashcode(.) = xdb:hashcode($deriv-to)]) then 
+                    &lt;ul&gt;&lt;li&gt;⇒ [см. выше]&lt;/li&gt;&lt;/ul&gt;
+                else
+                $print-derivatives
+            } &lt;/li&gt;
+        ) } &lt;/ul&gt;
+    )
+};
+
+declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {
+    let $inflect-list := tokenize($inflections, &#39; &#39;)
+    let $word := $ref/ancestor-or-self::word[1]
+    for $inflection at $pos in $inflect-list
+    let $inflect-word := xdb:key($word, &#39;inflect-table&#39;, $inflection)
+        [not(@speech) or @speech=c:get-speech($word)]/
+        ..[c:get-lang(.) = c:get-lang($word)]
+    let $link := if ($inflect-word) then c:to-word-link($inflect-word) else () 
+    return
+    if ($inflect-word)
+    then (&lt;a href=&quot;{$link}&quot;&gt;{$inflection}&lt;/a&gt;, if ($pos = count($inflect-list)) then () else text {&#39; &#39;})
+    else text { ($inflection), if ($pos = count($inflect-list)) then () else &#39; &#39; }
+};
+
+declare function local:print-examples($ref as element()?) as node()* {(
+    if ($ref/example) then text{&#39; например: &#39;} else (),
+    for $example in $ref/example
+    let $example-refs := xdb:key($ref, &#39;ref&#39;, $example/@source)
+    let $example-ref := $example-refs[1]
+    let $show-lang := c:other-lang($ref, $example-ref)
+    return (
+        if ($example/preceding-sibling::example) then text {&#39;, &#39;} else (),
+        c:print-word($example-ref, local:print-word-control($show-lang, &#39;parent&#39;)),
+        if (not(count($example-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+        if (not($example/@t)) then c:print-gloss($example-ref) else (),
+        if (not($example/@t=&#39;transform&#39;)) then () else
+            let $example-transform-refs := xdb:key($example-ref, &#39;ref&#39;, $example-ref/transform/@source)
+            let $example-transform-ref := $example-transform-refs[1]
+            let $show-transform-lang := c:other-lang($example-ref, $example-transform-ref)
+            return (
+                text {&#39; ← &#39;},
+                if (not(count($example-transform-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+                c:print-word($example-transform-ref, local:print-word-control($show-transform-lang))
+            ),
+        if (not($example/@t=&#39;inflect&#39;)) then () else
+            let $example-inflect-refs := xdb:key($example-ref, &#39;ref&#39;, $example-ref/inflect/@source)
+            let $example-inflect-ref := $example-inflect-refs[1]
+            let $show-inflect-lang := c:other-lang($example-ref, $example-inflect-ref)
+            return (
+                text {&#39; ← &#39;},
+                if (not(count($example-inflect-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+                c:print-word($example-inflect-ref, local:print-word-control($show-inflect-lang))
+            ),
+        if (not($example/@t[starts-with(., &#39;deriv&#39;)])) then () else (
+            if ($example-ref/deriv[@source]) then text {&#39; &lt; &#39;} else (),
+            c:print-wordlet($example-ref/deriv[1]/@i3, &#39; &amp;lt; &#39;),
+            c:print-wordlet($example-ref/deriv[1]/@i2, &#39; &amp;lt; &#39;),
+            c:print-wordlet($example-ref/deriv[1]/@i1, &#39; &amp;lt; &#39;),
+            for $example-deriv in $example-ref/deriv[@source]
+                let $example-deriv-v := $example-deriv/@v
+                let $example-deriv-source := $example-deriv/@source/string()
+                let $example-deriv-refs := xdb:key($example-ref, &#39;ref&#39;, $example-deriv-source)
+                let $example-deriv-ref := $example-deriv-refs[@v=$example-deriv-v][1]
+                let $show-deriv-lang := c:other-lang($example-ref, $example-deriv-ref)
+            return (
+                c:print-word($example-deriv-ref, local:print-word-control($show-deriv-lang, &#39;parent&#39;)),
+                if ($example-deriv/following-sibling::deriv) then text {&#39;/&#39;} else ()
+            ),
+            for $example-deriv in $example-ref/deriv[@from]
+            return (
+                &lt;span&gt; [&amp;lt; {c:print-word($example-ref/.., &lt;print-word show-link=&#39;y&#39;/&gt;)}]&lt;/span&gt;
+            )
+        )
+    )
+)};
+
+declare function local:print-matching-refs($value as xs:string, $variation-refs as element()*, $pubmode) as element() {
+    let $matching-refs := for $i in $variation-refs[c:normalize-for-match(@v)=$value] order by translate($i/@mark, &#39;-&#39;, &#39;→&#39;) return $i
+    return
+    &lt;li&gt;{c:print-word($matching-refs[1], &lt;print-word style=&quot;bold&quot;/&gt;)}
+    {local:print-ref-set($matching-refs,
+        &lt;ref-set short-mode=&quot;{$pubmode}&quot; show-mark=&quot;{$matching-refs[1]/@mark}&quot; show-lang=&quot;{c:get-lang($matching-refs[1]/..)}&quot;/&gt;)}&lt;/li&gt;
+};
+
+declare variable $pubmode external;
+declare variable $code external;
+declare variable $words := xdb:key(/*, &#39;word-code&#39;, $code);
+declare variable $l := c:get-lang($words[1]);
+declare variable $lang := //language[@id=$l]/@name/string();
+declare variable $neo-lang-word := if ($words[1]/combine) then c:get-word($words[1]/combine) else $words[1];
+declare variable $allow-neo-nav :=
+    if (ends-with(c:get-speech($words[1]), &#39;-name&#39;)) then false()
+    else if (c:get-speech($words[1]) = &#39;phrase&#39; or c:get-speech($words[1]) = &#39;text&#39;) then false()
+    else if (c:get-speech($words[1]) = &#39;grammar&#39;) then false()
+    else if (c:get-speech($words[1]) = &#39;root&#39;) then true()
+    else if (starts-with(c:get-speech($words[1]), &#39;phone&#39;)) then false()
+    else true();
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;&lt;/meta&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1&quot;&gt;&lt;/meta&gt;
+&lt;title&gt;Eldamo : {$lang} : {$words[1]/@v/string()}&lt;/title&gt;
+&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;../../css/global.css&quot; /&gt;
+
+&lt;script src=&quot;../../js/glaemscribe.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/tengwar_ds_eldamar.cst.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/quenya.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/sindarin-beleriand.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/sindarin-classical.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/transcribe.js&quot;&gt;&lt;/script&gt;
+
+&lt;style&gt;
+li ul li {{list-style-type:none}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id=&quot;nav-block&quot; class=&quot;nav-block&quot;&gt;
+&lt;span class=&quot;hierarchy-nav&quot;&gt;
+&lt;span class=&quot;breadcrumb-nav&quot;&gt;
+    [&lt;a href=&quot;../../index.html&quot;&gt;На главную страницу&lt;/a&gt;] »
+    &lt;a href=&quot;../languages/index.html&quot;&gt;Языки&lt;/a&gt; »
+    &lt;a href=&quot;../language-pages/lang-{$l}.html&quot;&gt;{$lang}&lt;/a&gt; »&amp;#160;
+&lt;/span&gt;
+{
+if (ends-with(c:get-speech($words[1]), &#39;-name&#39;)) then    
+    &lt;a href=&quot;../name-indexes/names-{$l}.html&quot;&gt;{$lang} - Имена&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;phrase&#39; or c:get-speech($words[1]) = &#39;text&#39;) then    
+    &lt;a href=&quot;../phrase-indexes/phrases-{$l}.html&quot;&gt;{$lang} - Фразы&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;grammar&#39;) then    
+    &lt;a href=&quot;../grammar-indexes/grammars-{$l}.html&quot;&gt;{$lang} - Граматика&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;root&#39;) then    
+    &lt;a href=&quot;../root-indexes/roots-{$l}.html&quot;&gt;{$lang} - Корни&lt;/a&gt;
+else if (starts-with(c:get-speech($words[1]), &#39;phone&#39;)) then    
+    &lt;a href=&quot;../phonetic-indexes/phonetics-{$l}.html&quot;&gt;{$lang} - Фонетика&lt;/a&gt;
+else
+    &lt;a href=&quot;../word-indexes/words-{$l}.html&quot;&gt;{$lang} - Слова&lt;/a&gt;
+}
+&lt;/span&gt;
+&lt;span class=&quot;search-nav-link&quot;&gt;[&lt;a href=&quot;../search/search.html&quot;&gt;Поиск&lt;/a&gt;]&lt;/span&gt;
+&lt;hr class=&quot;nav-break&quot;/&gt;
+&lt;span class=&quot;list-nav&quot;&gt; {
+let $lang := $words[1]/ancestor-or-self::*[@l][1]/@l/string()
+let $base-word := $words[1]/ancestor-or-self::*[@l=$lang][last()]
+let $base-word-speech := c:get-speech($base-word)
+let $base-word-set := xdb:key($words[1], &#39;language&#39;, $lang)
+let $word-set := 
+    if (ends-with($base-word-speech, &#39;-name&#39;)) then    
+        $base-word-set[ends-with(c:get-speech(.), &#39;-name&#39;)]
+    else if ($base-word-speech = &#39;phrase&#39; or $base-word-speech = &#39;text&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phrase&#39; or c:get-speech(.)=&#39;text&#39;]
+    else if ($base-word-speech = &#39;grammar&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;grammar&#39;]
+    else if ($base-word-speech = &#39;phonetic-group&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phonetic-group&#39;]
+    else if ($base-word-speech = &#39;phonetic-rule&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phonetic-rule&#39;]
+    else if ($base-word-speech = &#39;phoneme&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phoneme&#39;]
+    else if ($base-word-speech = &#39;root&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;root&#39;]
+    else
+   
+… [обрезано: показано 20000 из 67297 знаков]
+</code></pre>
+</details>
+<details class="references"><summary>Сведения о вложениях · 1</summary><ul><li><span>word-page.xq</span> <code>dc82ffab-5047-4834-abc9-fedb5039e3ef</code></li></ul></details></div></article><article class="message assistant" id="m-c22f205c-f077-41cc-8920-36770239abab"><header><span class="role">Claude</span><time>2025-04-12 17:18:20</time><a class="message-link" href="#m-c22f205c-f077-41cc-8920-36770239abab" title="Ссылка на реплику">#4</a></header><div class="prose"><p>Я проанализировал код файла <code>word-page.xq</code> и нашел места, где необходимо добавить вызовы функции <code>c:print-inflect-value</code> для перевода полей form и variant. Вот необходимые изменения:</p>
+<p><strong>⚙ repl</strong></p>
+<pre><code>
+// Давайте найдем в коде все места, где выводятся form и variant без перевода
+const fileContent = await window.fs.readFile(&#39;word-page.xq&#39;, { encoding: &#39;utf8&#39; });
+
+// Ищем потенциальные места, где происходит вывод form и variant без вызова функции перевода
+const formPatterns = [
+  // Ищем прямое упоминание @form без вызова функции перевода
+  /@form/g,
+  // Ищем прямое упоминание @variant без вызова функции перевода
+  /@variant/g,
+  // Ищем строки, где используется local:print-inflections
+  /local:print-inflections/g
+];
+
+let results = {};
+formPatterns.forEach(pattern =&gt; {
+  const matches = fileContent.match(pattern);
+  results[pattern.source] = matches ? matches.length : 0;
+});
+
+console.log(&quot;Потенциальные места, требующие изменений:&quot;);
+console.log(results);
+
+// Найдем конкретные функции, где требуются изменения
+const functionsToModify = [
+  &quot;local:print-inflections&quot;,
+  &quot;local:print-element&quot;,
+  &quot;local:print-word-control&quot;
+];
+
+functionsToModify.forEach(funcName =&gt; {
+  const regex = new RegExp(`declare function ${funcName}[\\s\\S]*?};`, &quot;g&quot;);
+  const matches = fileContent.match(regex);
+  if (matches) {
+    console.log(`\nНайдена функция ${funcName}:`);
+    console.log(matches[0].substring(0, 200) + &quot;...&quot;);
+  }
+});
+</code></pre>
+<details><summary>результат repl</summary>
+<pre><code>{&quot;status&quot;:&quot;success&quot;,&quot;logs&quot;:[&quot;Потенциальные места, требующие изменений:&quot;,&quot;{\&quot;@form\&quot;:27,\&quot;@variant\&quot;:10,\&quot;local:print-inflections\&quot;:10}&quot;,&quot;\nНайдена функция local:print-inflections:&quot;,&quot;declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {\r\n    let $inflect-list := tokenize($inflections, &#39; &#39;)\r\n    let $word := $ref/ancestor-or-self::word...&quot;,&quot;\nНайдена функция local:print-element:&quot;,&quot;declare function local:print-element-in($word as element()?, $pubmode) as node()* {\r\n    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;element-in-ref&#39;, @source)[c:get-ref(.)]\r\n    le...&quot;,&quot;\nНайдена функция local:print-word-control:&quot;,&quot;declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {\r\n    &lt;print-word&gt; { (\r\n        if ($show-lang) then attribute show-lang {&#39;y&#39;} else (),\r\n   ...&quot;]}
+</code></pre>
+</details>
+<p><strong>⚙ repl</strong></p>
+<pre><code>
+// Теперь давайте найдем все конкретные места, где нужно добавить вызов функции c:print-inflect-value
+const fileContent = await window.fs.readFile(&#39;word-page.xq&#39;, { encoding: &#39;utf8&#39; });
+
+// Найдем функцию local:print-inflections, которая требует основных изменений
+const inflectionsFuncRegex = /declare function local:print-inflections\([^)]*\) as [^{]*{[\s\S]*?}/;
+const inflectionsFunc = fileContent.match(inflectionsFuncRegex);
+
+console.log(&quot;Текущая функция local:print-inflections:&quot;);
+console.log(inflectionsFunc[0]);
+
+// Поищем другие ключевые места, требующие изменений
+// 1. Места, где отображаются классы слов с формами
+console.log(&quot;\nМеста, где выводятся классы слов с формами:&quot;);
+const classFormRegex = /if \(\$word\/class\/@form\) then \(([^)]*)\) else/g;
+let match;
+while ((match = classFormRegex.exec(fileContent)) !== null) {
+  console.log(match[1]);
+}
+
+// 2. Места, где отображаются варианты inflect
+console.log(&quot;\nМеста, где выводятся варианты inflect:&quot;);
+const inflectVariantRegex = /if \(not\(\$ref\/inflect\/@variant\)\) then \(\) else[^\)]*\)/g;
+while ((match = inflectVariantRegex.exec(fileContent)) !== null) {
+  console.log(match[0]);
+}
+
+// 3. Найдем все места, где выводятся form и variant в таблицах форм
+console.log(&quot;\nМеста, где выводятся form и variant в таблицах форм:&quot;);
+const tableFormRegex = /let \$form := [^;]*@form[^;]*/g;
+while ((match = tableFormRegex.exec(fileContent)) !== null) {
+  console.log(match[0]);
+}
+
+// 4. Выводы вариантов
+console.log(&quot;\nМеста, где выводятся варианты (variants):&quot;);
+const variantsRegex = /\$variants := [^;]*@variant[^;]*/g;
+while ((match = variantsRegex.exec(fileContent)) !== null) {
+  console.log(match[0]);
+}
+</code></pre>
+<details><summary>результат repl</summary>
+<pre><code>{&quot;status&quot;:&quot;error&quot;,&quot;logs&quot;:[&quot;Текущая функция local:print-inflections:&quot;],&quot;error&quot;:&quot;inflectionsFunc is null&quot;}
+</code></pre>
+</details>
+<p><strong>⚙ repl</strong></p>
+<pre><code>
+// Проверим конкретные фрагменты кода, требующие изменений
+const fileContent = await window.fs.readFile(&#39;word-page.xq&#39;, { encoding: &#39;utf8&#39; });
+
+// Найдем функцию local:print-inflections
+const printInflectionsRegex = /declare function local:print-inflections\([^\{]+\{[\s\S]+?\};/;
+const printInflectionsMatch = fileContent.match(printInflectionsRegex);
+
+if (printInflectionsMatch) {
+  console.log(&quot;Функция local:print-inflections:&quot;);
+  console.log(printInflectionsMatch[0]);
+} else {
+  console.log(&quot;Функция local:print-inflections не найдена&quot;);
+}
+
+// Найдем где выводятся формы класса (class/@form)
+const classFormRegex = /if \(\$word\/class\/@form\) then.+?\)/g;
+const classFormMatches = fileContent.match(classFormRegex);
+
+if (classFormMatches) {
+  console.log(&quot;\nВывод class/@form:&quot;);
+  classFormMatches.forEach(match =&gt; console.log(match));
+} else {
+  console.log(&quot;\nВывод class/@form не найден&quot;);
+}
+
+// Найдем места вывода вариантов в inflect
+const inflectVariantRegex = /if \(not\(\$ref\/inflect\/@variant\)\) then \(\) else.+?\)/g;
+const inflectVariantMatches = fileContent.match(inflectVariantRegex);
+
+if (inflectVariantMatches) {
+  console.log(&quot;\nВывод вариантов в inflect:&quot;);
+  inflectVariantMatches.forEach(match =&gt; console.log(match));
+} else {
+  console.log(&quot;\nВывод вариантов в inflect не найден&quot;);
+}
+
+// Найдем места обработки variants в других контекстах
+const variantsRegex = /\$variants :=.+?@variant.+?;/g;
+const variantsMatches = fileContent.match(variantsRegex);
+
+if (variantsMatches) {
+  console.log(&quot;\nОбработка variants:&quot;);
+  variantsMatches.forEach(match =&gt; console.log(match));
+} else {
+  console.log(&quot;\nОбработка variants не найдена&quot;);
+}
+</code></pre>
+<details><summary>результат repl</summary>
+<pre><code>{&quot;status&quot;:&quot;success&quot;,&quot;logs&quot;:[&quot;Функция local:print-inflections:&quot;,&quot;declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {\r\n    let $inflect-list := tokenize($inflections, &#39; &#39;)\r\n    let $word := $ref/ancestor-or-self::word[1]\r\n    for $inflection at $pos in $inflect-list\r\n    let $inflect-word := xdb:key($word, &#39;inflect-table&#39;, $inflection)\r\n        [not(@speech) or @speech=c:get-speech($word)]/\r\n        ..[c:get-lang(.) = c:get-lang($word)]\r\n    let $link := if ($inflect-word) then c:to-word-link($inflect-word) else () \r\n    return\r\n    if ($inflect-word)\r\n    then (&lt;a href=\&quot;{$link}\&quot;&gt;{$inflection}&lt;/a&gt;, if ($pos = count($inflect-list)) then () else text {&#39; &#39;})\r\n    else text { ($inflection), if ($pos = count($inflect-list)) then () else &#39; &#39; }\r\n};&quot;,&quot;\nВывод class/@form:&quot;,&quot;if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant)&quot;,&quot;if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant)&quot;,&quot;\nВывод вариантов в inflect не найден&quot;,&quot;\nОбработка variants не найдена&quot;]}
+</code></pre>
+</details>
+<p><strong>⚙ repl</strong></p>
+<pre><code>
+// Давайте найдем другие места, где упоминаются form и variant
+const fileContent = await window.fs.readFile(&#39;word-page.xq&#39;, { encoding: &#39;utf8&#39; });
+
+// Поищем упоминания local:print-inflections в контексте использования
+const printInflectionsUsageRegex = /local:print-inflections\([^)]+\)/g;
+const printInflectionsUsages = fileContent.match(printInflectionsUsageRegex);
+
+if (printInflectionsUsages) {
+  console.log(&quot;Использования local:print-inflections:&quot;);
+  printInflectionsUsages.forEach(match =&gt; console.log(match));
+} else {
+  console.log(&quot;Использования local:print-inflections не найдены&quot;);
+}
+
+// Поищем, где происходит вывод form в таблицах
+const formOutputRegex = /&lt;td&gt;\{local:print-inflections\([^)]+\)\}&lt;\/td&gt;/g;
+const formOutputMatches = fileContent.match(formOutputRegex);
+
+if (formOutputMatches) {
+  console.log(&quot;\nВывод form в таблицах:&quot;);
+  formOutputMatches.forEach(match =&gt; console.log(match));
+} else {
+  console.log(&quot;\nВывод form в таблицах не найден&quot;);
+}
+
+// Найдем, где напрямую используется @form/@variant для отображения
+const directFormRegex = /(concat|string)\(\$[^\/]+\/@form\)/g;
+const directFormMatches = fileContent.match(directFormRegex);
+
+if (directFormMatches) {
+  console.log(&quot;\nПрямое использование @form для вывода:&quot;);
+  directFormMatches.forEach(match =&gt; console.log(match));
+} else {
+  console.log(&quot;\nПрямое использование @form для вывода не найдено&quot;);
+}
+
+// Найдем другие места, связанные с вариантами
+const otherVariantRegex = /let \$variants.+?@variant.+?/g;
+const otherVariantMatches = fileContent.match(otherVariantRegex);
+
+if (otherVariantMatches) {
+  console.log(&quot;\nДругие места с вариантами:&quot;);
+  otherVariantMatches.forEach(match =&gt; console.log(match));
+} else {
+  console.log(&quot;\nДругие места с вариантами не найдены&quot;);
+}
+</code></pre>
+<details><summary>результат repl</summary>
+<pre><code>{&quot;status&quot;:&quot;success&quot;,&quot;logs&quot;:[&quot;Использования local:print-inflections:&quot;,&quot;local:print-inflections($ref as element()&quot;,&quot;local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant)&quot;,&quot;local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant)&quot;,&quot;local:print-inflections($ref, $variants)&quot;,&quot;local:print-inflections($word, $form)&quot;,&quot;local:print-inflections($word, string($ref/inflect/@variant)&quot;,&quot;local:print-inflections($word, string($ref/inflect/@variant)&quot;,&quot;local:print-inflections($element, string($form)&quot;,&quot;local:print-inflections($element-word, string($form)&quot;,&quot;local:print-inflections($element, string($form)&quot;,&quot;\nВывод form в таблицах не найден&quot;,&quot;\nПрямое использование @form для вывода не найдено&quot;,&quot;\nДругие места с вариантами:&quot;,&quot;let $variants := $ref/*[name()=$from]/normalize-space(replace(replace(concat(&#39; &#39;, @form, &#39; &#39;, @variant,&quot;]}
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;type&quot;: &quot;application/vnd.ant.code&quot;,
+ &quot;title&quot;: &quot;Модифицированные функции для перевода полей form и variant&quot;,
+ &quot;command&quot;: &quot;create&quot;,
+ &quot;content&quot;: &quot;[4543 знаков]&quot;,
+ &quot;language&quot;: &quot;xquery&quot;,
+ &quot;version_uuid&quot;: &quot;301c2f5c-9a9d-4afd-91d4-c328d839d5e4&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p>Проанализировав код, я нашел несколько мест, где нужно добавить вызовы функции <code>c:print-inflect-value</code> для перевода полей form и variant. Основные изменения необходимо внести в функцию <code>local:print-inflections</code>, а также в некоторые другие места кода.</p>
+<p>Вот необходимые изменения для правильного перевода грамматических форм:</p>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[813 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[813 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;8237136a-7ce9-491e-9a6e-ddc445561851&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p>Теперь нужно добавить функции для обработки других мест в коде:</p>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[1568 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[556 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;66c48f93-569b-4bf5-9bf1-0cf74b602696&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p>Теперь необходимо добавить функцию для обработки вариантов в таблицах:</p>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;implementation-guide&quot;,
+ &quot;type&quot;: &quot;text/markdown&quot;,
+ &quot;title&quot;: &quot;Руководство по внедрению изменений&quot;,
+ &quot;command&quot;: &quot;create&quot;,
+ &quot;content&quot;: &quot;[3885 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;596b2275-a233-4eef-80c9-a0856cd838b0&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;code-changes&quot;,
+ &quot;type&quot;: &quot;application/vnd.ant.code&quot;,
+ &quot;title&quot;: &quot;Изменения в коде word-page.xq&quot;,
+ &quot;command&quot;: &quot;create&quot;,
+ &quot;content&quot;: &quot;[2319 знаков]&quot;,
+ &quot;language&quot;: &quot;diff&quot;,
+ &quot;version_uuid&quot;: &quot;f8c6b7b7-89ed-418f-b9d4-c8369403734a&quot;
+}
+</code></pre>
+</div></article><article class="message user" id="m-eecd20ad-c709-4b86-a3f8-78412ffc32aa"><header><span class="role">Вы</span><time>2025-04-12 17:20:21</time><a class="message-link" href="#m-eecd20ad-c709-4b86-a3f8-78412ffc32aa" title="Ссылка на реплику">#5</a></header><div class="prose"><p>Продолжи</p>
+</div></article><article class="message assistant" id="m-a8b8cbc0-4e55-4257-a523-820a804932d2"><header><span class="role">Claude</span><time>2025-04-12 17:21:56</time><a class="message-link" href="#m-a8b8cbc0-4e55-4257-a523-820a804932d2" title="Ссылка на реплику">#6</a></header><div class="prose"><p>Я продолжу описание необходимых изменений в коде для обеспечения перевода грамматических форм и вариантов.</p>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;code-changes&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[5763 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[2318 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;28ce4a6c-23f0-4337-b426-a52923385394&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;code-changes&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[2629 знаков]&quot;,
+ &quot;old_str&quot;: &quot;declare function local:print-inflections_old($ref as&quot;,
+ &quot;version_uuid&quot;: &quot;6f2c5dc1-7066-42c2-acd5-983d555c1aba&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;final-summary&quot;,
+ &quot;type&quot;: &quot;text/markdown&quot;,
+ &quot;title&quot;: &quot;Итоговое описание изменений&quot;,
+ &quot;command&quot;: &quot;create&quot;,
+ &quot;content&quot;: &quot;[4073 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;2e2fee81-2b7a-4765-aacb-7a4e91a78c90&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p>На основе анализа предоставленных файлов я разработал решение для перевода грамматических форм и вариантов в интерфейсе веб-страницы.</p>
+<h4>Решение проблемы с переводом полей form и variant</h4>
+<p>Ключевая проблема заключалась в том, что хотя в файле <code>common.xq</code> уже была реализована функция <code>c:print-inflect-value</code> для перевода грамматических терминов, она не использовалась в файле <code>word-page.xq</code>. Я выполнил необходимые изменения для интеграции этой функции во все релевантные части кода.</p>
+<h5>Основные внесенные изменения:</h5>
+<ol>
+<li><p><strong>Модификация функции <code>local:print-inflections</code></strong>:</p>
+<ul>
+<li>Добавил вызов <code>c:print-inflect-value</code> для перевода значений форм перед их отображением</li>
+</ul>
+</li>
+<li><p><strong>Добавил вспомогательные функции</strong>:</p>
+<ul>
+<li><code>local:get-translated-form-variant</code> - комбинирует и переводит форму и вариант</li>
+<li><code>local:normalize-and-translate-with-forms</code> - нормализует строку с переведенными формами</li>
+</ul>
+</li>
+<li><p><strong>Модифицировал все места вывода форм и вариантов</strong>:</p>
+<ul>
+<li>Заголовки слов с указанием класса</li>
+<li>Заголовки таблиц с примерами форм</li>
+<li>Содержимое таблиц вариантов</li>
+<li>Ссылки с указанием грамматических форм</li>
+<li>Отображение составных элементов</li>
+</ul>
+</li>
+</ol>
+<h5>Пример конкретных изменений:</h5>
+<p>Например, код:</p>
+<pre><code class="language-xquery">if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant))), &#39;) &#39;) else ()
+</code></pre>
+<p>Был заменен на:</p>
+<pre><code class="language-xquery">if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, local:normalize-and-translate-with-forms($word/class/@mark, $word/class/@form, $word/class/@variant)), &#39;) &#39;) else ()
+</code></pre>
+<p>Теперь при выводе грамматических форм и вариантов будет использоваться функция <code>c:print-inflect-value</code>, которая переводит английские грамматические термины на русский язык согласно словарю переводов, определенному в <code>common.xq</code>.</p>
+<p>Это сделает интерфейс более понятным для русскоязычных пользователей и обеспечит единообразие терминологии во всем приложении.</p>
+</div></article><article class="message user" id="m-a1d77c99-1a12-469a-8556-64222993fd5e"><header><span class="role">Вы</span><time>2025-04-14 11:13:22</time><a class="message-link" href="#m-a1d77c99-1a12-469a-8556-64222993fd5e" title="Ссылка на реплику">#7</a></header><div class="prose"><p>Файл word-page.txt - основной файл, требующий корректировки, code-changes.txt - файл с необходимыми корректировками файла word-page.txt. Проанализируй эти файлы и измени файл word-page.txt в соответствии с содержанием файла code-changes.txt.</p>
+<details><summary>вложение: code-changes.txt (8386 байт)</summary>
+<pre><code>diff --git a/word-page.xq b/word-page.xq
+index 12345678..abcdefg 100644
+--- a/word-page.xq
++++ b/word-page.xq
+@@ -47,6 +47,24 @@ declare function local:print-ref-set($refs as element()*, $ref-set as element())
+     return ($item/node(), if ($item/following-sibling::*) then text {&#39;; &#39;} else ())
+ ) };
+ 
++declare function local:get-translated-form-variant($form as xs:string?, $variant as xs:string?) as xs:string {
++    let $combined := string-join(
++        (
++            if ($form) then c:print-inflect-value($form) else (),
++            if ($variant) then c:print-inflect-value($variant) else ()
++        ),
++        &#39; &#39;
++    )
++    return normalize-space($combined)
++};
++
++declare function local:normalize-and-translate-with-forms($mark as xs:string?, $form as xs:string?, $variant as xs:string?) as xs:string {
++    let $translated-form := if ($form) then c:print-inflect-value($form) else ()
++    let $translated-variant := if ($variant) then c:print-inflect-value($variant) else ()
++    return normalize-space(concat($mark, &#39; &#39;, $translated-form, &#39; &#39;, $translated-variant))
++};
++
++
+ declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {
+     &lt;print-word&gt; { (
+         if ($show-lang) then attribute show-lang {&#39;y&#39;} else (),
+@@ -129,19 +147,142 @@ declare function local:print-element-in($word as element()?, $pubmode) as node()
+ declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {
+     let $inflect-list := tokenize($inflections, &#39; &#39;)
+     let $word := $ref/ancestor-or-self::word[1]
+-    for $inflection at $pos in $inflect-list
++    for $inflection at $pos in $inflect-list
++    let $translated-inflection := c:print-inflect-value($inflection)
++    let $inflect-word := xdb:key($word, &#39;inflect-table&#39;, $inflection)
++        [not(@speech) or @speech=c:get-speech($word)]/
++        ..[c:get-lang(.) = c:get-lang($word)]
++    let $link := if ($inflect-word) then c:to-word-link($inflect-word) else () 
++    return
++    if ($inflect-word)
++    then (&lt;a href=&quot;{$link}&quot;&gt;{$translated-inflection}&lt;/a&gt;, if ($pos = count($inflect-list)) then () else text {&#39; &#39;})
++    else text { ($translated-inflection), if ($pos = count($inflect-list)) then () else &#39; &#39; }
++};
++
++@@ -301,7 +342,7 @@ let $word-page := (
++    { if ($word/@tengwar) then &lt;span&gt; [&lt;b&gt;{$word/@tengwar/string()}&lt;/b&gt;]&lt;/span&gt; else () }
++    {c:print-speech($word)}
++-    {if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant))), &#39;) &#39;) else ()}
+++    {if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, local:normalize-and-translate-with-forms($word/class/@mark, $word/class/@form, $word/class/@variant)), &#39;) &#39;) else ()}
++    {c:print-gloss($word)}
++    {let $rule := if ($word/@rule) then $word else $word/rule return
++    if ($rule) then concat(&#39;; [&#39;, $rule/@from, &#39;] &amp;gt; [&#39;, $rule/@rule, &#39;]&#39;) else ()}
++
++@@ -359,7 +400,7 @@ let $word-page := (
++    { if ($word/@tengwar) then &lt;span&gt; [&lt;b&gt;{$word/@tengwar/string()}&lt;/b&gt;]&lt;/span&gt; else () }
++    {c:print-speech($word)}
++-    {if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant))), &#39;) &#39;) else ()}
+++    {if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, local:normalize-and-translate-with-forms($word/class/@mark, $word/class/@form, $word/class/@variant)), &#39;) &#39;) else ()}
++    {c:print-neo-gloss($word)}
++    { if (not($word/@created or $word/@vetted)) then () else
++      concat(&#39; [&#39;,
++
++@@ -448,7 +489,7 @@ let $word-page := (
++for $form in if ($note/form) then $note/form/@form else $note/@form
++return (
++-&lt;tr&gt;&lt;th colspan=&quot;10&quot;&gt;Примеры ({string($form)})&lt;/th&gt;&lt;/tr&gt;,
+++&lt;tr&gt;&lt;th colspan=&quot;10&quot;&gt;Примеры ({c:print-inflect-value(string($form))})&lt;/th&gt;&lt;/tr&gt;,
++
++@@ -457,8 +498,8 @@ let $exclude := $form/../@exclude
++let $exclude2 := $form/../@exclude2
++let $from := $note/@from
++let $refs := xdb:matchAllKeys($word, $key, $form)
++-    [c:get-lang(.)=c:get-langs($note)]
++-    [not($speech) or c:get-speech(.) = $speech]
+++    [c:get-lang(.)=c:get-langs($note)]
+++    [not($speech) or c:get-speech(.) = $speech]
++    [not($exclude) or not(contains(*[name()=$from]/@form, $exclude) or contains(*[name()=$from]/@variant, $exclude))]
++    [not($exclude2) or not(contains(*[name()=$from]/@form, $exclude2) or contains(*[name()=$from]/@variant, $exclude2))]
++let $has-glosses := ($note/@show-glosses | $refs[c:get-gloss(.)]) and not($note/@show-glosses = &#39;false&#39;)
++
++@@ -466,7 +507,7 @@ let $has-variants := $note/@show-variants | $refs/*[name()=$from][1][normalize-s
++let $has-sources := $refs/@source
++let $show-form := $note/@show-form
++for $ref in $refs
++-let $variants := $ref/*[name()=$from]/normalize-space(replace(replace(concat(&#39; &#39;, @form, &#39; &#39;, @variant, &#39; &#39;), &#39; &#39;, &#39;  &#39;), concat(&#39; &#39;, replace($omit, &#39; &#39;, &#39;  &#39;), &#39; &#39;), &#39;&#39;))
+++let $variants := $ref/*[name()=$from]/normalize-space(replace(replace(concat(&#39; &#39;, c:print-inflect-value(@form), &#39; &#39;, c:print-inflect-value(@variant), &#39; &#39;), &#39; &#39;, &#39;  &#39;), concat(&#39; &#39;, replace(c:print-inflect-value($omit), &#39; &#39;, &#39;  &#39;), &#39; &#39;), &#39;&#39;))
++let $from-source := $ref/*[name()=$from][1]
++let $ref-form := if ($show-form) then $ref/ancestor-or-self::word[1]/*[name()=$show-form]/@form/string() else ()
++order by $ref-form, $variants
++
++@@ -537,7 +578,7 @@ let $inflect-refs := $valid-refs[inflect[not(@source) or c:get-ref(.)]
++    if ($inflect-word)
++    then (&lt;a href=&quot;{$link}&quot;&gt;{$inflection}&lt;/a&gt;, if ($pos = count($inflect-list)) then () else text {&#39; &#39;})
++    else text { ($inflection), if ($pos = count($inflect-list)) then () else &#39; &#39; }
++};
++
++// Удаляем неиспользуемые функции
+
+@@ -645,7 +686,7 @@ let $change-refs := $valid-refs[
++    &lt;span&gt;
++            ←&amp;#160;{c:print-word($from-ref, &lt;print-word/&gt;)}
++-            {if ($from-ref/inflect/@form) then concat(&#39; (&#39;, $from-ref/inflect/@form, &#39;)&#39;) else () }
+++            {if ($from-ref/inflect/@form) then concat(&#39; (&#39;, c:print-inflect-value($from-ref/inflect/@form), &#39;)&#39;) else () }
++        &lt;/span&gt;
++    else
++        &lt;span&gt;[←&amp;#160;{c:print-word($from-ref, &lt;print-word/&gt;)}]&lt;/span&gt;
++
++@@ -694,7 +735,7 @@ let $ref := $refs[1]
++let $form := $ref/inflect/@form/string()
++let $print-word := if ($ref/@l) then &lt;print-word show-lang=&quot;y&quot;/&gt; else &lt;print-word/&gt;
++order by $form, $ref/@v
++return
++    &lt;tr&gt;{ (
++        &lt;td&gt;&lt;i&gt;{c:print-word($ref, $print-word)}&lt;/i&gt;&lt;/td&gt;,
++        &lt;td&gt;{ (
++-            local:print-inflections($word, $form),
++-            if (not($ref/inflect/@variant)) then () else
++-            (&#39;; &#39;, local:print-inflections($word, string($ref/inflect/@variant)))
+++            local:print-inflections($word, $form),
+++            if (not($ref/inflect/@variant)) then () else
+++            (&#39;; &#39;, local:print-inflections($word, string($ref/inflect/@variant)))
++        ) }&lt;/td&gt;,
++        (: if (not($has-variants)) then () else
++        &lt;td&gt;{ local:print-inflections($word, string($ref/inflect/@variant)) }&lt;/td&gt;, :)
++
++@@ -753,7 +794,7 @@ let $element-words := $elements/c:get-word(.)
++            &lt;td&gt;
++                {if ($element/@v=&#39;?&#39;) then &lt;i&gt;?&lt;/i&gt; else c:print-word($element-word, $print-word)}
++                {$element/@mark/string()}
++            &lt;/td&gt;,
++            if (count($glosses) gt 0) then &lt;td&gt;{c:print-gloss($element-word)}&lt;/td&gt; else (),
++-            if ($has-forms) then &lt;td&gt;{local:print-inflections($element-word, string($form))}&lt;/td&gt; else (),
+++            if ($has-forms) then &lt;td&gt;{local:print-inflections($element-word, c:print-inflect-value(string($form)))}&lt;/td&gt; else (),
++            if ($has-references) then &lt;td&gt;{(
++                local:print-ref-set($matching-refs, $ref-set)
++            )}&lt;/td&gt; else ()
++
++@@ -772,7 +813,7 @@ let $element-words := $elements/c:get-word(.)
++        &lt;tr&gt; {(
++            &lt;td&gt;{c:print-word($element, $print-word)}&lt;/td&gt;,
++            if (count($glosses) gt 0) then &lt;td&gt;{c:print-gloss($element)}&lt;/td&gt; else (),
++-            if ($has-forms) then &lt;td&gt;{local:print-inflections($element, string($form))}&lt;/td&gt; else (),
+++            if ($has-forms) then &lt;td&gt;{local:print-inflections($element, c:print-inflect-value(string($form)))}&lt;/td&gt; else (),
++            &lt;td&gt;{(
++                local:print-ref-set($refs, $ref-set)
++            )}&lt;/td&gt;
++        )} &lt;/tr&gt;
+</code></pre>
+</details>
+<details><summary>вложение: word-page.txt (67950 байт)</summary>
+<pre><code>import module namespace c = &quot;common.xq&quot; at &quot;common.xq&quot;;
+
+declare function local:print-deriv($deriv as node()?) as element() {
+    &lt;span&gt;
+{c:print-word($deriv/c:get-ref(.), &lt;print-word show-link=&quot;parent&quot; show-lang=&quot;y&quot;/&gt;)}
+&amp;gt;
+{c:print-wordlet($deriv/@i1, &#39; &amp;gt; &#39;)}
+{c:print-wordlet($deriv/@i2, &#39; &amp;gt; &#39;)}
+{c:print-wordlet($deriv/@i3, &#39; &amp;gt; &#39;)}
+{c:print-word($deriv/parent::ref, &lt;print-word show-link=&quot;parent&quot; show-lang=&quot;y&quot;/&gt;)}
+    &lt;/span&gt;
+};
+
+declare function local:is-match($s1 as xs:string?, $s2 as xs:string?) as xs:boolean {
+    not(c:normalize-for-match($s1) != c:normalize-for-match($s2))
+};
+
+declare function local:print-ref($ref as element(), $ref-set) as element()* {
+    let $other-ref := $ref-set/@other-ref
+    let $deref := if ($other-ref) then c:get-ref($ref) else $ref/ancestor-or-self::ref
+    let $show-notes := $ref-set/@show-notes
+    let $show-mark := $ref-set/@show-mark
+    let $show-lang := $ref-set/@show-lang
+    let $show-gloss := $ref-set/@gloss
+    let $show-rule := $ref-set/@show-rule
+    let $show-value := $ref-set/@v
+    let $short-mode := $ref-set/@short-mode
+
+    let $notes := $ref[$show-notes]/string()
+    return
+    if ($deref) then
+    &lt;span&gt;{c:print-source-link($deref, $short-mode)}{
+        let $do-print-lang := $show-lang != $deref/@l return
+        if ($show-rule) then (
+            text {&#39; (&#39;}, 
+            let $deriv-ref := c:get-ref($deref/deriv[1])
+            return c:print-word($deriv-ref, local:print-word-control($do-print-lang)), 
+            text {&#39; &amp;gt; &#39;},
+            c:print-wordlet($deref/deriv[1]/@i1, &#39; &amp;gt; &#39;),
+            c:print-wordlet($deref/deriv[1]/@i2, &#39; &amp;gt; &#39;),
+            c:print-wordlet($deref/deriv[1]/@i3, &#39; &amp;gt; &#39;),
+            c:print-word($deref, local:print-word-control($do-print-lang)), 
+            if ($deref/deriv[1]/string()) then (&#39;; &#39;, xdb:html($deref/deriv[1])) else (), 
+            text {&#39;)&#39;}
+        ) else 
+        if (not($show-value) and not($show-mark != $deref/@mark) and not($show-lang != $deref/@l)) then () else 
+        let $do-print-word :=
+            (not(local:is-match($deref/@v, $show-value) and not($deref/@mark))) or
+            ($show-mark and $deref/@mark)
+        let $do-print-gloss := $deref/@gloss != $show-gloss
+        let $do-print-notes := $notes != &#39;&#39;
+        return if ($do-print-word or $do-print-gloss or $do-print-notes) then (
+            text {&#39; (&#39;}, 
+            if ($do-print-word) then c:print-word($deref, local:print-word-control($do-print-lang)) else (), 
+            if ($do-print-word and $do-print-gloss) then text{&#39; &#39;} else (),
+            if ($do-print-gloss) then text {c:print-gloss-no-space($deref)} else (), 
+            if ($do-print-notes and ($do-print-gloss or $do-print-word)) then text{&#39;, &#39;} else (),
+            if ($do-print-notes) then xdb:html($notes) else (),
+            text {&#39;)&#39;}
+        ) else ()
+    }&lt;/span&gt; else ()
+};
+
+declare function local:print-ref-set($refs as element()*, $ref-set as element()) as node()* { (
+    if ($refs) then text{&#39; ✧&amp;#160;&#39;} else (),
+    let $group := &lt;div&gt;{for $ref in $refs return local:print-ref($ref, $ref-set)}&lt;/div&gt;
+    for $item in $group/*
+    return ($item/node(), if ($item/following-sibling::*) then text {&#39;; &#39;} else ())
+) };
+
+declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {
+    &lt;print-word&gt; { (
+        if ($show-lang) then attribute show-lang {&#39;y&#39;} else (),
+        if ($show-link) then attribute show-link {$show-link} else ()
+    ) } &lt;/print-word&gt;
+};
+
+declare function local:print-word-control($show-lang as xs:boolean) as element() {
+    local:print-word-control($show-lang, ())
+};
+
+declare function local:ref-sig($ref as element()*, $ref-name) as xs:string {
+    let $att-values :=
+        &lt;element&gt;{$ref/@*[not(name()=&#39;source&#39;)][$ref-name != &#39;element&#39; or not(name()=&#39;gloss&#39;)]/string()}:{
+            $ref/*[name()=$ref-name]/@*[not(name()=&#39;source&#39;) and not(name()=&#39;v&#39;)]/string()}:{
+            $ref/*[name()=$ref-name]/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:change-sig($ref as element()*, $ref-name) as xs:string {
+    let $change-element := $ref/*[name()=$ref-name]
+    let $change := $change-element
+    let $att-values :=
+        &lt;element&gt;{$ref-name}:{$ref/@v/string()}:{$ref/@gloss/string()}:{
+        $change-element/text()
+        }:{$change/@v/string()}:{$ref/@change/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:element-sig($ref as element()*) as xs:string {
+    let $element := $ref/c:get-ref($ref)/..
+    let $att-values :=
+        &lt;element&gt;
+            {$element/@*/string()}:{name($ref)}:{
+            $ref/@*[not(name()=&#39;source&#39;) and not(name()=&#39;v&#39;)]/string()}:{
+            $ref/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:print-element-in($word as element()?, $pubmode) as node()* {
+    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;element-in-ref&#39;, @source)[c:get-ref(.)]
+    let $element-ins := xdb:key($word, &#39;element-in&#39;, $word/@v)[element[@v = $word/@v]/@l = c:get-lang($word) or
+        (not(element[@v = $word/@v]/@l) and c:get-lang(.) = c:get-lang($word))]
+    let $unmatched := $element-in-refs/..[not(@v = $element-ins/@v)]
+    return (
+        &lt;ul&gt; { (
+        for $element-in in $element-ins
+        let $control := &lt;ref-set short-mode=&quot;{$pubmode}&quot;&gt;{if (c:get-speech($element-in) = &#39;phrase&#39; or c:get-speech($element-in) = &#39;text&#39;) then () else $element-in/@v}&lt;/ref-set&gt;
+        let $is-neo := c:is-neo($element-in)
+        order by $element-in/@l, c:normalize-for-sort($element-in/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo&#39;} else () }
+                {c:print-word($element-in, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($element-in)}
+                {local:print-ref-set($element-in-refs[c:get-ref(.)[../@v = $element-in/@v]], $control)}
+            &lt;/li&gt;,
+        for $element-in in $unmatched
+        let $control := &lt;ref-set short-mode=&quot;{$pubmode}&quot;&gt;{if (c:get-speech($element-in) = &#39;phrase&#39; or c:get-speech($element-in) = &#39;text&#39;) then () else $element-in/@v}&lt;/ref-set&gt;
+        let $is-neo := c:is-neo($element-in)
+        order by $element-in/@l, c:normalize-for-sort($element-in/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo&#39;} else () }
+                {c:print-word($element-in, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($element-in)}
+                {local:print-ref-set($element-in-refs[c:get-ref(.)[../@v = $element-in/@v]], $control)}
+            &lt;/li&gt;
+        ) } &lt;/ul&gt;
+    )
+};
+
+declare function local:print-derivations($word as element()?, $priors as element()*, $pubmode) as node()* {
+    let $deriv-refs := $word/ref[c:get-ref(.)]/deriv[c:get-ref(.)]
+    let $derivs := $deriv-refs/c:get-ref(.)/.. | $word/deriv/c:get-word(.)
+    return (
+        for $deriv in $derivs[not(xdb:hashcode(.) = $priors/xdb:hashcode(.))]
+        let $deriv-link := $word/deriv[xdb:hashcode(c:get-word(.)) = xdb:hashcode($deriv)]
+        let $deriv-mark := $deriv-link/@mark/string()
+        let $refs := $deriv-refs[xdb:key($word, &#39;ref&#39;, @source)[../@v = $deriv/@v]]
+        let $value := $deriv/@v/string()
+        let $is-neo := c:is-neo(c:get-word($deriv))
+        return
+            &lt;li&gt;
+                { attribute class { if ($is-neo) then &#39;neo c-bullet&#39; else &#39;c-bullet&#39; } }
+                &amp;lt; 
+                {c:print-word($deriv, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {$deriv-mark}
+                {c:print-gloss($deriv)}
+                {local:print-ref-set($refs, &lt;ref-set short-mode=&quot;{$pubmode}&quot; v=&quot;{$value}&quot; other-ref=&quot;y&quot;/&gt;)}
+                &lt;ul&gt;{(
+                    for $ref in $refs[@i1 or . != &#39;&#39;]
+                    return
+                    &lt;li style=&quot;list-style-type:none; text-indent: -1em;&quot;&gt;{(
+                        &#39; &amp;lt; &#39;,
+                        c:print-wordlet($ref/@i3, &#39; &amp;lt; &#39;),
+                        c:print-wordlet($ref/@i2, &#39; &amp;lt; &#39;),
+                        c:print-wordlet($ref/@i1, &#39; &amp;lt; &#39;),
+                        &lt;i&gt;{$ref/@v/string()}&lt;/i&gt;,
+                        if ($ref != &#39;&#39;) then (&#39;, &#39;, xdb:html($ref/string())) else (),
+                        local:print-ref-set($ref, &lt;ref-set short-mode=&quot;{$pubmode}&quot; other-ref=&quot;y&quot;/&gt;)
+                    )}&lt;/li&gt;,
+                    if (xdb:hashcode($word) = xdb:hashcode($deriv)) then () else local:print-derivations($deriv, ($priors, $word), $pubmode))
+                }&lt;/ul&gt;
+            &lt;/li&gt;
+    )
+};
+
+declare function local:print-derivatives($word as element()?, $pubmode) as node()* {
+    if (c:get-speech($word) = &#39;phoneme&#39;) then () else
+    local:print-derivatives($word, true(), (), $pubmode)
+};
+
+declare function local:print-derivatives($word as element()?, $top-level as xs:boolean, $priors as element()*, $pubmode) as node()* {
+    let $is-root := c:is-root($word)
+    let $deriv-only := ($top-level and not($is-root)) or c:get-speech($word) = &#39;phoneme&#39;
+    let $deriv-to-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;deriv-to-ref&#39;, @source)[c:get-ref(.)]
+    let $word-derivs := xdb:key($word, &#39;deriv-to&#39;, $word/@v)[deriv/c:get-word(.)/xdb:hashcode(.) = $word/xdb:hashcode(.)]
+    let $deriv-tos := $deriv-to-refs/.. | $word-derivs
+    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;element-in-ref&#39;, @source)[c:get-ref(.)]
+    let $word-elements := xdb:key($word, &#39;element-in&#39;, $word/@v)
+        [element/c:get-word(.)/xdb:hashcode(.) = $word/xdb:hashcode(.)]
+    let $element-ins := if ($deriv-only) then () else $element-in-refs/.. | $word-elements
+    return (
+        if ($top-level and ($deriv-tos or $element-ins)) then &lt;p&gt;&lt;u&gt;Производные&lt;/u&gt;&lt;/p&gt; else (),
+        &lt;ul&gt; { (
+        if (not($top-level) and not($deriv-tos) and (count($element-ins) gt 3)) then
+            &lt;li&gt;
+                ⇒ {count($element-ins)} compounds
+            &lt;/li&gt;
+        else
+        let $child-derivs := $deriv-tos[not(c:get-speech(.) = &#39;phrase&#39; or c:get-speech(.) = &#39;text&#39;)] |
+            $element-ins[not(c:get-speech(.) = &#39;phrase&#39; or c:get-speech(.) = &#39;text&#39;)][not(xdb:hashcode(.) = $deriv-tos/xdb:hashcode(.))]
+        for $deriv-to in $child-derivs
+        let $is-neo := c:is-neo($deriv-to)
+        order by c:get-lang($deriv-to), c:normalize-for-sort($deriv-to/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo c-bullet&#39;} else attribute class {&#39;c-bullet&#39;} }
+                {$word/derivatives/@no-roots}
+                {if (xdb:hashcode($deriv-to) = $deriv-tos/xdb:hashcode(.)) then &#39;&amp;gt; &#39; else &#39;⇒ &#39;}
+                {c:print-word($deriv-to, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($deriv-to)}
+                {local:print-ref-set(($deriv-to-refs|$element-in-refs)[c:get-ref(.)[xdb:hashcode(..) = xdb:hashcode($deriv-to)]], &lt;ref-set short-mode=&quot;{$pubmode}&quot;/&gt;)}
+                {if (xdb:hashcode($word) = xdb:hashcode($deriv-to)) then ()
+                else if ($word/derivatives/@no-roots and c:is-root($deriv-to)) then ()
+                else
+                let $print-derivatives := local:print-derivatives($deriv-to, false(), ($priors, $child-derivs), $pubmode) return
+                if (string($print-derivatives) != &#39;&#39; and not(contains(string($print-derivatives), &#39; compounds&#39;)) and $priors[xdb:hashcode(.) = xdb:hashcode($deriv-to)]) then 
+                    &lt;ul&gt;&lt;li&gt;⇒ [см. выше]&lt;/li&gt;&lt;/ul&gt;
+                else
+                $print-derivatives
+            } &lt;/li&gt;
+        ) } &lt;/ul&gt;
+    )
+};
+
+declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {
+    let $inflect-list := tokenize($inflections, &#39; &#39;)
+    let $word := $ref/ancestor-or-self::word[1]
+    for $inflection at $pos in $inflect-list
+    let $inflect-word := xdb:key($word, &#39;inflect-table&#39;, $inflection)
+        [not(@speech) or @speech=c:get-speech($word)]/
+        ..[c:get-lang(.) = c:get-lang($word)]
+    let $link := if ($inflect-word) then c:to-word-link($inflect-word) else () 
+    return
+    if ($inflect-word)
+    then (&lt;a href=&quot;{$link}&quot;&gt;{$inflection}&lt;/a&gt;, if ($pos = count($inflect-list)) then () else text {&#39; &#39;})
+    else text { ($inflection), if ($pos = count($inflect-list)) then () else &#39; &#39; }
+};
+
+declare function local:print-examples($ref as element()?) as node()* {(
+    if ($ref/example) then text{&#39; например: &#39;} else (),
+    for $example in $ref/example
+    let $example-refs := xdb:key($ref, &#39;ref&#39;, $example/@source)
+    let $example-ref := $example-refs[1]
+    let $show-lang := c:other-lang($ref, $example-ref)
+    return (
+        if ($example/preceding-sibling::example) then text {&#39;, &#39;} else (),
+        c:print-word($example-ref, local:print-word-control($show-lang, &#39;parent&#39;)),
+        if (not(count($example-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+        if (not($example/@t)) then c:print-gloss($example-ref) else (),
+        if (not($example/@t=&#39;transform&#39;)) then () else
+            let $example-transform-refs := xdb:key($example-ref, &#39;ref&#39;, $example-ref/transform/@source)
+            let $example-transform-ref := $example-transform-refs[1]
+            let $show-transform-lang := c:other-lang($example-ref, $example-transform-ref)
+            return (
+                text {&#39; ← &#39;},
+                if (not(count($example-transform-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+                c:print-word($example-transform-ref, local:print-word-control($show-transform-lang))
+            ),
+        if (not($example/@t=&#39;inflect&#39;)) then () else
+            let $example-inflect-refs := xdb:key($example-ref, &#39;ref&#39;, $example-ref/inflect/@source)
+            let $example-inflect-ref := $example-inflect-refs[1]
+            let $show-inflect-lang := c:other-lang($example-ref, $example-inflect-ref)
+            return (
+                text {&#39; ← &#39;},
+                if (not(count($example-inflect-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+                c:print-word($example-inflect-ref, local:print-word-control($show-inflect-lang))
+            ),
+        if (not($example/@t[starts-with(., &#39;deriv&#39;)])) then () else (
+            if ($example-ref/deriv[@source]) then text {&#39; &lt; &#39;} else (),
+            c:print-wordlet($example-ref/deriv[1]/@i3, &#39; &amp;lt; &#39;),
+            c:print-wordlet($example-ref/deriv[1]/@i2, &#39; &amp;lt; &#39;),
+            c:print-wordlet($example-ref/deriv[1]/@i1, &#39; &amp;lt; &#39;),
+            for $example-deriv in $example-ref/deriv[@source]
+                let $example-deriv-v := $example-deriv/@v
+                let $example-deriv-source := $example-deriv/@source/string()
+                let $example-deriv-refs := xdb:key($example-ref, &#39;ref&#39;, $example-deriv-source)
+                let $example-deriv-ref := $example-deriv-refs[@v=$example-deriv-v][1]
+                let $show-deriv-lang := c:other-lang($example-ref, $example-deriv-ref)
+            return (
+                c:print-word($example-deriv-ref, local:print-word-control($show-deriv-lang, &#39;parent&#39;)),
+                if ($example-deriv/following-sibling::deriv) then text {&#39;/&#39;} else ()
+            ),
+            for $example-deriv in $example-ref/deriv[@from]
+            return (
+                &lt;span&gt; [&amp;lt; {c:print-word($example-ref/.., &lt;print-word show-link=&#39;y&#39;/&gt;)}]&lt;/span&gt;
+            )
+        )
+    )
+)};
+
+declare function local:print-matching-refs($value as xs:string, $variation-refs as element()*, $pubmode) as element() {
+    let $matching-refs := for $i in $variation-refs[c:normalize-for-match(@v)=$value] order by translate($i/@mark, &#39;-&#39;, &#39;→&#39;) return $i
+    return
+    &lt;li&gt;{c:print-word($matching-refs[1], &lt;print-word style=&quot;bold&quot;/&gt;)}
+    {local:print-ref-set($matching-refs,
+        &lt;ref-set short-mode=&quot;{$pubmode}&quot; show-mark=&quot;{$matching-refs[1]/@mark}&quot; show-lang=&quot;{c:get-lang($matching-refs[1]/..)}&quot;/&gt;)}&lt;/li&gt;
+};
+
+declare variable $pubmode external;
+declare variable $code external;
+declare variable $words := xdb:key(/*, &#39;word-code&#39;, $code);
+declare variable $l := c:get-lang($words[1]);
+declare variable $lang := //language[@id=$l]/@name/string();
+declare variable $neo-lang-word := if ($words[1]/combine) then c:get-word($words[1]/combine) else $words[1];
+declare variable $allow-neo-nav :=
+    if (ends-with(c:get-speech($words[1]), &#39;-name&#39;)) then false()
+    else if (c:get-speech($words[1]) = &#39;phrase&#39; or c:get-speech($words[1]) = &#39;text&#39;) then false()
+    else if (c:get-speech($words[1]) = &#39;grammar&#39;) then false()
+    else if (c:get-speech($words[1]) = &#39;root&#39;) then true()
+    else if (starts-with(c:get-speech($words[1]), &#39;phone&#39;)) then false()
+    else true();
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;&lt;/meta&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1&quot;&gt;&lt;/meta&gt;
+&lt;title&gt;Eldamo : {$lang} : {$words[1]/@v/string()}&lt;/title&gt;
+&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;../../css/global.css&quot; /&gt;
+
+&lt;script src=&quot;../../js/glaemscribe.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/tengwar_ds_eldamar.cst.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/quenya.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/sindarin-beleriand.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/sindarin-classical.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/transcribe.js&quot;&gt;&lt;/script&gt;
+
+&lt;style&gt;
+li ul li {{list-style-type:none}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id=&quot;nav-block&quot; class=&quot;nav-block&quot;&gt;
+&lt;span class=&quot;hierarchy-nav&quot;&gt;
+&lt;span class=&quot;breadcrumb-nav&quot;&gt;
+    [&lt;a href=&quot;../../index.html&quot;&gt;На главную страницу&lt;/a&gt;] »
+    &lt;a href=&quot;../languages/index.html&quot;&gt;Языки&lt;/a&gt; »
+    &lt;a href=&quot;../language-pages/lang-{$l}.html&quot;&gt;{$lang}&lt;/a&gt; »&amp;#160;
+&lt;/span&gt;
+{
+if (ends-with(c:get-speech($words[1]), &#39;-name&#39;)) then    
+    &lt;a href=&quot;../name-indexes/names-{$l}.html&quot;&gt;{$lang} - Имена&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;phrase&#39; or c:get-speech($words[1]) = &#39;text&#39;) then    
+    &lt;a href=&quot;../phrase-indexes/phrases-{$l}.html&quot;&gt;{$lang} - Фразы&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;grammar&#39;) then    
+    &lt;a href=&quot;../grammar-indexes/grammars-{$l}.html&quot;&gt;{$lang} - Граматика&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;root&#39;) then    
+    &lt;a href=&quot;../root-indexes/roots-{$l}.html&quot;&gt;{$lang} - Корни&lt;/a&gt;
+else if (starts-with(c:get-speech($words[1]), &#39;phone&#39;)) then    
+    &lt;a href=&quot;../phonetic-indexes/phonetics-{$l}.html&quot;&gt;{$lang} - Фонетика&lt;/a&gt;
+else
+    &lt;a href=&quot;../word-indexes/words-{$l}.html&quot;&gt;{$lang} - Слова&lt;/a&gt;
+}
+&lt;/span&gt;
+&lt;span class=&quot;search-nav-link&quot;&gt;[&lt;a href=&quot;../search/search.html&quot;&gt;Поиск&lt;/a&gt;]&lt;/span&gt;
+&lt;hr class=&quot;nav-break&quot;/&gt;
+&lt;span class=&quot;list-nav&quot;&gt; {
+let $lang := $words[1]/ancestor-or-self::*[@l][1]/@l/string()
+let $base-word := $words[1]/ancestor-or-self::*[@l=$lang][last()]
+let $base-word-speech := c:get-speech($base-word)
+let $base-word-set := xdb:key($words[1], &#39;language&#39;, $lang)
+let $word-set := 
+    if (ends-with($base-word-speech, &#39;-name&#39;)) then    
+        $base-word-set[ends-with(c:get-speech(.), &#39;-name&#39;)]
+    else if ($base-word-speech = &#39;phrase&#39; or $base-word-speech = &#39;text&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phrase&#39; or c:get-speech(.)=&#39;text&#39;]
+    else if ($base-word-speech = &#39;grammar&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;grammar&#39;]
+    else if ($base-word-speech = &#39;phonetic-group&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phonetic-group&#39;]
+    else if ($base-word-speech = &#39;phonetic-rule&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phonetic-rule&#39;]
+    else if ($base-word-speech = &#39;phoneme&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phoneme&#39;]
+    else if ($base-word-speech = &#39;root&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;root&#39;]
+    else
+   
+… [обрезано: показано 20000 из 67297 знаков]
+</code></pre>
+</details>
+<details class="references"><summary>Сведения о вложениях · 2</summary><ul><li><span>code-changes.txt</span> <code>8e4ca88b-9378-4b76-8190-d69bc4154191</code></li><li><span>word-page.txt</span> <code>8ddae2cf-1874-4afe-81f0-fc5362a7ff43</code></li></ul></details></div></article><article class="message assistant" id="m-27e6b0c9-a6d5-41f8-aea5-d89f00fe7fcb"><header><span class="role">Claude</span><time>2025-04-14 11:15:20</time><a class="message-link" href="#m-27e6b0c9-a6d5-41f8-aea5-d89f00fe7fcb" title="Ссылка на реплику">#8</a></header><div class="prose"><p>На основе предоставленных файлов <code>word-page.txt</code> и <code>code-changes.txt</code> я внес в файл <code>word-page.txt</code> следующие изменения для обеспечения правильного перевода грамматических форм и вариантов:</p>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;type&quot;: &quot;application/vnd.ant.code&quot;,
+ &quot;title&quot;: &quot;Модифицированный код word-page.xq&quot;,
+ &quot;command&quot;: &quot;create&quot;,
+ &quot;content&quot;: &quot;[22497 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;55d4600b-b5c7-41b7-8bdf-8133f39dc13d&quot;
+}
+</code></pre>
+</div></article><article class="message user" id="m-dfd477aa-1136-454a-9ae4-b2ab736efa6a"><header><span class="role">Вы</span><time>2025-04-14 11:16:12</time><a class="message-link" href="#m-dfd477aa-1136-454a-9ae4-b2ab736efa6a" title="Ссылка на реплику">#9</a></header><div class="prose"><p>Продолжи</p>
+</div></article><article class="message assistant" id="m-c9c39195-c79a-46db-bf01-beec0dec7375"><header><span class="role">Claude</span><time>2025-04-14 11:18:05</time><a class="message-link" href="#m-c9c39195-c79a-46db-bf01-beec0dec7375" title="Ссылка на реплику">#10</a></header><div class="prose"><p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[3199 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[888 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;01a04d42-a39c-4693-8675-6d11cdc0d8d9&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[2296 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[2284 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;7cb5b958-a008-4d0c-9901-0e4721637518&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[3978 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[3966 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;428619cd-e6c7-4040-b847-26907f1c2cbe&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[1613 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[1521 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;aeeb08e7-6f5f-4fb6-89c9-c192ba7b9616&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[821 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[798 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;49aa6dff-6a45-4530-a582-fd5baa896823&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;if ($inflect&quot;,
+ &quot;version_uuid&quot;: &quot;780e0e9a-6d01-41fc-b6ac-017fee5e42ad&quot;
+}
+</code></pre>
+</div></article><article class="message user" id="m-5ff91357-a8d6-4ba3-9dd1-6b60e22397e1"><header><span class="role">Вы</span><time>2025-04-14 11:18:31</time><a class="message-link" href="#m-5ff91357-a8d6-4ba3-9dd1-6b60e22397e1" title="Ссылка на реплику">#11</a></header><div class="prose"><p>Продолжи</p>
+</div></article><article class="message assistant" id="m-f9b4f19d-cb8e-4ca2-98cc-b6d5aeaa01e0"><header><span class="role">Claude</span><time>2025-04-14 11:19:50</time><a class="message-link" href="#m-f9b4f19d-cb8e-4ca2-98cc-b6d5aeaa01e0" title="Ссылка на реплику">#12</a></header><div class="prose"><p>Продолжаю работу с модификацией файла word-page.xq для обеспечения правильного перевода грамматических форм и вариантов.</p>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[1445 знаков]&quot;,
+ &quot;old_str&quot;: &quot;if ($inflect&quot;,
+ &quot;version_uuid&quot;: &quot;5f286ca8-fa7d-4ce2-8f13-e2c2c6e8a16c&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;modified-code&quot;,
+ &quot;command&quot;: &quot;update&quot;,
+ &quot;new_str&quot;: &quot;[3919 знаков]&quot;,
+ &quot;old_str&quot;: &quot;[3850 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;01c85604-38e8-46b6-91ad-6cca61e58041&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p><strong>⚙ artifacts</strong></p>
+<pre><code>{
+ &quot;id&quot;: &quot;summary&quot;,
+ &quot;type&quot;: &quot;text/markdown&quot;,
+ &quot;title&quot;: &quot;Итоговые изменения в word-page.xq&quot;,
+ &quot;command&quot;: &quot;create&quot;,
+ &quot;content&quot;: &quot;[3435 знаков]&quot;,
+ &quot;version_uuid&quot;: &quot;d735220f-4755-46a0-bfaa-4ea35b4dfe27&quot;
+}
+</code></pre>
+<details><summary>результат artifacts</summary>
+<pre><code>OK
+</code></pre>
+</details>
+<p>На основе предоставленных файлов я внес необходимые изменения в код <code>word-page.xq</code> для обеспечения правильного перевода грамматических форм и вариантов. Ниже приведены основные внесенные изменения:</p>
+<h4>Основные изменения</h4>
+<ol>
+<li><p><strong>Добавлены вспомогательные функции для перевода форм</strong>:</p>
+<ul>
+<li><code>local:get-translated-form-variant</code> - для комбинирования и перевода формы и варианта</li>
+<li><code>local:normalize-and-translate-with-forms</code> - для нормализации строки с формами и их переводом</li>
+</ul>
+</li>
+<li><p><strong>Модифицирована функция <code>local:print-inflections</code></strong>:</p>
+<ul>
+<li>Добавлен вызов <code>c:print-inflect-value</code> для перевода значений</li>
+<li>Теперь функция возвращает переведенные термины вместо оригинальных английских</li>
+</ul>
+</li>
+<li><p><strong>Обновлены вызовы для отображения класса слова на странице</strong>:</p>
+<ul>
+<li>Оба вхождения <code>normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant))</code> заменены на <code>local:normalize-and-translate-with-forms($word/class/@mark, $word/class/@form, $word/class/@variant)</code></li>
+</ul>
+</li>
+<li><p><strong>Изменен код для вывода заголовков таблиц форм</strong>:</p>
+<ul>
+<li><code>{string($form)}</code> заменено на <code>{c:print-inflect-value(string($form))}</code></li>
+</ul>
+</li>
+<li><p><strong>Модифицирован вывод вариантов форм в таблицах</strong>:</p>
+<ul>
+<li>Добавлены вызовы <code>c:print-inflect-value</code> к атрибутам <code>@form</code> и <code>@variant</code></li>
+</ul>
+</li>
+<li><p><strong>Исправлен вывод форм для ссылок</strong>:</p>
+<ul>
+<li><code>$from-ref/inflect/@form</code> заменено на <code>c:print-inflect-value($from-ref/inflect/@form)</code></li>
+</ul>
+</li>
+<li><p><strong>Обновлен код для отображения форм элементов составных слов</strong>:</p>
+<ul>
+<li>Добавлены вызовы <code>c:print-inflect-value</code> перед передачей строки в функцию <code>local:print-inflections</code></li>
+</ul>
+</li>
+</ol>
+<h4>Результат</h4>
+<p>Теперь при отображении грамматических форм и вариантов на страницах слов будут использоваться переведенные термины на русский язык, а не оригинальные английские названия. Это соответствует локализации интерфейса и делает его более понятным для русскоязычных пользователей.</p>
+<p>Функция <code>c:print-inflect_value</code> из модуля <code>common.xq</code> теперь правильно используется во всех местах кода, где происходит вывод грамматических форм и вариантов.</p>
+</div></article><article class="message user" id="m-e456c296-4275-4868-8650-bd2fe76552a9" hidden><header><span class="role">Вы</span><time>2025-04-12 17:19:23</time><a class="message-link" href="#m-e456c296-4275-4868-8650-bd2fe76552a9" title="Ссылка на реплику">#1.1</a></header><div class="prose"><p>Продолжи</p>
+</div></article><article class="message user" id="m-f88bb354-7bc8-4ef9-a778-75aa217affc9" hidden><header><span class="role">Вы</span><time>2025-04-14 11:12:22</time><a class="message-link" href="#m-f88bb354-7bc8-4ef9-a778-75aa217affc9" title="Ссылка на реплику">#2.1</a></header><div class="prose"><p>Файл word-page.txt - основной файл, требующий корректировки, code-changes.txt - файл с необходимыми корректировками файла word-page.txt. Проанализируй эти файлы и измени файл word-page.txt в соответствии с содержанием файла code-changes.txt.</p>
+<details><summary>вложение: code-changes.txt (8386 байт)</summary>
+<pre><code>diff --git a/word-page.xq b/word-page.xq
+index 12345678..abcdefg 100644
+--- a/word-page.xq
++++ b/word-page.xq
+@@ -47,6 +47,24 @@ declare function local:print-ref-set($refs as element()*, $ref-set as element())
+     return ($item/node(), if ($item/following-sibling::*) then text {&#39;; &#39;} else ())
+ ) };
+ 
++declare function local:get-translated-form-variant($form as xs:string?, $variant as xs:string?) as xs:string {
++    let $combined := string-join(
++        (
++            if ($form) then c:print-inflect-value($form) else (),
++            if ($variant) then c:print-inflect-value($variant) else ()
++        ),
++        &#39; &#39;
++    )
++    return normalize-space($combined)
++};
++
++declare function local:normalize-and-translate-with-forms($mark as xs:string?, $form as xs:string?, $variant as xs:string?) as xs:string {
++    let $translated-form := if ($form) then c:print-inflect-value($form) else ()
++    let $translated-variant := if ($variant) then c:print-inflect-value($variant) else ()
++    return normalize-space(concat($mark, &#39; &#39;, $translated-form, &#39; &#39;, $translated-variant))
++};
++
++
+ declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {
+     &lt;print-word&gt; { (
+         if ($show-lang) then attribute show-lang {&#39;y&#39;} else (),
+@@ -129,19 +147,142 @@ declare function local:print-element-in($word as element()?, $pubmode) as node()
+ declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {
+     let $inflect-list := tokenize($inflections, &#39; &#39;)
+     let $word := $ref/ancestor-or-self::word[1]
+-    for $inflection at $pos in $inflect-list
++    for $inflection at $pos in $inflect-list
++    let $translated-inflection := c:print-inflect-value($inflection)
++    let $inflect-word := xdb:key($word, &#39;inflect-table&#39;, $inflection)
++        [not(@speech) or @speech=c:get-speech($word)]/
++        ..[c:get-lang(.) = c:get-lang($word)]
++    let $link := if ($inflect-word) then c:to-word-link($inflect-word) else () 
++    return
++    if ($inflect-word)
++    then (&lt;a href=&quot;{$link}&quot;&gt;{$translated-inflection}&lt;/a&gt;, if ($pos = count($inflect-list)) then () else text {&#39; &#39;})
++    else text { ($translated-inflection), if ($pos = count($inflect-list)) then () else &#39; &#39; }
++};
++
++@@ -301,7 +342,7 @@ let $word-page := (
++    { if ($word/@tengwar) then &lt;span&gt; [&lt;b&gt;{$word/@tengwar/string()}&lt;/b&gt;]&lt;/span&gt; else () }
++    {c:print-speech($word)}
++-    {if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant))), &#39;) &#39;) else ()}
+++    {if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, local:normalize-and-translate-with-forms($word/class/@mark, $word/class/@form, $word/class/@variant)), &#39;) &#39;) else ()}
++    {c:print-gloss($word)}
++    {let $rule := if ($word/@rule) then $word else $word/rule return
++    if ($rule) then concat(&#39;; [&#39;, $rule/@from, &#39;] &amp;gt; [&#39;, $rule/@rule, &#39;]&#39;) else ()}
++
++@@ -359,7 +400,7 @@ let $word-page := (
++    { if ($word/@tengwar) then &lt;span&gt; [&lt;b&gt;{$word/@tengwar/string()}&lt;/b&gt;]&lt;/span&gt; else () }
++    {c:print-speech($word)}
++-    {if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, &#39; &#39;, $word/class/@variant))), &#39;) &#39;) else ()}
+++    {if ($word/class/@form) then (&#39; (&#39;, local:print-inflections($word, local:normalize-and-translate-with-forms($word/class/@mark, $word/class/@form, $word/class/@variant)), &#39;) &#39;) else ()}
++    {c:print-neo-gloss($word)}
++    { if (not($word/@created or $word/@vetted)) then () else
++      concat(&#39; [&#39;,
++
++@@ -448,7 +489,7 @@ let $word-page := (
++for $form in if ($note/form) then $note/form/@form else $note/@form
++return (
++-&lt;tr&gt;&lt;th colspan=&quot;10&quot;&gt;Примеры ({string($form)})&lt;/th&gt;&lt;/tr&gt;,
+++&lt;tr&gt;&lt;th colspan=&quot;10&quot;&gt;Примеры ({c:print-inflect-value(string($form))})&lt;/th&gt;&lt;/tr&gt;,
++
++@@ -457,8 +498,8 @@ let $exclude := $form/../@exclude
++let $exclude2 := $form/../@exclude2
++let $from := $note/@from
++let $refs := xdb:matchAllKeys($word, $key, $form)
++-    [c:get-lang(.)=c:get-langs($note)]
++-    [not($speech) or c:get-speech(.) = $speech]
+++    [c:get-lang(.)=c:get-langs($note)]
+++    [not($speech) or c:get-speech(.) = $speech]
++    [not($exclude) or not(contains(*[name()=$from]/@form, $exclude) or contains(*[name()=$from]/@variant, $exclude))]
++    [not($exclude2) or not(contains(*[name()=$from]/@form, $exclude2) or contains(*[name()=$from]/@variant, $exclude2))]
++let $has-glosses := ($note/@show-glosses | $refs[c:get-gloss(.)]) and not($note/@show-glosses = &#39;false&#39;)
++
++@@ -466,7 +507,7 @@ let $has-variants := $note/@show-variants | $refs/*[name()=$from][1][normalize-s
++let $has-sources := $refs/@source
++let $show-form := $note/@show-form
++for $ref in $refs
++-let $variants := $ref/*[name()=$from]/normalize-space(replace(replace(concat(&#39; &#39;, @form, &#39; &#39;, @variant, &#39; &#39;), &#39; &#39;, &#39;  &#39;), concat(&#39; &#39;, replace($omit, &#39; &#39;, &#39;  &#39;), &#39; &#39;), &#39;&#39;))
+++let $variants := $ref/*[name()=$from]/normalize-space(replace(replace(concat(&#39; &#39;, c:print-inflect-value(@form), &#39; &#39;, c:print-inflect-value(@variant), &#39; &#39;), &#39; &#39;, &#39;  &#39;), concat(&#39; &#39;, replace(c:print-inflect-value($omit), &#39; &#39;, &#39;  &#39;), &#39; &#39;), &#39;&#39;))
++let $from-source := $ref/*[name()=$from][1]
++let $ref-form := if ($show-form) then $ref/ancestor-or-self::word[1]/*[name()=$show-form]/@form/string() else ()
++order by $ref-form, $variants
++
++@@ -537,7 +578,7 @@ let $inflect-refs := $valid-refs[inflect[not(@source) or c:get-ref(.)]
++    if ($inflect-word)
++    then (&lt;a href=&quot;{$link}&quot;&gt;{$inflection}&lt;/a&gt;, if ($pos = count($inflect-list)) then () else text {&#39; &#39;})
++    else text { ($inflection), if ($pos = count($inflect-list)) then () else &#39; &#39; }
++};
++
++// Удаляем неиспользуемые функции
+
+@@ -645,7 +686,7 @@ let $change-refs := $valid-refs[
++    &lt;span&gt;
++            ←&amp;#160;{c:print-word($from-ref, &lt;print-word/&gt;)}
++-            {if ($from-ref/inflect/@form) then concat(&#39; (&#39;, $from-ref/inflect/@form, &#39;)&#39;) else () }
+++            {if ($from-ref/inflect/@form) then concat(&#39; (&#39;, c:print-inflect-value($from-ref/inflect/@form), &#39;)&#39;) else () }
++        &lt;/span&gt;
++    else
++        &lt;span&gt;[←&amp;#160;{c:print-word($from-ref, &lt;print-word/&gt;)}]&lt;/span&gt;
++
++@@ -694,7 +735,7 @@ let $ref := $refs[1]
++let $form := $ref/inflect/@form/string()
++let $print-word := if ($ref/@l) then &lt;print-word show-lang=&quot;y&quot;/&gt; else &lt;print-word/&gt;
++order by $form, $ref/@v
++return
++    &lt;tr&gt;{ (
++        &lt;td&gt;&lt;i&gt;{c:print-word($ref, $print-word)}&lt;/i&gt;&lt;/td&gt;,
++        &lt;td&gt;{ (
++-            local:print-inflections($word, $form),
++-            if (not($ref/inflect/@variant)) then () else
++-            (&#39;; &#39;, local:print-inflections($word, string($ref/inflect/@variant)))
+++            local:print-inflections($word, $form),
+++            if (not($ref/inflect/@variant)) then () else
+++            (&#39;; &#39;, local:print-inflections($word, string($ref/inflect/@variant)))
++        ) }&lt;/td&gt;,
++        (: if (not($has-variants)) then () else
++        &lt;td&gt;{ local:print-inflections($word, string($ref/inflect/@variant)) }&lt;/td&gt;, :)
++
++@@ -753,7 +794,7 @@ let $element-words := $elements/c:get-word(.)
++            &lt;td&gt;
++                {if ($element/@v=&#39;?&#39;) then &lt;i&gt;?&lt;/i&gt; else c:print-word($element-word, $print-word)}
++                {$element/@mark/string()}
++            &lt;/td&gt;,
++            if (count($glosses) gt 0) then &lt;td&gt;{c:print-gloss($element-word)}&lt;/td&gt; else (),
++-            if ($has-forms) then &lt;td&gt;{local:print-inflections($element-word, string($form))}&lt;/td&gt; else (),
+++            if ($has-forms) then &lt;td&gt;{local:print-inflections($element-word, c:print-inflect-value(string($form)))}&lt;/td&gt; else (),
++            if ($has-references) then &lt;td&gt;{(
++                local:print-ref-set($matching-refs, $ref-set)
++            )}&lt;/td&gt; else ()
++
++@@ -772,7 +813,7 @@ let $element-words := $elements/c:get-word(.)
++        &lt;tr&gt; {(
++            &lt;td&gt;{c:print-word($element, $print-word)}&lt;/td&gt;,
++            if (count($glosses) gt 0) then &lt;td&gt;{c:print-gloss($element)}&lt;/td&gt; else (),
++-            if ($has-forms) then &lt;td&gt;{local:print-inflections($element, string($form))}&lt;/td&gt; else (),
+++            if ($has-forms) then &lt;td&gt;{local:print-inflections($element, c:print-inflect-value(string($form)))}&lt;/td&gt; else (),
++            &lt;td&gt;{(
++                local:print-ref-set($refs, $ref-set)
++            )}&lt;/td&gt;
++        )} &lt;/tr&gt;
+</code></pre>
+</details>
+<details><summary>вложение: word-page.txt (67950 байт)</summary>
+<pre><code>import module namespace c = &quot;common.xq&quot; at &quot;common.xq&quot;;
+
+declare function local:print-deriv($deriv as node()?) as element() {
+    &lt;span&gt;
+{c:print-word($deriv/c:get-ref(.), &lt;print-word show-link=&quot;parent&quot; show-lang=&quot;y&quot;/&gt;)}
+&amp;gt;
+{c:print-wordlet($deriv/@i1, &#39; &amp;gt; &#39;)}
+{c:print-wordlet($deriv/@i2, &#39; &amp;gt; &#39;)}
+{c:print-wordlet($deriv/@i3, &#39; &amp;gt; &#39;)}
+{c:print-word($deriv/parent::ref, &lt;print-word show-link=&quot;parent&quot; show-lang=&quot;y&quot;/&gt;)}
+    &lt;/span&gt;
+};
+
+declare function local:is-match($s1 as xs:string?, $s2 as xs:string?) as xs:boolean {
+    not(c:normalize-for-match($s1) != c:normalize-for-match($s2))
+};
+
+declare function local:print-ref($ref as element(), $ref-set) as element()* {
+    let $other-ref := $ref-set/@other-ref
+    let $deref := if ($other-ref) then c:get-ref($ref) else $ref/ancestor-or-self::ref
+    let $show-notes := $ref-set/@show-notes
+    let $show-mark := $ref-set/@show-mark
+    let $show-lang := $ref-set/@show-lang
+    let $show-gloss := $ref-set/@gloss
+    let $show-rule := $ref-set/@show-rule
+    let $show-value := $ref-set/@v
+    let $short-mode := $ref-set/@short-mode
+
+    let $notes := $ref[$show-notes]/string()
+    return
+    if ($deref) then
+    &lt;span&gt;{c:print-source-link($deref, $short-mode)}{
+        let $do-print-lang := $show-lang != $deref/@l return
+        if ($show-rule) then (
+            text {&#39; (&#39;}, 
+            let $deriv-ref := c:get-ref($deref/deriv[1])
+            return c:print-word($deriv-ref, local:print-word-control($do-print-lang)), 
+            text {&#39; &amp;gt; &#39;},
+            c:print-wordlet($deref/deriv[1]/@i1, &#39; &amp;gt; &#39;),
+            c:print-wordlet($deref/deriv[1]/@i2, &#39; &amp;gt; &#39;),
+            c:print-wordlet($deref/deriv[1]/@i3, &#39; &amp;gt; &#39;),
+            c:print-word($deref, local:print-word-control($do-print-lang)), 
+            if ($deref/deriv[1]/string()) then (&#39;; &#39;, xdb:html($deref/deriv[1])) else (), 
+            text {&#39;)&#39;}
+        ) else 
+        if (not($show-value) and not($show-mark != $deref/@mark) and not($show-lang != $deref/@l)) then () else 
+        let $do-print-word :=
+            (not(local:is-match($deref/@v, $show-value) and not($deref/@mark))) or
+            ($show-mark and $deref/@mark)
+        let $do-print-gloss := $deref/@gloss != $show-gloss
+        let $do-print-notes := $notes != &#39;&#39;
+        return if ($do-print-word or $do-print-gloss or $do-print-notes) then (
+            text {&#39; (&#39;}, 
+            if ($do-print-word) then c:print-word($deref, local:print-word-control($do-print-lang)) else (), 
+            if ($do-print-word and $do-print-gloss) then text{&#39; &#39;} else (),
+            if ($do-print-gloss) then text {c:print-gloss-no-space($deref)} else (), 
+            if ($do-print-notes and ($do-print-gloss or $do-print-word)) then text{&#39;, &#39;} else (),
+            if ($do-print-notes) then xdb:html($notes) else (),
+            text {&#39;)&#39;}
+        ) else ()
+    }&lt;/span&gt; else ()
+};
+
+declare function local:print-ref-set($refs as element()*, $ref-set as element()) as node()* { (
+    if ($refs) then text{&#39; ✧&amp;#160;&#39;} else (),
+    let $group := &lt;div&gt;{for $ref in $refs return local:print-ref($ref, $ref-set)}&lt;/div&gt;
+    for $item in $group/*
+    return ($item/node(), if ($item/following-sibling::*) then text {&#39;; &#39;} else ())
+) };
+
+declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {
+    &lt;print-word&gt; { (
+        if ($show-lang) then attribute show-lang {&#39;y&#39;} else (),
+        if ($show-link) then attribute show-link {$show-link} else ()
+    ) } &lt;/print-word&gt;
+};
+
+declare function local:print-word-control($show-lang as xs:boolean) as element() {
+    local:print-word-control($show-lang, ())
+};
+
+declare function local:ref-sig($ref as element()*, $ref-name) as xs:string {
+    let $att-values :=
+        &lt;element&gt;{$ref/@*[not(name()=&#39;source&#39;)][$ref-name != &#39;element&#39; or not(name()=&#39;gloss&#39;)]/string()}:{
+            $ref/*[name()=$ref-name]/@*[not(name()=&#39;source&#39;) and not(name()=&#39;v&#39;)]/string()}:{
+            $ref/*[name()=$ref-name]/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:change-sig($ref as element()*, $ref-name) as xs:string {
+    let $change-element := $ref/*[name()=$ref-name]
+    let $change := $change-element
+    let $att-values :=
+        &lt;element&gt;{$ref-name}:{$ref/@v/string()}:{$ref/@gloss/string()}:{
+        $change-element/text()
+        }:{$change/@v/string()}:{$ref/@change/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:element-sig($ref as element()*) as xs:string {
+    let $element := $ref/c:get-ref($ref)/..
+    let $att-values :=
+        &lt;element&gt;
+            {$element/@*/string()}:{name($ref)}:{
+            $ref/@*[not(name()=&#39;source&#39;) and not(name()=&#39;v&#39;)]/string()}:{
+            $ref/string()}&lt;/element&gt;
+    return $att-values/string()
+};
+
+declare function local:print-element-in($word as element()?, $pubmode) as node()* {
+    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;element-in-ref&#39;, @source)[c:get-ref(.)]
+    let $element-ins := xdb:key($word, &#39;element-in&#39;, $word/@v)[element[@v = $word/@v]/@l = c:get-lang($word) or
+        (not(element[@v = $word/@v]/@l) and c:get-lang(.) = c:get-lang($word))]
+    let $unmatched := $element-in-refs/..[not(@v = $element-ins/@v)]
+    return (
+        &lt;ul&gt; { (
+        for $element-in in $element-ins
+        let $control := &lt;ref-set short-mode=&quot;{$pubmode}&quot;&gt;{if (c:get-speech($element-in) = &#39;phrase&#39; or c:get-speech($element-in) = &#39;text&#39;) then () else $element-in/@v}&lt;/ref-set&gt;
+        let $is-neo := c:is-neo($element-in)
+        order by $element-in/@l, c:normalize-for-sort($element-in/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo&#39;} else () }
+                {c:print-word($element-in, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($element-in)}
+                {local:print-ref-set($element-in-refs[c:get-ref(.)[../@v = $element-in/@v]], $control)}
+            &lt;/li&gt;,
+        for $element-in in $unmatched
+        let $control := &lt;ref-set short-mode=&quot;{$pubmode}&quot;&gt;{if (c:get-speech($element-in) = &#39;phrase&#39; or c:get-speech($element-in) = &#39;text&#39;) then () else $element-in/@v}&lt;/ref-set&gt;
+        let $is-neo := c:is-neo($element-in)
+        order by $element-in/@l, c:normalize-for-sort($element-in/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo&#39;} else () }
+                {c:print-word($element-in, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($element-in)}
+                {local:print-ref-set($element-in-refs[c:get-ref(.)[../@v = $element-in/@v]], $control)}
+            &lt;/li&gt;
+        ) } &lt;/ul&gt;
+    )
+};
+
+declare function local:print-derivations($word as element()?, $priors as element()*, $pubmode) as node()* {
+    let $deriv-refs := $word/ref[c:get-ref(.)]/deriv[c:get-ref(.)]
+    let $derivs := $deriv-refs/c:get-ref(.)/.. | $word/deriv/c:get-word(.)
+    return (
+        for $deriv in $derivs[not(xdb:hashcode(.) = $priors/xdb:hashcode(.))]
+        let $deriv-link := $word/deriv[xdb:hashcode(c:get-word(.)) = xdb:hashcode($deriv)]
+        let $deriv-mark := $deriv-link/@mark/string()
+        let $refs := $deriv-refs[xdb:key($word, &#39;ref&#39;, @source)[../@v = $deriv/@v]]
+        let $value := $deriv/@v/string()
+        let $is-neo := c:is-neo(c:get-word($deriv))
+        return
+            &lt;li&gt;
+                { attribute class { if ($is-neo) then &#39;neo c-bullet&#39; else &#39;c-bullet&#39; } }
+                &amp;lt; 
+                {c:print-word($deriv, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {$deriv-mark}
+                {c:print-gloss($deriv)}
+                {local:print-ref-set($refs, &lt;ref-set short-mode=&quot;{$pubmode}&quot; v=&quot;{$value}&quot; other-ref=&quot;y&quot;/&gt;)}
+                &lt;ul&gt;{(
+                    for $ref in $refs[@i1 or . != &#39;&#39;]
+                    return
+                    &lt;li style=&quot;list-style-type:none; text-indent: -1em;&quot;&gt;{(
+                        &#39; &amp;lt; &#39;,
+                        c:print-wordlet($ref/@i3, &#39; &amp;lt; &#39;),
+                        c:print-wordlet($ref/@i2, &#39; &amp;lt; &#39;),
+                        c:print-wordlet($ref/@i1, &#39; &amp;lt; &#39;),
+                        &lt;i&gt;{$ref/@v/string()}&lt;/i&gt;,
+                        if ($ref != &#39;&#39;) then (&#39;, &#39;, xdb:html($ref/string())) else (),
+                        local:print-ref-set($ref, &lt;ref-set short-mode=&quot;{$pubmode}&quot; other-ref=&quot;y&quot;/&gt;)
+                    )}&lt;/li&gt;,
+                    if (xdb:hashcode($word) = xdb:hashcode($deriv)) then () else local:print-derivations($deriv, ($priors, $word), $pubmode))
+                }&lt;/ul&gt;
+            &lt;/li&gt;
+    )
+};
+
+declare function local:print-derivatives($word as element()?, $pubmode) as node()* {
+    if (c:get-speech($word) = &#39;phoneme&#39;) then () else
+    local:print-derivatives($word, true(), (), $pubmode)
+};
+
+declare function local:print-derivatives($word as element()?, $top-level as xs:boolean, $priors as element()*, $pubmode) as node()* {
+    let $is-root := c:is-root($word)
+    let $deriv-only := ($top-level and not($is-root)) or c:get-speech($word) = &#39;phoneme&#39;
+    let $deriv-to-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;deriv-to-ref&#39;, @source)[c:get-ref(.)]
+    let $word-derivs := xdb:key($word, &#39;deriv-to&#39;, $word/@v)[deriv/c:get-word(.)/xdb:hashcode(.) = $word/xdb:hashcode(.)]
+    let $deriv-tos := $deriv-to-refs/.. | $word-derivs
+    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, &#39;element-in-ref&#39;, @source)[c:get-ref(.)]
+    let $word-elements := xdb:key($word, &#39;element-in&#39;, $word/@v)
+        [element/c:get-word(.)/xdb:hashcode(.) = $word/xdb:hashcode(.)]
+    let $element-ins := if ($deriv-only) then () else $element-in-refs/.. | $word-elements
+    return (
+        if ($top-level and ($deriv-tos or $element-ins)) then &lt;p&gt;&lt;u&gt;Производные&lt;/u&gt;&lt;/p&gt; else (),
+        &lt;ul&gt; { (
+        if (not($top-level) and not($deriv-tos) and (count($element-ins) gt 3)) then
+            &lt;li&gt;
+                ⇒ {count($element-ins)} compounds
+            &lt;/li&gt;
+        else
+        let $child-derivs := $deriv-tos[not(c:get-speech(.) = &#39;phrase&#39; or c:get-speech(.) = &#39;text&#39;)] |
+            $element-ins[not(c:get-speech(.) = &#39;phrase&#39; or c:get-speech(.) = &#39;text&#39;)][not(xdb:hashcode(.) = $deriv-tos/xdb:hashcode(.))]
+        for $deriv-to in $child-derivs
+        let $is-neo := c:is-neo($deriv-to)
+        order by c:get-lang($deriv-to), c:normalize-for-sort($deriv-to/@v)
+        return
+            &lt;li&gt;
+                { if ($is-neo) then attribute class {&#39;neo c-bullet&#39;} else attribute class {&#39;c-bullet&#39;} }
+                {$word/derivatives/@no-roots}
+                {if (xdb:hashcode($deriv-to) = $deriv-tos/xdb:hashcode(.)) then &#39;&amp;gt; &#39; else &#39;⇒ &#39;}
+                {c:print-word($deriv-to, &lt;print-word show-lang=&quot;y&quot; show-link=&quot;y&quot;/&gt;)}
+                {c:print-gloss($deriv-to)}
+                {local:print-ref-set(($deriv-to-refs|$element-in-refs)[c:get-ref(.)[xdb:hashcode(..) = xdb:hashcode($deriv-to)]], &lt;ref-set short-mode=&quot;{$pubmode}&quot;/&gt;)}
+                {if (xdb:hashcode($word) = xdb:hashcode($deriv-to)) then ()
+                else if ($word/derivatives/@no-roots and c:is-root($deriv-to)) then ()
+                else
+                let $print-derivatives := local:print-derivatives($deriv-to, false(), ($priors, $child-derivs), $pubmode) return
+                if (string($print-derivatives) != &#39;&#39; and not(contains(string($print-derivatives), &#39; compounds&#39;)) and $priors[xdb:hashcode(.) = xdb:hashcode($deriv-to)]) then 
+                    &lt;ul&gt;&lt;li&gt;⇒ [см. выше]&lt;/li&gt;&lt;/ul&gt;
+                else
+                $print-derivatives
+            } &lt;/li&gt;
+        ) } &lt;/ul&gt;
+    )
+};
+
+declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {
+    let $inflect-list := tokenize($inflections, &#39; &#39;)
+    let $word := $ref/ancestor-or-self::word[1]
+    for $inflection at $pos in $inflect-list
+    let $inflect-word := xdb:key($word, &#39;inflect-table&#39;, $inflection)
+        [not(@speech) or @speech=c:get-speech($word)]/
+        ..[c:get-lang(.) = c:get-lang($word)]
+    let $link := if ($inflect-word) then c:to-word-link($inflect-word) else () 
+    return
+    if ($inflect-word)
+    then (&lt;a href=&quot;{$link}&quot;&gt;{$inflection}&lt;/a&gt;, if ($pos = count($inflect-list)) then () else text {&#39; &#39;})
+    else text { ($inflection), if ($pos = count($inflect-list)) then () else &#39; &#39; }
+};
+
+declare function local:print-examples($ref as element()?) as node()* {(
+    if ($ref/example) then text{&#39; например: &#39;} else (),
+    for $example in $ref/example
+    let $example-refs := xdb:key($ref, &#39;ref&#39;, $example/@source)
+    let $example-ref := $example-refs[1]
+    let $show-lang := c:other-lang($ref, $example-ref)
+    return (
+        if ($example/preceding-sibling::example) then text {&#39;, &#39;} else (),
+        c:print-word($example-ref, local:print-word-control($show-lang, &#39;parent&#39;)),
+        if (not(count($example-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+        if (not($example/@t)) then c:print-gloss($example-ref) else (),
+        if (not($example/@t=&#39;transform&#39;)) then () else
+            let $example-transform-refs := xdb:key($example-ref, &#39;ref&#39;, $example-ref/transform/@source)
+            let $example-transform-ref := $example-transform-refs[1]
+            let $show-transform-lang := c:other-lang($example-ref, $example-transform-ref)
+            return (
+                text {&#39; ← &#39;},
+                if (not(count($example-transform-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+                c:print-word($example-transform-ref, local:print-word-control($show-transform-lang))
+            ),
+        if (not($example/@t=&#39;inflect&#39;)) then () else
+            let $example-inflect-refs := xdb:key($example-ref, &#39;ref&#39;, $example-ref/inflect/@source)
+            let $example-inflect-ref := $example-inflect-refs[1]
+            let $show-inflect-lang := c:other-lang($example-ref, $example-inflect-ref)
+            return (
+                text {&#39; ← &#39;},
+                if (not(count($example-inflect-refs)=1)) then text {&#39; [ERROR:MISMATCH] &#39;} else (),
+                c:print-word($example-inflect-ref, local:print-word-control($show-inflect-lang))
+            ),
+        if (not($example/@t[starts-with(., &#39;deriv&#39;)])) then () else (
+            if ($example-ref/deriv[@source]) then text {&#39; &lt; &#39;} else (),
+            c:print-wordlet($example-ref/deriv[1]/@i3, &#39; &amp;lt; &#39;),
+            c:print-wordlet($example-ref/deriv[1]/@i2, &#39; &amp;lt; &#39;),
+            c:print-wordlet($example-ref/deriv[1]/@i1, &#39; &amp;lt; &#39;),
+            for $example-deriv in $example-ref/deriv[@source]
+                let $example-deriv-v := $example-deriv/@v
+                let $example-deriv-source := $example-deriv/@source/string()
+                let $example-deriv-refs := xdb:key($example-ref, &#39;ref&#39;, $example-deriv-source)
+                let $example-deriv-ref := $example-deriv-refs[@v=$example-deriv-v][1]
+                let $show-deriv-lang := c:other-lang($example-ref, $example-deriv-ref)
+            return (
+                c:print-word($example-deriv-ref, local:print-word-control($show-deriv-lang, &#39;parent&#39;)),
+                if ($example-deriv/following-sibling::deriv) then text {&#39;/&#39;} else ()
+            ),
+            for $example-deriv in $example-ref/deriv[@from]
+            return (
+                &lt;span&gt; [&amp;lt; {c:print-word($example-ref/.., &lt;print-word show-link=&#39;y&#39;/&gt;)}]&lt;/span&gt;
+            )
+        )
+    )
+)};
+
+declare function local:print-matching-refs($value as xs:string, $variation-refs as element()*, $pubmode) as element() {
+    let $matching-refs := for $i in $variation-refs[c:normalize-for-match(@v)=$value] order by translate($i/@mark, &#39;-&#39;, &#39;→&#39;) return $i
+    return
+    &lt;li&gt;{c:print-word($matching-refs[1], &lt;print-word style=&quot;bold&quot;/&gt;)}
+    {local:print-ref-set($matching-refs,
+        &lt;ref-set short-mode=&quot;{$pubmode}&quot; show-mark=&quot;{$matching-refs[1]/@mark}&quot; show-lang=&quot;{c:get-lang($matching-refs[1]/..)}&quot;/&gt;)}&lt;/li&gt;
+};
+
+declare variable $pubmode external;
+declare variable $code external;
+declare variable $words := xdb:key(/*, &#39;word-code&#39;, $code);
+declare variable $l := c:get-lang($words[1]);
+declare variable $lang := //language[@id=$l]/@name/string();
+declare variable $neo-lang-word := if ($words[1]/combine) then c:get-word($words[1]/combine) else $words[1];
+declare variable $allow-neo-nav :=
+    if (ends-with(c:get-speech($words[1]), &#39;-name&#39;)) then false()
+    else if (c:get-speech($words[1]) = &#39;phrase&#39; or c:get-speech($words[1]) = &#39;text&#39;) then false()
+    else if (c:get-speech($words[1]) = &#39;grammar&#39;) then false()
+    else if (c:get-speech($words[1]) = &#39;root&#39;) then true()
+    else if (starts-with(c:get-speech($words[1]), &#39;phone&#39;)) then false()
+    else true();
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;&lt;/meta&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1&quot;&gt;&lt;/meta&gt;
+&lt;title&gt;Eldamo : {$lang} : {$words[1]/@v/string()}&lt;/title&gt;
+&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;../../css/global.css&quot; /&gt;
+
+&lt;script src=&quot;../../js/glaemscribe.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/tengwar_ds_eldamar.cst.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/quenya.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/sindarin-beleriand.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/sindarin-classical.glaem.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../js/transcribe.js&quot;&gt;&lt;/script&gt;
+
+&lt;style&gt;
+li ul li {{list-style-type:none}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id=&quot;nav-block&quot; class=&quot;nav-block&quot;&gt;
+&lt;span class=&quot;hierarchy-nav&quot;&gt;
+&lt;span class=&quot;breadcrumb-nav&quot;&gt;
+    [&lt;a href=&quot;../../index.html&quot;&gt;На главную страницу&lt;/a&gt;] »
+    &lt;a href=&quot;../languages/index.html&quot;&gt;Языки&lt;/a&gt; »
+    &lt;a href=&quot;../language-pages/lang-{$l}.html&quot;&gt;{$lang}&lt;/a&gt; »&amp;#160;
+&lt;/span&gt;
+{
+if (ends-with(c:get-speech($words[1]), &#39;-name&#39;)) then    
+    &lt;a href=&quot;../name-indexes/names-{$l}.html&quot;&gt;{$lang} - Имена&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;phrase&#39; or c:get-speech($words[1]) = &#39;text&#39;) then    
+    &lt;a href=&quot;../phrase-indexes/phrases-{$l}.html&quot;&gt;{$lang} - Фразы&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;grammar&#39;) then    
+    &lt;a href=&quot;../grammar-indexes/grammars-{$l}.html&quot;&gt;{$lang} - Граматика&lt;/a&gt;
+else if (c:get-speech($words[1]) = &#39;root&#39;) then    
+    &lt;a href=&quot;../root-indexes/roots-{$l}.html&quot;&gt;{$lang} - Корни&lt;/a&gt;
+else if (starts-with(c:get-speech($words[1]), &#39;phone&#39;)) then    
+    &lt;a href=&quot;../phonetic-indexes/phonetics-{$l}.html&quot;&gt;{$lang} - Фонетика&lt;/a&gt;
+else
+    &lt;a href=&quot;../word-indexes/words-{$l}.html&quot;&gt;{$lang} - Слова&lt;/a&gt;
+}
+&lt;/span&gt;
+&lt;span class=&quot;search-nav-link&quot;&gt;[&lt;a href=&quot;../search/search.html&quot;&gt;Поиск&lt;/a&gt;]&lt;/span&gt;
+&lt;hr class=&quot;nav-break&quot;/&gt;
+&lt;span class=&quot;list-nav&quot;&gt; {
+let $lang := $words[1]/ancestor-or-self::*[@l][1]/@l/string()
+let $base-word := $words[1]/ancestor-or-self::*[@l=$lang][last()]
+let $base-word-speech := c:get-speech($base-word)
+let $base-word-set := xdb:key($words[1], &#39;language&#39;, $lang)
+let $word-set := 
+    if (ends-with($base-word-speech, &#39;-name&#39;)) then    
+        $base-word-set[ends-with(c:get-speech(.), &#39;-name&#39;)]
+    else if ($base-word-speech = &#39;phrase&#39; or $base-word-speech = &#39;text&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phrase&#39; or c:get-speech(.)=&#39;text&#39;]
+    else if ($base-word-speech = &#39;grammar&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;grammar&#39;]
+    else if ($base-word-speech = &#39;phonetic-group&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phonetic-group&#39;]
+    else if ($base-word-speech = &#39;phonetic-rule&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phonetic-rule&#39;]
+    else if ($base-word-speech = &#39;phoneme&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;phoneme&#39;]
+    else if ($base-word-speech = &#39;root&#39;) then    
+        $base-word-set[c:get-speech(.)=&#39;root&#39;]
+    else
+   
+… [обрезано: показано 20000 из 67297 знаков]
+</code></pre>
+</details>
+<details class="references"><summary>Сведения о вложениях · 2</summary><ul><li><span>code-changes.txt</span> <code>55255b75-a9ad-43e5-9377-f153b1fed62e</code></li><li><span>word-page.txt</span> <code>3b31c980-7aa8-4fe7-95cf-062c77c8a3ef</code></li></ul></details></div></article></div></main><aside class="sidebar" id="files-panel"><div class="sidebar-heading"><h2>Файлы беседы</h2><button type="button" class="quiet mobile-files" id="back-to-messages">К репликам</button></div>
+          <div id="file-state" class="muted"></div><div id="file-list"></div>
+          <details id="archived-files"><summary>Снимки из выгрузки <span id="snapshot-count"></span></summary><div id="snapshot-list"></div></details>
+          <p class="small muted">У вложений с одним лишь именем или UUID сведения показаны возле соответствующей реплики.</p></aside></div>
+          <dialog id="viewer"><div class="viewer-head"><div><h2 id="viewer-title"></h2><p id="viewer-info" class="muted"></p></div><button id="viewer-close" class="quiet" type="button" aria-label="Закрыть">Закрыть</button></div>
+          <div class="viewer-controls"><label for="version-select">Версия</label><select id="version-select"></select><button type="button" id="show-source" aria-pressed="true">Содержимое</button><button type="button" id="show-diff" aria-pressed="false">Изменения</button><button class="primary" id="download-file" type="button">Скачать</button></div>
+          <div id="viewer-state" class="muted"></div><pre id="viewer-code" tabindex="0"></pre></dialog></body></html>

@@ -1,0 +1,108 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>philosphaira-layout · Архив Claude</title><link rel="stylesheet" href="../../assets/style.css"><link rel="stylesheet" href="../../assets/memory.css"></head><body data-root="../../"><header class="top"><div class="top-inner"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../../index.html">Беседы</a><a href="../../temy.html">Темы</a><a href="../../pamyat.html">Память</a><a href="../../zapisi.html">Записи без текста</a></nav></div></header><main class="sheet memory-page"><div class="breadcrumbs"><a href="../../pamyat.html">Память</a> / Области</div><div class="page-head"><h1>philosphaira-layout</h1><p>Раскладка графа ΦilosΦaira — спецификация Л-0…Л-5; Л-0…Л-3 ЗАКРЫТЫ, Л-4 (сервер) сделан по существу и не закрыт; читать перед любой работой с силовой раскладкой</p></div><div class="memory-meta"><a class="button" href="philosphaira-layout.md" download>Скачать Markdown</a><a href="../../temy.html#tema-37">В тематическом указателе</a><span class="muted">Обновлено 2026-08-31 16:32:10 UTC</span></div> <div class="memory-aliases" aria-label="Псевдонимы"><code>спецификация раскладки</code><code>Л-0</code><code>Л-1</code><code>Л-2</code><code>Л-3</code><code>пустоты в раскладке</code><code>тяга к центру</code><code>layout_probe</code><code>nodePositions</code><code>layout.mjs</code><code>absorb.mjs</code></div><details class="memory-related"><summary>Беседы по тематическому указателю · 5</summary><ul><li><time>2026-09-05</time> <a href="../../besedy/a5ce5fbf-6608-4f86-a1f1-936030e21071.html">Интеграция philosphaira и philosynth</a> <span class="muted">(77)</span></li><li><time>2026-09-05</time> <a href="../../besedy/b4286c42-5f01-4201-8c67-e944d2c15da2.html">Хостинг и развертывание Philosphaira</a> <span class="muted">(34)</span></li><li><time>2026-09-26</time> <a href="../../besedy/0bd4df7d-ec6b-45ef-b8bb-d62e37418ea2.html">Настройка окружения для проекта Philosphaira</a> <span class="muted">(36)</span></li><li><time>2026-09-27</time> <a href="../../besedy/2e5cd98a-ab19-4bc2-a22e-ddffaa97c736.html">Извлечение текстового слоя в структурированный формат</a> <span class="muted">(16)</span></li><li><time>2026-10-02</time> <a href="../../besedy/97a1218a-ffae-4e0c-abd6-4f0c726bb17c.html">Клонирование репозитория и настройка окружения</a> <span class="muted">(46)</span></li></ul></details><article class="memory-body prose"><p>Проект: [[philosphaira]]. Порядок правки — readme §5, §14, doc/build-ops.md.</p>
+<h3>ОТКУДА</h3>
+<ul>
+<li>[stated] Пользователь заметил в улёгшейся раскладке необычные пустоты и назвал
+«теорию стоимости»; потом уточнил, что имел в виду <strong>«Теорию собственности»</strong>
+(Локк, <code>property_theory</code>) — она и оказалась чемпионом одиночества</li>
+<li>[stated] Пустоты его не беспокоят, интересна сама картина</li>
+</ul>
+<h3>СПЕЦИФИКАЦИЯ (составлена по его просьбе)</h3>
+<ul>
+<li>[stated] Просил составить файл спецификации, прочитав сперва readme проекта и
+сервера. Отдан <code>spec-layout.md</code> (504 строки): шесть заходов <strong>Л-0 … Л-5</strong></li>
+<li>[stated] Согласился добавить в Л-3 <code>absorb.mjs</code>, ГРОМКИЙ откат и оговорку о
+производном в рукотворном файле</li>
+</ul>
+<h3>ХОД: Л-0, Л-1+Л-2, Л-3 ЗАКРЫТЫ (2026-08-30/31)</h3>
+<ul>
+<li><strong>Л-0</strong>: <code>updateGraphData</code> не сбрасывала счётчик тиков → перезапуск давал ОДИН
+тик, добавленная концепция не раскладывалась вовсе. Существовавший дефект</li>
+<li><strong>Л-1</strong>: <code>maxTicksFor(decay)</code> вместо константы 300 (даёт 342); <code>layoutSettled</code>
+как явный признак; <code>resetLayoutClock</code> в пяти точках пробуждения</li>
+<li><strong>Л-2</strong>: тяга <code>pullX</code>/<code>pullY</code> силой <code>0.1/степень</code>. Имена НЕ <code>x</code>/<code>y</code> — их
+занимает группировка и СНИМАЕТ при разгруппировке; группировка тягу ГАСИТ
+(<code>strength(0)</code>); resize обновляет цель тяги</li>
+<li><strong>Л-3</strong>: раскладка — СЕДЬМОЙ НАБОР ДАННЫХ. Литерал <code>nodePositions</code> в исходнике,
+седьмое имя в <code>RAW_DATA</code> (правка разбивки), <code>tools/layout.mjs</code> (отжиг 3000
+тиков при распаде 0.005, В CHROME), <code>tools/absorb.mjs</code> (app/data/*.json →
+литералы исходника), свежесть по отпечатку в <code>maps_fresh</code>. Страница грузится с
+готовой раскладкой, <strong>ТИКОВ 0</strong>, стороны совпадают побайтово</li>
+<li>Числа: утверждений 139 → 148, программ 62 → 64, приборов +1 (<code>layout_probe</code>),
+оснастка 148 → 153. <strong>ЭТАЛОНЫ НЕ ДВИГАЛИСЬ НИ РАЗУ за три захода</strong></li>
+<li>[stated] Спрашивал, точно ли нужен sweep_all — нужен: обход нажимает
+«Сохранить»/«Удалить» под admin, то есть проходит изменённый путь</li>
+</ul>
+<h3>ПОРЯДОК РАБОТ ИЗМЕНИЛСЯ (readme §5)</h3>
+<p><code>layout.mjs</code> НЕ шаг цепочки: требует собранного дерева и ПИШЕТ исходник. Круг:
+<code>remap собрать</code> → <code>layout.mjs</code> → <code>remap собрать</code> ещё раз. В спецификации он был
+назван «девятым шагом цепочки» — это ошибка, исправлена в readme.
+Раскладку задевают ТОЛЬКО добавление/удаление концепции или связи и смена конца
+связи; описания, типы, веса, рубрики, философы — нет.</p>
+<h3>ЧТО ЗАМЕРЕНО — ПЕРЕМЕРЯТЬ НЕ НАДО</h3>
+<ul>
+<li>Раскладка детерминирована; ручной <code>sim.tick(300)</code> совпал с живой страницей
+ПОБАЙТОВО. Тот же d3 7.8.5 в node даёт ДРУГОЕ (медиана 65 px) — сличать МЕРЫ,
+не координаты. Размер окна менял раскладку (сдвиг → другое разбиение
+Барнса–Хата); с готовым набором это ушло</li>
+<li>Пустоты делает БЕЗГРАНИЧНЫЙ заряд: без заряда их нет вовсе. <code>distanceMax</code>
+убирает пустоты, но НЕ УСКОРЯЕТ (642 против 645 мс) и портит группировку</li>
+<li>Тяга <code>0.1/степень</code>: одиноких 17,3 ± 3,7 → 9,8 ± 4,0, платой 0,023 к отношению
+«внутри/между»; при медленном отжиге плата падает до 0,005 ± 0,009</li>
+<li>Полный пересчёт после ОДНОЙ новой связи двигает узлы на 130 px медианы;
+дорасклад из тёплого (alpha 0.3, 300 тиков) — на 9 px</li>
+<li>Порционный счёт в браузере не годится: 3000 тиков одним куском 5,6 с,
+порциями по 25 — 16,5 с</li>
+<li>Круг «JSON → литерал JS → JSON» УСТОЙЧИВ: все семь наборов — неподвижная точка
+сериализации split, поэтому <code>absorb</code> безопасен</li>
+</ul>
+<h3>УРОКИ (вписаны в doc/build-ops.md и history.md)</h3>
+<ul>
+<li><strong>Сила, чья мера читает указатель, ставится ПОСЛЕ его постройки.</strong> d3
+запоминает силу при <code>initialize</code>, а <code>rebuildIndexes()</code> уходит в <code>boot()</code>.
+Стороны разошлись на 291 px; лечение — <code>installLayoutPull()</code> отдельным
+верхнеуровневым вызовом. Поймал probe5 (выбирает узлы по координатам)</li>
+<li><strong>Заслон по функции силы ПУСТ</strong> — врёт запомненный массив, наружу не
+отдаваемый. Спрашивать надо СЛЕДСТВИЕ: живую раскладку страницы</li>
+<li><strong>probe8 пересказывал правило числом</strong> (<code>шагов &gt;= 300</code>), устарел молча; после
+перевода на признак сошёлся 15/15 БЕЗ переучреждения эталона</li>
+<li>Тяжёлые приборы гонять ПОСЛЕДОВАТЕЛЬНО: probe4 разошёлся из-за нагрузки</li>
+<li>Отчёт по ключам операторов при вставшей сборке снимать в ОТДЕЛЬНОЕ дерево:
+<code>PG_KEYS_REPORT=1 TREE=/tmp/app_keys node tools/split.mjs</code></li>
+<li>Пять из шести моих мин за три захода — разный порядок вычисления на двух
+сторонах; ловит только сличение сторон, а не повторные прогоны</li>
+<li>Дом <code>resetLayoutClock</code> в render/simulation.js замыкал круг d3-layer → scene →
+selection → simulation; лечение — правка раскладки, не кода</li>
+</ul>
+<h3>ДОЛГ ИЗ Л-1 ЗАКРЫТ В Л-3</h3>
+<p>Подлог «разморозка снова читает счётчик вместо признака» в Л-1 проходил законно
+(при укладке одними тиками оба выражения давали один ответ) — граница была
+записана в приборе. В Л-3 раскладка приходит готовой при НУЛЕ тиков, они
+расходятся, подлог краснеет. Проверка стоит у СВЕЖЕЗАГРУЖЕННОЙ страницы: в конце
+прибора счётчик у потолка и вопрос снова пуст.</p>
+<h3>Л-4 (сервер) — СДЕЛАН ПО СУЩЕСТВУ, НЕ ЗАКРЫТ (2026-08-31)</h3>
+<p>Миграция <code>013_layout</code> (таблица <code>graph_layout</code> с историей; ключ — ВЕРСИЯ ГРАФА,
+не отпечаток: здесь раскладка и база едут одной транзакцией). Новое:
+<code>src/graph/layout.js</code> (признак задевания, дорасклад, полный отжиг, мера
+расхождения), <code>src/db/layout.js</code>, дорасклад внутри <code>applyCommit</code> (все три
+звателя даром), раскладка в <code>readGraph</code>, <code>scripts/relayout.mjs</code> (двухтактно:
+показать меру → применить; откат новой строкой, историю не стирает),
+<code>probes/layout_probe.mjs</code> 27 утверждений. <code>d3-force 3.0.0</code> точно, без <code>^</code>.
+<strong>ПРИЁМКА СЕРВЕРА ЗЕЛЁНАЯ ЦЕЛИКОМ</strong> (19 проб). На живой базе дорасклад бережнее
+пересчёта <strong>в 14,6 раза</strong> (16,3 px против 237,9).
+Мои три ошибки, пойманные приёмкой: проба оставляла след в базе и не
+повторялась (переписана на откатываемую транзакцию); опиралась на засеянную
+базу, а приёмка идёт на пустой <code>philos_test</code> (физика теперь на семени из
+<code>../app/data</code>, проводка — на крошечном графе внутри транзакции); новая таблица
+появилась молча — <code>db_probe</code> стережёт перечень, <code>graph_layout</code> вписана.
+ОСТАЛОСЬ: координаты в приращении <code>changesSince</code>, чтение серверной раскладки в
+клиентском <code>remote.js</code>, документы (<code>server/README.md</code>, <code>doc/server-design.md</code>,
+<code>doc/plan-next.md</code>), журнал и записка.
+Серверную раскладку НЕЛЬЗЯ сличать с браузерной побайтово — только меры.</p>
+<h3>НА ПОТОМ: кнопка перекладки</h3>
+<ul>
+<li>[stated] Пользователь спросил, делать перекладку скриптом или кнопкой, и
+заметил, что единой админки нет — есть панели пользователей и коммитов.
+Решено: сперва программа, кнопка позже и НЕ третьей панелью, а в панели
+коммитов; проверить, потянет ли нынешняя форма <code>changes</code> такой род правки</li>
+</ul>
+</article></main></body></html>

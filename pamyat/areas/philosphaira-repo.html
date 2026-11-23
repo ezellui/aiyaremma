@@ -1,0 +1,70 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>philosphaira-repo · Архив Claude</title><link rel="stylesheet" href="../../assets/style.css"><link rel="stylesheet" href="../../assets/memory.css"></head><body data-root="../../"><header class="top"><div class="top-inner"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../../index.html">Беседы</a><a href="../../temy.html">Темы</a><a href="../../pamyat.html">Память</a><a href="../../zapisi.html">Записи без текста</a></nav></div></header><main class="sheet memory-page"><div class="breadcrumbs"><a href="../../pamyat.html">Память</a> / Области</div><div class="page-head"><h1>philosphaira-repo</h1><p>Репозиторий github.com/Ranatar/philosphaira — что выложено, как поднять с нуля, чем расходится документация; читать вместе с philosphaira</p></div><div class="memory-meta"><a class="button" href="philosphaira-repo.md" download>Скачать Markdown</a><a href="../../temy.html#tema-42">В тематическом указателе</a><span class="muted">Обновлено 2026-09-17 12:58:59 UTC</span></div> <div class="memory-aliases" aria-label="Псевдонимы"><code>Ranatar/philosphaira</code><code>репозиторий philosphaira</code><code>клон philosphaira</code></div><details class="memory-related"><summary>Беседы по тематическому указателю · 7</summary><ul><li><time>2026-09-05</time> <a href="../../besedy/a5ce5fbf-6608-4f86-a1f1-936030e21071.html">Интеграция philosphaira и philosynth</a> <span class="muted">(4)</span></li><li><time>2026-09-05</time> <a href="../../besedy/b4286c42-5f01-4201-8c67-e944d2c15da2.html">Хостинг и развертывание Philosphaira</a> <span class="muted">(14)</span></li><li><time>2026-09-26</time> <a href="../../besedy/0bd4df7d-ec6b-45ef-b8bb-d62e37418ea2.html">Настройка окружения для проекта Philosphaira</a> <span class="muted">(17)</span></li><li><time>2026-09-27</time> <a href="../../besedy/2e5cd98a-ab19-4bc2-a22e-ddffaa97c736.html">Извлечение текстового слоя в структурированный формат</a> <span class="muted">(14)</span></li><li><time>2026-10-02</time> <a href="../../besedy/97a1218a-ffae-4e0c-abd6-4f0c726bb17c.html">Клонирование репозитория и настройка окружения</a> <span class="muted">(43)</span></li><li><time>2026-10-08</time> <a href="../../besedy/d2ab30a3-8772-43fe-a826-247d2e00d026.html">Eldamo repository setup issues</a> <span class="muted">(13)</span></li><li><time>2026-10-28</time> <a href="../../besedy/b337eea1-3414-45e7-a264-39c9997508dd.html">Eldamo: корни нео-квэнья</a> <span class="muted">(3)</span></li></ul></details><article class="memory-body prose"><p>Основная заметка проекта: [[philosphaira]] (там устройство и правила).</p>
+<h3>ЧТО ВЫЛОЖЕНО (проверено клоном 2026-08-20)</h3>
+<ul>
+<li>[stated] Пользователь дал ссылку <a rel="noreferrer" href="https://github.com/Ranatar/philosphaira">https://github.com/Ranatar/philosphaira</a> и просил
+склонировать и ознакомиться (файловая структура, readme целиком, далее)</li>
+<li>Выложено ВСЁ дерево реформы: app/ (порождаемое, 113 модулей + boot + main),
+source/philosophy_graph_v3.html (31 404 строки), decisions/ (assign_names 764 имени<ul>
+<li>12 «новых» + 28 операторов, layers.json, tradition_kinds.draft.json), mapping/ (4 карты),
+tools/ (45 программ), baseline/ (7 эталонов + manifest), doc/ (5 документов), readme.md
+(883 строки), package.json с ТОЧНЫМИ версиями. Коммитов 5, последний 2026-08-20 23:04 +0400</li>
+</ul>
+</li>
+<li>ПРЕЖНЯЯ ЗАМЕТКА УСТАРЕЛА: в philosphaira записано «дерево отличается от выложенного
+(60 модулей)». УЖЕ НЕТ — выложенное совпадает с рабочим побайтово</li>
+</ul>
+<h3>ПОДЪЁМ НА ЧИСТОЙ МАШИНЕ — РАБОТАЕТ БЕЗ ЕДИНОЙ ПРАВКИ</h3>
+<pre><code>git clone …; npm install            # acorn, eslint-scope 9.1.2, d3, puppeteer-core
+# УСТАРЕЛО: pw-browsers НЕ ИСПОЛЬЗОВАТЬ.
+# [stated] (2026-09-17) проект запускать и тестировать ТОЛЬКО в Chrome 131 — он лежит
+# по умолчанию paths.mjs; вывод о «непереносимом css_probe» ниже был ложным (readme §6)
+export PUPPETEER=&lt;корень&gt;/node_modules/puppeteer-core   # НЕ mermaid-cli, как в умолчании paths.mjs
+python3 tools/make_ref.py ; (setsid bash tools/serve.sh app 8711 &amp;)
+BASE=http://127.0.0.1:8711/ node tools/assert_probe.mjs index.html
+</code></pre>
+<ul>
+<li>В контейнере chat Chrome лежит в /opt/pw-browsers (playwright), а puppeteer-core ставится
+самим npm install — оба умолчания paths.mjs неверны, перекрываются переменными</li>
+<li>ВОСПРОИЗВОДИМОСТЬ ПРОВЕРЕНА: копия репозитория + <code>remap.mjs собрать</code> дала app/ побайтово
+тот же (sha256 дерева совпал, diff -rq пуст). Выложенная сборка = исходник + решения</li>
+</ul>
+<h3>ПРИЁМКА НА ЧУЖОЙ МАШИНЕ (мой прогон 2026-08-20)</h3>
+<ul>
+<li>Строение: remap проверить 106 модулей/764 имени; рёбер снизу вверх 0; файлов 116,
+несведённых 0, негодных 0, недостижимых 0; boot 69 кусков/100 строк, значений 0;
+долг 0/0/0/0; все карты свежие; map_tree — кругов 0, лишних вывозов 0, мёртвых 0,
+склад 6, приборам 2</li>
+<li>Страница: assert_probe 139/139 (readme обещает 137), compare 83/83, probe6 28/28,
+probe7 13/13, probe8 15/15</li>
+<li>CSS_PROBE РАЗОШЁЛСЯ С ЭТАЛОНОМ — И ЭТО НЕ ДЕФЕКТ ПРОЕКТА. По его же протоколу:
+сличение сторон (index.html против _ref-orig.html) 6/6, повтор одной стороны 6/6.
+Значит расхождение даёт ДРУГАЯ СБОРКА БРАУЗЕРА: вычисленные стили машинно-зависимы,
+а manifest.json выпуск Chrome не записывает. ЭТАЛОН css_probe НЕПЕРЕНОСИМ</li>
+</ul>
+<h3>РАСХОЖДЕНИЯ ДОКУМЕНТАЦИИ С ДЕЛОМ (найдены при чтении, не правились)</h3>
+<ol>
+<li>readme §6 и §13: «137 утверждений» — прибор даёт 139</li>
+<li>readme §6 и §13: «шесть замороженных эталонов», «девять приборов» — эталонов 7 и
+приборов 10 (добавлен blind_probe, он же стоит в accept_baseline.sh)</li>
+<li>readme §10 «dead.js — семь сущностей» против §12 «на складе шесть»; в файле 6</li>
+<li>readme §16 и doc/build.md §«Пространства имён» описывают загрузку базы через
+<code>import … with { type: &#39;json&#39; }</code>. В app/modules/core/ns.js этого НЕТ: там
+<code>await Promise.all(fetch…)</code> на верхнем уровне, и в самом файле объяснено почему
+(Firefox до 138 падает при разборе). Отмена записана в history.md, а два описания
+устройства остались прежними — ровно тот случай, о котором предупреждает §12</li>
+<li>ШАПКА ВСЕХ 115 ПОРОЖДЁННЫХ ФАЙЛОВ (tools/split.mjs:639) гласит «правки вносить СЮДА,
+не в исходник» — прямо противоположно доктрине readme §5 «правка в app/ бессмысленна».
+Ср. delegate.mjs:150, где шапка написана верно («правки вносить туда»)</li>
+</ol>
+<h3>АУДИТ ЛИШНИХ ФАЙЛОВ (2026-09-10)</h3>
+<ul>
+<li>[stated] Пользователь просил склонировать репозиторий и проверить, какие приборы в tools/ и прочие файлы уже не нужны нынешнему состоянию проекта</li>
+<li>[stated] Согласился снять: fix_fresh_graph.py, tools/patch_orig_persist.py, tools/patch_orig_freeze.py, tools/rename_globals.mjs (переименование теперь только rename.mjs), РАСПАКОВКА.md — патч отдан</li>
+<li>[stated] add_relation_ids.mjs и reorder_chrono.mjs ОСТАВИТЬ: приложение само ставит идентификаторы и порядок только при правке через интерфейс, а администратор может править код напрямую — тогда приборы нужны</li>
+<li>[stated] Второй заход: согласился снять accept_baseline.sh, unbridge.mjs (вместе с порождением моста), sync_formula_versions.mjs; boot_values оставить и ввести в приёмку; читаемые .md-карты обновлять и учитывать</li>
+<li>[stated] ПРАВИЛО ПРО ИСХОДНИК: если ошибка в исходнике — править исходник и дальше по порядку readme, а не обходить прибором</li>
+<li>[stated] PostgreSQL разрешено ставить в окружение (для приёмки сервера); Chrome 131 и puppeteer в окружении есть по путям из paths.mjs</li>
+<li>[stated] РЕШЕНИЕ О tools/ (61 файл): разносить по подпапкам, но сперва свести пути программ в paths.mjs/paths.py — «первый путь» из двух предложенных. Сведение сделано (таблица РАЗМЕЩЕНИЕ + программа())</li>
+<li>[stated] Состав групп утверждён и перенос сделан: корень tools/ 9, build/ 6, maps/ 7, edit/ 7, probes/ 19, checks/ 13. Дальше дробить probes/ по темам не стали — граница probes/ по признаку «ввозит puppeteer» проверяема, исключение одно именованное (edit/layout.mjs)</li>
+</ul>
+</article></main></body></html>

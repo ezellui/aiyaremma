@@ -1,0 +1,42 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>philosynth-17-log · Архив Claude</title><link rel="stylesheet" href="../../assets/style.css"><link rel="stylesheet" href="../../assets/memory.css"></head><body data-root="../../"><header class="top"><div class="top-inner"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../../index.html">Беседы</a><a href="../../temy.html">Темы</a><a href="../../pamyat.html">Память</a><a href="../../zapisi.html">Записи без текста</a></nav></div></header><main class="sheet memory-page"><div class="breadcrumbs"><a href="../../pamyat.html">Память</a> / Области</div><div class="page-head"><h1>philosynth-17-log</h1><p>Журнал беседы 1.7 PhiloSynth (граф 3D/2D, клиент; ЗАКРЫТА 2026-08-04, тест 84✓×2, доки пропатчены conv17) — грабли и решения</p></div><div class="memory-meta"><a class="button" href="philosynth-17-log.md" download>Скачать Markdown</a><a href="../../temy.html#tema-52">В тематическом указателе</a><span class="muted">Обновлено 2026-08-04 03:34:40 UTC</span></div> <div class="memory-aliases" aria-label="Псевдонимы"><code>беседа 1.7</code><code>test-17-requests2-9</code><code>graph-viz</code></div><details class="memory-related"><summary>Беседы по тематическому указателю · 3</summary><ul><li><time>2026-09-23</time> <a href="../../besedy/48e57717-a6e9-4d77-8a46-b1c536be7d27.html">Анализ багов и недоделок в philosynth</a> <span class="muted">(10)</span></li><li><time>2026-10-20</time> <a href="../../besedy/ea1f0608-2313-497a-b382-6f39e3edb2de.html">Philosynth Phase 14 localization</a> <span class="muted">(4)</span></li><li><time>2026-11-16</time> <a href="../../besedy/165f0408-465e-4239-b88b-ebe2d54206a0.html">Философский сервис: беседа 18.3</a> <span class="muted">(3)</span></li></ul></details><article class="memory-body prose"><h3>Статус (2026-08-04) — БЕСЕДА 1.7 ЗАКРЫТА</h3>
+<ul>
+<li>Запрос 1 (порт визуализации графа) — готов ранее: graph-utils/Graph3D/Graph2D/NodePanel/EdgePanel/GraphLegend/GraphModal + utils/graph-{physics,geometry} + api/elements.ts + интеграция SynthesisPage (кнопка «◈ Граф»); typecheck/build зелёные.</li>
+<li>[stated] Запросы 2–9 — одним заходом по команде пользователя: tests/test-17-requests2-9.mjs, ДВА прогона подряд 84✓/0✗.</li>
+<li>Запуск: pkill-чистка ОТДЕЛЬНЫМ вызовом → <code>service postgresql start; redis-server --daemonize yes; npx tsx tests/test-17-requests2-9.mjs</code> одним вызовом (демоны умирают между вызовами bash). Именно .mjs+tsx: tests/*.mts попадает под typecheck:scripts (NodeNext), клиентские импорты его сломают.</li>
+<li>[stated] «Завершение беседы» выполнено одним заходом (2026-08-04): полный typecheck+typecheck:scripts+vite build зелёные (warning чанка 993KB — кандидат React.lazy); интеграция сквозная (SynthesisPage→api/elements→роут /categories→GraphData, единственный внешний потребитель); ревью карты 04 — 17/17 маркерных функций на местах, заглушка одна (экспорт MMD/PNG/JSON → TODO(4.2)); глава 1.7 в NEXT-CONTEXT (шаблон 1.6b: файлы/адаптации (а)–(з)/ревью 04/помодульный реестр 5.2,5.4,5.5,2.3,4.2/12 граблей/TODO); scripts/patch-docs-conv17.py — 11 правок APPLY, повтор полный skip (идемпотентен): 07 «По факту 1.7» + шапка 2026-08-04 + §12 долг экспорта → 4.2, 04 §3 пути → graph/, README (статус 1.1–1.7, абзац 1.7, «Не сделано» → Фаза 2+, tests/ 0.3b–1.7).</li>
+<li>Реестр «(из 1.7)» в контекстах бесед 5.2/5.4/5.5 УЖЕ был аннотирован в 07 заранее; 2.3 касается лишь флага extGraphMetrics — реестр закрыт главой NEXT-CONTEXT, патч 07 не требовался.</li>
+</ul>
+<h3>Отклонение от исходника (внесено в код, для патча доков)</h3>
+<ul>
+<li>globals.css: @media (max-width:600px) для .gm-legend (max-width 44vw, max-height 38%) — на 390px легенда богатого графа (12 типов узлов + 8 рёбер) накрывала ВЕСЬ канвас (elementFromPoint=.gm-legend по всей площади), pinch/orbit/tap физически не достигали canvas. Обоснование: протокольный запрос 9 требует рабочий мобильный touch (прецедент «протокол &gt; исходник»). Десктоп не тронут.</li>
+</ul>
+<h3>Копилка патча доков (дополнение к копилке из транскриптов)</h3>
+<ul>
+<li>(и) CSS-грабля: <code>*/</code> в ТЕКСТЕ комментария (напр. глоб «.gm-export-<em>/») закрывает комментарий досрочно, браузер съедает следующее правило (терялся position:fixed у .gm-overlay); cssnano в build случайно спасал. Вторая ловушка: python-фикс по index(&#39;</em>/&#39;) нашёл ТО ЖЕ раннее закрытие и оставил хвост старого баннера.</li>
+<li>(л) мобильная легенда — см. отклонение выше; кандидат TODO: сворачивание легенды.</li>
+<li>(м) НЕТОЧНОСТЬ 07 запрос 3: hex #e74c3c/#3498db — статическая TC доревизии v10; тест сверяет hue динамических сидов (онтологическ 215, эпистемологическ 145).</li>
+<li>(н) квирк typeColor: двусторонний fuzzy (lp.includes(k)||k.includes(lp)) — «логическая» ⊂ «онтологическая» → один цвет (сверено с исходником [556], порт 1:1).</li>
+</ul>
+<h3>Грабли браузерных тестов (копилка 0.4)</h3>
+<ol>
+<li>pkill-самострел: <code>pkill -f &quot;[v]ite&quot;</code> в одном bash-вызове с heredoc, содержащим «vite» плоско, убивает собственный шелл.</li>
+<li>npx-обёртка vite при SIGKILL оставляет сироту — спавнить <code>node ../node_modules/vite/bin/vite.js</code> (бинарь в КОРНЕВОМ node_modules, client/node_modules пуст).</li>
+<li>d3 raise() в hover переставляет .node-g в конец DOM — nth-адресация врёт; адресоваться по g.<strong>data</strong>.name.</li>
+<li>Заголовки панелей капсятся CSS-ом — innerText отдаёт визуальный регистр, сверять через toUpperCase() (родня грабли 1.5).</li>
+<li>У РЁБЕР 3D тоже тултип (desc+[тип], без имён узлов) — охоту на узлы фильтровать по списку имён.</li>
+<li>Клик/tap по хитбоксу ребра НЕ ставит isOrbit (поведение порта) — orbit-жест начинать из заведомо пустой точки (elementFromPoint=canvas И тултип не зажёгся).</li>
+<li>Раскладка-«кольцо»: при zoom 150 узлы разлетаются к краям канваса, центр бывает пуст — сетку охоты строить ОТНОСИТЕЛЬНОЙ (доли rect до ±0.4).</li>
+<li>CDP Input.dispatchTouchEvent работает (headless shell + SwiftShader): двухточечный touchStart Chrome разбивает на touchstart:1+touchstart:2 (пинчу не мешает); touchEnd с пустым touchPoints корректен.</li>
+<li>Шпион touch-событий вешать на document с capture и логом e.target.tagName — мгновенно вскрывает перекрытия (события шли @SPAN/@DIV легенды).</li>
+<li>Фоновая страница: bringToFront + флаги --disable-background-timer-throttling/--disable-backgrounding-occluded-windows/--disable-renderer-backgrounding (rAF-диагностика: счётчик кадров за 500мс).</li>
+<li>Сценарный catch со стеком ОБЯЗАТЕЛЕН до finally с process.exit — иначе исключение глотается молча.</li>
+</ol>
+<h3>Сиды теста (для переиспользования)</h3>
+<p>S_MAIN: 12 категорий (все структурные+процессуальные роли, 2 кластера, рефлексивный узел), 9 рёбер (uni/bi/рефлексивная/слабая 0.2 и 0.25/8 типов); S_EXT (ext_graph_metrics=true, «Расширенное-Ядро»); S_ONE; S_EMPTY; S_PUBB/S_PRIVB (чужие публичный/приватный).</p>
+<h3>Дополнение завершения (2026-08-04, по указанию пользователя)</h3>
+<ul>
+<li>[stated] Интеграция в проекте проверяется корректировкой server/integration-check.mts — у каждой беседы свои секции; файл большой, смотреть структуру и фрагменты.</li>
+<li>Устройство файла: секции 2x (need(await import) — рантайм-импорт модулей + список экспортов), 4x (текстовые контракты по исходникам через rd(): дословности, грабли, запреты), 5x (живые смоуки против БД/Redis — демоны поднимать в том же bash-вызове); clientModule импортирует и .tsx (tsx транспилирует JSX); финальная строка INTEGRATION OK — накопительный реестр всех секций. Запуск: <code>npm run check:integration -w server</code>; типовое покрытие — typecheck:checks (tsconfig.checks.json: audit.mts + integration-check.mts).</li>
+<li>Добавлена секция 4q (беседа 1.7): 10 клиент-модулей + контракты (сиды hue, fuzzy 1:1, roleMode, warmup параметром, passive:false, raise(), edge-arc, TODO(4.2), «◈ Граф»+extGraphMetrics, CSS+медиа-легенда+анти-грабля «*/»); INTEGRATION OK зелёный, typecheck:checks зелёный; регексы контрактов проверены негативным тестом (ловят поломку и заражение). Глава NEXT-CONTEXT дополнена.</li>
+</ul>
+</article></main></body></html>

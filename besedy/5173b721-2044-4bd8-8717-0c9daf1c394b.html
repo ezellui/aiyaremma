@@ -1,0 +1,167 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Без названия · Архив Claude</title><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/memory.css"><script defer src="../data/5173b721-2044-4bd8-8717-0c9daf1c394b.js"></script><script defer src="../assets/app.js"></script></head><body data-root="../"><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../index.html">Беседы</a><a href="../temy.html">Темы</a><a href="../pamyat.html">Память</a><a href="../zapisi.html">Записи без текста</a></nav></div></header><div class="layout"><main class="conversation"><div class="breadcrumbs"><a href="../index.html">Беседы</a><span> / 2026-04-12</span></div><div class="chat-heading"><h1>Без названия</h1><p class="muted">2026-04-12 · 28 реплик · 1 ветвь</p></div><div class="branch-toolbar"><label for="branch">Ветка</label><select id="branch"><option value="0">Главная ветвь</option></select><a id="fork-link" href="#" hidden>К точке развилки</a><a class="mobile-files" href="#files-panel">К файлам</a></div><p id="branch-summary" class="muted branch-summary" aria-live="polite"></p><div id="messages"><article class="message user" id="m-019d82e8-9a16-7b3b-ad3a-9d210e845bc3"><header><span class="role">Вы</span><time>2026-04-12 18:16:15</time><a class="message-link" href="#m-019d82e8-9a16-7b3b-ad3a-9d210e845bc3" title="Ссылка на реплику">#1</a></header><div class="prose"><details><summary>вложение: ws-messages.ts (3486 байт)</summary>
+<pre><code>import type { EditPlan } from &quot;./edit-plan&quot;;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Client → Server messages
+// ═══════════════════════════════════════════════════════════════════════════
+
+export interface WsStartGeneration {
+  type: &quot;start_generation&quot;;
+  synthesisId: string;
+  sectionKey: string;
+}
+
+export interface WsConfirmStep {
+  type: &quot;confirm_step&quot;;
+  planId: string;
+  stepIndex: number;
+}
+
+export interface WsCancel {
+  type: &quot;cancel&quot;;
+}
+
+export type ClientWsMessage =
+  | WsStartGeneration
+  | WsConfirmStep
+  | WsCancel;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Server → Client messages
+// ═══════════════════════════════════════════════════════════════════════════
+
+export interface WsStreamDelta {
+  type: &quot;stream_delta&quot;;
+  html: string;
+  charsSoFar: number;
+}
+
+export interface WsStreamDone {
+  type: &quot;stream_done&quot;;
+  usage: WsUsageInfo;
+  sectionKey: string;
+}
+
+export interface WsStreamError {
+  type: &quot;stream_error&quot;;
+  error: string;
+  partialHtml: string;
+}
+
+export interface WsPlanUpdated {
+  type: &quot;plan_updated&quot;;
+  plan: EditPlan;
+}
+
+export interface WsSubsectionDetected {
+  type: &quot;subsection_detected&quot;;
+  name: string;
+  charsSoFar: number;
+}
+
+export type ServerWsMessage =
+  | WsStreamDelta
+  | WsStreamDone
+  | WsStreamError
+  | WsPlanUpdated
+  | WsSubsectionDetected;
+
+// ─── Shared sub-types ──────────────────────────────────────────────────────
+
+export interface WsUsageInfo {
+  inputTokens: number;
+  outputTokens: number;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Union type for all WS messages
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type WsMessage = ClientWsMessage | ServerWsMessage;
+
+// ─── Type guards ───────────────────────────────────────────────────────────
+
+export function isClientMessage(msg: WsMessage): msg is ClientWsMessage {
+  return (
+    msg.type === &quot;start_generation&quot; ||
+    msg.type === &quot;confirm_step&quot; ||
+    msg.type === &quot;cancel&quot;
+  );
+}
+
+export function isServerMessage(msg: WsMessage): msg is ServerWsMessage {
+  return (
+    msg.type === &quot;stream_delta&quot; ||
+    msg.type === &quot;stream_done&quot; ||
+    msg.type === &quot;stream_error&quot; ||
+    msg.type === &quot;plan_updated&quot; ||
+    msg.type === &quot;subsection_detected&quot;
+  );
+}
+</code></pre>
+</details>
+<details><summary>вложение: index.ts (944 байт)</summary>
+<pre><code>// Constants
+export * from &quot;./constants/philosophers&quot;;
+export * from &quot;./constants/labels&quot;;
+export * from &quot;./constants/section-labels&quot;;
+export * from &quot;./constants/ctx-keys&quot;;
+export * from &quot;./constants/phil-filename&quot;;
+export * from &quot;./constants/methods&quot;;
+
+// Types
+export type * from &quot;./types/synthesis&quot;;
+export type * from &quot;./types/section&quot;;
+export type * from &quot;./types/graph&quot;;
+export type * from &quot;./types/elements&quot;;
+export type * from &quot;./types/lineage&quot;;
+export type * from &quot;./types/edit-plan&quot;;
+export type * from &quot;./types/generation&quot;;
+export type * from &quot;./types/modes&quot;;
+export type * from &quot;./types/billing&quot;;
+export type * from &quot;./types/prompts&quot;;
+export type * from &quot;./types/ws-messages&quot;;
+// Value re-exports (type guards)
+export { isClientMessage, isServerMessage } from &quot;./types/ws-messages&quot;;
+
+// Utils
+export * from &quot;./utils/version&quot;;
+export * from &quot;./utils/transliterate&quot;;
+export * from &quot;./utils/normalize&quot;;
+export * from &quot;./utils/escape&quot;;
+</code></pre>
+</details>
+<details class="references"><summary>Сведения о вложениях · 6</summary><ul><li><span>01-architecture.md</span> <code>019d82e3-e68b-7210-8eaa-3f46c6c24ace</code></li><li><span>03-specification.md</span> <code>019d82e4-2148-70e5-90b4-8703d8ff70b3</code></li><li><span>05-file-structure.md</span> <code>019d82e4-3c43-7058-84bd-5fdb9a03810f</code></li><li><span>schema.ts</span> <code>019d82e4-bc04-7157-96dc-e8dbb072dd9c</code></li><li><span>ws-messages.ts</span> <code>3ad4f4d2-7735-4e42-bf62-6b96d3e49c91</code></li><li><span>index.ts</span> <code>31118bcb-8e84-4e40-93fd-274fc7cd026f</code></li></ul></details></div></article><article class="message assistant" id="m-019d82e8-9a17-7e6a-924e-e5422ae0f36a"><header><span class="role">Claude</span><time>2026-04-12 18:19:32</time><a class="message-link" href="#m-019d82e8-9a17-7e6a-924e-e5422ae0f36a" title="Ссылка на реплику">#2</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d82ec-7a59-7807-819e-f97b62d154e0"><header><span class="role">Вы</span><time>2026-04-12 18:20:28</time><a class="message-link" href="#m-019d82ec-7a59-7807-819e-f97b62d154e0" title="Ссылка на реплику">#3</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d82ec-7a59-76db-8c95-2e455d3568ed"><header><span class="role">Claude</span><time>2026-04-12 18:21:20</time><a class="message-link" href="#m-019d82ec-7a59-76db-8c95-2e455d3568ed" title="Ссылка на реплику">#4</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d82ee-f754-71fc-9438-406e5e357465"><header><span class="role">Вы</span><time>2026-04-12 18:23:14</time><a class="message-link" href="#m-019d82ee-f754-71fc-9438-406e5e357465" title="Ссылка на реплику">#5</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d82ee-f754-710f-8f64-f535d638279f"><header><span class="role">Claude</span><time>2026-04-12 18:25:20</time><a class="message-link" href="#m-019d82ee-f754-710f-8f64-f535d638279f" title="Ссылка на реплику">#6</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d82f1-8705-7026-b39c-c44762afbc74"><header><span class="role">Вы</span><time>2026-04-12 18:25:59</time><a class="message-link" href="#m-019d82f1-8705-7026-b39c-c44762afbc74" title="Ссылка на реплику">#7</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d82f1-8705-7c23-8b8f-af8c9b912a6e"><header><span class="role">Claude</span><time>2026-04-12 18:34:40</time><a class="message-link" href="#m-019d82f1-8705-7c23-8b8f-af8c9b912a6e" title="Ссылка на реплику">#8</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d82fa-ad66-7152-8949-92f73fb0e6e0"><header><span class="role">Вы</span><time>2026-04-12 18:36:00</time><a class="message-link" href="#m-019d82fa-ad66-7152-8949-92f73fb0e6e0" title="Ссылка на реплику">#9</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d82fa-ad66-71ca-aac6-80298c4111c3"><header><span class="role">Claude</span><time>2026-04-12 18:44:40</time><a class="message-link" href="#m-019d82fa-ad66-71ca-aac6-80298c4111c3" title="Ссылка на реплику">#10</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d8303-7b9e-7f5b-bee3-a531c1db92e4"><header><span class="role">Вы</span><time>2026-04-12 18:45:36</time><a class="message-link" href="#m-019d8303-7b9e-7f5b-bee3-a531c1db92e4" title="Ссылка на реплику">#11</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d8303-7b9e-7d04-a6e3-510d13c30b64"><header><span class="role">Claude</span><time>2026-04-12 18:47:50</time><a class="message-link" href="#m-019d8303-7b9e-7d04-a6e3-510d13c30b64" title="Ссылка на реплику">#12</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d8305-fb65-7266-bf31-4cbee1376d7c"><header><span class="role">Вы</span><time>2026-04-12 18:48:20</time><a class="message-link" href="#m-019d8305-fb65-7266-bf31-4cbee1376d7c" title="Ссылка на реплику">#13</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d8305-fb65-7852-899a-f2747bf0dbed"><header><span class="role">Claude</span><time>2026-04-12 18:51:04</time><a class="message-link" href="#m-019d8305-fb65-7852-899a-f2747bf0dbed" title="Ссылка на реплику">#14</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d8309-4afb-7c1e-b41e-e38bc76b1473"><header><span class="role">Вы</span><time>2026-04-12 18:51:57</time><a class="message-link" href="#m-019d8309-4afb-7c1e-b41e-e38bc76b1473" title="Ссылка на реплику">#15</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d8309-4afb-7d82-95bb-aa9b156571f4"><header><span class="role">Claude</span><time>2026-04-12 18:54:35</time><a class="message-link" href="#m-019d8309-4afb-7d82-95bb-aa9b156571f4" title="Ссылка на реплику">#16</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d830c-eddb-7e27-93da-66ffd9f97cec"><header><span class="role">Вы</span><time>2026-04-12 18:55:55</time><a class="message-link" href="#m-019d830c-eddb-7e27-93da-66ffd9f97cec" title="Ссылка на реплику">#17</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d830c-eddc-7acc-a1ab-366d464fa192"><header><span class="role">Claude</span><time>2026-04-12 18:56:55</time><a class="message-link" href="#m-019d830c-eddc-7acc-a1ab-366d464fa192" title="Ссылка на реплику">#18</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d830e-2234-79d7-8ac9-694f3e0fd318"><header><span class="role">Вы</span><time>2026-04-12 18:57:14</time><a class="message-link" href="#m-019d830e-2234-79d7-8ac9-694f3e0fd318" title="Ссылка на реплику">#19</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d830e-2234-7679-82b7-532909e9efaa"><header><span class="role">Claude</span><time>2026-04-12 18:58:09</time><a class="message-link" href="#m-019d830e-2234-7679-82b7-532909e9efaa" title="Ссылка на реплику">#20</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d830f-95ab-7caf-8225-43801e7da070"><header><span class="role">Вы</span><time>2026-04-12 18:58:49</time><a class="message-link" href="#m-019d830f-95ab-7caf-8225-43801e7da070" title="Ссылка на реплику">#21</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d830f-95ab-7db2-b207-f7d82cf02252"><header><span class="role">Claude</span><time>2026-04-12 19:01:25</time><a class="message-link" href="#m-019d830f-95ab-7db2-b207-f7d82cf02252" title="Ссылка на реплику">#22</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d8312-690e-7f9f-93d0-9cf18f0b5012"><header><span class="role">Вы</span><time>2026-04-12 19:01:55</time><a class="message-link" href="#m-019d8312-690e-7f9f-93d0-9cf18f0b5012" title="Ссылка на реплику">#23</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d8312-690e-7cdb-bd83-a18a55706171"><header><span class="role">Claude</span><time>2026-04-12 19:03:18</time><a class="message-link" href="#m-019d8312-690e-7cdb-bd83-a18a55706171" title="Ссылка на реплику">#24</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d8314-c3c0-74c4-8613-27af002580d6"><header><span class="role">Вы</span><time>2026-04-12 19:04:29</time><a class="message-link" href="#m-019d8314-c3c0-74c4-8613-27af002580d6" title="Ссылка на реплику">#25</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d8314-c3c1-74c7-8544-6951ed107b43"><header><span class="role">Claude</span><time>2026-04-12 19:07:43</time><a class="message-link" href="#m-019d8314-c3c1-74c7-8544-6951ed107b43" title="Ссылка на реплику">#26</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message user" id="m-019d8318-693a-7a30-88ac-1bd57e4e5707"><header><span class="role">Вы</span><time>2026-04-12 19:08:32</time><a class="message-link" href="#m-019d8318-693a-7a30-88ac-1bd57e4e5707" title="Ссылка на реплику">#27</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article><article class="message assistant" id="m-019d8318-693a-7d6b-ba1c-f1c57ce4a2f5"><header><span class="role">Claude</span><time>2026-04-12 19:10:14</time><a class="message-link" href="#m-019d8318-693a-7d6b-ba1c-f1c57ce4a2f5" title="Ссылка на реплику">#28</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
+</div></article></div></main><aside class="sidebar" id="files-panel"><div class="sidebar-heading"><h2>Файлы беседы</h2><button type="button" class="quiet mobile-files" id="back-to-messages">К репликам</button></div>
+          <div id="file-state" class="muted"></div><div id="file-list"></div>
+          <details id="archived-files"><summary>Снимки из выгрузки <span id="snapshot-count"></span></summary><div id="snapshot-list"></div></details>
+          <p class="small muted">У вложений с одним лишь именем или UUID сведения показаны возле соответствующей реплики.</p></aside></div>
+          <dialog id="viewer"><div class="viewer-head"><div><h2 id="viewer-title"></h2><p id="viewer-info" class="muted"></p></div><button id="viewer-close" class="quiet" type="button" aria-label="Закрыть">Закрыть</button></div>
+          <div class="viewer-controls"><label for="version-select">Версия</label><select id="version-select"></select><button type="button" id="show-source" aria-pressed="true">Содержимое</button><button type="button" id="show-diff" aria-pressed="false">Изменения</button><button class="primary" id="download-file" type="button">Скачать</button></div>
+          <div id="viewer-state" class="muted"></div><pre id="viewer-code" tabindex="0"></pre></dialog></body></html>

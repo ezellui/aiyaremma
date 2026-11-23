@@ -1,0 +1,29 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>philosphaira-db-additions · Архив Claude</title><link rel="stylesheet" href="../../assets/style.css"><link rel="stylesheet" href="../../assets/memory.css"></head><body data-root="../../"><header class="top"><div class="top-inner"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../../index.html">Беседы</a><a href="../../temy.html">Темы</a><a href="../../pamyat.html">Память</a><a href="../../zapisi.html">Записи без текста</a></nav></div></header><main class="sheet memory-page"><div class="breadcrumbs"><a href="../../pamyat.html">Память</a> / Области</div><div class="page-head"><h1>philosphaira-db-additions</h1><p>Расширение связей и концепций базы ΦilosΦaira — спецификация doc/db-additions-spec.md и решения пользователя по ней; читать перед работой с наполнением базы</p></div><div class="memory-meta"><a class="button" href="philosphaira-db-additions.md" download>Скачать Markdown</a><a href="../../temy.html#tema-35">В тематическом указателе</a><span class="muted">Обновлено 2026-10-02 11:16:49 UTC</span></div> <div class="memory-aliases" aria-label="Псевдонимы"><code>спецификация добавлений</code><code>db-additions-spec</code><code>spec_probe</code><code>заходы A-E</code></div><details class="memory-related"><summary>Беседы по тематическому указателю · 1</summary><ul><li><time>2026-09-27</time> <a href="../../besedy/2e5cd98a-ab19-4bc2-a22e-ddffaa97c736.html">Извлечение текстового слоя в структурированный формат</a> <span class="muted">(12)</span></li></ul></details><article class="memory-body prose"><p>Основная заметка проекта: [[philosphaira]]. Репозиторий: [[philosphaira-repo]].</p>
+<ul>
+<li>[stated] Просил составить реестры того, что было в базе до сентябрьского прироста и что
+добавлено (существующие 57 философов / прирост 43) — сделаны отдельными файлами</li>
+<li>[stated] Затем просил составить md-спецификацию всех необходимых добавлений в базу
+БЕЗ описаний: сперва утверждается состав, тексты пишутся потом. Спецификация лежит в
+дереве — doc/db-additions-spec.md (заходы A–E: внутренние связи, связи к прежним 57,
+связи между новыми, добор концепций, добор до порога)</li>
+<li>[stated] Согласился завести прибор tools/checks/spec_probe.mjs для разбора этой
+спецификации</li>
+<li>[stated] ПОРЯДОК РАБОТ: сперва правки интерфейса, связи по спецификации — потом</li>
+<li>[stated] По недочёту «Показать на графе» у малосвязной концепции выбрал вариант 1:
+кнопка сама открывает вид «по структуре», без второй кнопки и без сообщения с действием</li>
+<li>[stated] Указал, что учёт философов без года смерти в проекте уже есть (по поводу
+Хомского с death: null)</li>
+<li>[stated] Архив ревизии описаний (philosophy-graph-descriptions) решил оставить ОТДЕЛЬНОЙ
+рабочей папкой, не вносить его оснастку в проект</li>
+<li>[stated] Просил писать описания крупными заходами (порядка 70 связей за раз), а не по
+25</li>
+<li>[stated] Возразил против оборотов, пересказывающих свой тип («X и есть условие Y»), и
+против захода E как добора ради числа: связь заводится, если отношение было; неверный
+тип — повод переписать тип, а не снять связь. Считает нормальным, что часть концепций
+остаётся ниже порога в пять связей</li>
+<li>[stated] ПРИНЦИП ОТБОРА КОНЦЕПЦИЙ: у философа стоят концепции именно ЕГО системы; общефилософских мало — только те, без которых система философа сыпется. Кандидатов в новые концепции (в т.ч. из HWPh, см. [[hwph-md]]) судить по этому признаку, а не по частоте упоминания</li>
+<li>[stated] (2026-10-02) При заведении новых концепций продумывать их внутрисистемные и межсистемные связи (направленность, тип, вес по семантике легенды) так, чтобы система каждого философа и весь граф оставались односвязными; описания — по критериям архива ревизии описаний</li>
+<li>[stated] (2026-10-02) Amor fati — концепция Ницше; у Марка Аврелия оставить аналогичное стоическое понятие</li>
+<li>[stated] (2026-10-02) Пары «влияние + развитие» в одну сторону между теми же концепциями: оставлять связь развития, а значимое отличие влияния переносить в её описание</li>
+</ul>
+</article></main></body></html>

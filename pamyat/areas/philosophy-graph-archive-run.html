@@ -1,0 +1,74 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>philosophy-graph-archive-run · Архив Claude</title><link rel="stylesheet" href="../../assets/style.css"><link rel="stylesheet" href="../../assets/memory.css"></head><body data-root="../../"><header class="top"><div class="top-inner"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../../index.html">Беседы</a><a href="../../temy.html">Темы</a><a href="../../pamyat.html">Память</a><a href="../../zapisi.html">Записи без текста</a></nav></div></header><main class="sheet memory-page"><div class="breadcrumbs"><a href="../../pamyat.html">Память</a> / Области</div><div class="page-head"><h1>philosophy-graph-archive-run</h1><p>Разворачивание архива philosophy_graph в присланном виде — окружение автора НА МЕСТЕ, две настоящие мины, полная приёмка сошлась; читать перед любой работой с архивом</p></div><div class="memory-meta"><a class="button" href="philosophy-graph-archive-run.md" download>Скачать Markdown</a><a href="../../temy.html#tema-21">В тематическом указателе</a><span class="muted">Обновлено 2026-08-17 05:51:22 UTC</span></div> <div class="memory-aliases" aria-label="Псевдонимы"><code>архив проекта</code><code>philosophy_graph_project_tar.xz</code><code>запуск архива</code><code>окружение приёмки</code></div><details class="memory-related"><summary>Беседы по тематическому указателю · 2</summary><ul><li><time>2026-11-13</time> <a href="../../besedy/d4618877-3445-48b6-8d7c-6e88d4b14d8a.html">Витгенштейн: извлечение и преобразование трактата</a> <span class="muted">(5)</span></li><li><time>2026-11-20</time> <a href="../../besedy/2cad0433-f5ff-4547-9cfc-8c379d4c4c1a.html">Тестирование физики проекта</a> <span class="muted">(3)</span></li></ul></details><article class="memory-body prose"><p>Продолжение [[philosophy-graph-probes]]. Устройство проекта — там и в [[philosophy-graph-modules]].</p>
+<h3>ЗАХОД 2026-08-17: АРХИВ ПРИСЛАН В БЕСЕДУ</h3>
+<ul>
+<li>[stated] Пользователь прислал philosophy_graph_project_tar.xz (868 КБ, 184 файла) и
+попросил разобраться в файловой структуре, документации и порядке работы</li>
+<li>[stated] Затем одёрнул: «а у тебя в окружении есть chrome 131, надо поискать
+тщательнее» — и был прав, см. ниже</li>
+<li>ЧИТАТЬ В ТАКОМ ПОРЯДКЕ: ОБЗОР.md (единственный полный; разделы 13 «что каждый файл
+делает» и 14 «что запускать при каждом изменении») → module-ops.md (перестановки) →
+split-README.md (устройство сборки и мины) → история-правок.md (заходы после
+разбивки) → module-spec-v2.md и три карты как справочники, не для чтения подряд</li>
+</ul>
+<h3>ОКРУЖЕНИЕ АВТОРА ЗДЕСЬ ЕСТЬ ЦЕЛИКОМ — И Я ЕГО НЕ НАШЁЛ С ПЕРВОГО РАЗА</h3>
+<ul>
+<li>Chrome 131.0.6778.204 лежит РОВНО ТАМ, где написано в ОБЗОР.md:
+/home/claude/.cache/puppeteer/chrome/linux-131.0.6778.204/chrome-linux64/chrome
+(ещё и chrome-headless-shell той же версии). puppeteer 23.11.1 — тоже ровно там:
+/home/claude/.npm-global/lib/node_modules/@mermaid-js/mermaid-cli/node_modules/puppeteer</li>
+<li>МОЯ ОШИБКА: искал через <code>ls ~/.cache/puppeteer</code>, а HOME здесь /root, не /home/claude.
+Тильда разошлась с буквальным путём — и я объявил окружение чужим.
+ПРАВИЛО: путь из документации проверять БУКВАЛЬНО, как записан, а не своим сокращением</li>
+<li>ВТОРАЯ ОШИБКА, ХУЖЕ ПЕРВОЙ: подставил Chromium 141 из playwright, получил расхождение
+css_probe во всех шести состояниях — и ОБЪЯСНИЛ его («эталон привязан к выпуску
+браузера, переутверждать при переезде — норма»). Объяснение было правдоподобным и
+ложным: на настоящем Chrome 131 css_probe даёт 6 из 6. То есть я нарушил собственное
+правило проекта — прежде чем звать расхождение чем бы то ни было, убедиться, что
+сравниваются одинаковые стороны. Подмена браузера и есть разные стороны</li>
+<li>НИКАКИХ ПЕРЕМЕННЫХ ОКРУЖЕНИЯ НЕ НУЖНО, кроме TREE и KEYS: умолчания CHROME и
+PUPPETEER в приборах верны. TREE=&lt;проект&gt;/split и KEYS=&lt;проект&gt;/handler_keys.json
+нужны sweep_all, потому что его умолчания указывают в /home/claude/build/src</li>
+</ul>
+<h3>ДВЕ НАСТОЯЩИЕ МИНЫ (третья была моей выдумкой)</h3>
+<ol>
+<li>split.mjs:533 копирует d3 из ЗАШИТОГО &#39;/home/claude/node_modules/d3/dist/d3.min.js&#39;
+— ни довода, ни переменной. Лечение: ln -sfn &lt;проект&gt;/node_modules /home/claude/node_modules</li>
+<li>remap.mjs «собрать» зовёт check_modules.mjs БЕЗ пути к дереву, тот падает на
+умолчании &#39;/home/claude/build/src&#39;. Падает ПОСЛЕ семи успешных шагов, уже снеся
+старое дерево (первый шаг делает rmSync) — потому перед первым прогоном ОБЯЗАТЕЛЬНО
+сохранять копию split/</li>
+<li>serve.sh держит переменную с КИРИЛЛИЧЕСКИМ именем (ЗДЕСЬ=…) — bash её не принимает,
+сервер молча не поднимается, curl отвечает 000. Обход: setsid python3 tools/serve.py
+8711 split. Мина известная (записана в памяти как урок), но в самом файле осталась</li>
+</ol>
+<h3>ПОЛНАЯ ПРИЁМКА СОШЛАСЬ, ИЗ АРХИВА, БЕЗ ЕДИНОЙ ПРАВКИ ПРОЕКТА</h3>
+<ul>
+<li>npm install по закреплённым версиям встал без правок</li>
+<li>ЦЕПОЧКА ИЗ СЕМИ ШАГОВ руками с явными доводами (split → delegate static → delegate
+dyn → rig → unbridge → prune_imports → split_css) дала дерево, СОВПАВШЕЕ С АРХИВНЫМ
+ПОБАЙТОВО (diff -r пуст). 98 модулей, S:84, MET:33, VIEWS:6; призрачных ввозов убрано
+66 в 18 модулях; склейка стилей знак в знак</li>
+<li>check_modules 104 файла, 0/0; layers ввозы 0; bridge_debt 0/0/0/0; maps_fresh — все
+четыре карты свежие</li>
+<li>assert_probe 137/137; sweep_all 302/302 (447 снимков, 135 обработчиков, ошибок 0);
+compare 83/83; probe6 28/28; probe7 13/13; probe8 15/15; css_probe 6/6 — ВСЕ ШЕСТЬ
+ЭТАЛОНОВ СОШЛИСЬ ТОЧНО, ни один не пришлось переутверждать</li>
+<li>ВРЕМЯ: sweep_all — три части примерно по 2–4 минуты каждая, в один заход не влезает
+по пределу времени команды. Часть 3 гонять фоном (nohup … &amp;) и ждать отдельно</li>
+</ul>
+<h3>КОМАНДА ЗАПУСКА, КОТОРАЯ РАБОТАЕТ ЗДЕСЬ</h3>
+<pre><code>ln -sfn &lt;проект&gt;/node_modules /home/claude/node_modules      # ради split.mjs:533
+cp -r split /tmp/split_ref                                    # remap.mjs снесёт дерево
+node tools/split.mjs split philosophy_graph_v3.html assign_names.json globals_map_v3.json
+node tools/delegate.mjs split static ; node tools/delegate.mjs split dyn
+node tools/rig.mjs split ; node tools/unbridge.mjs split
+node tools/prune_imports.mjs split ; node tools/split_css.mjs split
+node tools/check_modules.mjs split                            # путь ОБЯЗАТЕЛЕН
+python3 tools/make_ref.py philosophy_graph_v3.html split
+setsid python3 tools/serve.py 8711 split &amp;                    # НЕ serve.sh
+export TREE=&lt;проект&gt;/split KEYS=&lt;проект&gt;/handler_keys.json    # CHROME/PUPPETEER не нужны
+node tools/assert_probe.mjs index.html
+node tools/&lt;прибор&gt;.mjs run index.html /tmp/sn/&lt;прибор&gt;.json
+node tools/baseline.mjs проверить &lt;прибор&gt; /tmp/sn/&lt;прибор&gt;.json
+</code></pre>
+</article></main></body></html>

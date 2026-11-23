@@ -1,0 +1,51 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>philosynth-42-log · Архив Claude</title><link rel="stylesheet" href="../../assets/style.css"><link rel="stylesheet" href="../../assets/memory.css"></head><body data-root="../../"><header class="top"><div class="top-inner"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../../index.html">Беседы</a><a href="../../temy.html">Темы</a><a href="../../pamyat.html">Память</a><a href="../../zapisi.html">Записи без текста</a></nav></div></header><main class="sheet memory-page"><div class="breadcrumbs"><a href="../../pamyat.html">Память</a> / Области</div><div class="page-head"><h1>philosynth-42-log</h1><p>Журнал беседы 4.2 PhiloSynth (Export Service; ЗАКРЫТА 2026-08-29 целиком, тест 76✓×2, доки пропатчены conv42) — решения и грабли; следующая — 4.3</p></div><div class="memory-meta"><a class="button" href="philosynth-42-log.md" download>Скачать Markdown</a><a href="../../temy.html#tema-60">В тематическом указателе</a><span class="muted">Обновлено 2026-08-30 03:49:13 UTC</span></div> <div class="memory-aliases" aria-label="Псевдонимы"><code>беседа 4.2</code><code>export-service</code><code>экспорт документа</code><code>export-assets</code></div><details class="memory-related"><summary>Беседы по тематическому указателю · 6</summary><ul><li><time>2026-09-18</time> <a href="../../besedy/82bd9b59-0a7e-4410-b56c-6703ff44512c.html">Оценка объёма текста в репозитории</a> <span class="muted">(7)</span></li><li><time>2026-09-23</time> <a href="../../besedy/48e57717-a6e9-4d77-8a46-b1c536be7d27.html">Анализ багов и недоделок в philosynth</a> <span class="muted">(16)</span></li><li><time>2026-10-20</time> <a href="../../besedy/ea1f0608-2313-497a-b382-6f39e3edb2de.html">Philosynth Phase 14 localization</a> <span class="muted">(11)</span></li><li><time>2026-11-16</time> <a href="../../besedy/399a9df0-0b9e-4100-b996-b79294137645.html">Клонирование репозитория philosynth</a> <span class="muted">(6)</span></li><li><time>2026-11-16</time> <a href="../../besedy/165f0408-465e-4239-b88b-ebe2d54206a0.html">Философский сервис: беседа 18.3</a> <span class="muted">(3)</span></li><li><time>2026-11-17</time> <a href="../../besedy/b071d9dc-f811-4376-854d-645cc024c1a1.html">Проверка коммитов philosynth</a> <span class="muted">(8)</span></li></ul></details><article class="memory-body prose"><p>Продолжение [[philosynth-41-log]]; проект — [[philosynth]].</p>
+<h3>Статус</h3>
+<ul>
+<li>Запрос 1 выполнен целиком (2026-08-29): typecheck ✓, vite build ✓, audit -w server ✓, смоук чистых ядер ✓.</li>
+<li>Сжатие контекста пришлось на середину запроса 1; ВСЯ пачка модулей написана заново, затем по требованию пользователя сверена с исходником построчно (MMD/JSON/PNG/auditCSS/fnBundle + дифф graph-style/physics с клиентом 1.7 по литералам) — семантических расхождений 0, внесены только пометки дословности (мёртвые es/nx,ny, ветка instanceof Set, MARKER_DEFS на уровне модуля).</li>
+<li>Тестовые запросы 2–6 ЗАКРЫТЫ (2026-08-29): tests/test-42-requests2-6.mjs, 76✓ ×2 прогона. Тест 5 (roundtrip-импорт) неисполним до 4.3 — зафиксирован 404 роута; собственный roundtrip есть первым тестом 4.3, покрытие не теряется.</li>
+<li>[stated] Блок завершения ВЫПОЛНЕН (2026-08-29), беседа ЗАКРЫТА: integration-check += секции 2q/4y/5s (дрейф-контроль graph-style/physics↔клиент 1.7, subtitleForExport↔DocumentHeader; живой конвейер экспорта) — INTEGRATION OK; ревью 04 §2.5 (ФАКТ-пометки + строки filename/reconstruct*); все дыры доков из реестра ниже пропатчены идемпотентным scripts/patch-docs-conv42.py (17 патчей: 07 — шапка/контекст/пп.3b-3c/4d/4g/5b/роуты-пять/тест4→4.3/глава «По факту 4.2»/квирк truncLabel/рёбра §11/оба долга §12 ЗАКРЫТЫ; 04; спека; ContextEntry); NEXT-CONTEXT — глава итогов 4.2 + комплект для 4.3; README — статус «+4.2», покрытие integration-check до 4.1–4.2, «следующая — 4.3».</li>
+<li>Грабля приёмки: npx (npx tsx …) лезет в сеть за реестром и виснет в этом контейнере — в командах приёмки звать node_modules/.bin/tsx напрямую.</li>
+<li>Следующая по графу — беседа 4.3 (Import Service); её первый тест — roundtrip экспортированного HTML. НАЧАТА — журнал [[philosynth-43-log]].</li>
+</ul>
+<h3>Сделано (запрос 1)</h3>
+<ul>
+<li>scripts/extract-export-assets.mjs (npm run extract:export-assets, идемпотентен) → server/config/export-assets.ts: fnBundle 46 функций buildGraphExportSection + константы + разметка #gmOverlay / #modeOverlay (без .mode-modal-params) + CSS исходника.</li>
+<li>server/services/export/: graph-model (G из БД), graph-style (копия палитр/ролей 1.7, фабрика createGraphStyle на экземпляр — сервер конкурентен), graph-physics, filename (getDocFilename), common (ExportError, loadExportSynthesis, exportFilename), mmd-exporter, json-exporter, png-exporter (node-canvas, вариант a), md-exporter (через html-parser), html-exporter (шапка-зеркало DocumentHeader, embedded state version:2, видимый лог — предвычисленный formatCtxLogHTML, auditCSS).</li>
+<li>server/utils/css-audit.ts; server/services/prompt-reconstruction.ts (4 reconstruct*, async) подключён в log-formatter — все TODO(4.2) сняты.</li>
+<li>routes/export.ts: 5 эндпоинтов GET /syntheses/:id/export/{html,md,mmd,png,json}, Content-Disposition RFC 5987, NO_GRAPH → 400 VALIDATION_ERROR; смонтирован в index.ts.</li>
+<li>Клиент: api/export.ts, меню «⤓ Экспорт» в SynthesisPage, заглушки GraphModal сняты (долг §12 1.7 закрыт), проброшен synthesisId.</li>
+</ul>
+<h3>Тесты 2–6 (харнесс и окружение)</h3>
+<ul>
+<li>Харнесс по образцу test-41: живой сервер + мок Claude (SSE), НО без vite; браузер — puppeteer-core + Chromium /opt/pw-browsers/chromium-1194/chrome-linux/chrome (кэш ~/.cache/puppeteer пуст).</li>
+<li>Мок графа под тест 2: ровно 8 узлов / 3 кластера, мульти-кластерный узел, рефлексивное и двунаправленные рёбра, роли ядро/генеративная/мост/центральная + синтез/тезис/антитезис.</li>
+<li>mermaid.live заменён тем же движком: npm-пакет mermaid в странице puppeteer (parse+render); CDN three r128/d3 7.8.5 в file://-тесте подменяются локальными копиями тех же версий через перехват запросов (cdnjs вне сетевого allowlist). 3D-canvas Three.js в headless-shell строится (swiftshader).</li>
+<li>Пакеты тестов ставить ОДНОЙ командой: npm i --no-save puppeteer-core postgres mermaid three@0.128.0 d3@7.8.5 — повторный npm i --no-save подчищает ранее поставленные не записанные пакеты.</li>
+<li>Окружение поднималось с нуля: apt update падал из-за протухшего /etc/apt/sources.list.d/nodesource.sources (403, домен вне allowlist) — удалить перед install postgresql-16 redis-server; su вместо sudo; pg_trgm создать заранее под postgres.</li>
+</ul>
+<h3>Решения и грабли</h3>
+<ul>
+<li>ГРАБЛЯ МОКОВ (важно будущим беседам): моки 2.3/4.1 возвращают разделы БЕЗ каркаса section-num/section-title/doc-content, который сис-промпт требует от настоящей модели — на таком вводе sec2md/saveMD дают пустой MD. Мок 4.2 отдаёт штатный каркас (wrapSection): один .doc-section на раздел, подразделы — div[data-section] внутри doc-content.</li>
+<li>Грабля мока-2: маршрутизацию pickHtml вести от специфичных маркеров («Таблица категорий») ПЕРЕД общим корнем /критическ/ — задание графа упоминает критический анализ и перехватывалось веткой критики (раздел graph получал html критики → 0 категорий).</li>
+<li>Пп. 4d/4g запроса на сервере буквально неисполнимы (нет DOM/живых функций) — ассеты извлекаются из самого исходника; лог — готовый html 2.4.</li>
+<li>reconstruct* async (Registry); config.buildPrompt → renderTemplate(promptKey,{param,context}); участники-концепции сервиса type=&#39;synthesis&#39; (не &#39;concept&#39;) — фильтры через isConceptParticipant.</li>
+<li>Квирк exportMMD сохранён: classDef t{N} объявляются, строк «class …» нет (узлы красятся per-node style).</li>
+<li>getDocFilename: paramCode join(&quot;&quot;) без дефисов — пример «hm-t-2» в комментарии исходника устарел.</li>
+<li>Генеалогия в embedded state — из lineage напрямую без капсул (серверный reconstructGenealogy — 4.3); genealogy участников = null.</li>
+<li>Артефакты прогона отданы пользователю: export-42.html/png/mmd.</li>
+</ul>
+<h3>Дыры доков (ВСЕ пропатчены scripts/patch-docs-conv42.py, 2026-08-29)</h3>
+<ol>
+<li>Первый запрос 4.2 в 07 не перечисляет md-exporter и GET /export/md (в списке роутов 4 из 5).</li>
+<li>filename.ts/getDocFilename не упомянут в запросе.</li>
+<li>Инверсия 4.2←4.3: тестовый запрос 4 «импортируй через POST /syntheses/import» неисполним (import-service — 4.3); аудит 07-30 её не заметил. Патч: пометить перенос в 4.3 или удалить как дубль — у 4.3 тот же roundtrip первым тестом.</li>
+<li>Граф §11: нет рёбер 4.2←2.4/4.1/1.7/1.6b; «Контекст» беседы устарел.</li>
+<li>Пп. 4d/4g неисполнимы буквально (см. выше).</li>
+<li>reconstruct*: buildPrompt/async/type=&#39;synthesis&#39; не отражены в 07.</li>
+<li>Спека фрагмента 4.2 включает лишние saveLang и reconstructGenealogy (тот — 4.3).</li>
+<li>Комментарий ContextEntry в shared/types/generation.ts называет статусы &#39;included&#39;|…, фактически &quot;found&quot;.</li>
+<li>Квирк «truncLabel печатает escape» в шапке 07 преувеличен: &quot;\u2026&quot; — валидный литерал, рендерится «…».</li>
+<li>Грабля моков (каркас раздела) — кандидат в шапку 07/журнал грабель.</li>
+</ol>
+</article></main></body></html>

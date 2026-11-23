@@ -1,0 +1,24 @@
+.memory-search{grid-template-columns:minmax(14rem,2fr) minmax(9rem,1fr)}
+.memory-category{margin:1rem 0 1.9rem}
+.memory-category h2{margin:0 0 .7rem}
+.memory-entries{list-style:none;padding:0;margin:0;background:var(--panel);border:1px solid var(--line);border-radius:.65rem}
+.memory-entries li{padding:.72rem .92rem;overflow-wrap:anywhere}
+.memory-entries li+li{border-top:1px solid var(--line)}
+.memory-entries a{font-weight:650;text-decoration:none}
+.memory-entries p{font-size:.88rem;color:var(--muted);margin:.28rem 0 0}
+.memory-page{max-width:58rem}
+.memory-page .page-head{padding-top:1.7rem}
+.memory-page .breadcrumbs{margin-top:1.4rem}
+.memory-page h1{overflow-wrap:anywhere}
+.memory-meta{display:flex;gap:.6rem 1rem;flex-wrap:wrap;margin:.7rem 0 1rem}
+.memory-aliases{display:flex;gap:.3rem .45rem;flex-wrap:wrap;margin-bottom:1rem}
+.memory-aliases code{overflow-wrap:anywhere}
+.memory-body{padding:clamp(.85rem,3vw,1.45rem);overflow-wrap:anywhere}
+.memory-body,.memory-related{background:var(--panel);border:1px solid var(--line);border-radius:.65rem}
+.memory-related{margin:1rem 0;padding:.85rem 1rem}
+.memory-related li{margin:.3rem 0}
+.memory-related ul{padding-left:1.3rem;margin:.55rem 0 0}
+.memory-related time{font-size:.82rem;color:var(--muted);white-space:nowrap}
+.chat-memory{margin:0 0 1rem}
+.topic .memory-topic-link{font-size:.9rem}
+@media(max-width:450px){.memory-search{grid-template-columns:1fr}.top-inner nav{column-gap:.65rem}}
