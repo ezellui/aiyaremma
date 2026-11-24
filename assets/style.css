@@ -121,3 +121,9 @@ dialog::backdrop{background:#20291f86}
 .fork-controls>span{color:var(--muted);font-weight:650;margin-right:.15rem}
 .fork-controls button{padding:.18rem .48rem;min-width:2rem}
 .fork-controls select{padding:.18rem .32rem;max-width:100%}
+
+.tool-series{border-left:3px solid #789888!important}
+.tool-series .tool-pair,.tool-series .tool-block{background:var(--panel);font-size:.91rem}
+.tool-series pre,.message-code pre{margin:.45rem 0 .2rem;max-height:25rem}
+.tool-actions{display:flex;flex-wrap:wrap;gap:.45rem;margin:.55rem 0;color:var(--accent);font-size:.82rem}
+.tool-actions button{padding:.23rem .5rem}

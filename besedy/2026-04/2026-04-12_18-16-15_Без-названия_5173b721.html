@@ -1,4 +1,4 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Без названия · Архив Claude</title><link rel="stylesheet" href="../../assets/style.css?v=e65c98bebf2828e0"><link rel="stylesheet" href="../../assets/memory.css?v=e65c98bebf2828e0"><script id="conversation-data" type="application/json">
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Без названия · Архив Claude</title><link rel="stylesheet" href="../../assets/style.css?v=bf224826aa97d7b6"><link rel="stylesheet" href="../../assets/memory.css?v=bf224826aa97d7b6"><script id="conversation-data" type="application/json">
 {
   "branches": [
     {
@@ -74,8 +74,8 @@
   "archive": [],
   "uuid": "5173b721-2044-4bd8-8717-0c9daf1c394b"
 }
-</script><script defer src="../../assets/app.js?v=e65c98bebf2828e0"></script></head><body data-build="e65c98bebf2828e0" data-root="../../"><header class="top"><div class="top-inner"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../../index.html">Беседы</a><a href="../../temy.html">Темы</a><a href="../../pamyat.html">Память</a><a href="../../zapisi.html">Записи без текста</a></nav></div></header><div class="layout"><main class="conversation"><div class="breadcrumbs"><a href="../../index.html">Беседы</a><span> / 2026-04-12</span></div><div class="chat-heading"><h1>Без названия</h1><p class="muted">2026-04-12 · 28 реплик · 1 ветвь</p></div><div class="branch-toolbar"><label for="branch">Ветка</label><select id="branch"><option value="0">Главная ветвь</option></select><a id="fork-link" href="#" hidden>К точке развилки</a><a class="mobile-files" href="#files-panel">К файлам</a></div><p id="branch-summary" class="muted branch-summary" aria-live="polite"></p><div id="messages"><article class="message user" id="m-019d82e8-9a16-7b3b-ad3a-9d210e845bc3"><header><span class="role">Вы</span><time>2026-04-12 18:16:15</time><a class="message-link" href="#m-019d82e8-9a16-7b3b-ad3a-9d210e845bc3" title="Ссылка на реплику">#1</a></header><div class="prose"><details><summary>вложение: ws-messages.ts (3486 байт)</summary>
-<pre><code>import type { EditPlan } from &quot;./edit-plan&quot;;
+</script><script defer src="../../assets/app.js?v=bf224826aa97d7b6"></script></head><body data-build="bf224826aa97d7b6" data-root="../../"><header class="top"><div class="top-inner"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true"></span>Архив Claude</a><nav aria-label="Основная навигация"><a href="../../index.html">Беседы</a><a href="../../temy.html">Темы</a><a href="../../pamyat.html">Память</a><a href="../../zapisi.html">Записи без текста</a></nav></div></header><div class="layout"><main class="conversation"><div class="breadcrumbs"><a href="../../index.html">Беседы</a><span> / 2026-04-12</span></div><div class="chat-heading"><h1>Без названия</h1><p class="muted">2026-04-12 · 28 реплик · 1 ветвь</p></div><div class="branch-toolbar"><label for="branch">Ветка</label><select id="branch"><option value="0">Главная ветвь</option></select><a id="fork-link" href="#" hidden>К точке развилки</a><a class="mobile-files" href="#files-panel">К файлам</a></div><p id="branch-summary" class="muted branch-summary" aria-live="polite"></p><div id="messages"><article class="message user" id="m-019d82e8-9a16-7b3b-ad3a-9d210e845bc3"><header><span class="role">Вы</span><time>2026-04-12 18:16:15</time><a class="message-link" href="#m-019d82e8-9a16-7b3b-ad3a-9d210e845bc3" title="Ссылка на реплику">#1</a></header><div class="prose"><details><summary>вложение: ws-messages.ts (3486 байт)</summary>
+<details class="message-code"><summary>Код</summary><pre><code>import type { EditPlan } from &quot;./edit-plan&quot;;
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  Client → Server messages
@@ -174,10 +174,11 @@ export function isServerMessage(msg: WsMessage): msg is ServerWsMessage {
     msg.type === &quot;subsection_detected&quot;
   );
 }
-</code></pre>
+
+</code></pre></details>
 </details>
 <details><summary>вложение: index.ts (944 байт)</summary>
-<pre><code>// Constants
+<details class="message-code"><summary>Код</summary><pre><code>// Constants
 export * from &quot;./constants/philosophers&quot;;
 export * from &quot;./constants/labels&quot;;
 export * from &quot;./constants/section-labels&quot;;
@@ -205,7 +206,8 @@ export * from &quot;./utils/version&quot;;
 export * from &quot;./utils/transliterate&quot;;
 export * from &quot;./utils/normalize&quot;;
 export * from &quot;./utils/escape&quot;;
-</code></pre>
+
+</code></pre></details>
 </details>
 <details class="references"><summary>Сведения о вложениях · 6</summary><ul><li><span>01-architecture.md</span> <code>019d82e3-e68b-7210-8eaa-3f46c6c24ace</code></li><li><span>03-specification.md</span> <code>019d82e4-2148-70e5-90b4-8703d8ff70b3</code></li><li><span>05-file-structure.md</span> <code>019d82e4-3c43-7058-84bd-5fdb9a03810f</code></li><li><span>schema.ts</span> <code>019d82e4-bc04-7157-96dc-e8dbb072dd9c</code></li><li><span>ws-messages.ts</span> <code>3ad4f4d2-7735-4e42-bf62-6b96d3e49c91</code></li><li><span>index.ts</span> <code>31118bcb-8e84-4e40-93fd-274fc7cd026f</code></li></ul></details></div></article><article class="message assistant" id="m-019d82e8-9a17-7e6a-924e-e5422ae0f36a"><header><span class="role">Claude</span><time>2026-04-12 18:19:32</time><a class="message-link" href="#m-019d82e8-9a17-7e6a-924e-e5422ae0f36a" title="Ссылка на реплику">#2</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>
 </div></article><article class="message user" id="m-019d82ec-7a59-7807-819e-f97b62d154e0"><header><span class="role">Вы</span><time>2026-04-12 18:20:28</time><a class="message-link" href="#m-019d82ec-7a59-7807-819e-f97b62d154e0" title="Ссылка на реплику">#3</a></header><div class="prose"><p><em>(в экспорте сообщение пустое)</em></p>

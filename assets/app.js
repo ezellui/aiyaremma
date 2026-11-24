@@ -401,14 +401,20 @@ function setupConversation(data) {
       showBranch(branchLink[1]);
       return;
     }
-    if (!location.hash.startsWith('#m-')) return;
-    const id=location.hash.slice(3);
+    const hash = location.hash;
+    const tool = hash.startsWith('#tool-') ? select(hash.slice(1)) : null;
+    const id = tool ? tool.closest('.message').id.slice(2) : hash.startsWith('#m-') ? hash.slice(3) : '';
     if (!nodes.has(id)) return;
     if (!active.chain.includes(id)) {
       const branch=data.branches.find(b=>b.tail.includes(id));
       if (branch) showBranch(branch.id);
     }
-    requestAnimationFrame(()=>nodes.get(id).scrollIntoView({block:'start'}));
+    if (tool) {
+      for (let node = tool; node && node.id !== 'm-' + id; node = node.parentElement) {
+        if (node.tagName === 'DETAILS') node.open = true;
+      }
+    }
+    requestAnimationFrame(() => (tool || nodes.get(id)).scrollIntoView({block:'start'}));
   }
 
   picker.addEventListener('change', () => {
@@ -416,6 +422,17 @@ function setupConversation(data) {
     history.replaceState(null, '', '#b-' + active.id);
   });
   window.addEventListener('hashchange',jumpToHash);
+  messages.addEventListener('click', event => {
+    const action = event.target.closest('button[data-tools]');
+    if (!action) return;
+    const series = action.closest('.tool-series');
+    const open = action.dataset.tools === 'open';
+    for (const item of series.querySelectorAll('details')) item.open = open;
+    if (!open) {
+      series.open = false;
+      series.querySelector('summary').focus();
+    }
+  });
   pickerVersion.addEventListener('change',renderVersion);
   select('viewer-close').addEventListener('click',()=>pane.close());
   select('back-to-messages').addEventListener('click',()=>picker.scrollIntoView({block:'center'}));
