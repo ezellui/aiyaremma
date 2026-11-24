@@ -1,0 +1,23 @@
+{
+  "autoMemoryEnabled": false,
+  "includeGitInstructions": false,
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "autoAllowBashIfSandboxed": true,
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "*.github.com",
+        "*.githubusercontent.com",
+        "registry.npmjs.org",
+        "pypi.org",
+        "files.pythonhosted.org"
+      ]
+    }
+  },
+  "permissions": {
+    "allow": ["WebSearch", "WebFetch"]
+  }
+}

@@ -1,0 +1,243 @@
+--- предыдущая/Конструктор-философских-концепций-и-интерпретаций.html
++++ текущая/Конструктор-философских-концепций-и-интерпретаций.html
+@@ -82,6 +82,9 @@
+ 
+     <script type="text/babel">
+         const PhilosophyConceptExplorer = () => {
++          // Состояние для названия концепции
++          const [conceptName, setConceptName] = React.useState("Ваша философская концепция");
++          
+           // Состояние для выбранных категорий
+           const [selectedCategories, setSelectedCategories] = React.useState({
+             // Онтологические категории
+@@ -466,9 +469,10 @@
+           // Состояние для отображения релевантных философских дилемм
+           const [relevantDilemmas, setRelevantDilemmas] = React.useState([]);
+ 
+-          // Обновление выводов при изменении выбранных категорий
++          // Обновление выводов и имени концепции при изменении выбранных категорий
+           React.useEffect(() => {
+             updateConclusions();
++            generateConceptName();
+           }, [selectedCategories]);
+ 
+           // Функция обновления выводов
+@@ -705,6 +709,201 @@
+             }
+           };
+           
++          // Функция для генерации названия концепции на основе выбранных категорий
++          const generateConceptName = () => {
++            // Количество выбранных категорий
++            const selectedCount = Object.values(selectedCategories).filter(Boolean).length;
++            
++            // Если категории не выбраны, устанавливаем базовое название
++            if (selectedCount === 0) {
++              setConceptName("Ваша философская концепция");
++              return;
++            }
++            
++            // Префиксы для названий на основе онтологических категорий
++            const ontologyPrefixes = {
++              existence: "Экзист",
++              substance: "Субстанц",
++              essence: "Эссенц",
++              matter: "Матер",
++              form: "Форм",
++              potentiality: "Потенц",
++              actuality: "Актуал"
++            };
++            
++            // Суффиксы для названий на основе эпистемологических категорий
++            const epistemologySuffixes = {
++              knowledge: "гнозия",
++              belief: "пистия",
++              reason: "логия",
++              empiricism: "эмпирика",
++              rationalism: "рационализм",
++              truth: "аллетика",
++              justification: "верификация"
++            };
++            
++            // Модификаторы на основе аксиологических категорий
++            const axiologyModifiers = {
++              value: "ценностный ",
++              ethics: "этический ",
++              aesthetics: "эстетический ",
++              good: "агатовый ",
++              beauty: "эстетичный ",
++              virtue: "аретический "
++            };
++            
++            // Модификаторы на основе логических категорий
++            const logicModifiers = {
++              necessity: "необходимостный ",
++              possibility: "возможностный ",
++              universality: "универсальный ",
++              particularity: "партикулярный ",
++              causality: "каузальный ",
++              teleology: "телеологический "
++            };
++            
++            // Модификаторы на основе антропологических категорий
++            const anthropologyModifiers = {
++              consciousness: "сознательный ",
++              freedom: "свободный ",
++              will: "волевой ",
++              identity: "идентичный ",
++              person: "персоналистический ",
++              society: "социальный ",
++              history: "исторический "
++            };
++            
++            // Строим имя концепции
++            let name = "";
++            
++            // Добавляем модификаторы, если они есть
++            const modifiers = [];
++            Object.entries(axiologyModifiers).forEach(([category, modifier]) => {
++              if (selectedCategories[category]) {
++                modifiers.push(modifier);
++              }
++            });
++            
++            Object.entries(logicModifiers).forEach(([category, modifier]) => {
++              if (selectedCategories[category]) {
++                modifiers.push(modifier);
++              }
++            });
++            
++            Object.entries(anthropologyModifiers).forEach(([category, modifier]) => {
++              if (selectedCategories[category]) {
++                modifiers.push(modifier);
++              }
++            });
++            
++            // Выбираем 1-2 случайных модификатора, если их больше двух
++            if (modifiers.length > 2) {
++              // Перемешиваем массив
++              for (let i = modifiers.length - 1; i > 0; i--) {
++                const j = Math.floor(Math.random() * (i + 1));
++                [modifiers[i], modifiers[j]] = [modifiers[j], modifiers[i]];
++              }
++              // Обрезаем до 2 элементов
++              modifiers.length = 2;
++            }
++            
++            // Добавляем выбранные модификаторы
++            name += modifiers.join("");
++            
++            // Добавляем префикс из онтологических категорий
++            let hasPrefix = false;
++            Object.entries(ontologyPrefixes).forEach(([category, prefix]) => {
++              if (!hasPrefix && selectedCategories[category]) {
++                name += prefix;
++                hasPrefix = true;
++              }
++            });
++            
++            // Если нет префикса, добавляем стандартный
++            if (!hasPrefix) {
++              name += "Филос";
++            }
++            
++            // Добавляем суффикс из эпистемологических категорий
++            let hasSuffix = false;
++            Object.entries(epistemologySuffixes).forEach(([category, suffix]) => {
++              if (!hasSuffix && selectedCategories[category]) {
++                name += suffix;
++                hasSuffix = true;
++              }
++            });
++            
++            // Если нет суффикса, добавляем стандартный
++            if (!hasSuffix) {
++              name += "офия";
++            }
++            
++            // Добавляем тип на основе доминирующей категории
++            let dominantGroup = "";
++            let maxCount = 0;
++            
++            // Подсчитываем количество выбранных категорий в каждой группе
++            const ontologyCount = Object.keys(ontologyPrefixes).filter(category => 
++              selectedCategories[category]).length;
++            const epistemologyCount = Object.keys(epistemologySuffixes).filter(category => 
++              selectedCategories[category]).length;
++            const axiologyCount = Object.keys(axiologyModifiers).filter(category => 
++              selectedCategories[category]).length;
++            const logicCount = Object.keys(logicModifiers).filter(category => 
++              selectedCategories[category]).length;
++            const anthropologyCount = Object.keys(anthropologyModifiers).filter(category => 
++              selectedCategories[category]).length;
++            
++            // Определяем доминирующую группу
++            if (ontologyCount > maxCount) {
++              maxCount = ontologyCount;
++              dominantGroup = " (онтологическая)";
++            }
++            if (epistemologyCount > maxCount) {
++              maxCount = epistemologyCount;
++              dominantGroup = " (эпистемологическая)";
++            }
++            if (axiologyCount > maxCount) {
++              maxCount = axiologyCount;
++              dominantGroup = " (аксиологическая)";
++            }
++            if (logicCount > maxCount) {
++              maxCount = logicCount;
++              dominantGroup = " (логическая)";
++            }
++            if (anthropologyCount > maxCount) {
++              maxCount = anthropologyCount;
++              dominantGroup = " (антропологическая)";
++            }
++            
++            // Добавляем доминирующую группу к названию
++            name += dominantGroup;
++            
++            // Первая буква заглавная
++            name = name.charAt(0).toUpperCase() + name.slice(1);
++            
++            // Специальные случаи для известных философских направлений
++            if (selectedCategories.matter && !selectedCategories.consciousness && selectedCategories.existence) {
++              name = "Материализм";
++            } else if (!selectedCategories.matter && selectedCategories.consciousness && selectedCategories.form) {
++              name = "Идеализм";
++            } else if (selectedCategories.consciousness && selectedCategories.matter && selectedCategories.existence) {
++              name = "Дуализм";
++            } else if (selectedCategories.empiricism && selectedCategories.knowledge && !selectedCategories.rationalism) {
++              name = "Эмпиризм";
++            } else if (selectedCategories.rationalism && selectedCategories.reason && !selectedCategories.empiricism) {
++              name = "Рационализм";
++            } else if (selectedCategories.consciousness && selectedCategories.freedom && selectedCategories.existence) {
++              name = "Экзистенциализм";
++            } else if (selectedCategories.value && selectedCategories.good && selectedCategories.ethics) {
++              name = "Аксиология";
++            } else if (selectedCategories.causality && selectedCategories.necessity && !selectedCategories.freedom) {
++              name = "Детерминизм";
++            }
++            
++            setConceptName(name);
++          };
++          
+           // Сброс всех категорий
+           const resetCategories = () => {
+             const resetState = {};
+@@ -714,10 +913,15 @@
+             });
+             
+             setSelectedCategories(resetState);
++            setConceptName("Ваша философская концепция");
+           };
+ 
+           return (
+-            <div className="p-4 max-w-6xl mx-auto bg-gray-50 rounded-lg shadow-md">              
++            <div className="p-4 max-w-6xl mx-auto bg-gray-50 rounded-lg shadow-md">
++              <div className="mb-6 bg-white p-4 rounded-lg shadow">
++                <h2 className="text-2xl font-bold text-center text-purple-800 mb-2">{conceptName}</h2>
++                <p className="text-center text-gray-600">Ваша уникальная философская концепция, сформированная на основе выбранных категорий</p>
++              </div>              
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <div className="col-span-1 bg-white p-4 rounded-lg shadow overflow-y-auto max-h-screen category-panel">
+                   <h2 className="text-xl font-semibold mb-4">Выберите философские категории</h2>

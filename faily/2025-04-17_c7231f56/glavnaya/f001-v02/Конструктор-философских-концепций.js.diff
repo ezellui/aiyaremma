@@ -1,0 +1,151 @@
+--- предыдущая/Конструктор-философских-концепций.jsx
++++ текущая/Конструктор-философских-концепций.jsx
+@@ -7,7 +7,8 @@
+     'Бытие', 'Сущность', 'Сознание', 'Материя', 'Субстанция', 
+     'Субъект', 'Мир', 'Истина', 'Знание', 'Язык', 
+     'Знак', 'Время', 'Пространство', 'Свобода', 'Необходимость', 
+-    'Ценность', 'Трансцендентное', 'Имманентное', 'Единое', 'Множественное'
++    'Ценность', 'Трансцендентное', 'Имманентное', 'Единое', 'Множественное',
++    'Целое', 'Разрыв'
+   ];
+ 
+   const relationTypes = [
+@@ -32,10 +33,13 @@
+   const [editingConceptName, setEditingConceptName] = useState(false);
+   const [editingDescription, setEditingDescription] = useState(false);
+   const [customNodeName, setCustomNodeName] = useState('');
++  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+   const [customCategory, setCustomCategory] = useState('');
+   const [showCustomCategory, setShowCustomCategory] = useState(false);
+   const [bidirectional, setBidirectional] = useState(false);
+   const [selectedRelationType, setSelectedRelationType] = useState(relationTypes[0]);
++  const [isDragging, setIsDragging] = useState(false);
++  const [draggedNode, setDraggedNode] = useState(null);
+   
+   const canvasRef = useRef(null);
+   const containerRef = useRef(null);
+@@ -48,7 +52,8 @@
+     'Истина': '#6B5CA5', 'Язык': '#6B5CA5', 'Знак': '#6B5CA5',
+     'Свобода': '#F9F871', 'Необходимость': '#F9F871',
+     'Ценность': '#1A535C', 'Трансцендентное': '#1A535C', 'Имманентное': '#1A535C',
+-    'Единое': '#C06C84', 'Множественное': '#C06C84'
++    'Единое': '#C06C84', 'Множественное': '#C06C84', 'Целое': '#C06C84',
++    'Разрыв': '#E76F51'
+   };
+ 
+   // Функция для получения цвета категории или генерации его для пользовательских категорий
+@@ -82,7 +87,7 @@
+   // Перерисовка графа при изменении данных
+   useEffect(() => {
+     drawGraph();
+-  }, [nodes, edges, selectedNode, selectedEdge, sourceNode]);
++  }, [nodes, edges, selectedNode, selectedEdge, sourceNode, isDragging]);
+ 
+   // Функция для рисования графа
+   const drawGraph = () => {
+@@ -176,7 +181,7 @@
+       context.fillStyle = getCategoryColor(node.category);
+       
+       // Если узел выбран или используется для связи, подсвечиваем его
+-      if (selectedNode === index || sourceNode === index) {
++      if (selectedNode === index || sourceNode === index || (isDragging && draggedNode === index)) {
+         context.shadowBlur = 15;
+         context.shadowColor = '#2684FF';
+       } else {
+@@ -230,6 +235,13 @@
+     
+     if (isAddingEdge) {
+       drawGraph();
++    }
++    
++    if (isDragging && draggedNode !== null) {
++      const newNodes = [...nodes];
++      newNodes[draggedNode].x = canvas.mouseX;
++      newNodes[draggedNode].y = canvas.mouseY;
++      setNodes(newNodes);
+     }
+   };
+ 
+@@ -263,7 +275,9 @@
+           // Начинаем добавление связи
+           setSourceNode(index);
+         } else {
+-          // Просто выбираем узел
++          // Начинаем перетаскивание или выбираем узел
++          setIsDragging(true);
++          setDraggedNode(index);
+           setSelectedNode(index);
+           setSelectedEdge(null);
+         }
+@@ -303,7 +317,7 @@
+           const newNode = {
+             id: nodes.length > 0 ? Math.max(...nodes.map(n => n.id)) + 1 : 0,
+             name: customNodeName || 'Узел ' + (nodes.length + 1),
+-            category: showCustomCategory ? customCategory : categories[0],
++            category: showCustomCategory ? customCategory : selectedCategory,
+             x: x,
+             y: y
+           };
+@@ -319,6 +333,11 @@
+         }
+       }
+     }
++  };
++
++  const handleCanvasMouseUp = () => {
++    setIsDragging(false);
++    setDraggedNode(null);
+   };
+ 
+   // Функция для удаления выбранного элемента
+@@ -578,6 +597,7 @@
+               <ul className="list-disc list-inside text-sm">
+                 <li>Добавляйте узлы (философские категории) и связи между ними</li>
+                 <li>Выбирайте типы связей и задавайте их направление</li>
++                <li>Перетаскивайте узлы для удобного расположения на схеме</li>
+                 <li>Сохраняйте и экспортируйте созданные концепции</li>
+                 <li>Редактируйте название и описание концепции</li>
+               </ul>
+@@ -587,6 +607,7 @@
+               <ul className="list-disc list-inside text-sm">
+                 <li>Нажмите "Добавить узел", затем кликните на холст для размещения</li>
+                 <li>Нажмите "Добавить связь", выберите тип связи, затем последовательно кликните по двум узлам</li>
++                <li>Выберите узел и перетащите его по холсту для изменения расположения</li>
+                 <li>Выберите узел или связь, чтобы увидеть их свойства в правой панели</li>
+                 <li>Используйте кнопку "Удалить" для удаления выбранного элемента</li>
+               </ul>
+@@ -630,33 +651,4 @@
+                     value={customNodeName} 
+                     onChange={(e) => setCustomNodeName(e.target.value)}
+                     className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+-                    placeholder="Введите название"
+-                  />
+-                </div>
+-                
+-                <div className="mb-2">
+-                  <label className="flex items-center text-sm mb-1">
+-                    <input 
+-                      type="checkbox" 
+-                      checked={showCustomCategory}
+-                      onChange={() => setShowCustomCategory(!showCustomCategory)}
+-                      className="mr-1"
+-                    />
+-                    Своя категория
+-                  </label>
+-                  
+-                  {showCustomCategory ? (
+-                    <input 
+-                      type="text" 
+-                      value={customCategory} 
+-                      onChange={(e) => setCustomCategory(e.target.value)}
+-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+-                      placeholder="Введите категорию"
+-                    />
+-                  ) : (
+-                    <select 
+-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+-                      onChange={(e) => setSelectedCategory(e.target.value)}
+-                    >
+-                      {categories.map(cat => (
+-                        
++                    placeholder="Введите название

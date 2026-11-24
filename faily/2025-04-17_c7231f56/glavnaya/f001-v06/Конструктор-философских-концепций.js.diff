@@ -1,0 +1,487 @@
+--- предыдущая/Конструктор-философских-концепций.jsx
++++ текущая/Конструктор-философских-концепций.jsx
+@@ -1,4 +1,103 @@
+-import React, { useState, useEffect, useRef, useCallback } from 'react';
++      {/* Основной интерфейс */}
++      <div className="flex flex-1 overflow-hidden">
++        {/* Левая панель инструментов */}
++        <div className="w-64 bg-gray-200 p-4 flex flex-col overflow-auto">
++          <h3 className="font-semibold mb-3">Инструменты</h3>
++          
++          {/* Инструменты работы с узлами */}
++          <div className="mb-4">
++            <h4 className="text-sm font-medium mb-2">Узлы</h4>
++            
++            {isAddingNode ? (
++              <div className="mb-3 p-3 bg-white rounded-md shadow-sm">
++                <div className="mb-2">
++                  <label className="block text-sm mb-1">Название узла:</label>
++                  <input 
++                    type="text" 
++                    value={customNodeName} 
++                    onChange={(e) => setCustomNodeName(e.target.value)}
++                    className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
++                    placeholder="Введите название"
++                  />
++                </div>
++                
++                <div className="mb-2">
++                  <label className="flex items-center text-sm mb-1">
++                    <input 
++                      type="checkbox" 
++                      checked={showCustomCategory}
++                      onChange={() => setShowCustomCategory(!showCustomCategory)}
++                      className="mr-1"
++                    />
++                    Своя категория
++                  </label>
++                  
++                  {showCustomCategory ? (
++                    <input 
++                      type="text" 
++                      value={customCategory} 
++                      onChange={(e) => setCustomCategory(e.target.value)}
++                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
++                      placeholder="Введите категорию"
++                    />
++                  ) : (
++                    <select 
++                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
++                      value={selectedCategory}
++                      onChange={(e) => setSelectedCategory(e.target.value)}
++                    >
++                      {categories.map(cat => (
++                        <option key={cat} value={cat}>{cat}</option>
++                      ))}
++                    </select>
++                  )}
++                </div>
++                
++                <div className="flex justify-between mt-2">
++                  <button 
++                    className="bg-gray-400 text-white px-2 py-1 rounded text-sm"
++                    onClick={() => {
++                      setIsAddingNode(false);
++                      setActiveMode(null);
++                    }}
++                  >
++                    Отмена
++                  </button>
++                  <button 
++                    className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
++                    onClick={() => {
++                      const newNode = {
++                        id: nodes.length > 0 ? Math.max(...nodes.map(n => n.id)) + 1 : 0,
++                        name: customNodeName || 'Узел ' + (nodes.length + 1),
++                        category: showCustomCategory ? customCategory : selectedCategory,
++                        x: containerRef.current.clientWidth / 2 / scale - offsetX / scale,
++                        y: containerRef.current.clientHeight / 2 / scale - offsetY / scale
++                      };
++                      setNodes([...nodes, newNode]);
++                      setIsAddingNode(false);
++                      setActiveMode(null);
++                      setCustomNodeName('');
++                      setShowCustomCategory(false);
++                      setCustomCategory('');
++                    }}
++                  >
++                    Создать
++                  </button>
++                </div>
++              </div>
++            ) : (
++              <button 
++                className="bg-blue-500 text-white px-3 py-2 rounded w-full flex items-center justify-center text-sm mb-3"
++                onClick={() => {
++                  if (isAddingEdge) {
++                    setIsAddingEdge(false);
++                    setSourceNode(null);
++                  }
++                  setIsAddingNode(true);
++                  setActiveMode('node');
++                }}
++              >
++                <Plus size={16} className="mr-1" />import React, { useState, useEffect, useRef, useCallback } from 'react';
+ import { ChevronDown, ChevronUp, Plus, Trash, Save, Download, Info, X, Edit, Check, Undo, Redo, ZoomIn, ZoomOut, Move, Maximize, Upload, AlertTriangle, RotateCcw } from 'lucide-react';
+ 
+ const PhilosophyGraph = () => {
+@@ -527,6 +626,182 @@
+     e.preventDefault(); // Отключаем стандартное контекстное меню
+   };, что индекс действителен
+       if (draggedNode >= 0 && draggedNode < newNodes.length) {
++        // Обновляем позицию с учетом масштаба и смещения
++        newNodes[draggedNode].x = (canvas.mouseX - offsetX) / scale;
++        newNodes[draggedNode].y = (canvas.mouseY - offsetY) / scale;
++        setNodes(newNodes);
++      } else {
++        // Сбрасываем состояние перетаскивания, если индекс недействителен
++        setIsDragging(false);
++        setDraggedNode(null);
++      }
++    }
++    
++    // Панорамирование
++    if (isPanning) {
++      const dx = canvas.mouseX - panStartX;
++      const dy = canvas.mouseY - panStartY;
++      setOffsetX(offsetX + dx);
++      setOffsetY(offsetY + dy);
++      setPanStartX(canvas.mouseX);
++      setPanStartY(canvas.mouseY);
++    }
++  };
++
++  const handleCanvasMouseDown = (e) => {
++    if (editingConceptName || editingDescription) {
++      // Если пользователь редактирует текст, игнорируем клики по холсту
++      return;
++    }
++    
++    const canvas = canvasRef.current;
++    const rect = canvas.getBoundingClientRect();
++    const x = e.clientX - rect.left;
++    const y = e.clientY - rect.top;
++    
++    // Сохраняем начальные координаты для панорамирования
++    setPanStartX(x);
++    setPanStartY(y);
++    
++    // Проверяем правую кнопку мыши для панорамирования
++    if (e.button === 2) {
++      e.preventDefault();
++      setIsPanning(true);
++      return;
++    }
++    
++    // Преобразуем координаты клика с учетом масштаба и смещения
++    const canvasX = (x - offsetX) / scale;
++    const canvasY = (y - offsetY) / scale;
++    
++    // Проверяем, кликнул ли пользователь по узлу
++    let nodeClicked = false;
++    nodes.forEach((node, index) => {
++      const distance = Math.sqrt((canvasX - node.x) ** 2 + (canvasY - node.y) ** 2);
++      if (distance <= 20 / scale) {
++        nodeClicked = true;
++        
++        if (isAddingEdge && sourceNode !== null) {
++          // Завершаем добавление связи
++          if (sourceNode !== index) {
++            const newEdge = {
++              source: nodes[sourceNode].id,
++              target: node.id,
++              type: selectedRelationType,
++              bidirectional: bidirectional
++            };
++            setEdges([...edges, newEdge]);
++          }
++          setSourceNode(null);
++          setIsAddingEdge(false);
++          setActiveMode(null);
++        } else if (isAddingEdge) {
++          // Начинаем добавление связи
++          setSourceNode(index);
++        } else {
++          // Начинаем перетаскивание или выбираем узел только если не в режиме добавления
++          if (!isAddingEdge && !isAddingNode) {
++            setIsDragging(true);
++            setDraggedNode(index);
++            setSelectedNode(index);
++            setSelectedEdge(null);
++          }
++        }
++      }
++    });
++    
++    // Проверяем, кликнул ли пользователь по связи
++    if (!nodeClicked && !isAddingEdge && !isAddingNode) {
++      let edgeClicked = false;
++      edges.forEach((edge, index) => {
++        const source = nodes.find(n => n.id === edge.source);
++        const target = nodes.find(n => n.id === edge.target);
++        
++        if (source && target) {
++          // Преобразуем координаты с учетом масштаба
++          const sx = source.x;
++          const sy = source.y;
++          const tx = target.x;
++          const ty = target.y;
++          
++          // Проверяем, находится ли точка достаточно близко к линии
++          const A = canvasY - sy;
++          const B = sx - canvasX;
++          const C = sx * sy - sx * canvasY;
++          
++          const distance = Math.abs(A * tx + B * ty + C) / Math.sqrt(A * A + B * B);
++          
++          // Проверяем, находится ли точка между двумя концами линии
++          const dotProduct = ((canvasX - sx) * (tx - sx) + (canvasY - sy) * (ty - sy));
++          const squaredLength = ((tx - sx) ** 2 + (ty - sy) ** 2);
++          
++          if (distance < 10 / scale && dotProduct >= 0 && dotProduct <= squaredLength) {
++            edgeClicked = true;
++            setSelectedEdge(index);
++            setSelectedNode(null);
++          }
++        }
++      });
++      
++      if (!edgeClicked) {
++        // Если пользователь кликнул по пустому месту и активен режим добавления узлов
++        if (isAddingNode) {
++          const newNode = {
++            id: nodes.length > 0 ? Math.max(...nodes.map(n => n.id)) + 1 : 0,
++            name: customNodeName || 'Узел ' + (nodes.length + 1),
++            category: showCustomCategory ? customCategory : selectedCategory,
++            x: canvasX,
++            y: canvasY
++          };
++          setNodes([...nodes, newNode]);
++          setIsAddingNode(false);
++          setActiveMode(null);
++          setCustomNodeName('');
++          setShowCustomCategory(false);
++          setCustomCategory('');
++        } else {
++          // Снимаем выделение
++          setSelectedNode(null);
++          setSelectedEdge(null);
++        }
++      }
++    }
++  };
++
++  const handleCanvasMouseUp = () => {
++    setIsDragging(false);
++    setDraggedNode(null);
++    setIsPanning(false);
++  };
++  
++  const handleCanvasWheel = (e) => {
++    e.preventDefault();
++    const canvas = canvasRef.current;
++    const rect = canvas.getBoundingClientRect();
++    const mouseX = e.clientX - rect.left;
++    const mouseY = e.clientY - rect.top;
++    
++    // Вычисляем точку, относительно которой будем масштабировать (позиция курсора)
++    const x = (mouseX - offsetX) / scale;
++    const y = (mouseY - offsetY) / scale;
++    
++    // Определяем новый масштаб
++    const delta = e.deltaY > 0 ? 0.9 : 1.1;
++    const newScale = Math.max(0.1, Math.min(5, scale * delta));
++    
++    // Корректируем смещение, чтобы центр масштабирования оставался под курсором
++    const newOffsetX = mouseX - x * newScale;
++    const newOffsetY = mouseY - y * newScale;
++    
++    setScale(newScale);
++    setOffsetX(newOffsetX);
++    setOffsetY(newOffsetY);
++  };
++  
++  const handleCanvasContextMenu = (e) => {
++    e.preventDefault(); // Отключаем стандартное контекстное меню
++  };, что индекс действителен
++      if (draggedNode >= 0 && draggedNode < newNodes.length) {
+         newNodes[draggedNode].x = canvas.mouseX;
+         newNodes[draggedNode].y = canvas.mouseY;
+         setNodes(newNodes);
+@@ -645,15 +920,27 @@
+   // Функция для удаления выбранного элемента
+   const handleDelete = () => {
+     if (selectedNode !== null) {
+-      // Удаляем узел и все связанные с ним связи
+-      const nodeId = nodes[selectedNode].id;
+-      setNodes(nodes.filter((_, i) => i !== selectedNode));
+-      setEdges(edges.filter(edge => edge.source !== nodeId && edge.target !== nodeId));
+-      setSelectedNode(null);
++      // Запрашиваем подтверждение
++      showConfirmationDialog(
++        "Вы уверены, что хотите удалить этот узел и все связанные с ним связи?",
++        () => {
++          // Удаляем узел и все связанные с ним связи
++          const nodeId = nodes[selectedNode].id;
++          setNodes(nodes.filter((_, i) => i !== selectedNode));
++          setEdges(edges.filter(edge => edge.source !== nodeId && edge.target !== nodeId));
++          setSelectedNode(null);
++        }
++      );
+     } else if (selectedEdge !== null) {
+-      // Удаляем связь
+-      setEdges(edges.filter((_, i) => i !== selectedEdge));
+-      setSelectedEdge(null);
++      // Запрашиваем подтверждение
++      showConfirmationDialog(
++        "Вы уверены, что хотите удалить эту связь?",
++        () => {
++          // Удаляем связь
++          setEdges(edges.filter((_, i) => i !== selectedEdge));
++          setSelectedEdge(null);
++        }
++      );
+     }
+   };
+ 
+@@ -699,11 +986,35 @@
+ 
+   // Функция для загрузки сохраненной концепции
+   const handleLoad = (concept) => {
+-    setNodes(concept.nodes);
+-    setEdges(concept.edges);
+-    setCurrentConceptName(concept.name);
+-    setConceptDescription(concept.description);
+-    setShowSaved(false);
++    // Если текущая концепция не пуста, запрашиваем подтверждение
++    if (nodes.length > 0) {
++      showConfirmationDialog(
++        "Загрузка новой концепции заменит текущую. Продолжить?",
++        () => {
++          setNodes(concept.nodes);
++          setEdges(concept.edges);
++          setCurrentConceptName(concept.name);
++          setConceptDescription(concept.description);
++          setShowSaved(false);
++          
++          // Сбрасываем масштаб и смещение
++          setScale(1);
++          setOffsetX(0);
++          setOffsetY(0);
++        }
++      );
++    } else {
++      setNodes(concept.nodes);
++      setEdges(concept.edges);
++      setCurrentConceptName(concept.name);
++      setConceptDescription(concept.description);
++      setShowSaved(false);
++      
++      // Сбрасываем масштаб и смещение
++      setScale(1);
++      setOffsetX(0);
++      setOffsetY(0);
++    }
+   };
+ 
+   // Функция для экспорта концепции в JSON
+@@ -722,6 +1033,106 @@
+     document.body.appendChild(downloadAnchorNode);
+     downloadAnchorNode.click();
+     downloadAnchorNode.remove();
++  };
++  
++  // Функция для импорта JSON
++  const handleImport = () => {
++    if (fileInputRef.current) {
++      fileInputRef.current.click();
++    }
++  };
++  
++  // Обработчик выбора файла для импорта
++  const handleFileInputChange = (e) => {
++    const file = e.target.files[0];
++    if (!file) return;
++    
++    const reader = new FileReader();
++    reader.onload = (event) => {
++      try {
++        const importedData = JSON.parse(event.target.result);
++        
++        // Проверка валидности данных
++        if (!importedData.nodes || !Array.isArray(importedData.nodes) || 
++            !importedData.edges || !Array.isArray(importedData.edges)) {
++          alert('Неверный формат файла. Отсутствуют необходимые данные о узлах и связях.');
++          return;
++        }
++        
++        // Запрашиваем подтверждение, если текущая концепция не пуста
++        if (nodes.length > 0) {
++          showConfirmationDialog(
++            "Импорт новой концепции заменит текущую. Продолжить?",
++            () => {
++              setNodes(importedData.nodes);
++              setEdges(importedData.edges);
++              
++              if (importedData.name) {
++                setCurrentConceptName(importedData.name);
++              }
++              
++              if (importedData.description) {
++                setConceptDescription(importedData.description);
++              }
++              
++              // Сбрасываем масштаб и смещение
++              setScale(1);
++              setOffsetX(0);
++              setOffsetY(0);
++            }
++          );
++        } else {
++          setNodes(importedData.nodes);
++          setEdges(importedData.edges);
++          
++          if (importedData.name) {
++            setCurrentConceptName(importedData.name);
++          }
++          
++          if (importedData.description) {
++            setConceptDescription(importedData.description);
++          }
++          
++          // Сбрасываем масштаб и смещение
++          setScale(1);
++          setOffsetX(0);
++          setOffsetY(0);
++        }
++      } catch (error) {
++        alert('Ошибка при чтении файла: ' + error.message);
++      }
++    };
++    
++    reader.readAsText(file);
++    
++    // Сбрасываем значение input, чтобы можно было загрузить тот же файл повторно
++    e.target.value = null;
++  };
++  
++  // Функция для автоматического размещения узлов
++  const handleAutoLayout = () => {
++    if (nodes.length === 0) return;
++    
++    // Простой алгоритм размещения - круговое расположение
++    const centerX = containerRef.current ? containerRef.current.clientWidth / 2 / scale : 400;
++    const centerY = containerRef.current ? containerRef.current.clientHeight / 2 / scale : 300;
++    const radius = Math.min(centerX, centerY) * 0.7;
++    
++    const newNodes = [...nodes];
++    newNodes.forEach((node, index) => {
++      const angle = (2 * Math.PI * index) / nodes.length;
++      node.x = centerX + radius * Math.cos(angle);
++      node.y = centerY + radius * Math.sin(angle);
++    });
++    
++    setNodes(newNodes);
++  };
++  
++  // Функция сброса масштаба и смещения
++  const handleResetView = () => {
++    setScale(1);
++    setOffsetX(0);
++    setOffsetY(0);
+   };
+ 
+   // Подготовка информации о выбранном элементе для панели свойств
+@@ -844,6 +1255,12 @@
+             onClick={handleExport}
+           >
+             <Download size={16} className="mr-1" /> Экспорт
++          </button>
++          <button 
++            className="bg-indigo-600 text-white px-3 py-1 rounded flex items-center text-sm"
++            onClick={handleImport}
++          >
++            <Upload size={16} className="mr-1" /> Импорт
+           </button>
+           <button 
+             className="bg-amber-600 text-white px-3 py-1 rounded flex items-center text-sm"

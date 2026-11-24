@@ -1,0 +1,235 @@
+/**
+ * Response processor service for Claude API responses
+ */
+
+const { defaultLogger } = require('../../../shared/lib/logging/logger');
+const { BadRequestError } = require('../../../shared/lib/errors/HttpErrors');
+const responseProcessors = require('../utils/responseProcessors');
+
+/**
+ * Service for processing responses from Claude API
+ */
+class ResponseProcessorService {
+  /**
+   * Create a new response processor service
+   * @param {Object} [logger=defaultLogger] - Logger instance
+   */
+  constructor(logger = defaultLogger) {
+    this.logger = logger;
+    this.processors = responseProcessors;
+  }
+
+  /**
+   * Process a response from Claude API
+   * @param {string} queryType - Type of query
+   * @param {Object} response - Claude API response
+   * @returns {Promise<Object>} Processed response
+   */
+  async process(queryType, response) {
+    try {
+      this.logger.debug('Processing response', { queryType });
+      
+      // Validate response structure
+      this._validateResponse(response);
+      
+      // Get processor for query type
+      const processor = this._getProcessor(queryType);
+      
+      if (!processor) {
+        throw new BadRequestError(`No processor found for query type: ${queryType}`);
+      }
+      
+      // Extract content from response
+      const content = this._extractContent(response);
+      
+      // Process the content
+      const processedResult = await processor(content);
+      
+      // Add metadata
+      const result = {
+        ...processedResult,
+        metadata: {
+          model: response.model,
+          processingDate: new Date().toISOString(),
+          usage: response.usage,
+        },
+      };
+      
+      this.logger.debug('Response processed successfully', { queryType });
+      
+      return result;
+    } catch (error) {
+      this.logger.error('Error processing response', {
+        error: error.message,
+        queryType,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get processor function for query type
+   * @param {string} queryType - Query type
+   * @returns {Function|null} Processor function
+   * @private
+   */
+  _getProcessor(queryType) {
+    // Map query types to processor functions
+    const processorMap = {
+      graph_validation: this.processors.processGraphValidation,
+      graph_enrichment: this.processors.processGraphEnrichment,
+      category_description: this.processors.processCategoryDescription,
+      relationship_description: this.processors.processRelationshipDescription,
+      thesis_generation: this.processors.processThesisGeneration,
+      thesis_elaboration: this.processors.processThesisElaboration,
+      thesis_comparison: this.processors.processThesisComparison,
+      graph_from_thesis: this.processors.processGraphFromThesis,
+      synthesis: this.processors.processSynthesis,
+      compatibility_analysis: this.processors.processCompatibilityAnalysis,
+      synthesis_critique: this.processors.processSynthesisCritique,
+      name_analysis: this.processors.processNameAnalysis,
+      origin_detection: this.processors.processOriginDetection,
+      general_query: this.processors.processGeneralQuery,
+    };
+    
+    return processorMap[queryType];
+  }
+
+  /**
+   * Validate response structure
+   * @param {Object} response - Claude API response
+   * @throws {BadRequestError} If response is invalid
+   * @private
+   */
+  _validateResponse(response) {
+    if (!response) {
+      throw new BadRequestError('Response is empty');
+    }
+    
+    if (!response.content) {
+      throw new BadRequestError('Response content is missing');
+    }
+    
+    if (response.content.length === 0) {
+      throw new BadRequestError('Response content is empty');
+    }
+  }
+
+  /**
+   * Extract content from Claude API response
+   * @param {Object} response - Claude API response
+   * @returns {string} Extracted content
+   * @private
+   */
+  _extractContent(response) {
+    // Handle different response formats
+    if (Array.isArray(response.content)) {
+      // New format with array of content blocks
+      const textContent = response.content
+        .filter(block => block.type === 'text')
+        .map(block => block.text)
+        .join('\n');
+      
+      if (!textContent) {
+        throw new BadRequestError('No text content found in response');
+      }
+      
+      return textContent;
+    } else if (typeof response.content === 'string') {
+      // Old format with string content
+      return response.content;
+    } else {
+      throw new BadRequestError('Unexpected response content format');
+    }
+  }
+
+  /**
+   * Parse JSON content from response
+   * @param {string} content - Response content
+   * @returns {Object} Parsed JSON object
+   * @private
+   */
+  _parseJSON(content) {
+    try {
+      // Try to extract JSON from markdown code block
+      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[1]);
+      }
+      
+      // Try to extract JSON from plain text
+      const plainJsonMatch = content.match(/\{[\s\S]*\}/);
+      if (plainJsonMatch) {
+        return JSON.parse(plainJsonMatch[0]);
+      }
+      
+      // Try direct parsing
+      return JSON.parse(content);
+    } catch (error) {
+      throw new BadRequestError(`Failed to parse JSON from response: ${error.message}`);
+    }
+  }
+
+  /**
+   * Parse structured sections from response
+   * @param {string} content - Response content
+   * @returns {Object} Parsed sections
+   * @private
+   */
+  _parseSections(content) {
+    const sections = {};
+    const sectionRegex = /^## (.*?)\n([\s\S]*?)(?=^## |\z)/gm;
+    let match;
+    
+    while ((match = sectionRegex.exec(content)) !== null) {
+      const sectionName = match[1].trim();
+      const sectionContent = match[2].trim();
+      sections[sectionName] = sectionContent;
+    }
+    
+    return sections;
+  }
+
+  /**
+   * Parse list items from response
+   * @param {string} content - Response content
+   * @returns {Array<string>} Parsed list items
+   * @private
+   */
+  _parseList(content) {
+    const items = [];
+    const listRegex = /^[-*+]\s+(.+)$/gm;
+    let match;
+    
+    while ((match = listRegex.exec(content)) !== null) {
+      items.push(match[1].trim());
+    }
+    
+    // If no list items found, try numbered lists
+    if (items.length === 0) {
+      const numberedRegex = /^\d+\.\s+(.+)$/gm;
+      while ((match = numberedRegex.exec(content)) !== null) {
+        items.push(match[1].trim());
+      }
+    }
+    
+    return items;
+  }
+
+  /**
+   * Clean response content
+   * @param {string} content - Raw content
+   * @returns {string} Cleaned content
+   * @private
+   */
+  _cleanContent(content) {
+    return content
+      .trim()
+      .replace(/\n{3,}/g, '\n\n') // Replace multiple newlines with double newlines
+      .replace(/^\s*[-*]+\s*$/gm, '') // Remove empty list markers
+      .trim();
+  }
+}
+
+module.exports = ResponseProcessorService;

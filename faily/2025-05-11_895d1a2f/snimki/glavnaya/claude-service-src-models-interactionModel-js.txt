@@ -1,0 +1,187 @@
+/**
+ * Model for Claude interactions
+ */
+
+const { v4: uuidv4 } = require('uuid');
+
+/**
+ * Claude interaction model
+ */
+class ClaudeInteraction {
+  /**
+   * Create a new Claude interaction
+   * @param {Object} data - Interaction data
+   * @param {string} [data.interactionId] - Unique identifier for the interaction
+   * @param {string} data.userId - ID of the user who initiated the interaction
+   * @param {string} [data.conceptId] - ID of the related concept (if applicable)
+   * @param {string} data.queryType - Type of query (from the query_type enum)
+   * @param {string} data.queryContent - Content of the query sent to Claude
+   * @param {string} [data.responseContent] - Content of the response from Claude
+   * @param {Date} [data.interactionDate] - When the interaction occurred
+   * @param {number} [data.processingTime] - Time taken to process the query in seconds
+   * @param {Object} [data.metadata] - Additional metadata about the interaction
+   * @param {string} [data.status] - Status of the interaction (pending, success, failed)
+   * @param {string} [data.error] - Error message if the interaction failed
+   * @param {number} [data.inputTokens] - Number of input tokens used
+   * @param {number} [data.outputTokens] - Number of output tokens generated
+   * @param {number} [data.cost] - Cost of the interaction in USD
+   * @param {string} [data.model] - Claude model used
+   * @param {string} [data.taskId] - Associated task ID for async operations
+   */
+  constructor(data) {
+    this.interactionId = data.interactionId || uuidv4();
+    this.userId = data.userId;
+    this.conceptId = data.conceptId || null;
+    this.queryType = data.queryType;
+    this.queryContent = data.queryContent;
+    this.responseContent = data.responseContent || null;
+    this.interactionDate = data.interactionDate || new Date();
+    this.processingTime = data.processingTime || null;
+    this.metadata = data.metadata || {};
+    this.status = data.status || 'pending';
+    this.error = data.error || null;
+    this.inputTokens = data.inputTokens || 0;
+    this.outputTokens = data.outputTokens || 0;
+    this.cost = data.cost || 0;
+    this.model = data.model || null;
+    this.taskId = data.taskId || null;
+  }
+  
+  /**
+   * Convert to database format
+   * @returns {Object} Database representation
+   */
+  toDatabase() {
+    return {
+      interaction_id: this.interactionId,
+      user_id: this.userId,
+      concept_id: this.conceptId,
+      query_type: this.queryType,
+      query_content: this.queryContent,
+      response_content: this.responseContent,
+      interaction_date: this.interactionDate,
+      processing_time: this.processingTime,
+      metadata: this.metadata,
+      status: this.status,
+      error: this.error,
+      input_tokens: this.inputTokens,
+      output_tokens: this.outputTokens,
+      cost: this.cost,
+      model: this.model,
+      task_id: this.taskId,
+    };
+  }
+  
+  /**
+   * Create from database format
+   * @param {Object} dbData - Database data
+   * @returns {ClaudeInteraction} ClaudeInteraction instance
+   */
+  static fromDatabase(dbData) {
+    return new ClaudeInteraction({
+      interactionId: dbData.interaction_id,
+      userId: dbData.user_id,
+      conceptId: dbData.concept_id,
+      queryType: dbData.query_type,
+      queryContent: dbData.query_content,
+      responseContent: dbData.response_content,
+      interactionDate: dbData.interaction_date,
+      processingTime: dbData.processing_time,
+      metadata: dbData.metadata,
+      status: dbData.status,
+      error: dbData.error,
+      inputTokens: dbData.input_tokens,
+      outputTokens: dbData.output_tokens,
+      cost: dbData.cost,
+      model: dbData.model,
+      taskId: dbData.task_id,
+    });
+  }
+  
+  /**
+   * Update interaction with response
+   * @param {Object} response - Response data
+   * @param {string} response.content - Response content
+   * @param {number} response.processingTime - Processing time in seconds
+   * @param {number} response.inputTokens - Input tokens used
+   * @param {number} response.outputTokens - Output tokens generated
+   * @param {number} response.cost - Cost in USD
+   * @param {string} response.model - Model used
+   */
+  updateWithResponse(response) {
+    this.responseContent = response.content;
+    this.processingTime = response.processingTime;
+    this.inputTokens = response.inputTokens;
+    this.outputTokens = response.outputTokens;
+    this.cost = response.cost;
+    this.model = response.model;
+    this.status = 'success';
+  }
+  
+  /**
+   * Mark interaction as failed
+   * @param {string} error - Error message
+   */
+  markAsFailed(error) {
+    this.status = 'failed';
+    this.error = error;
+  }
+  
+  /**
+   * Get query type enum values
+   * @returns {Array<string>} Query types
+   */
+  static getQueryTypes() {
+    return [
+      'graph_validation',
+      'graph_enrichment',
+      'category_description',
+      'relationship_description',
+      'thesis_generation',
+      'thesis_elaboration',
+      'graph_from_thesis',
+      'synthesis',
+      'compatibility_analysis',
+      'synthesis_critique',
+      'name_analysis',
+      'origin_detection',
+      'general_query',
+    ];
+  }
+  
+  /**
+   * Get status enum values
+   * @returns {Array<string>} Status values
+   */
+  static getStatusValues() {
+    return ['pending', 'success', 'failed'];
+  }
+  
+  /**
+   * Validate the interaction
+   * @throws {Error} If validation fails
+   */
+  validate() {
+    if (!this.userId) {
+      throw new Error('User ID is required');
+    }
+    
+    if (!this.queryType) {
+      throw new Error('Query type is required');
+    }
+    
+    if (!ClaudeInteraction.getQueryTypes().includes(this.queryType)) {
+      throw new Error(`Invalid query type: ${this.queryType}`);
+    }
+    
+    if (!this.queryContent) {
+      throw new Error('Query content is required');
+    }
+    
+    if (this.status && !ClaudeInteraction.getStatusValues().includes(this.status)) {
+      throw new Error(`Invalid status: ${this.status}`);
+    }
+  }
+}
+
+module.exports = ClaudeInteraction;

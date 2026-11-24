@@ -1,0 +1,78 @@
+
+graph TD
+    %% Определение узлов (категорий) с классами для стилизации
+    Sing["Сингулярность"] :::central
+    Mult["Множественность"] :::primary
+    Dif["Различие"] :::primary
+    Rep["Повторение"] :::primary
+    Virt["Виртуальное"] :::primary
+    Act["Актуальное"] :::primary
+    Becom["Становление"] :::primary
+    
+    %% Второстепенные категории
+    Pot["Потенция"] :::secondary
+    Ent["Энтелехия"] :::secondary
+    Whole["Целое"] :::secondary
+    One["Единое"] :::secondary
+    Time["Время"] :::tertiary
+    Space["Пространство"] :::tertiary
+    Int["Интенсивность"] :::secondary
+    Cont["Контингентность"] :::secondary
+    Imm["Имманентное"] :::tertiary
+    Trans["Трансцендентное"] :::tertiary
+    Rhiz["Ризома"] :::tertiary
+    Struct["Структура"] :::tertiary
+    Sign["Знак"] :::tertiary
+    Mean["Значение"] :::tertiary
+    
+    %% Связи центральных категорий
+    Mult <-->|"Диалектическое противоречие"| Sing
+    
+    Dif -->|"Конституирующая"| Mult
+    Mult -->|"Конституирующая"| Rep
+    
+    Dif -->|"Дополнение"| Sing
+    Rep -->|"Дополнение"| Sing
+    
+    Virt <-->|"Становление"| Sing
+    Act <-->|"Становление"| Sing
+    
+    Virt -->|"Причинность"| Becom
+    Act -->|"Причинность"| Becom
+    
+    Sing -->|"Репрезентационная"| Becom
+    
+    Dif -->|"Эволюционная"| Virt
+    Rep -->|"Эволюционная"| Act
+    
+    %% Связи второстепенных категорий
+    Pot -->|"Телеологическая"| Virt
+    Ent -->|"Телеологическая"| Act
+    
+    Int -->|"Феноменологическая"| Imm
+    Cont -->|"Феноменологическая"| Trans
+    
+    Whole -->|"Конституирующая"| Time
+    One -->|"Конституирующая"| Space
+    
+    Rhiz -->|"Герменевтическая"| Whole
+    Struct -->|"Иерархическая"| One
+    
+    Time <-->|"Дополнение"| Space
+    
+    Sign -->|"Репрезентационная"| Time
+    Mean -->|"Репрезентационная"| Space
+    
+    Sign -->|"Аксиологическая"| Whole
+    
+    Imm -->|"Причинность"| Becom
+    Trans -->|"Причинность"| Becom
+    
+    Becom <-->|"Диалектическое противоречие"| Imm
+    Becom <-->|"Диалектическое противоречие"| Trans
+    
+    %% Определение стилей для категорий
+    classDef central fill:#FFD700,stroke:#000,stroke-width:2px,font-weight:bold
+    classDef primary fill:#FF9966,stroke:#000,stroke-width:1.5px
+    classDef secondary fill:#DDDDDD,stroke:#000
+    classDef tertiary fill:#CCFFFF,stroke:#000

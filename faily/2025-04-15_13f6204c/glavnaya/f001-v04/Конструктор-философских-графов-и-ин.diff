@@ -1,0 +1,295 @@
+--- предыдущая/Конструктор-философских-графов-и-интерпретаций.html
++++ текущая/Конструктор-философских-графов-и-интерпретаций.html
+@@ -1133,4 +1133,291 @@
+           
+           // Функция для применения предустановленной парадигмы
+           const applyParadigm = (paradigmName) => {
+-            const paradigm = philosophicalParadigms.find(p
++            const paradigm = philosophicalParadigms.find(p => p.name === paradigmName);
++            
++            if (!paradigm) return;
++            
++            // Очищаем текущий граф
++            setNodes([]);
++            setLinks([]);
++            
++            // Добавляем узлы парадигмы
++            const newNodes = paradigm.nodes.map(nodeId => ({
++              id: nodeId,
++              name: categoryDict[nodeId].name
++            }));
++            
++            // Добавляем связи парадигмы
++            const newLinks = paradigm.links.map(link => ({
++              source: link.source,
++              target: link.target,
++              type: link.type
++            }));
++            
++            setNodes(newNodes);
++            setLinks(newLinks);
++          };
++          
++          // Функция для сброса графа
++          const resetGraph = () => {
++            setNodes([]);
++            setLinks([]);
++            setSelectedNode(null);
++            setConnectionMenu({
++              visible: false,
++              x: 0,
++              y: 0,
++              sourceNode: null,
++              targetNode: null
++            });
++            setConceptName("Ваша философская концепция");
++            setConclusions([]);
++            setImplications([]);
++            setCompatibleParadigms([]);
++            setCompatibleSchools([]);
++            setRelevantDilemmas([]);
++          };
++          
++          // Основной компонент интерфейса
++          return (
++            <div className="p-4 max-w-6xl mx-auto bg-gray-50 rounded-lg shadow-md">
++              {/* Заголовок концепции */}
++              <div className="mb-6 bg-white p-4 rounded-lg shadow">
++                <h2 className="text-2xl font-bold text-center text-purple-800 mb-2">{conceptName}</h2>
++                <p className="text-center text-gray-600">Ваша уникальная философская концепция, сформированная на основе графа взаимосвязанных категорий</p>
++              </div>
++              
++              {/* Основной контент */}
++              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
++                {/* Левая панель с категориями */}
++                <div className="col-span-1 bg-white p-4 rounded-lg shadow overflow-y-auto max-h-screen category-panel">
++                  <h2 className="text-xl font-semibold mb-4">Философские категории</h2>
++                  
++                  {/* Группы категорий */}
++                  {categoryGroups.map((group, groupIndex) => (
++                    <div key={groupIndex} className="mb-6">
++                      <h3 className="text-lg font-medium mb-2">{group.title}</h3>
++                      <div className="grid grid-cols-2 gap-2">
++                        {group.categories.map((category) => {
++                          const isAdded = nodes.some(node => node.id === category.id);
++                          
++                          return (
++                            <div 
++                              key={category.id} 
++                              className={`p-2 rounded-lg cursor-pointer transition-all ${
++                                isAdded 
++                                  ? "bg-purple-100 border-2 border-purple-500" 
++                                  : "bg-gray-100 hover:bg-gray-200 border-2 border-transparent"
++                              }`}
++                              onClick={() => isAdded ? removeCategory(category.id) : addCategory(category.id)}
++                              title={category.description}
++                            >
++                              <div className="flex items-center">
++                                <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: category.color }}></div>
++                                <span className="text-sm font-medium truncate">{category.name}</span>
++                              </div>
++                            </div>
++                          );
++                        })}
++                      </div>
++                    </div>
++                  ))}
++                  
++                  {/* Предустановленные парадигмы */}
++                  <h2 className="text-xl font-semibold mt-6 mb-4">Предустановленные парадигмы</h2>
++                  <div className="space-y-2 mb-6">
++                    {philosophicalParadigms.map((paradigm) => (
++                      <button
++                        key={paradigm.name}
++                        className="block w-full text-left px-3 py-2 text-sm bg-purple-100 hover:bg-purple-200 rounded paradigm-button"
++                        onClick={() => applyParadigm(paradigm.name)}
++                      >
++                        {paradigm.name}
++                      </button>
++                    ))}
++                  </div>
++                  
++                  {/* Легенда типов связей */}
++                  <h2 className="text-xl font-semibold mt-6 mb-4">Типы связей</h2>
++                  <div className="space-y-2 mb-6">
++                    {connectionTypes.map((type) => (
++                      <div key={type.id} className="flex items-center text-sm">
++                        <div 
++                          className="legend-line mr-2" 
++                          style={{ 
++                            backgroundColor: type.color,
++                            borderStyle: type.lineStyle === "dashed" ? "dashed" : type.lineStyle === "dotted" ? "dotted" : "solid"
++                          }}
++                        ></div>
++                        <span>{type.name}</span>
++                      </div>
++                    ))}
++                  </div>
++                  
++                  {/* Инструкции */}
++                  <div className="mt-6 p-3 bg-blue-50 rounded-lg text-sm">
++                    <h3 className="font-semibold mb-1">Инструкции:</h3>
++                    <ul className="list-disc pl-5 space-y-1">
++                      <li>Нажмите на категорию, чтобы добавить её в граф</li>
++                      <li>Нажмите на добавленную категорию, чтобы удалить её</li>
++                      <li>Нажмите на узел в графе, чтобы выбрать его (для создания связи)</li>
++                      <li>Затем нажмите на другой узел, чтобы создать связь</li>
++                      <li>Выберите тип связи в появившемся меню</li>
++                      <li>Для удаления связи выберите по очереди соединённые узлы</li>
++                    </ul>
++                  </div>
++                  
++                  {/* Кнопка сброса */}
++                  <button
++                    className="w-full mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
++                    onClick={resetGraph}
++                  >
++                    Сбросить граф
++                  </button>
++                </div>
++                
++                {/* Центральная и правая панели */}
++                <div className="col-span-1 md:col-span-2">
++                  {/* Граф */}
++                  <div 
++                    ref={graphContainerRef}
++                    className="bg-white p-4 rounded-lg shadow mb-4"
++                    onClick={handleBackgroundClick}
++                  >
++                    <h2 className="text-xl font-semibold mb-4">Философский граф</h2>
++                    <svg ref={svgRef} width="100%" height="500"></svg>
++                    
++                    {/* Меню выбора типа связи */}
++                    {connectionMenu.visible && (
++                      <div 
++                        className="connection-menu absolute z-10"
++                        style={{ 
++                          top: connectionMenu.y - 100, 
++                          left: connectionMenu.x - 100 
++                        }}
++                      >
++                        <h3 className="text-sm font-semibold mb-2">Выберите тип связи:</h3>
++                        {connectionTypes.map((type) => (
++                          <div 
++                            key={type.id} 
++                            className="connection-type text-sm"
++                            onClick={() => handleCreateConnection(type.id)}
++                          >
++                            <div className="flex items-center">
++                              <div 
++                                className="w-3 h-3 mr-2"
++                                style={{ backgroundColor: type.color }}
++                              ></div>
++                              <span>{type.name}</span>
++                            </div>
++                          </div>
++                        ))}
++                      </div>
++                    )}
++                  </div>
++                  
++                  {/* Выводы */}
++                  <div className="bg-white p-4 rounded-lg shadow overflow-y-auto max-h-screen">
++                    <h2 className="text-xl font-semibold mb-4">Философские выводы</h2>
++                    
++                    {/* Основные выводы */}
++                    <h3 className="text-lg font-medium mb-2">Основные положения системы</h3>
++                    {conclusions.length > 0 ? (
++                      <ul className="list-disc pl-5 space-y-2 mb-6">
++                        {conclusions.map((conclusion, index) => (
++                          <li key={index} className="conclusion-item text-gray-800">
++                            {conclusion}
++                          </li>
++                        ))}
++                      </ul>
++                    ) : (
++                      <p className="text-gray-500 italic mb-6">Добавьте категории и связи между ними, чтобы увидеть философские выводы.</p>
++                    )}
++                    
++                    {/* Сложные импликации */}
++                    <h3 className="text-lg font-medium mb-2 text-purple-800">Сложные философские импликации</h3>
++                    {implications.length > 0 ? (
++                      <ul className="list-disc pl-5 space-y-3 mb-6">
++                        {implications.map((implication, index) => (
++                          <li key={index} className="conclusion-item text-gray-800 bg-purple-50 p-3 rounded shadow-sm">
++                            {implication}
++                          </li>
++                        ))}
++                      </ul>
++                    ) : (
++                      <p className="text-gray-500 italic mb-6">Создайте более сложные связи между категориями, чтобы увидеть философские импликации.</p>
++                    )}
++                    
++                    {/* Совместимые парадигмы */}
++                    <h3 className="text-lg font-medium mb-2">Совместимые философские парадигмы</h3>
++                    {compatibleParadigms.length > 0 ? (
++                      <div className="space-y-4 mb-6">
++                        {compatibleParadigms.map((paradigm, index) => (
++                          <div key={index} className="p-3 bg-green-50 border border-green-200 rounded conclusion-item">
++                            <h4 className="font-medium text-green-700">{paradigm.name}</h4>
++                            <p className="text-sm text-gray-700">{paradigm.description}</p>
++                          </div>
++                        ))}
++                      </div>
++                    ) : (
++                      <p className="text-gray-500 italic mb-6">Ваш граф не соответствует ни одной из предустановленных парадигм.</p>
++                    )}
++                    
++                    {/* Релевантные дилеммы */}
++                    <h3 className="text-lg font-medium mb-2">Релевантные философские дилеммы</h3>
++                    {relevantDilemmas.length > 0 ? (
++                      <div className="space-y-4 mb-6">
++                        {relevantDilemmas.map((dilemma, index) => (
++                          <div key={index} className="p-3 bg-yellow-50 border border-yellow-200 rounded conclusion-item">
++                            <h4 className="font-medium text-yellow-700">{dilemma.name}</h4>
++                            <p className="text-sm text-gray-700">{dilemma.description}</p>
++                            <div className="mt-2">
++                              <h5 className="text-sm font-medium text-gray-700">Основные позиции:</h5>
++                              <ul className="list-disc pl-5 text-sm text-gray-600">
++                                {dilemma.positions.map((position, posIndex) => (
++                                  <li key={posIndex}>{position}</li>
++                                ))}
++                              </ul>
++                            </div>
++                          </div>
++                        ))}
++                      </div>
++                    ) : (
++                      <p className="text-gray-500 italic mb-6">Добавьте больше категорий, чтобы увидеть релевантные философские дилеммы.</p>
++                    )}
++                    
++                    {/* Совместимые философские школы */}
++                    <h3 className="text-lg font-medium mb-2">Совместимые философские школы</h3>
++                    {compatibleSchools.length > 0 ? (
++                      <div className="space-y-4 mb-6">
++                        {compatibleSchools.map((school, index) => (
++                          <div key={index} className="p-3 bg-blue-50 border border-blue-200 rounded conclusion-item">
++                            <h4 className="font-medium text-blue-700">{school.name}</h4>
++                            <p className="text-sm text-gray-700">{school.description}</p>
++                            <div className="mt-2">
++                              <h5 className="text-sm font-medium text-gray-700">Представители и ключевые идеи:</h5>
++                              <ul className="list-disc pl-5 text-sm text-gray-600">
++                                {school.representatives.map((representative, repIndex) => (
++                                  <li key={repIndex}>
++                                    <span className="quote">{representative}</span>
++                                  </li>
++                                ))}
++                              </ul>
++                            </div>
++                          </div>
++                        ))}
++                      </div>
++                    ) : (
++                      <p className="text-gray-500 italic mb-6">Ваш граф не соответствует ни одной из известных философских школ.</p>
++                    )}
++                  </div>
++                </div>
++              </div>
++            </div>
++          );
++        };
++
++        ReactDOM.render(
++            <PhilosophyGraphExplorer />,
++            document.getElementById('root')
++        );

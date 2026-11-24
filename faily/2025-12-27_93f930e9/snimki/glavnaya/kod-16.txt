@@ -1,0 +1,14 @@
+init/
+├── postgres/
+│   ├── 01-init-databases.sql
+│   ├── 02-create-users-table.sql
+│   ├── 03-create-concepts-table.sql
+│   ├── 04-create-philosophers-table.sql
+│   ├── 05-create-traditions-table.sql
+│   ├── 06-create-templates.sql
+│   ├── 07-create-interactions-table.sql
+│   └── 08-insert-seed-data.sql
+├── mongo/
+│   └── init-mongo.js                   # Инициализация MongoDB
+└── neo4j/
+    └── init-constraints.cypher         # Constraints и индексы

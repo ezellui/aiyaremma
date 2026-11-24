@@ -1,0 +1,41 @@
+--- предыдущая/unified_modal_complete_styles.css
++++ текущая/unified_modal_complete_styles.css
+@@ -24,11 +24,25 @@
+     border-radius: 15px;
+     box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+     max-width: 650px;
+-    max-height: 85vh;
++    max-height: 90vh; /* Увеличено с 85vh до 90vh */
+     overflow-y: auto;
+     z-index: 2000;
+     border: 1px solid rgba(255,255,255,0.2);
+     transition: all 0.3s ease;
++    box-sizing: border-box; /* КРИТИЧЕСКИ ВАЖНО: padding входит в max-height */
++}
++
++/* Универсальное правило для всех элементов внутри модального окна */
++.detail-modal *,
++.detail-modal *::before,
++.detail-modal *::after {
++    box-sizing: border-box;
++}
++
++/* Контейнер модального контента */
++.modal-content {
++    box-sizing: border-box;
++    padding-bottom: 10px; /* Небольшой отступ внизу для визуального комфорта */
+ }
+ 
+ /* Показать модальное окно */
+@@ -89,9 +103,9 @@
+     letter-spacing: 0.5px;
+ }
+ 
+-/* Заголовки в режиме редактирования сдвигаем вниз */
++/* Заголовки в режиме редактирования сдвигаем вниз, но меньше */
+ .detail-modal.edit-mode h2 {
+-    margin-top: 20px;
++    margin-top: 12px; /* Уменьшено с 20px до 12px */
+ }
+ 
+ /* ============================================================================ */

@@ -1,0 +1,27 @@
+concept-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── connection.js
+│   │   └── migrations/
+│   │       ├── 001_create_concepts.sql
+│   │       ├── 002_create_philosophers.sql
+│   │       ├── 003_create_traditions.sql
+│   │       └── 004_create_relations.sql
+│   ├── models/
+│   │   ├── Concept.js
+│   │   ├── Philosopher.js
+│   │   └── Tradition.js
+│   ├── controllers/
+│   │   └── concept.controller.js
+│   ├── services/
+│   │   ├── concept.service.js
+│   │   └── cache.service.js
+│   └── routes/
+│       └── concept.routes.js
+└── tests/

@@ -1,0 +1,229 @@
+--- предыдущая/Социальная-сеть-русской-философии.mmd
++++ текущая/Социальная-сеть-русской-философии.mmd
+@@ -13,6 +13,13 @@
+     classDef emigrant fill:#ffe599,stroke:#d79b00,color:#333
+     classDef modern fill:#b1ddf0,stroke:#10739e,color:#333
+     classDef foreign fill:#e2e2e2,stroke:#666666,color:#333
++
++    %% Определение стилей линий
++    linkStyle default stroke:#333,stroke-width:1
++    %% Определение стилей для разных типов связей (будут применены ниже через className)
++    %% Знакомство: зеленая линия
++    %% Ложно приписываемая связь: красная пунктирная линия
++    %% Опосредованное влияние: серая пунктирная линия
+ 
+     %% ГРУППИРОВКА ПО ПЕРИОДАМ
+     subgraph "Древнерусский период (XI-XVII вв.)"
+@@ -166,19 +173,19 @@
+     FedorK --> IvanP
+     FedorK --> IvanG
+     %% Знакомство
+-    NilS ---o IosifV
+-    FedorK ---o IvanG
+-    AndKurb ---o IvanG
+-    %% Ложно приписываемые связи
+-    KlimS -.-x Ilarion
+-    IvanP -.-x FedorK
++    NilS -- "знакомство" --> IosifV
++    FedorK -- "знакомство" --> IvanG
++    AndKurb -- "знакомство" --> IvanG
++    %% Ложно приписываемые связи
++    KlimS -. "ложно<br>приписываемая<br>связь" .-> Ilarion
++    IvanP -. "ложно<br>приписываемая<br>связь" .-> FedorK
+ 
+     %% Связи древнерусских философов с зарубежными
+-    Platon -.-o Ilarion
+-    Aristotle -.-o MaksimG
++    Platon -. "опосредованное<br>влияние" .-> Ilarion
++    Aristotle -. "опосредованное<br>влияние" .-> MaksimG
+     Plotin --> NilS
+     JohnDamascus --> IosifV
+-    ThomasAquin -.-o MaksimG
++    ThomasAquin -. "опосредованное<br>влияние" .-> MaksimG
+ 
+     %% Просвещение
+     Voltaire --> Lomonosov
+@@ -190,17 +197,17 @@
+     Novikov --> Gamalei
+     Novikov --> Lopukhin
+     Lopukhin --> Labzin
+-    Skovoroda -.-o Lomonosov
+-    NilS -.-o Skovoroda
+-    IosifV -.-o Lomonosov
+-    %% Знакомство
+-    Novikov ---o Radishchev
+-    Novikov ---o Gamalei
+-    Novikov ---o Lopukhin
+-    Lopukhin ---o Labzin
+-    %% Ложно приписываемые связи
+-    Voltaire -.-x Radishchev
+-    Rousseau -.-x Skovoroda
++    Skovoroda -. "опосредованное<br>влияние" .-> Lomonosov
++    NilS -. "опосредованное<br>влияние" .-> Skovoroda
++    IosifV -. "опосредованное<br>влияние" .-> Lomonosov
++    %% Знакомство
++    Novikov -- "знакомство" --> Radishchev
++    Novikov -- "знакомство" --> Gamalei
++    Novikov -- "знакомство" --> Lopukhin
++    Lopukhin -- "знакомство" --> Labzin
++    %% Ложно приписываемые связи
++    Voltaire -. "ложно<br>приписываемая<br>связь" .-> Radishchev
++    Rousseau -. "ложно<br>приписываемая<br>связь" .-> Skovoroda
+ 
+     %% Славянофилы и западники
+     Schelling --> Khomyakov
+@@ -230,17 +237,17 @@
+     Tyutchev --> Dostoyevsky
+     Hilferding --> Danilevsky
+     %% Знакомство
+-    Khomyakov ---o Kireevsky
+-    Khomyakov ---o YuriSamarin
+-    KonstAksakov ---o IvanAksakov
+-    Dostoyevsky ---o MDostoyevsky
+-    Dostoyevsky ---o Strakhov
+-    Dostoyevsky ---o Leontiev
+-    Tyutchev ---o IvanAksakov
+-    %% Ложно приписываемые связи
+-    Dostoyevsky -.-x Khomyakov
+-    Tyutchev -.-x Khomyakov
+-    Tyutchev -.-x Kireevsky
++    Khomyakov -- "знакомство" --> Kireevsky
++    Khomyakov -- "знакомство" --> YuriSamarin
++    KonstAksakov -- "знакомство" --> IvanAksakov
++    Dostoyevsky -- "знакомство" --> MDostoyevsky
++    Dostoyevsky -- "знакомство" --> Strakhov
++    Dostoyevsky -- "знакомство" --> Leontiev
++    Tyutchev -- "знакомство" --> IvanAksakov
++    %% Ложно приписываемые связи
++    Dostoyevsky -. "ложно<br>приписываемая<br>связь" .-> Khomyakov
++    Tyutchev -. "ложно<br>приписываемая<br>связь" .-> Khomyakov
++    Tyutchev -. "ложно<br>приписываемая<br>связь" .-> Kireevsky
+ 
+     %% Западники связи
+     Chaadaev --> Belinsky
+@@ -269,15 +276,15 @@
+     Hegel --> Granovsky
+     Kant --> Chicherin
+     %% Знакомство  
+-    Belinsky ---o Hertzen
+-    Hertzen ---o Ogarev
+-    Belinsky ---o Turgenev
+-    Hertzen ---o Turgenev
+-    Belinsky ---o Botkin
+-    Granovsky ---o Chicherin
+-    %% Ложно приписываемые связи
+-    Chaadaev -.-x Hegel
+-    Belinsky -.-x Feuerbach
++    Belinsky -- "знакомство" --> Hertzen
++    Hertzen -- "знакомство" --> Ogarev
++    Belinsky -- "знакомство" --> Turgenev
++    Hertzen -- "знакомство" --> Turgenev
++    Belinsky -- "знакомство" --> Botkin
++    Granovsky -- "знакомство" --> Chicherin
++    %% Ложно приписываемые связи
++    Chaadaev -. "ложно<br>приписываемая<br>связь" .-> Hegel
++    Belinsky -. "ложно<br>приписываемая<br>связь" .-> Feuerbach
+ 
+     %% Славянофилы и Западники между собой
+     Chaadaev --> Khomyakov
+@@ -290,11 +297,11 @@
+     Strakhov -.-> Chernyshevsky
+     Leontiev -.-> Chernyshevsky
+     %% Знакомство
+-    Khomyakov ---o Chaadaev
+-    Hertzen ---o Khomyakov
+-    %% Ложно приписываемые связи
+-    Hertzen -.-x Dostoyevsky
+-    Belinsky -.-x Dostoyevsky
++    Khomyakov -- "знакомство" --> Chaadaev
++    Hertzen -- "знакомство" --> Khomyakov
++    %% Ложно приписываемые связи
++    Hertzen -. "ложно<br>приписываемая<br>связь" .-> Dostoyevsky
++    Belinsky -. "ложно<br>приписываемая<br>связь" .-> Dostoyevsky
+ 
+     %% Религиозная философия
+     Khomyakov --> Solovyov
+@@ -340,20 +347,20 @@
+     Husserl --> Shpet
+     Husserl --> Frank
+     %% Знакомство
+-    Solovyov ---o Trubetskoy_S
+-    Solovyov ---o Trubetskoy_E
+-    Solovyov ---o FedorovN
+-    FedorovN ---o Dostoyevsky
+-    Berdyaev ---o Bulgakov
+-    Berdyaev ---o Frank
+-    Berdyaev ---o Shestov
+-    Bulgakov ---o Florensky
+-    Lossky ---o Frank
+-    Merezhkovsky ---o Rozanov
+-    %% Ложно приписываемые связи
+-    Solovyov -.-x Dostoyevsky
+-    FedorovN -.-x Tolstoy
+-    Shestov -.-x Husserl
++    Solovyov -- "знакомство" --> Trubetskoy_S
++    Solovyov -- "знакомство" --> Trubetskoy_E
++    Solovyov -- "знакомство" --> FedorovN
++    FedorovN -- "знакомство" --> Dostoyevsky
++    Berdyaev -- "знакомство" --> Bulgakov
++    Berdyaev -- "знакомство" --> Frank
++    Berdyaev -- "знакомство" --> Shestov
++    Bulgakov -- "знакомство" --> Florensky
++    Lossky -- "знакомство" --> Frank
++    Merezhkovsky -- "знакомство" --> Rozanov
++    %% Ложно приписываемые связи
++    Solovyov -. "ложно<br>приписываемая<br>связь" .-> Dostoyevsky
++    FedorovN -. "ложно<br>приписываемая<br>связь" .-> Tolstoy
++    Shestov -. "ложно<br>приписываемая<br>связь" .-> Husserl
+ 
+     %% Космисты
+     FedorovN --> Tsiolkovsky
+@@ -364,11 +371,11 @@
+     Umov --> Tsiolkovsky
+     Umov --> Vernadsky
+     %% Знакомство
+-    Tsiolkovsky ---o Chizhevsky
+-    Vernadsky ---o Chizhevsky
+-    %% Ложно приписываемые связи
+-    FedorovN -.-x Tsiolkovsky
+-    FedorovN -.-x Vernadsky
++    Tsiolkovsky -- "знакомство" --> Chizhevsky
++    Vernadsky -- "знакомство" --> Chizhevsky
++    %% Ложно приписываемые связи
++    FedorovN -. "ложно<br>приписываемая<br>связь" .-> Tsiolkovsky
++    FedorovN -. "ложно<br>приписываемая<br>связь" .-> Vernadsky
+ 
+     %% Советские философы
+     Marx --> Plekhanov
+@@ -383,13 +390,13 @@
+     Hegel --> Ilyenkov
+     Feuerbach --> Plekhanov
+     %% Знакомство
+-    Plekhanov ---o Lenin
+-    Lenin ---o Lunacharsky
+-    Lenin ---o Bogdanov
+-    Ilyenkov ---o Mamardashvili
+-    %% Ложно приписываемые связи
+-    Marx -.-x Lenin
+-    Plekhanov -.-x Berdyaev
++    Plekhanov -- "знакомство" --> Lenin
++    Lenin -- "знакомство" --> Lunacharsky
++    Lenin -- "знакомство" --> Bogdanov
++    Ilyenkov -- "знакомство" --> Mamardashvili
++    %% Ложно приписываемые связи
++    Marx -. "ложно<br>приписываемая<br>связь" .-> Lenin
++    Plekhanov -. "ложно<br>приписываемая<br>связь" .-> Berdyaev
+ 
+     %% Современная философия
+     Berdyaev --> Contemporary1
+@@ -411,7 +418,7 @@
+         A2[A] <-->|взаимное влияние| B2[B]
+         A3[A] -.->|критика| B3[B]
+         A4[A] <-.->|полемика| B4[B]
+-        A5[A] ---o|личное знакомство| B5[B]
+-        A6[A] -.-x|ложно приписываемая связь| B6[B]
+-        A7[A] -.-o|опосредованное<br>влияние| B7[B]
++        A5[A] -- "знакомство" --> B5[B]
++        A6[A] -. "ложно<br>приписываемая<br>связь" .-> B6[B]
++        A7[A] -. "опосредованное<br>влияние" .-> B7[B]
+     end

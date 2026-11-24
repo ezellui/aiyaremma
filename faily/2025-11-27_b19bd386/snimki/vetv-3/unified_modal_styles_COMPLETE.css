@@ -1,0 +1,1159 @@
+/* ============================================ */
+/* УНИФИЦИРОВАННАЯ СИСТЕМА МОДАЛЬНЫХ ОКОН     */
+/* ИСЧЕРПЫВАЮЩИЕ CSS СТИЛИ                    */
+/* ============================================ */
+
+/* ============================================ */
+/* 1. БАЗОВАЯ СТРУКТУРА МОДАЛЬНОГО ОКНА        */
+/* ============================================ */
+
+/* Overlay (фон затемнения) */
+#modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1999;
+}
+
+#modalOverlay.show {
+    display: block;
+}
+
+/* Универсальное модальное окно (заменяет все 5 старых окон) */
+.detail-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.92);
+    color: white;
+    padding: 25px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    max-width: 550px;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 2000;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.detail-modal.show {
+    display: block;
+}
+
+/* Специфичная настройка для окна философа */
+#philosopherDetailModal.detail-modal {
+    max-width: 650px;
+    max-height: 85vh;
+}
+
+/* ============================================ */
+/* 2. КНОПКА ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА          */
+/* ============================================ */
+
+.modal-close,
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover,
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg);
+}
+
+/* ============================================ */
+/* 3. КНОПКА ПЕРЕКЛЮЧЕНИЯ РЕЖИМОВ              */
+/* ============================================ */
+
+.mode-switch-btn {
+    position: absolute;
+    top: 12px;
+    right: 50px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.mode-switch-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* ============================================ */
+/* 4. ИНДИКАТОР РЕЖИМА РЕДАКТИРОВАНИЯ          */
+/* ============================================ */
+
+.detail-modal.edit-mode {
+    border: 2px solid #667eea;
+    box-shadow: 0 10px 50px rgba(102, 126, 234, 0.5);
+}
+
+.detail-modal.edit-mode::before {
+    content: '✏️ Режим редактирования';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 15px;
+    border-radius: 5px 5px 0 0;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ============================================ */
+/* 5. КОНТЕНТ МОДАЛЬНОГО ОКНА                  */
+/* ============================================ */
+
+.modal-content {
+    /* Контейнер для всего контента */
+}
+
+/* Заголовки */
+.detail-modal h2 {
+    margin: 0 0 8px 0;
+    color: #a29bfe;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.detail-modal h3 {
+    margin: 15px 0 10px 0;
+    color: #a29bfe;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.detail-modal h4 {
+    margin: 12px 0 8px 0;
+    color: #a29bfe;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Описания */
+.detail-modal .description {
+    color: #e0e0e0;
+    margin-bottom: 18px;
+    line-height: 1.5;
+    font-size: 13px;
+}
+
+/* ============================================ */
+/* 6. ТЕГИ ФИЛОСОФОВ                           */
+/* ============================================ */
+
+.detail-modal .philosopher-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 12px;
+    opacity: 0.9;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.detail-modal .philosopher-tag:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+/* ============================================ */
+/* 7. СЕКЦИЯ РУБРИК (только в режиме просмотра концепции) */
+/* ============================================ */
+
+.detail-modal .rubric-section {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 18px;
+    border-radius: 10px;
+    border-left: 3px solid #a29bfe;
+    margin-bottom: 15px;
+}
+
+.detail-modal .rubric-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #a29bfe;
+    margin-bottom: 6px;
+}
+
+.detail-modal .rubric-description {
+    font-size: 12px;
+    color: #b0b0b0;
+    margin-bottom: 14px;
+    font-style: italic;
+}
+
+/* ============================================ */
+/* 8. СВЯЗАННЫЕ КОНЦЕПЦИИ                      */
+/* ============================================ */
+
+.detail-modal .related-concepts {
+    margin-top: 12px;
+}
+
+.detail-modal .related-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e0e0e0;
+    margin-bottom: 8px;
+}
+
+.detail-modal .concept-item {
+    display: flex;
+    align-items: center;
+    padding: 7px 10px;
+    margin: 4px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-modal .concept-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+    border-color: rgba(162, 155, 254, 0.4);
+}
+
+.detail-modal .concept-color {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.detail-modal .concept-name {
+    font-size: 13px;
+    color: #e0e0e0;
+    flex-grow: 1;
+}
+
+.detail-modal .concept-philosopher {
+    font-size: 10px;
+    color: #a0a0a0;
+    font-style: italic;
+}
+
+/* ============================================ */
+/* 9. СЕКЦИЯ СВЯЗЕЙ УЗЛА                       */
+/* ============================================ */
+
+.connections-section {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 3px solid #3498db;
+}
+
+.connections-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #a29bfe;
+    margin-bottom: 10px;
+}
+
+.connection-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+}
+
+.connection-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+}
+
+.connection-arrow {
+    font-size: 16px;
+    margin: 0 10px;
+    position: relative;
+}
+
+.connection-arrow-tooltip {
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 11px;
+}
+
+.connection-arrow:hover .connection-arrow-tooltip {
+    visibility: visible;
+}
+
+/* Раскрывающееся описание связи */
+.connection-toggle {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0 5px;
+    margin-left: 5px;
+    transition: transform 0.2s;
+}
+
+.connection-toggle:hover {
+    color: #2980b9;
+}
+
+.connection-toggle.expanded {
+    transform: rotate(180deg);
+}
+
+.connection-description {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 5px;
+    font-size: 11px;
+    color: #e0e0e0;
+    line-height: 1.5;
+    display: none;
+}
+
+.connection-description.show {
+    display: block;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Кнопки в секции связей */
+.toggle-all-descriptions-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 10px 0;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+.toggle-all-descriptions-btn:hover {
+    background: #2980b9;
+}
+
+.show-all-concepts-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 8px;
+    transition: background 0.3s;
+}
+
+.show-all-concepts-btn:hover {
+    background: #2980b9;
+}
+
+.goto-node-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.goto-node-btn:hover {
+    background: #229954;
+}
+
+/* ============================================ */
+/* 10. СЕКЦИЯ ВЗАИМОДЕЙСТВИЯ ФИЛОСОФОВ         */
+/* ============================================ */
+
+.philosopher-interactions-section {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 3px solid #e74c3c;
+}
+
+.philosopher-interactions-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #a29bfe;
+    margin-bottom: 10px;
+}
+
+.philosopher-interaction-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.philosopher-interaction-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+}
+
+/* ============================================ */
+/* 11. ПОИСК В МОДАЛЬНОМ ОКНЕ (темная тема)    */
+/* ============================================ */
+
+#modalSearch {
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2010;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 3px solid #a29bfe;
+}
+
+#modalSearch .legend-search-icon {
+    color: #a29bfe;
+}
+
+#modalSearch .legend-search-input-wrapper {
+    position: relative;
+}
+
+#modalSearch .legend-search-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+    width: 100%;
+    padding: 8px 30px 8px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+#modalSearch .legend-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#modalSearch .legend-search-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #a29bfe;
+}
+
+#modalSearch .legend-search-clear {
+    color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+    display: none;
+    transition: color 0.2s;
+}
+
+#modalSearch .legend-search-clear:hover {
+    color: #e74c3c;
+}
+
+#modalSearch .legend-search-clear.show {
+    display: block;
+}
+
+#modalSearch .search-results {
+    z-index: 2020;
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    max-height: 350px;
+    overflow-y: auto;
+    margin-top: 5px;
+    display: none;
+}
+
+#modalSearch .search-results.show {
+    display: block;
+}
+
+#modalSearch .search-result-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+#modalSearch .search-result-item:hover {
+    background: rgba(162, 155, 254, 0.2);
+}
+
+#modalSearch .search-result-label {
+    color: #e0e0e0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+#modalSearch .search-result-philosopher {
+    color: #b0b0b0;
+    font-size: 10px;
+    font-style: italic;
+}
+
+#modalSearch .search-no-results {
+    color: rgba(255, 255, 255, 0.5);
+    padding: 15px;
+    text-align: center;
+    font-size: 11px;
+}
+
+#modalSearch .search-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+#modalSearch .search-results::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#modalSearch .search-results::-webkit-scrollbar-thumb {
+    background: #a29bfe;
+    border-radius: 10px;
+}
+
+/* ============================================ */
+/* 12. SCROLLBAR ДЛЯ МОДАЛЬНОГО ОКНА           */
+/* ============================================ */
+
+.detail-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.detail-modal::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.detail-modal::-webkit-scrollbar-thumb {
+    background: #a29bfe;
+    border-radius: 10px;
+}
+
+.detail-modal::-webkit-scrollbar-thumb:hover {
+    background: #8b7fe6;
+}
+
+/* ============================================ */
+/* 13. ФОРМЫ РЕДАКТИРОВАНИЯ                    */
+/* ============================================ */
+
+.modal-form-group {
+    margin-bottom: 20px;
+}
+
+.modal-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #a29bfe;
+    font-size: 14px;
+}
+
+.modal-form-group input[type="text"],
+.modal-form-group input[type="number"],
+.modal-form-group textarea,
+.modal-form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #e0e0e0;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.modal-form-group input:focus,
+.modal-form-group textarea:focus,
+.modal-form-group select:focus {
+    outline: none;
+    border-color: #a29bfe;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.modal-form-group input::placeholder,
+.modal-form-group textarea::placeholder {
+    color: rgba(224, 224, 224, 0.5);
+}
+
+.modal-form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.modal-form-group input[type="color"] {
+    width: 60px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Inline формы (для размещения нескольких полей в строку) */
+.modal-form-inline {
+    display: flex;
+    gap: 15px;
+}
+
+.modal-form-inline > div {
+    flex: 1;
+}
+
+/* Чекбоксы */
+.modal-form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.modal-form-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.modal-form-checkbox label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+/* ============================================ */
+/* 14. КНОПКИ ДЕЙСТВИЙ В МОДАЛЬНОМ ОКНЕ        */
+/* ============================================ */
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.modal-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.modal-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.modal-btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.modal-btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.modal-btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.modal-btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+/* ============================================ */
+/* 15. СПИСКИ РЕДАКТИРОВАНИЯ                   */
+/* ============================================ */
+
+.modal-edit-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #a29bfe;
+}
+
+.modal-edit-section h4 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #a29bfe;
+}
+
+.modal-edit-list {
+    /* Контейнер для списка элементов */
+}
+
+.modal-edit-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+}
+
+.modal-edit-list-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(162, 155, 254, 0.4);
+}
+
+.modal-edit-list-item-content {
+    flex: 1;
+    cursor: pointer;
+}
+
+.modal-edit-list-item-name {
+    font-weight: 600;
+    color: #e0e0e0;
+    margin-bottom: 3px;
+}
+
+.modal-edit-list-item-desc {
+    font-size: 12px;
+    color: #b0b0b0;
+}
+
+.modal-edit-list-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.modal-list-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.modal-list-btn-edit {
+    background: #3498db;
+    color: white;
+}
+
+.modal-list-btn-edit:hover {
+    background: #2980b9;
+}
+
+.modal-list-btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.modal-list-btn-delete:hover {
+    background: #c0392b;
+}
+
+.modal-list-btn-add {
+    width: 100%;
+    padding: 10px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 10px;
+}
+
+.modal-list-btn-add:hover {
+    background: #229954;
+}
+
+/* ============================================ */
+/* 16. ПОИСК КОНЦЕПЦИЙ В ФОРМАХ                */
+/* ============================================ */
+
+.modal-concept-search {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.modal-concept-search-input {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 14px;
+    color: #e0e0e0;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+.modal-concept-search-input:focus {
+    outline: none;
+    border-color: #a29bfe;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.modal-concept-search-input::placeholder {
+    color: rgba(224, 224, 224, 0.5);
+}
+
+.modal-concept-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(42, 42, 62, 0.98);
+    border: 2px solid #a29bfe;
+    border-radius: 8px;
+    margin-top: 5px;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal-concept-search-results.show {
+    display: block;
+}
+
+.modal-concept-search-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+}
+
+.modal-concept-search-item:hover {
+    background: rgba(162, 155, 254, 0.2);
+}
+
+.modal-concept-search-item:last-child {
+    border-bottom: none;
+}
+
+.modal-concept-search-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 0 6px currentColor;
+}
+
+.modal-concept-search-name {
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+.modal-concept-search-philosopher {
+    font-size: 12px;
+    color: #b0b0b0;
+    margin-left: auto;
+}
+
+/* ============================================ */
+/* 17. РЕЖИМ ВЫБОРА НА ГРАФЕ                   */
+/* ============================================ */
+
+.graph-selection-mode {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    z-index: 1000;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.graph-selection-mode h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+
+.graph-selection-mode p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.graph-selection-cancel {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+.graph-selection-cancel:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================ */
+/* 18. ПРЕДУПРЕЖДАЮЩИЕ СООБЩЕНИЯ               */
+/* ============================================ */
+
+.modal-warning {
+    background: rgba(255, 243, 205, 0.15);
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.modal-warning h4 {
+    margin: 0 0 8px 0;
+    color: #ffc107;
+    font-size: 15px;
+}
+
+.modal-warning p {
+    margin: 0;
+    color: #e0e0e0;
+    font-size: 13px;
+}
+
+.modal-warning-list {
+    margin: 10px 0 0 20px;
+    color: #e0e0e0;
+}
+
+/* ============================================ */
+/* 19. СВОРАЧИВАЕМЫЕ СЕКЦИИ                    */
+/* ============================================ */
+
+.collapsible-section {
+    margin-bottom: 15px;
+}
+
+.collapsible-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.collapsible-header:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.collapsible-header-title {
+    font-weight: 600;
+    color: #a29bfe;
+    font-size: 14px;
+}
+
+.collapsible-toggle {
+    color: #a29bfe;
+    font-size: 16px;
+    transition: transform 0.2s;
+}
+
+.collapsible-toggle.expanded {
+    transform: rotate(180deg);
+}
+
+.collapsible-content {
+    padding: 10px 0;
+    display: none;
+}
+
+.collapsible-content.show {
+    display: block;
+    animation: slideDown 0.2s ease-out;
+}
+
+/* ============================================ */
+/* 20. АНИМАЦИИ                                */
+/* ============================================ */
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.detail-modal.show {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+/* ============================================ */
+/* 21. ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ                  */
+/* ============================================ */
+
+/* Разделитель */
+.modal-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 20px 0;
+}
+
+/* Информационная подсказка */
+.modal-hint {
+    font-size: 11px;
+    color: #b0b0b0;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+/* Статусный значок */
+.modal-status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.modal-status-badge.success {
+    background: rgba(39, 174, 96, 0.2);
+    color: #27ae60;
+}
+
+.modal-status-badge.warning {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+
+.modal-status-badge.error {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+
+/* ============================================ */
+/* КОНЕЦ СТИЛЕЙ УНИФИЦИРОВАННОЙ СИСТЕМЫ        */
+/* ============================================ */

@@ -1,0 +1,154 @@
+A vertical philosophical poster in the style of Viennese modernism crossed 
+with British post-war engraving and anime sentai illustration. Title at the 
+top in clean serif capitals: "SAILOR SPRACHGRENZE", with subtitle below: 
+"AT THE LIMIT OF LANGUAGE". Beneath the subtitle, a smaller German motto: 
+"DIE SPRACHE SPRICHT UNS".
+
+CRITICAL STRUCTURE: the entire poster is divided VERTICALLY into TWO 
+ASYMMETRIC HALVES that meet at the central figure. The left half is COLD, 
+LOGICAL, AUSTERE (early Wittgenstein, the Tractatus): pure white background, 
+steel-grey, faint blue, geometric lines, scattered logical formulas and truth 
+tables, an abstract logical space without objects. The right half is WARM, 
+LIVED-IN, ORDINARY (late Wittgenstein, the Investigations): a faintly 
+sketched ordinary cityscape with workshops, market stalls, children playing, 
+ochre and warm earth tones, the texture of everyday life. The boundary 
+between the two halves is a JAGGED, ZIGZAGGING vertical line — not a clean 
+center divide, but an irregular interface that reflects the irregular 
+boundary of language itself.
+
+Central figure: a young woman in her late twenties, slender, slightly tense, 
+with a serious focused expression — almost pained, like someone who is 
+straining to think a thought that is barely speakable. Her gaze is directed 
+SIDEWAYS AND DOWNWARD, toward one of her own hands, attentive to the 
+instrument she holds. NOT looking at the viewer, NOT into the distance.
+
+She wears an asymmetric sailor-senshi-style uniform that follows the 
+poster's vertical division:
+- Left half of her costume: severe, almost monochrome — pale white blouse, 
+  steel-grey collar, fine geometric panels with faint truth-table patterns 
+  embroidered into the fabric (rows of T and F, simple logical connectives). 
+  Crystalline, Viennese-modernist, ornament-free.
+- Right half of her costume: ordinary, warm — a simple linen blouse, a 
+  hand-knit dark cardigan over the shoulder, a plain skirt in muted ochre 
+  and brown wool. Slightly worn, lived-in, like clothes from a 1940s 
+  Cambridge bedsit.
+The seam between the two halves runs vertically through the middle of her 
+torso, irregular, not perfectly symmetric.
+
+Tiara: a thin silver circlet, almost invisible. On the LEFT side it bears a 
+small geometric figure — a crystalline lattice, like a logical space. On 
+the RIGHT side the same circlet bears a tiny silhouette of a chess piece 
+(a rook) on a small chessboard fragment — language as a game played by 
+rules. One object, two natures.
+
+A simple medallion at the chest, NO eye, NO sun: a plain silver disc 
+engraved in elegant serif Latin letters with the words "WOVON MAN NICHT 
+SPRECHEN KANN, DARÜBER MUSS MAN SCHWEIGEN" — running in a tight spiral 
+around the disc.
+
+CRITICAL HANDS — TWO INSTRUMENTS:
+- In her LEFT hand (on the cold side), held LOWERED and slightly tilted 
+  away from her body: a small simple WOODEN LADDER, perhaps a meter long, 
+  unadorned, as if she has just set it down or is about to drop it. Above 
+  the ladder, faint floating text in elegant cursive: "Er muss diese Leiter 
+  wegwerfen, nachdem er auf ihr hinaufgestiegen ist". (Tractatus 6.54.)
+- In her RIGHT hand (on the warm side), held forward at chest level, 
+  slightly raised: a plain WOODEN RULER or simple measuring stick, 
+  unremarkable, the kind a builder or teacher would use. This is the 
+  primal instrument of a language game — Wittgenstein's "Bring me a slab".
+Between the two hands, FLOATING IN MID-AIR across the boundary, a horizontal 
+banner with handwritten German text in flowing serif italic: "DIE GRENZEN 
+MEINER SPRACHE BEDEUTEN DIE GRENZEN MEINER WELT." This sentence is the 
+bridge between the two phases.
+
+LEFT BORDER COLUMN — TRACTATUS APHORISMS, arranged hierarchically as a 
+descending tree, with larger numbers at top and smaller decimal subnumbers 
+nested below, visually echoing the Tractatus's own decimal structure:
+- "1. — Die Welt ist alles, was der Fall ist."
+- "2.1 — Wir machen uns Bilder der Tatsachen."
+- "3.221 — Die Gegenstände kann ich nur nennen. Zeichen vertreten sie."
+- "4.024 — Einen Satz verstehen, heißt, wissen was der Fall ist, wenn er 
+  wahr ist."
+- "5.6 — Die Grenzen meiner Sprache bedeuten die Grenzen meiner Welt." 
+  [larger, emphasized panel]
+- "6.522 — Es gibt allerdings Unaussprechliches. Dies zeigt sich, es ist 
+  das Mystische." [larger, emphasized panel]
+- "7. — Wovon man nicht sprechen kann, darüber muß man schweigen." 
+  [largest panel, at the bottom of the column]
+Each aphorism in a clean rectangular cartouche with thin steel-blue border, 
+on white parchment, in elegant serif. The visual style of this column should 
+recall the original 1921 typesetting of the Tractatus — austere, mathematical, 
+cathedral-like in its hierarchy.
+
+RIGHT BORDER COLUMN — LANGUAGE GAMES, scattered NON-hierarchically as small 
+genre scenes in irregular ornate frames, suggesting a "family" of cases 
+without a unifying form:
+- "PI §2 — DAS BAUSPIEL" — two builders, one calling "Block!" and the other 
+  bringing a stone block.
+- "PI §66 — FAMILIENÄHNLICHKEIT" — four small portraits of different family 
+  members, each sharing some feature with others, but no single feature 
+  shared by all.
+- "PI §201 — DIE REGEL" — a child writing a number sequence on a chalkboard: 
+  "2, 4, 6, 8, ... 1000, 1004, 1008" — the rule suddenly diverging.
+- "PI §244 — DER SCHMERZ" — a person wincing, hand on cheek, another person 
+  responding with concern; the question of private language.
+- "PI §109 — THERAPIE" — a hand carefully unfolding a tangled string into 
+  straight line, with the caption "Die Philosophie ist ein Kampf gegen die 
+  Verhexung unsres Verstandes durch die Mittel unserer Sprache."
+- "PI §43 — GEBRAUCH" — many small images of the same word "Spiel" used in 
+  different contexts (a chess game, a children's game, a tennis match, an 
+  orchestra playing).
+The frames here should be IRREGULAR — some round, some rectangular, some 
+oval — and slightly tilted, as if pinned to a corkboard rather than 
+arranged on a logical lattice. Visual contrast with the left column must be 
+striking: left = cathedral, right = archipelago.
+
+ANTAGONISTIC ELEMENTS — placed at the upper outer corners:
+
+- Upper-left corner, in the cold half: a small dim cartouche labeled "DIE 
+  KRANKHEITEN DES VERSTANDES" (the diseases of the intellect) — silhouettes 
+  of classical philosophers (Plato, Kant, Hegel) gesturing toward abstract 
+  "essences" floating above their heads, the kind of metaphysical 
+  illusioning Wittgenstein wanted to cure.
+
+- Upper-right corner, in the warm half: a small genre scene labeled "DER 
+  ALTE GEGEN DEN JUNGEN" (the old against the young) — a young man in a 
+  WWI Austrian officer's uniform writing intently in a notebook (young 
+  Wittgenstein composing the Tractatus); above him, an older man in a 
+  worn cardigan crossing out the manuscript with a red pencil (late 
+  Wittgenstein revising himself). This is the philosopher's most honest 
+  antagonist: his own later voice.
+
+BOTTOM CORNERS — two biographical scenes in plain rectangular frames (not 
+ovals — too ornamental):
+
+- Bottom left, labeled "DIE OSTFRONT, 1916" : a young soldier in Austrian 
+  field uniform crouched in a muddy trench at night, writing in a small 
+  notebook by the light of a single candle, distant artillery flashes on 
+  the horizon. A sense of mortal danger and concentrated thought. This is 
+  where the Tractatus was physically written.
+
+- Bottom right, labeled "CAMBRIDGE, 1947": a small bare room with one 
+  shabby armchair, a single folding chair for a guest, a few cups, papers 
+  scattered on the floor, no decorations on the walls. The philosopher 
+  in his late fifties, in a worn jacket, sitting on the edge of the 
+  armchair, mid-sentence, hand half-raised, eyes closed in painful 
+  concentration. The room is exactly as Norman Malcolm and others 
+  described it.
+
+These two corner scenes form a pair: BATTLEFIELD and EMPTY ROOM — two 
+sites of ethical struggle to find words, the outer (war) and the inner 
+(thought).
+
+Bottom of the poster, in clean serif capitals: "WOVON MAN NICHT SPRECHEN 
+KANN, DARÜBER MUSS MAN SCHWEIGEN." Below it in smaller italic English: 
+"Tell them I've had a wonderful life." Bottommost banner across the full 
+width, small caps: "DIE SPRACHE IST DIE GRENZE, DIE UNS TRÄGT."
+
+Style: Viennese modernist clarity meeting British post-war restraint, NO 
+heavy gold, NO baroque ornament, RESTRAINED color palette dominated by 
+white, steel-blue, ochre, and worn brown. Photorealistic but introspective 
+anime figure design, deliberate visual asymmetry between the two halves of 
+the poster, vertical poster format, dense composition on the columns but 
+EMPTY breathing space around the figure herself, museum print quality, 
+atmosphere of intense ethical seriousness combined with quiet ordinariness.

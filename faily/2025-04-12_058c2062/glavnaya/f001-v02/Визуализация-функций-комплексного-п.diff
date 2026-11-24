@@ -1,0 +1,132 @@
+--- предыдущая/Визуализация-функций-комплексного-переменного.html
++++ текущая/Визуализация-функций-комплексного-переменного.html
+@@ -98,12 +98,17 @@
+             <p>1. Введите функцию комплексного переменного (используйте z как переменную)</p>
+             <p>2. Функция должна быть записана в формате, понятном библиотеке math.js, например:</p>
+             <ul>
+-                <li>z^2 - функция f(z) = z²</li>
++                <li>z^2 или z**2 - функция f(z) = z²</li>
+                 <li>1/z - функция f(z) = 1/z</li>
+                 <li>sin(z) - синус</li>
+                 <li>exp(z) - экспонента</li>
+                 <li>(z^2 + 1)/(z^2 - 1) - рациональная функция</li>
++                <li>z^3 - 1 - многочлен</li>
++                <li>log(z) - натуральный логарифм</li>
++                <li>cos(z)*sin(z) - произведение функций</li>
+             </ul>
++            <p>Доступные операции: +, -, *, /, ^, **</p>
++            <p>Доступные функции: sin, cos, tan, exp, log, sqrt, abs, conj</p>
+         </div>
+         
+         <div class="control-panel">
+@@ -182,13 +187,22 @@
+             const showGridLines = showGrid.checked;
+             const brightness = parseFloat(brightnessSlider.value);
+             
++            // Очищаем холст перед рисованием
++            ctx.clearRect(0, 0, width, height);
++            
+             // Получение введенной функции
+             const functionStr = functionInput.value;
+             let complexFunction;
+             
+             try {
++                // Преобразуем некоторые распространенные ошибки ввода
++                let processedFunctionStr = functionStr
++                    .replace(/\^/g, "**")                 // заменяем ^ на **
++                    .replace(/([0-9])z/gi, "$1*z")        // заменяем 2z на 2*z
++                    .replace(/z([0-9])/gi, "z**$1");      // заменяем z2 на z**2
++                
+                 // Парсинг функции с помощью math.js
+-                complexFunction = math.compile(functionStr);
++                complexFunction = math.compile(processedFunctionStr);
+             } catch (error) {
+                 alert("Ошибка в функции: " + error.message);
+                 return;
+@@ -210,35 +224,66 @@
+                     try {
+                         fValue = complexFunction.evaluate({ z: math.complex(zReal, zImag) });
+                     } catch (error) {
+-                        // Если произошла ошибка, устанавливаем пиксель в черный цвет
++                        // Если произошла ошибка, устанавливаем пиксель в темно-красный цвет (для диагностики)
+                         const i = (y * width + x) * 4;
+-                        data[i] = 0;
+-                        data[i + 1] = 0;
+-                        data[i + 2] = 0;
+-                        data[i + 3] = 255;
++                        data[i] = 80;      // R
++                        data[i + 1] = 0;   // G
++                        data[i + 2] = 0;   // B
++                        data[i + 3] = 255; // A
+                         continue;
+                     }
+                     
+                     // Получение модуля и аргумента результата
+-                    const modulus = math.abs(fValue);
+-                    const phase = math.arg(fValue);
++                    let modulus, phase;
++                    
++                    try {
++                        // Для комплексных чисел используем math.abs и math.arg
++                        modulus = math.abs(fValue);
++                        phase = math.arg(fValue);
++                    } catch (error) {
++                        // Если функция вернула обычное число, а не комплексное
++                        if (typeof fValue === 'number') {
++                            modulus = Math.abs(fValue);
++                            phase = fValue >= 0 ? 0 : Math.PI;
++                        } else {
++                            // Если возникла другая ошибка, пропускаем пиксель
++                            const i = (y * width + x) * 4;
++                            data[i] = 0;
++                            data[i + 1] = 0;
++                            data[i + 2] = 80; // Темно-синий для диагностики
++                            data[i + 3] = 255;
++                            continue;
++                        }
++                    }
+                     
+                     // Нормализация модуля для визуализации (используем формулу, которая лучше работает с большими значениями)
+                     const modulusColor = Math.atan(modulus) * 2 / Math.PI;
+                     
+                     // Вычисление компонентов цвета на основе HSV модели
+                     // Фаза определяет оттенок, модуль влияет на яркость
++                    // Нормализуем фазу к диапазону от 0 до 360 градусов
+                     let hue = ((phase + Math.PI) / (2 * Math.PI)) * 360;
++                    // Обеспечиваем, что hue всегда положительный и меньше 360
++                    if (hue < 0) hue += 360;
++                    if (hue >= 360) hue -= 360;
++                    
+                     let saturation = 1;
+                     let value = brightness * (0.5 + 0.5 * modulusColor);
+                     
+                     // Вычисление линий уровня для модуля и фазы
+                     if (showGridLines && gridDensity > 0) {
++                        // Используем логарифмический масштаб для модуля
+                         const logModulus = Math.log(modulus + 0.00001) / Math.log(10);
+                         const scaledLogModulus = logModulus * gridDensity;
+                         const modulusGrid = Math.abs(scaledLogModulus - Math.round(scaledLogModulus));
+                         
+-                        const phaseGrid = Math.abs(((phase / Math.PI * gridDensity) % 1) - 0.5) * 2;
++                        // Нормализуем фазу к диапазону от 0 до 2π для линий уровня
++                        const normalizedPhase = (phase + 2 * Math.PI) % (2 * Math.PI);
++                        const scaledPhase = normalizedPhase / (2 * Math.PI / gridDensity);
++                        const phaseGrid = Math.min(
++                            Math.abs(scaledPhase - Math.floor(scaledPhase)),
++                            Math.abs(scaledPhase - Math.ceil(scaledPhase))
++                        );
+                         
+                         // Если точка близка к линии уровня, делаем ее темнее
+                         if (modulusGrid < 0.05 || phaseGrid < 0.05) {
+@@ -328,6 +373,11 @@
+         function hsvToRgb(h, s, v) {
+             let r, g, b;
+             
++            // Нормализуем h к диапазону 0-1
++            h = h / 360;
++            if (h < 0) h += 1;
++            if (h > 1) h -= Math.floor(h);
++            
+             const i = Math.floor(h * 6);
+             const f = h * 6 - i;
+             const p = v * (1 - s);

@@ -1,0 +1,948 @@
+/**
+ * @fileoverview Константы для философских понятий
+ * 
+ * Этот файл содержит константы, используемые в различных компонентах системы
+ * для обеспечения единообразия в работе с философскими концепциями, категориями,
+ * традициями и другими философскими сущностями.
+ * 
+ * Philosophy-specific constants for the Philosophy Service
+ * Defines valid values for philosophical categories, types, and relationships
+ */
+
+/**
+ * Типы философских категорий, используемые для классификации узлов в графе концепции.
+ * Используются в Graph Service, Thesis Service и других сервисах.
+ * @type {Object.<string, string>}
+ */
+const CATEGORY_TYPES = Object.freeze({
+  ONTOLOGICAL: 'ontological',        // Онтологические категории
+  EPISTEMOLOGICAL: 'epistemological', // Эпистемологические категории
+  AXIOLOGICAL: 'axiological',         // Аксиологические категории
+  ETHICAL: 'ethical',                 // Этические категории
+  AESTHETIC: 'aesthetic',             // Эстетические категории
+  METAPHYSICAL: 'metaphysical',       // Метафизические категории
+  LOGICAL: 'logical',                 // Логические категории
+  PRACTICAL: 'practical',             // Практические категории
+  POLITICAL: 'political',             // Политические категории
+  THEOLOGICAL: 'theological',         // Теологические категории
+  ANTHROPOLOGICAL: 'anthropological', // Антропологические категории
+  SOCIAL: 'social',                   // Социальные категории
+  LINGUISTIC: 'linguistic',           // Лингвистические категории
+  PHENOMENOLOGICAL: 'phenomenological', // Феноменологические категории
+  EXISTENTIAL: 'existential',         // Экзистенциальные категории
+  ANALYTICAL: 'analytical',           // Аналитические категории
+  HERMENEUTICAL: 'hermeneutical',     // Герменевтические категории
+  CROSS_DISCIPLINARY: 'cross_disciplinary', // Междисциплинарные категории
+});
+
+/**
+ * Типы связей между философскими категориями в графе концепции.
+ * Используются в Graph Service для определения типа отношений между узлами.
+ * @type {Object.<string, string>}
+ */
+const RELATIONSHIP_TYPES = Object.freeze({
+  HIERARCHICAL: 'hierarchical',           // Иерархическая связь (общее-частное)
+  CAUSAL: 'causal',                       // Причинно-следственная связь
+  DIALECTICAL: 'dialectical',             // Диалектическая связь (тезис-антитезис-синтез)
+  CORRELATIONAL: 'correlational',         // Корреляционная связь (взаимосвязь)
+  DISJUNCTIVE: 'disjunctive',             // Дизъюнктивная связь (или-или)
+  CONJUNCTIVE: 'conjunctive',             // Конъюнктивная связь (и-и)
+  CONTRADICTION: 'contradiction',         // Противоречие
+  COMPLEMENTARY: 'complementary',         // Дополнительность
+  EMERGENCE: 'emergence',                 // Эмерджентность (новое качество)
+  NECESSARY_CONDITION: 'necessary_condition', // Необходимое условие
+  SUFFICIENT_CONDITION: 'sufficient_condition', // Достаточное условие
+  IDENTITY: 'identity',                   // Тождество
+  ANALOGY: 'analogy',                     // Аналогия
+  IMPLEMENTATION: 'implementation',       // Реализация
+  INSTANTIATION: 'instantiation',         // Конкретизация
+  GENERALIZATION: 'generalization',       // Обобщение
+  PART_WHOLE: 'part_whole',               // Часть-целое
+  MEANS_END: 'means_end',                 // Средство-цель
+  DEDUCTIVE: 'deductive',                 // Дедуктивная связь
+  INDUCTIVE: 'inductive',                 // Индуктивная связь
+  ABDUCTIVE: 'abductive',                 // Абдуктивная связь
+  TEMPORAL: 'temporal',                   // Временная связь
+  CONCEPTUAL: 'conceptual',               // Концептуальная связь
+  DEFINITIONAL: 'definitional',           // Определяющая связь
+  MANIFESTATION: 'manifestation',         // Выражение
+  FOUNDATIONAL: 'foundational',           // Основание
+  RECOGNITION: 'recognition',             // Понимание
+  REFLEXION: 'reflexion',                 // Мышление
+  DEVELOPMENT: 'development',             // Развитие
+});
+
+/**
+ * Направленность связей в графе концепции.
+ * Используется в Graph Service для определения направления связи между узлами.
+ * @type {Object.<string, string>}
+ */
+const RELATIONSHIP_DIRECTIONS = Object.freeze({
+  UNIDIRECTIONAL: 'unidirectional',   // Однонаправленная связь
+  BIDIRECTIONAL: 'bidirectional',     // Двунаправленная (взаимная) связь
+  REFLEXIVE: 'reflexive',             // Рефлексивная связь (самоссылка)
+});
+
+/**
+ * Количественные характеристики категорий в графе концепции.
+ * Используются в Graph Service и других сервисах для количественного описания категорий.
+ * @type {Object.<string, string>}
+ */
+const CATEGORY_CHARACTERISTICS = Object.freeze({
+  CENTRALITY: 'centrality',           // Центральность (важность) категории
+  CERTAINTY: 'certainty',             // Определённость категории
+  HISTORICAL_SIGNIFICANCE: 'historical_significance', // Историческая значимость
+  INNOVATION_DEGREE: 'innovation_degree', // Степень инновационности
+  CLARITY: 'clarity',                 // Ясность определения
+  BREADTH: 'breadth',                 // Широта охвата
+  DEPTH: 'depth',                     // Глубина проработки
+  APPLICABILITY: 'applicability',     // Применимость
+});
+
+/**
+ * Количественные характеристики связей в графе концепции.
+ * Используются в Graph Service и других сервисах для количественного описания связей.
+ * @type {Object.<string, string>}
+ */
+const RELATIONSHIP_CHARACTERISTICS = Object.freeze({
+  STRENGTH: 'strength',               // Сила связи
+  CERTAINTY: 'certainty',             // Определённость связи
+  INNOVATION_DEGREE: 'innovation_degree', // Степень инновационности
+  HISTORICAL_SUPPORT: 'historical_support', // Историческая подтверждённость
+  LOGICAL_NECESSITY: 'logical_necessity', // Логическая необходимость
+  CONTEXT_DEPENDENCE: 'context_dependence', // Контекстная зависимость
+});
+
+/**
+ * Уровни инновационности для категорий и связей.
+ * Используются для определения степени новизны элементов концепции.
+ * @type {Object.<string, number>}
+ */
+const INNOVATION_LEVELS = Object.freeze({
+  TRADITIONAL: 1,   // Традиционное понимание
+  REINTERPRETED: 2, // Переосмысленное понимание
+  EXTENDED: 3,      // Расширенное понимание
+  NOVEL: 4,         // Новое понимание
+  REVOLUTIONARY: 5, // Революционное понимание
+});
+
+/**
+ * Типы философских тезисов.
+ * Используются в Thesis Service для классификации генерируемых тезисов.
+ * @type {Object.<string, string>}
+ */
+const THESIS_TYPES = Object.freeze({
+  ONTOLOGICAL: 'ontological',           // Онтологические тезисы (о природе бытия)
+  EPISTEMOLOGICAL: 'epistemological',   // Эпистемологические тезисы (о познании)
+  AXIOLOGICAL: 'axiological',           // Аксиологические тезисы (о ценностях)
+  ETHICAL: 'ethical',                   // Этические тезисы (о морали)
+  AESTHETIC: 'aesthetic',               // Эстетические тезисы (о красоте)
+  METAPHYSICAL: 'metaphysical',         // Метафизические тезисы
+  METHODOLOGICAL: 'methodological',     // Методологические тезисы
+  LOGICAL: 'logical',                   // Логические тезисы
+  HISTORICAL: 'historical',             // Исторические тезисы
+  POLITICAL: 'political',               // Политические тезисы
+  SOCIAL: 'social',                     // Социальные тезисы
+  CRITICAL: 'critical',                 // Критические тезисы
+  SYNTHETIC: 'synthetic',               // Синтетические тезисы
+  COMPARATIVE: 'comparative',           // Сравнительные тезисы
+  DEFINITIONAL: 'definitional',         // Определяющие тезисы
+  FOUNDATIONAL: 'foundational',         // Основополагающие тезисы
+  PRACTICAL: 'practical',               // Практические тезисы
+  SPECULATIVE: 'speculative',           // Спекулятивные тезисы
+  LINGUISTIC: 'linguistic',             // Лингвистические тезисы
+  PHENOMENOLOGICAL: 'phenomenological', // Феноменологические тезисы
+  EXISTENTIAL: 'existential',           // Экзистенциальные тезисы
+  ANALYTICAL: 'analytical',             // Аналитические тезисы
+  HERMENEUTICAL: 'hermeneutical',       // Герменевтические тезисы
+  ANTHROPOLOGICAL: 'anthropological',   // Антропологические тезисы
+  THEOLOGICAL: 'theological',           // Теологические тезисы
+  CROSS_DISCIPLINARY: 'cross_disciplinary', // Междисциплинарные тезисы
+});
+
+/**
+ * Стили представления философских тезисов.
+ * Используются в Thesis Service для форматирования генерируемых тезисов.
+ * @type {Object.<string, string>}
+ */
+const THESIS_STYLES = Object.freeze({
+  ACADEMIC: 'academic',         // Академический стиль
+  POPULAR: 'popular',           // Популярный стиль
+  APHORISTIC: 'aphoristic',     // Афористичный стиль
+  ANALYTICAL: 'analytical',     // Аналитический стиль
+  CONTINENTAL: 'continental',   // Континентальный стиль
+  DIALECTICAL: 'dialectical',   // Диалектический стиль
+  DIALOGICAL: 'dialogical',     // Диалогический стиль
+  SOCRATIC: 'socratic',         // Сократический стиль
+  HERMENEUTICAL: 'hermeneutical', // Герменевтический стиль
+  PHENOMENOLOGICAL: 'phenomenological', // Феноменологический стиль
+  EXISTENTIAL: 'existential',   // Экзистенциальный стиль
+  PRAGMATIC: 'pragmatic',       // Прагматический стиль
+  LOGICAL_POSITIVIST: 'logical_positivist', // Логический позитивизм
+  POSTMODERN: 'postmodern',     // Постмодернистский стиль
+  STRUCTURALIST: 'structuralist', // Структуралистский стиль
+  DECONSTRUCTIONIST: 'deconstructionist', // Деконструктивистский стиль
+});
+
+/**
+ * Основные философские традиции.
+ * Используются в различных сервисах для классификации и контекстуализации.
+ * @type {Object.<string, string>}
+ */
+const PHILOSOPHICAL_TRADITIONS = Object.freeze({
+  // Античная философия
+  ANCIENT_GREEK: 'ancient_greek',       // Древнегреческая философия
+  PRESOCRATIC: 'presocratic',           // Досократическая философия
+  SOCRATIC: 'socratic',                 // Сократическая философия
+  PLATONIC: 'platonic',                 // Платоническая философия
+  ARISTOTELIAN: 'aristotelian',         // Аристотелевская философия
+  STOIC: 'stoic',                       // Стоицизм
+  EPICUREAN: 'epicurean',               // Эпикуреизм
+  SKEPTIC: 'skeptic',                   // Скептицизм
+  NEOPLATONIC: 'neoplatonic',           // Неоплатонизм
+  HELLENISTIC: 'hellenistic',           // Эллинистическая философия
+  
+  // Средневековая философия
+  PATRISTIC: 'patristic',               // Патристика
+  SCHOLASTIC: 'scholastic',             // Схоластика
+  MEDIEVAL_SCHOLASTIC: 'medieval_scholastic', // Средневековая схоластика
+  THOMISTIC: 'thomistic',               // Томизм
+  NOMINALISM: 'nominalism',             // Номинализм
+  REALISM: 'realism',                   // Реализм (средневековый)
+  
+  // Восточные традиции
+  CONFUCIAN: 'confucian',               // Конфуцианство
+  CONFUCIANISM: 'confucianism',         // Конфуцианство (альтернативное название)
+  DAOIST: 'daoist',                     // Даосизм
+  TAOISM: 'taoism',                     // Даосизм (альтернативное название)
+  BUDDHIST: 'buddhist',                 // Буддизм
+  BUDDHISM: 'buddhism',                 // Буддизм (альтернативное название)
+  HINDU: 'hindu',                       // Индуизм
+  HINDUISM: 'hinduism',                 // Индуизм (альтернативное название)
+  VEDANTA: 'vedanta',                   // Веданта
+  ZEN: 'zen',                           // Дзен-буддизм
+  JAINISM: 'jainism',                   // Джайнизм
+  SHINTO: 'shinto',                     // Синтоизм
+  
+  // Исламская философия
+  CLASSICAL_ISLAMIC: 'classical_islamic', // Классическая исламская философия
+  SUFISM: 'sufism',                     // Суфизм
+  MODERN_ISLAMIC: 'modern_islamic',     // Современная исламская философия
+  
+  // Новое время
+  RENAISSANCE_HUMANISM: 'renaissance_humanism', // Ренессансный гуманизм
+  RATIONALISM: 'rationalism',           // Рационализм
+  EMPIRICISM: 'empiricism',             // Эмпиризм
+  ENLIGHTENMENT: 'enlightenment',       // Просвещение
+  IDEALISM: 'idealism',                 // Идеализм
+  GERMAN_IDEALISM: 'german_idealism',   // Немецкий идеализм
+  ROMANTICISM: 'romanticism',           // Романтизм
+  UTILITARIANISM: 'utilitarianism',     // Утилитаризм
+  
+  // Современная философия
+  PHENOMENOLOGY: 'phenomenology',       // Феноменология
+  EXISTENTIALISM: 'existentialism',     // Экзистенциализм
+  HERMENEUTICS: 'hermeneutics',         // Герменевтика
+  MARXISM: 'marxism',                   // Марксизм
+  CRITICAL_THEORY: 'critical_theory',   // Критическая теория
+  PRAGMATISM: 'pragmatism',             // Прагматизм
+  ANALYTIC: 'analytic',                 // Аналитическая философия
+  POSTMODERN: 'postmodern',             // Постмодернизм
+  POSTSTRUCTURALISM: 'poststructuralism', // Постструктурализм
+  FEMINIST: 'feminist',                 // Феминистская философия
+  CONTINENTAL: 'continental',           // Континентальная философия
+  PROCESS: 'process',                   // Процесс-философия
+  
+  // Другие традиции
+  AFRICAN: 'african',                   // Африканская философия
+  INDIGENOUS: 'indigenous',             // Философия коренных народов
+  SYNCRETIC: 'syncretic',               // Синкретическая философия
+  
+  // Метафилософские подходы
+  NATURALISM: 'naturalism',             // Натурализм
+  NON_NATURALISM: 'non_naturalism',     // Не-натурализм
+  CONSTRUCTIVISM: 'constructivism',     // Конструктивизм
+  ESSENTIALISM: 'essentialism',         // Эссенциализм
+  PLURALISM: 'pluralism',               // Плюрализм
+  MONISM: 'monism',                     // Монизм
+  DUALISM: 'dualism',                   // Дуализм
+});
+
+/**
+ * Исторические периоды философии.
+ * Используются в Historical Context Service для периодизации.
+ * @type {Object.<string, Object>}
+ */
+const HISTORICAL_PERIODS = Object.freeze({
+  ANCIENT: {
+    id: 'ancient',
+    name: 'Античность',
+    startYear: -800,
+    endYear: 476,
+    description: 'Философия Древней Греции и Рима',
+  },
+  MEDIEVAL: {
+    id: 'medieval',
+    name: 'Средневековье',
+    startYear: 476,
+    endYear: 1453,
+    description: 'Период доминирования религиозной философии',
+  },
+  RENAISSANCE: {
+    id: 'renaissance',
+    name: 'Возрождение',
+    startYear: 1300,
+    endYear: 1600,
+    description: 'Возрождение интереса к античному наследию',
+  },
+  EARLY_MODERN: {
+    id: 'early_modern',
+    name: 'Раннее Новое время',
+    startYear: 1600,
+    endYear: 1800,
+    description: 'Период научной революции и Просвещения',
+  },
+  MODERN: {
+    id: 'modern',
+    name: 'Современная философия (XIX век)',
+    startYear: 1800,
+    endYear: 1900,
+    description: 'Период развития систематических философских систем',
+  },
+  CONTEMPORARY: {
+    id: 'contemporary',
+    name: 'Современная философия (XX-XXI века)',
+    startYear: 1900,
+    endYear: null,
+    description: 'Современные философские течения',
+  },
+  UNKNOWN: {
+    id: 'unknown',
+    name: 'Неизвестный период',
+    startYear: null,
+    endYear: null,
+    description: 'Период не определен',
+  },
+});
+
+/**
+ * Области практического применения философских концепций.
+ * Используются в Practical Application Service.
+ * @type {Object.<string, string>}
+ */
+const PRACTICAL_DOMAINS = Object.freeze({
+  EDUCATION: 'education',           // Образование
+  ETHICS: 'ethics',                 // Этика
+  POLITICS: 'politics',             // Политика
+  LAW: 'law',                       // Право
+  ECONOMICS: 'economics',           // Экономика
+  MEDICINE: 'medicine',             // Медицина
+  PSYCHOLOGY: 'psychology',         // Психология
+  ENVIRONMENTAL: 'environmental',   // Экология
+  ENVIRONMENT: 'environment',       // Экология (альтернативное название)
+  TECHNOLOGY: 'technology',         // Технологии
+  BUSINESS: 'business',             // Бизнес
+  SOCIAL_POLICY: 'social_policy',   // Социальная политика
+  SOCIAL_WORK: 'social_work',       // Социальная работа
+  PERSONAL_DEVELOPMENT: 'personal_development', // Личностное развитие
+  SCIENCE: 'science',               // Наука
+  ART: 'art',                       // Искусство
+  CONFLICT_RESOLUTION: 'conflict_resolution', // Разрешение конфликтов
+  CULTURE: 'culture',               // Культура
+  RELIGION: 'religion',             // Религия
+  COMMUNICATION: 'communication',   // Коммуникация
+});
+
+/**
+ * Методы реализации философских концепций на практике.
+ * Используются в Practical Application Service.
+ * @type {Object.<string, string>}
+ */
+const IMPLEMENTATION_METHODS = Object.freeze({
+  POLICY_CHANGE: 'policy_change',               // Изменение политики
+  EDUCATIONAL_CURRICULUM: 'educational_curriculum', // Образовательная программа
+  LEGAL_REFORM: 'legal_reform',                 // Правовая реформа
+  SOCIAL_MOVEMENT: 'social_movement',           // Социальное движение
+  INSTITUTIONAL_DESIGN: 'institutional_design', // Институциональный дизайн
+  PERSONAL_PRACTICE: 'personal_practice',       // Личная практика
+  COMMUNITY_INITIATIVE: 'community_initiative', // Общественная инициатива
+  PROFESSIONAL_ETHICS: 'professional_ethics',   // Профессиональная этика
+  TECHNOLOGICAL_INNOVATION: 'technological_innovation', // Технологическая инновация
+  ARTISTIC_EXPRESSION: 'artistic_expression',   // Художественное выражение
+  THERAPEUTIC_APPROACH: 'therapeutic_approach', // Терапевтический подход
+  DIALOGICAL_PRACTICE: 'dialogical_practice',   // Диалогическая практика
+});
+
+/**
+ * Типы философских вопросов для диалогов.
+ * Используются в Dialogue Service для формирования диалогов.
+ * @type {Object.<string, string>}
+ */
+const PHILOSOPHICAL_QUESTION_TYPES = Object.freeze({
+  METAPHYSICAL: 'metaphysical',         // Метафизические вопросы
+  ONTOLOGICAL: 'ontological',           // Онтологические вопросы
+  EPISTEMOLOGICAL: 'epistemological',   // Эпистемологические вопросы
+  ETHICAL: 'ethical',                   // Этические вопросы
+  POLITICAL: 'political',               // Политические вопросы
+  EXISTENTIAL: 'existential',           // Экзистенциальные вопросы
+  SOCIAL: 'social',                     // Социальные вопросы
+  LOGICAL: 'logical',                   // Логические вопросы
+  AESTHETIC: 'aesthetic',               // Эстетические вопросы
+  HISTORICAL: 'historical',             // Исторические вопросы
+  METHODOLOGICAL: 'methodological',     // Методологические вопросы
+  PRACTICAL: 'practical',               // Практические вопросы
+  COMPARATIVE: 'comparative',           // Сравнительные вопросы
+  CRITICAL: 'critical',                 // Критические вопросы
+  DEFINITIONAL: 'definitional',         // Определяющие вопросы
+  CONCEPTUAL: 'conceptual',             // Концептуальные вопросы
+  APPLICATIVE: 'applicative',           // Вопросы применения
+});
+
+/**
+ * Примеры философских вопросов для диалогов.
+ * Используются в Dialogue Service для формирования диалогов.
+ * @type {Object.<string, Array<string>>}
+ */
+const PHILOSOPHICAL_QUESTIONS = Object.freeze({
+  [PHILOSOPHICAL_QUESTION_TYPES.METAPHYSICAL]: [
+    "Что такое реальность?",
+    "Существует ли объективная реальность независимо от наблюдателя?",
+    "В чём сущность бытия?",
+    "Что означает существовать?",
+    "Существует ли первопричина всего?",
+  ],
+  [PHILOSOPHICAL_QUESTION_TYPES.EPISTEMOLOGICAL]: [
+    "Что такое знание?",
+    "Как мы можем знать, что мы что-то знаем?",
+    "Существуют ли априорные знания?",
+    "Каковы границы человеческого познания?",
+    "Что является критерием истины?",
+  ],
+  [PHILOSOPHICAL_QUESTION_TYPES.ETHICAL]: [
+    "Существуют ли объективные моральные ценности?",
+    "Как определить, что есть благо?",
+    "Является ли мораль абсолютной или относительной?",
+    "Что является основой моральной ответственности?",
+    "Может ли быть оправдано причинение вреда для достижения большего блага?",
+  ],
+  [PHILOSOPHICAL_QUESTION_TYPES.POLITICAL]: [
+    "Какова идеальная форма правления?",
+    "Что такое справедливость в обществе?",
+    "Как соотносятся свобода личности и общественные интересы?",
+    "Какова роль государства в жизни человека?",
+    "Как должны распределяться ресурсы в обществе?",
+  ],
+  [PHILOSOPHICAL_QUESTION_TYPES.EXISTENTIAL]: [
+    "В чём смысл человеческого существования?",
+    "Как человек должен относиться к конечности своего бытия?",
+    "Что значит быть аутентичным?",
+    "Как соотносятся свобода и ответственность?",
+    "Существует ли свобода воли?",
+  ],
+});
+
+/**
+ * Типы аргументации в философских диалогах.
+ * Используются в Dialogue Service для анализа аргументации.
+ * @type {Object.<string, string>}
+ */
+const ARGUMENT_TYPES = Object.freeze({
+  DEDUCTIVE: 'deductive',               // Дедуктивная аргументация
+  INDUCTIVE: 'inductive',               // Индуктивная аргументация
+  ABDUCTIVE: 'abductive',               // Абдуктивная аргументация
+  ANALOGICAL: 'analogical',             // Аргументация по аналогии
+  PRAGMATIC: 'pragmatic',               // Прагматическая аргументация
+  DIALECTICAL: 'dialectical',           // Диалектическая аргументация
+  TRANSCENDENTAL: 'transcendental',     // Трансцендентальная аргументация
+  PHENOMENOLOGICAL: 'phenomenological', // Феноменологическая аргументация
+  HERMENEUTICAL: 'hermeneutical',       // Герменевтическая аргументация
+  RHETORICAL: 'rhetorical',             // Риторическая аргументация
+  INTUITIVE: 'intuitive',               // Интуитивная аргументация
+  HISTORICAL: 'historical',             // Историческая аргументация
+  CONCEPTUAL: 'conceptual',             // Концептуальная аргументация
+});
+
+/**
+ * Типы синтеза философских концепций.
+ * Используются в Synthesis Service для определения стратегии синтеза.
+ * @type {Object.<string, string>}
+ */
+const SYNTHESIS_TYPES = Object.freeze({
+  DIALECTICAL: 'dialectical',           // Диалектический синтез (тезис-антитезис-синтез)
+  INTEGRATIVE: 'integrative',           // Интегративный синтез (объединение совместимых элементов)
+  CREATIVE: 'creative',                 // Творческий синтез (создание новых элементов)
+  COMPARATIVE: 'comparative',           // Сравнительный синтез (выявление общих структур)
+  HISTORICAL: 'historical',             // Исторический синтез (эволюционное развитие)
+  CONCEPTUAL: 'conceptual',             // Концептуальный синтез (проработка понятий)
+  PRAGMATIC: 'pragmatic',               // Прагматический синтез (ориентация на применимость)
+  METHODOLOGICAL: 'methodological',     // Методологический синтез (объединение подходов)
+  HERMENEUTICAL: 'hermeneutical',       // Герменевтический синтез (интерпретативный)
+  CROSS_CULTURAL: 'cross_cultural',     // Кросс-культурный синтез (между традициями)
+});
+
+/**
+ * Методы синтеза (упрощенная версия для обратной совместимости)
+ * @type {Object.<string, string>}
+ */
+const SYNTHESIS_METHODS = Object.freeze({
+  DIALECTICAL: 'dialectical',
+  COMPLEMENTARY: 'complementary',
+  HIERARCHICAL: 'hierarchical',
+  HYBRID: 'hybrid',
+});
+
+/**
+ * Критерии совместимости концепций для синтеза.
+ * Используются в Synthesis Service для анализа совместимости.
+ * @type {Object.<string, string>}
+ */
+const COMPATIBILITY_CRITERIA = Object.freeze({
+  ONTOLOGICAL: 'ontological',           // Онтологическая совместимость
+  EPISTEMOLOGICAL: 'epistemological',   // Эпистемологическая совместимость
+  AXIOLOGICAL: 'axiological',           // Аксиологическая совместимость
+  METHODOLOGICAL: 'methodological',     // Методологическая совместимость
+  LINGUISTIC: 'linguistic',             // Лингвистическая совместимость
+  LOGICAL: 'logical',                   // Логическая совместимость
+  HISTORICAL: 'historical',             // Историческая совместимость
+  CULTURAL: 'cultural',                 // Культурная совместимость
+  PRAGMATIC: 'pragmatic',               // Прагматическая совместимость
+  CONCEPTUAL: 'conceptual',             // Концептуальная совместимость
+});
+
+/**
+ * Типы анализа концепций.
+ * Используются в различных сервисах для классификации аналитических операций.
+ * @type {Object.<string, string>}
+ */
+const ANALYSIS_TYPES = Object.freeze({
+  CRITICAL: 'critical',                 // Критический анализ
+  HISTORICAL: 'historical',             // Исторический анализ
+  COMPARATIVE: 'comparative',           // Сравнительный анализ
+  CONCEPTUAL: 'conceptual',             // Концептуальный анализ
+  LOGICAL: 'logical',                   // Логический анализ
+  HERMENEUTICAL: 'hermeneutical',       // Герменевтический анализ
+  PHENOMENOLOGICAL: 'phenomenological', // Феноменологический анализ
+  LINGUISTIC: 'linguistic',             // Лингвистический анализ
+  PRAGMATIC: 'pragmatic',               // Прагматический анализ
+  STRUCTURAL: 'structural',             // Структурный анализ
+  GENEALOGICAL: 'genealogical',         // Генеалогический анализ
+  DECONSTRUCTIVE: 'deconstructive',     // Деконструктивный анализ
+  PSYCHOANALYTICAL: 'psychoanalytical', // Психоаналитический анализ
+  FEMINIST: 'feminist',                 // Феминистский анализ
+  POSTCOLONIAL: 'postcolonial',         // Постколониальный анализ
+  SYSTEMATIC: 'systematic',             // Систематический анализ
+});
+
+/**
+ * Направления эволюции философских концепций.
+ * Используются в Evolution Service для анализа и прогнозирования эволюции.
+ * @type {Object.<string, string>}
+ */
+const EVOLUTION_DIRECTIONS = Object.freeze({
+  SPECIALIZATION: 'specialization',     // Специализация (уточнение области)
+  GENERALIZATION: 'generalization',     // Обобщение (расширение области)
+  INTEGRATION: 'integration',           // Интеграция с другими концепциями
+  DIFFERENTIATION: 'differentiation',   // Дифференциация (внутреннее разделение)
+  REINTERPRETATION: 'reinterpretation', // Переосмысление основных положений
+  EXTENSION: 'extension',               // Расширение (добавление новых элементов)
+  REDUCTION: 'reduction',               // Редукция (упрощение)
+  FORMALIZATION: 'formalization',       // Формализация (повышение строгости)
+  CONTEXTUALIZATION: 'contextualization', // Контекстуализация (уточнение области применения)
+  HISTORICIZATION: 'historicization',   // Историзация (понимание в историческом контексте)
+  CRITIQUE: 'critique',                 // Критика (выявление проблем)
+  SYNTHESIS: 'synthesis',               // Синтез (объединение с другими концепциями)
+  APPLICATION: 'application',           // Применение в новых областях
+  TRANSDISCIPLINARY: 'transdisciplinary', // Трансдисциплинарное развитие
+  EXPANSION: 'expansion',               // Расширение
+  REFINEMENT: 'refinement',             // Уточнение
+  DECONSTRUCTION: 'deconstruction',     // Деконструкция
+  RECONTEXTUALIZATION: 'recontextualization', // Реконтекстуализация
+  SCIENTIFIC_UPDATE: 'scientific_update', // Научное обновление
+  CULTURAL_ADAPTATION: 'cultural_adaptation', // Культурная адаптация
+});
+
+/**
+ * Типы изменений в эволюции концепций.
+ * Используются в Evolution Service для классификации предлагаемых изменений.
+ * @type {Object.<string, string>}
+ */
+const CHANGE_TYPES = Object.freeze({
+  ADD_CATEGORY: 'add_category',         // Добавление новой категории
+  REMOVE_CATEGORY: 'remove_category',   // Удаление категории
+  MODIFY_CATEGORY: 'modify_category',   // Изменение категории
+  ADD_RELATIONSHIP: 'add_relationship', // Добавление новой связи
+  REMOVE_RELATIONSHIP: 'remove_relationship', // Удаление связи
+  MODIFY_RELATIONSHIP: 'modify_relationship', // Изменение связи
+  REDEFINE_CONCEPT: 'redefine_concept', // Переопределение концепции
+  RENAME_CONCEPT: 'rename_concept',     // Переименование концепции
+  MERGE_CATEGORIES: 'merge_categories', // Объединение категорий
+  SPLIT_CATEGORY: 'split_category',     // Разделение категории
+  REFOCUS: 'refocus',                   // Изменение фокуса концепции
+  RECONTEXTUALIZE: 'recontextualize',   // Переконтекстуализация
+  ADD_PERSPECTIVE: 'add_perspective',   // Добавление новой перспективы
+  CHANGE_METHODOLOGY: 'change_methodology', // Изменение методологии
+  UPDATE_TERMINOLOGY: 'update_terminology', // Обновление терминологии
+});
+
+/**
+ * Диапазоны количественных характеристик
+ * @type {Object.<string, number>}
+ */
+const CHARACTERISTIC_RANGES = Object.freeze({
+  MIN: 0,
+  MAX: 1,
+  DEFAULT: 0.5,
+});
+
+/**
+ * Правила валидации
+ * @type {Object.<string, number>}
+ */
+const VALIDATION = Object.freeze({
+  NAME_MIN_LENGTH: 3,
+  NAME_MAX_LENGTH: 100,
+  DESCRIPTION_MIN_LENGTH: 10,
+  DESCRIPTION_MAX_LENGTH: 5000,
+  DEFINITION_MIN_LENGTH: 20,
+  DEFINITION_MAX_LENGTH: 1000,
+  THESIS_MIN_LENGTH: 50,
+  THESIS_MAX_LENGTH: 5000,
+  MIN_CATEGORIES_PER_CONCEPT: 3,
+  MAX_CATEGORIES_PER_CONCEPT: 50,
+  MIN_RELATIONSHIPS_PER_GRAPH: 1,
+  MAX_RELATIONSHIPS_PER_GRAPH: 200,
+});
+
+/**
+ * Основной объект констант для философского сервиса
+ * Philosophy-specific constants for the Philosophy Service
+ */
+const PHILOSOPHY_CONSTANTS = Object.freeze({
+  // Типы тезисов
+  THESIS_TYPES,
+  
+  // Стили тезисов
+  THESIS_STYLES,
+  
+  // Типы категорий
+  CATEGORY_TYPES,
+  
+  // Типы связей
+  RELATIONSHIP_TYPES,
+  
+  // Направления связей
+  RELATIONSHIP_DIRECTIONS,
+  
+  // Характеристики категорий
+  CATEGORY_CHARACTERISTICS,
+  
+  // Характеристики связей
+  RELATIONSHIP_CHARACTERISTICS,
+  
+  // Методы синтеза
+  SYNTHESIS_METHODS,
+  SYNTHESIS_TYPES,
+  
+  // Критерии совместимости
+  COMPATIBILITY_CRITERIA,
+  
+  // Уровни инновационности
+  INNOVATION_DEGREES: INNOVATION_LEVELS,
+  INNOVATION_LEVELS,
+  
+  // Диапазоны характеристик
+  CHARACTERISTIC_RANGES,
+  
+  // Исторические периоды
+  HISTORICAL_PERIODS,
+  
+  // Философские традиции
+  PHILOSOPHICAL_TRADITIONS,
+  
+  // Области практического применения
+  PRACTICAL_DOMAINS,
+  
+  // Методы реализации
+  IMPLEMENTATION_METHODS,
+  
+  // Типы философских вопросов
+  PHILOSOPHICAL_QUESTION_TYPES,
+  DIALOGUE_QUESTION_TYPES: PHILOSOPHICAL_QUESTION_TYPES, // Для обратной совместимости
+  
+  // Примеры философских вопросов
+  PHILOSOPHICAL_QUESTIONS,
+  
+  // Типы аргументации
+  ARGUMENT_TYPES,
+  
+  // Типы анализа
+  ANALYSIS_TYPES,
+  
+  // Направления эволюции
+  EVOLUTION_DIRECTIONS,
+  
+  // Типы изменений
+  CHANGE_TYPES,
+  
+  // Правила валидации
+  VALIDATION,
+});
+
+/**
+ * Helper functions - Вспомогательные функции
+ */
+
+/**
+ * Check if a thesis type is valid
+ * Проверка валидности типа тезиса
+ * @param {string} type - The thesis type to check
+ * @returns {boolean} - Whether the type is valid
+ */
+function isValidThesisType(type) {
+  return Object.values(THESIS_TYPES).includes(type);
+}
+
+/**
+ * Check if a thesis style is valid
+ * Проверка валидности стиля тезиса
+ * @param {string} style - The thesis style to check
+ * @returns {boolean} - Whether the style is valid
+ */
+function isValidThesisStyle(style) {
+  return Object.values(THESIS_STYLES).includes(style);
+}
+
+/**
+ * Check if a category type is valid
+ * Проверка валидности типа категории
+ * @param {string} type - The category type to check
+ * @returns {boolean} - Whether the type is valid
+ */
+function isValidCategoryType(type) {
+  return Object.values(CATEGORY_TYPES).includes(type);
+}
+
+/**
+ * Check if a relationship type is valid
+ * Проверка валидности типа связи
+ * @param {string} type - The relationship type to check
+ * @returns {boolean} - Whether the type is valid
+ */
+function isValidRelationshipType(type) {
+  return Object.values(RELATIONSHIP_TYPES).includes(type);
+}
+
+/**
+ * Check if a relationship direction is valid
+ * Проверка валидности направления связи
+ * @param {string} direction - The relationship direction to check
+ * @returns {boolean} - Whether the direction is valid
+ */
+function isValidRelationshipDirection(direction) {
+  return Object.values(RELATIONSHIP_DIRECTIONS).includes(direction);
+}
+
+/**
+ * Check if an innovation degree is valid
+ * Проверка валидности степени инновационности
+ * @param {number} degree - The innovation degree to check
+ * @returns {boolean} - Whether the degree is valid
+ */
+function isValidInnovationDegree(degree) {
+  return degree >= INNOVATION_LEVELS.TRADITIONAL && 
+         degree <= INNOVATION_LEVELS.REVOLUTIONARY &&
+         Number.isInteger(degree);
+}
+
+/**
+ * Check if a characteristic value is in valid range
+ * Проверка валидности значения характеристики
+ * @param {number} value - The characteristic value to check
+ * @returns {boolean} - Whether the value is valid
+ */
+function isValidCharacteristicValue(value) {
+  return value >= CHARACTERISTIC_RANGES.MIN && 
+         value <= CHARACTERISTIC_RANGES.MAX;
+}
+
+/**
+ * Get all philosophical traditions as a flat array
+ * Получение всех философских традиций в виде плоского массива
+ * @returns {string[]} - Array of all tradition values
+ */
+function getAllTraditions() {
+  return Object.values(PHILOSOPHICAL_TRADITIONS);
+}
+
+/**
+ * Get tradition category for a specific tradition
+ * Получение категории традиции для конкретной традиции
+ * @param {string} tradition - The tradition to check
+ * @returns {string|null} - The category name or null if not found
+ */
+function getTraditionCategory(tradition) {
+  // Проверяем каждую традицию
+  const categories = {
+    'Античная философия': [
+      'ancient_greek', 'presocratic', 'socratic', 'platonic', 
+      'aristotelian', 'stoic', 'epicurean', 'skeptic', 
+      'neoplatonic', 'hellenistic'
+    ],
+    'Средневековая философия': [
+      'patristic', 'scholastic', 'medieval_scholastic', 
+      'thomistic', 'nominalism', 'realism'
+    ],
+    'Восточные традиции': [
+      'confucian', 'confucianism', 'daoist', 'taoism', 
+      'buddhist', 'buddhism', 'hindu', 'hinduism', 
+      'vedanta', 'zen', 'jainism', 'shinto'
+    ],
+    'Исламская философия': [
+      'classical_islamic', 'sufism', 'modern_islamic'
+    ],
+    'Новое время': [
+      'renaissance_humanism', 'rationalism', 'empiricism', 
+      'enlightenment', 'idealism', 'german_idealism', 
+      'romanticism', 'utilitarianism'
+    ],
+    'Современная философия': [
+      'phenomenology', 'existentialism', 'hermeneutics', 
+      'marxism', 'critical_theory', 'pragmatism', 
+      'analytic', 'postmodern', 'poststructuralism', 
+      'feminist', 'continental', 'process'
+    ],
+    'Другие традиции': [
+      'african', 'indigenous', 'syncretic'
+    ],
+    'Метафилософские подходы': [
+      'naturalism', 'non_naturalism', 'constructivism', 
+      'essentialism', 'pluralism', 'monism', 'dualism'
+    ]
+  };
+  
+  for (const [category, traditions] of Object.entries(categories)) {
+    if (traditions.includes(tradition)) {
+      return category;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Get description for innovation degree
+ * Получение описания для степени инновационности
+ * @param {number} degree - The innovation degree
+ * @returns {string} - Description of the degree
+ */
+function getInnovationDegreeDescription(degree) {
+  const descriptions = {
+    1: 'Traditional understanding - follows established interpretations / Традиционное понимание - следует установленным интерпретациям',
+    2: 'Reinterpreted understanding - offers new perspective on existing ideas / Переосмысленное понимание - предлагает новый взгляд на существующие идеи',
+    3: 'Extended understanding - expands beyond traditional boundaries / Расширенное понимание - выходит за традиционные границы',
+    4: 'Novel understanding - introduces significantly new concepts / Новое понимание - вводит существенно новые концепции',
+    5: 'Revolutionary understanding - fundamentally challenges existing paradigms / Революционное понимание - фундаментально бросает вызов существующим парадигмам'
+  };
+  return descriptions[degree] || 'Unknown innovation degree / Неизвестная степень инновационности';
+}
+
+/**
+ * Check if a practical domain is valid
+ * Проверка валидности области практического применения
+ * @param {string} domain - The practical domain to check
+ * @returns {boolean} - Whether the domain is valid
+ */
+function isValidPracticalDomain(domain) {
+  return Object.values(PRACTICAL_DOMAINS).includes(domain);
+}
+
+/**
+ * Check if an analysis type is valid
+ * Проверка валидности типа анализа
+ * @param {string} type - The analysis type to check
+ * @returns {boolean} - Whether the type is valid
+ */
+function isValidAnalysisType(type) {
+  return Object.values(ANALYSIS_TYPES).includes(type);
+}
+
+/**
+ * Check if an evolution direction is valid
+ * Проверка валидности направления эволюции
+ * @param {string} direction - The evolution direction to check
+ * @returns {boolean} - Whether the direction is valid
+ */
+function isValidEvolutionDirection(direction) {
+  return Object.values(EVOLUTION_DIRECTIONS).includes(direction);
+}
+
+/**
+ * Get historical period by year
+ * Получение исторического периода по году
+ * @param {number} year - The year to check
+ * @returns {Object|null} - The historical period or null if not found
+ */
+function getHistoricalPeriodByYear(year) {
+  for (const period of Object.values(HISTORICAL_PERIODS)) {
+    if (period.startYear !== null && period.endYear !== null) {
+      if (year >= period.startYear && year <= period.endYear) {
+        return period;
+      }
+    } else if (period.startYear !== null && period.endYear === null) {
+      if (year >= period.startYear) {
+        return period;
+      }
+    }
+  }
+  return HISTORICAL_PERIODS.UNKNOWN;
+}
+
+/**
+ * Экспорт всех констант и функций для использования в других модулях
+ * Export all constants and functions for use in other modules
+ */
+module.exports = {
+  // Основные константы
+  CATEGORY_TYPES,
+  RELATIONSHIP_TYPES,
+  RELATIONSHIP_DIRECTIONS,
+  CATEGORY_CHARACTERISTICS,
+  RELATIONSHIP_CHARACTERISTICS,
+  INNOVATION_LEVELS,
+  THESIS_TYPES,
+  THESIS_STYLES,
+  PHILOSOPHICAL_TRADITIONS,
+  HISTORICAL_PERIODS,
+  PRACTICAL_DOMAINS,
+  IMPLEMENTATION_METHODS,
+  PHILOSOPHICAL_QUESTION_TYPES,
+  PHILOSOPHICAL_QUESTIONS,
+  ARGUMENT_TYPES,
+  SYNTHESIS_TYPES,
+  SYNTHESIS_METHODS,
+  COMPATIBILITY_CRITERIA,
+  ANALYSIS_TYPES,
+  EVOLUTION_DIRECTIONS,
+  CHANGE_TYPES,
+  CHARACTERISTIC_RANGES,
+  VALIDATION,
+  
+  // Основной объект констант
+  PHILOSOPHY_CONSTANTS,
+  
+  // Вспомогательные функции
+  isValidThesisType,
+  isValidThesisStyle,
+  isValidCategoryType,
+  isValidRelationshipType,
+  isValidRelationshipDirection,
+  isValidInnovationDegree,
+  isValidCharacteristicValue,
+  isValidPracticalDomain,
+  isValidAnalysisType,
+  isValidEvolutionDirection,
+  getAllTraditions,
+  getTraditionCategory,
+  getInnovationDegreeDescription,
+  getHistoricalPeriodByYear,
+};

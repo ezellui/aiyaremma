@@ -1,0 +1,255 @@
+{
+  "philosopherConcepts": {
+    "Платон": {
+      "name": "Платон",
+      "color": "#FF6B6B",
+      "birth": -428,
+      "death": -348
+    },
+    "Аристотель": {
+      "name": "Аристотель",
+      "color": "#4ECDC4",
+      "birth": -384,
+      "death": -322
+    },
+    "Декарт": {
+      "name": "Декарт",
+      "color": "#45B7D1",
+      "birth": 1596,
+      "death": 1650
+    },
+    "Кант": {
+      "name": "Кант",
+      "color": "#96CEB4",
+      "birth": 1724,
+      "death": 1804
+    },
+    "Гегель": {
+      "name": "Гегель",
+      "color": "#FFEAA7",
+      "birth": 1770,
+      "death": 1831
+    },
+    "Ницше": {
+      "name": "Ницше",
+      "color": "#DFE6E9",
+      "birth": 1844,
+      "death": 1900
+    }
+  },
+  "concepts": [
+    {
+      "id": "plato_ideas",
+      "label": "Мир идей",
+      "concept": "Платон",
+      "description": "Мир вечных и неизменных идей",
+      "extendedDescription": "Согласно Платону, существует трансцендентный мир идеальных форм, которые являются подлинной реальностью, в то время как материальный мир представляет собой лишь несовершенное отражение этих форм."
+    },
+    {
+      "id": "plato_soul",
+      "label": "Триединство души",
+      "concept": "Платон",
+      "description": "Учение о трёх частях души",
+      "extendedDescription": "Платон разделяет душу на три части: разумную (логистикон), яростную (тимос) и вожделеющую (эпитюмия)."
+    },
+    {
+      "id": "aristotle_substance",
+      "label": "Субстанция",
+      "concept": "Аристотель",
+      "description": "Первичная сущность, основа бытия",
+      "extendedDescription": "Аристотель понимает субстанцию как то, что существует само по себе и не нуждается для своего существования в чём-то другом."
+    },
+    {
+      "id": "aristotle_four_causes",
+      "label": "Четыре причины",
+      "concept": "Аристотель",
+      "description": "Материальная, формальная, действующая и целевая причины",
+      "extendedDescription": "Учение о четырёх видах причин, объясняющих существование и изменение вещей в мире."
+    },
+    {
+      "id": "descartes_cogito",
+      "label": "Cogito ergo sum",
+      "concept": "Декарт",
+      "description": "Я мыслю, следовательно, я существую",
+      "extendedDescription": "Основополагающий принцип философии Декарта, утверждающий несомненность существования мыслящего субъекта."
+    },
+    {
+      "id": "descartes_dualism",
+      "label": "Дуализм души и тела",
+      "concept": "Декарт",
+      "description": "Учение о двух субстанциях",
+      "extendedDescription": "Декарт постулирует существование двух независимых субстанций: мыслящей (res cogitans) и протяжённой (res extensa)."
+    },
+    {
+      "id": "kant_categorical_imperative",
+      "label": "Категорический императив",
+      "concept": "Кант",
+      "description": "Безусловный моральный закон",
+      "extendedDescription": "Формула морального закона, требующая поступать только согласно такой максиме, которая могла бы стать всеобщим законом."
+    },
+    {
+      "id": "kant_apriori",
+      "label": "Априорные формы",
+      "concept": "Кант",
+      "description": "Доопытные формы чувственности и рассудка",
+      "extendedDescription": "Кант выделяет априорные формы созерцания (пространство и время) и категории рассудка, которые структурируют наш опыт."
+    },
+    {
+      "id": "hegel_dialectics",
+      "label": "Диалектика",
+      "concept": "Гегель",
+      "description": "Метод познания через противоречия",
+      "extendedDescription": "Диалектический метод предполагает движение мысли через тезис, антитезис и синтез, раскрывая внутренние противоречия понятий."
+    },
+    {
+      "id": "hegel_absolute_spirit",
+      "label": "Абсолютный дух",
+      "concept": "Гегель",
+      "description": "Высшая ступень развития духа",
+      "extendedDescription": "Абсолютный дух представляет собой полное самопознание духа, достигаемое в искусстве, религии и философии."
+    },
+    {
+      "id": "nietzsche_will_to_power",
+      "label": "Воля к власти",
+      "concept": "Ницше",
+      "description": "Фундаментальная движущая сила жизни",
+      "extendedDescription": "По Ницше, воля к власти является основным принципом всего живого, стремлением к расширению и усилению своего влияния."
+    },
+    {
+      "id": "nietzsche_ubermensch",
+      "label": "Сверхчеловек",
+      "concept": "Ницше",
+      "description": "Идеал человека будущего",
+      "extendedDescription": "Сверхчеловек - это тот, кто преодолел традиционную мораль и создал собственную систему ценностей."
+    }
+  ],
+  "connections": [
+    {
+      "from": "plato_ideas",
+      "to": "aristotle_substance",
+      "type": "critique",
+      "weight": 3,
+      "bidirectional": false,
+      "description": "Аристотель критикует платоновскую теорию идей, утверждая, что формы не могут существовать отдельно от вещей."
+    },
+    {
+      "from": "aristotle_four_causes",
+      "to": "plato_ideas",
+      "type": "development",
+      "weight": 2,
+      "bidirectional": false,
+      "description": "Учение о четырёх причинах развивает платоновское понимание формы как причины бытия."
+    },
+    {
+      "from": "descartes_cogito",
+      "to": "kant_apriori",
+      "type": "influence",
+      "weight": 2,
+      "bidirectional": false,
+      "description": "Декартовский субъект познания влияет на кантовское понимание трансцендентального субъекта."
+    },
+    {
+      "from": "kant_apriori",
+      "to": "hegel_dialectics",
+      "type": "development",
+      "weight": 3,
+      "bidirectional": false,
+      "description": "Гегель развивает кантовскую философию, делая категории динамичными в диалектическом процессе."
+    },
+    {
+      "from": "kant_categorical_imperative",
+      "to": "nietzsche_will_to_power",
+      "type": "opposition",
+      "weight": 3,
+      "bidirectional": false,
+      "description": "Ницше отвергает кантовский моральный абсолютизм в пользу витальной философии воли к власти."
+    },
+    {
+      "from": "hegel_absolute_spirit",
+      "to": "nietzsche_ubermensch",
+      "type": "critique",
+      "weight": 2,
+      "bidirectional": false,
+      "description": "Ницше критикует гегелевский идеализм абсолютного духа, противопоставляя ему конкретного сверхчеловека."
+    },
+    {
+      "from": "plato_soul",
+      "to": "descartes_dualism",
+      "type": "similarity",
+      "weight": 2,
+      "bidirectional": true,
+      "description": "И Платон, и Декарт проводят принципиальное различие между душевным и телесным."
+    },
+    {
+      "from": "aristotle_substance",
+      "to": "descartes_dualism",
+      "type": "influence",
+      "weight": 2,
+      "bidirectional": false,
+      "description": "Аристотелевское учение о субстанции влияет на декартовскую концепцию двух субстанций."
+    }
+  ],
+  "rubrics": [
+    {
+      "id": "metaphysics",
+      "name": "Метафизика",
+      "description": "Учение о первоначалах бытия, природе реальности и структуре мира"
+    },
+    {
+      "id": "epistemology",
+      "name": "Эпистемология",
+      "description": "Теория познания, изучающая природу, источники и границы знания"
+    },
+    {
+      "id": "ethics",
+      "name": "Этика",
+      "description": "Философское учение о морали, нравственности и должном поведении"
+    },
+    {
+      "id": "anthropology",
+      "name": "Философская антропология",
+      "description": "Учение о природе и сущности человека"
+    }
+  ],
+  "conceptToRubrics": {
+    "plato_ideas": ["metaphysics", "epistemology"],
+    "plato_soul": ["anthropology", "metaphysics"],
+    "aristotle_substance": ["metaphysics"],
+    "aristotle_four_causes": ["metaphysics", "epistemology"],
+    "descartes_cogito": ["epistemology", "anthropology"],
+    "descartes_dualism": ["metaphysics", "anthropology"],
+    "kant_categorical_imperative": ["ethics"],
+    "kant_apriori": ["epistemology", "metaphysics"],
+    "hegel_dialectics": ["epistemology", "metaphysics"],
+    "hegel_absolute_spirit": ["metaphysics"],
+    "nietzsche_will_to_power": ["metaphysics", "anthropology"],
+    "nietzsche_ubermensch": ["ethics", "anthropology"]
+  },
+  "relationTypes": [
+    {
+      "id": "influence",
+      "label": "Влияние",
+      "color": "#3498db"
+    },
+    {
+      "id": "critique",
+      "label": "Критика",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "development",
+      "label": "Развитие",
+      "color": "#2ecc71"
+    },
+    {
+      "id": "similarity",
+      "label": "Сходство",
+      "color": "#f39c12"
+    },
+    {
+      "id": "opposition",
+      "label": "Противопоставление",
+      "color": "#9b59b6"
+    }
+  ]
+}

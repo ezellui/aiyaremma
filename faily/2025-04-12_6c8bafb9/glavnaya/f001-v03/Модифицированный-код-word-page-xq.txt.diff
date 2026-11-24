@@ -1,0 +1,74 @@
+--- предыдущая/Модифицированный-код-word-page-xq.txt
++++ текущая/Модифицированный-код-word-page-xq.txt
+@@ -1,4 +1,4 @@
+-import module namespace c = "common.xq" at "common.xq";
++if ($inflectimport module namespace c = "common.xq" at "common.xq";
+ 
+ declare function local:print-deriv($deriv as node()?) as element() {
+     <span>
+@@ -363,7 +363,7 @@
+ else if (c:get-speech($words[1]) = 'phrase' or c:get-speech($words[1]) = 'text') then    
+     <a href="../phrase-indexes/phrases-{$l}.html">{$lang} - Фразы</a>
+ else if (c:get-speech($words[1]) = 'grammar') then    
+-    <a href="../grammar-indexes/grammars-{$l}.html">{$lang} - Граматика</a>
++    <a href="../grammar-indexes/grammars-{$l}.html">{$lang} - Грамматика</a>
+ else if (c:get-speech($words[1]) = 'root') then    
+     <a href="../root-indexes/roots-{$l}.html">{$lang} - Корни</a>
+ else if (starts-with(c:get-speech($words[1]), 'phone')) then    
+@@ -375,6 +375,56 @@
+ <span class="search-nav-link">[<a href="../search/search.html">Поиск</a>]</span>
+ <hr class="nav-break"/>
+ <span class="list-nav"> {
++let $lang := $l
++let $base-word := if ($words[1]/combine) then c:get-word($words[1]/combine) else $words[1]
++let $base-word-speech := c:get-speech($base-word)
++let $base-word-set := c:lang-words(/*, $lang)
++let $word-set := 
++    if (ends-with($base-word-speech, '-name')) then    
++        $base-word-set[ends-with(c:get-speech(.), '-name')]
++    else if ($base-word-speech = 'phrase' or $base-word-speech = 'text') then    
++        $base-word-set[c:get-speech(.)='phrase' or c:get-speech(.)='text']
++    else if ($base-word-speech = 'grammar') then    
++        $base-word-set[c:get-speech(.)='grammar']
++    else if ($base-word-speech = 'phonetic-group') then    
++        $base-word-set[c:get-speech(.)='phonetic-group']
++    else if ($base-word-speech = 'phonetic-rule') then    
++        $base-word-set[c:get-speech(.)='phonetic-rule']
++    else if ($base-word-speech = 'phoneme') then    
++        $base-word-set[c:get-speech(.)='phoneme']
++    else if ($base-word-speech = 'root') then    
++        $base-word-set[c:get-speech(.)='root']
++    else
++        $base-word-set
++            [not(ends-with(c:get-speech(.), '-name'))]
++            [not(c:get-speech(.)='phrase' or c:get-speech(.)='text')]
++            [not(starts-with(c:get-speech(.), 'phone'))]
++            [not(c:get-speech(.)='grammar')]
++            [not(c:get-speech(.)='root')]
++let $sorted-word-set :=
++    <group> {
++        for $item in $word-set
++        order by $item/@order, c:normalize-for-sort(c:normalize-spelling($item/@v))
++        return
++        <word l="{c:get-lang($item)}" v="{$item/@v}"> {
++            if (xdb:hashcode($item) = xdb:hashcode($base-word)) then 'match' else ()
++        } </word>
++    } </group>
++let $match-in-word-set := $sorted-word-set/*[text()='match'][1]
++let $preceding-word := $match-in-word-set/preceding-sibling::*[1]
++let $following-word := $match-in-word-set/following-sibling::*[1]
++return (
++    if ($preceding-word) then <span class="previous-nav-link">
++        [<a href="{c:to-word-link($preceding-word)}">← Предыдущее</a>]
++    </span> else (),
++    <span class="next-nav-link">{ if ($following-word) then
++        ('[', <a href="{c:to-word-link($following-word)}">Следующее →</a>, ']')
++    else ('&#160;') }</span>,
++    <span class="search-nav-link2">[<a href="../search/search.html">Поиск</a>]</span>
++) }
++</span>
++</div>
++)}
+ let $lang := $words[1]/ancestor-or-self::*[@l][1]/@l/string()
+ let $base-word := $words[1]/ancestor-or-self::*[@l=$lang][last()]
+ let $base-word-speech := c:get-speech($base-word)

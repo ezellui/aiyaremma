@@ -1,0 +1,74 @@
+// migrations/00005_relationship_types.cypher
+
+// Определение типов отношений и их свойств в соответствии с RELATIONSHIP_TYPES из philosophy-constants.js
+
+// Отношение INCLUDES между Concept и Category
+// Пример создания:
+// MATCH (c:Concept {concept_id: $concept_id})
+// MATCH (cat:Category {category_id: $category_id})
+// CREATE (c)-[:INCLUDES]->(cat)
+
+// Отношение RELATED_TO между Categories с полным спектром типов отношений
+// Пример создания с характеристиками:
+// MATCH (cat1:Category {category_id: $category1_id})
+// MATCH (cat2:Category {category_id: $category2_id})
+// CREATE (cat1)-[r:RELATED_TO {
+//   relationship_id: $relationship_id,
+//   type: $type,
+//   direction: $direction,
+//   strength: $strength,
+//   certainty: $certainty,
+//   traditions: $traditions,
+//   philosophers: $philosophers,
+//   created_at: datetime($created_at),
+//   updated_at: datetime($updated_at)
+// }]->(cat2)
+// RETURN r;
+
+// Полный список типов отношений RELATED_TO:
+// - hierarchical (иерархическое) - отношение общего к частному
+// - causal (причинно-следственное) - причина и следствие
+// - dialectical (диалектическое) - отношение тезис-антитезис-синтез
+// - correlational (корреляционное) - взаимосвязь
+// - disjunctive (дизъюнктивное) - отношение "или-или"
+// - conjunctive (конъюнктивное) - отношение "и-и"
+// - contradiction (противоречие) - логически несовместимые положения
+// - complementary (комплементарное) - дополнительность
+// - emergence (эмерджентность) - возникновение нового качества
+// - necessary_condition (необходимое условие) - отношение необходимости
+// - sufficient_condition (достаточное условие) - отношение достаточности
+// - identity (тождество) - отношение идентичности
+// - analogy (аналогия) - отношение сходства
+// - implementation (реализация) - воплощение идеи
+// - instantiation (конкретизация) - пример общего положения
+// - generalization (обобщение) - отношение частного к общему
+// - part_whole (часть-целое) - отношение части к целому
+// - means_end (средство-цель) - отношение средства к цели
+// - deductive (дедуктивное) - отношение общих положений к частным
+// - inductive (индуктивное) - отношение частных положений к общим
+// - abductive (абдуктивное) - отношение наблюдения к гипотезе
+// - temporal (временное) - отношение временной последовательности
+// - conceptual (концептуальное) - отношение между понятиями
+// - definitional (определяющее) - отношение определения
+
+// Направления отношений (RELATIONSHIP_DIRECTIONS):
+// - unidirectional (однонаправленное) - направление от одной категории к другой
+// - bidirectional (двунаправленное) - взаимное влияние категорий
+// - circular (циклическое) - отношение в замкнутом цикле
+// - reflexive (рефлексивное) - самореферентное отношение
+
+// Создание ограничений для связей RELATED_TO
+CREATE CONSTRAINT related_to_relationship_id_unique IF NOT EXISTS
+FOR ()-[r:RELATED_TO]->() REQUIRE r.relationship_id IS UNIQUE;
+
+// Создание индекса для типа связи
+CREATE INDEX related_to_type_index IF NOT EXISTS
+FOR ()-[r:RELATED_TO]->() ON (r.type);
+
+// Создание индекса для силы связи
+CREATE INDEX related_to_strength_index IF NOT EXISTS
+FOR ()-[r:RELATED_TO]->() ON (r.strength);
+
+// Создание индекса для определенности связи
+CREATE INDEX related_to_certainty_index IF NOT EXISTS
+FOR ()-[r:RELATED_TO]->() ON (r.certainty);

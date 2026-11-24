@@ -1,0 +1,12 @@
+Categories {
+    string category_id PK
+    string concept_id FK
+    string name
+    string definition
+    string extended_description
+    string source
+    json tradition_concepts  -- Добавлено
+    json philosophers        -- Добавлено
+    datetime created_at
+    datetime last_modified
+}

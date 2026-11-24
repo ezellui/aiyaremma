@@ -1,0 +1,361 @@
+{
+  "concepts": [
+    {
+      "id": "concept_existentialism",
+      "name": "Экзистенциализм",
+      "createdAt": "2024-02-15T11:00:00.000Z",
+      "description": "Философское направление, акцентирующее индивидуальное существование, свободу и ответственность",
+      "author": "Различные философы XX века"
+    },
+    {
+      "id": "concept_phenomenology",
+      "name": "Феноменология",
+      "createdAt": "2024-02-20T15:30:00.000Z",
+      "description": "Философский метод, исследующий структуры сознания и явления как они даны в опыте",
+      "author": "Эдмунд Гуссерль"
+    },
+    {
+      "id": "concept_poststructuralism",
+      "name": "Постструктурализм",
+      "createdAt": "2024-03-01T10:15:00.000Z",
+      "description": "Философское направление, критикующее структурный подход и акцентирующее множественность смыслов",
+      "author": "Различные философы второй половины XX века"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat_ex_1",
+      "conceptId": "concept_existentialism",
+      "name": "Экзистенция",
+      "definition": "Способ бытия человека, характеризующийся осознанием своей конечности и свободы",
+      "source": "Бытие и время, Бытие и ничто",
+      "traditions": ["экзистенциализм", "феноменология"],
+      "philosophers": ["Хайдеггер", "Сартр", "Ясперс"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 8,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_ex_2",
+      "conceptId": "concept_existentialism",
+      "name": "Свобода",
+      "definition": "Фундаментальная характеристика человеческого бытия, основа выбора и ответственности",
+      "source": "Бытие и ничто, Экзистенциализм - это гуманизм",
+      "traditions": ["экзистенциализм", "персонализм"],
+      "philosophers": ["Сартр", "Камю", "Бердяев"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 9,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_ex_3",
+      "conceptId": "concept_existentialism",
+      "name": "Абсурд",
+      "definition": "Конфликт между человеческим стремлением к смыслу и безмолвием мира",
+      "source": "Миф о Сизифе",
+      "traditions": ["экзистенциализм", "абсурдизм"],
+      "philosophers": ["Камю", "Сартр", "Кьеркегор"],
+      "metrics": {
+        "centrality": 8,
+        "definition": 9,
+        "historical": 8
+      }
+    },
+    {
+      "id": "cat_ex_4",
+      "conceptId": "concept_existentialism",
+      "name": "Тревога",
+      "definition": "Фундаментальное настроение, раскрывающее конечность и свободу человека",
+      "source": "Понятие страха, Бытие и время",
+      "traditions": ["экзистенциализм", "психоанализ"],
+      "philosophers": ["Кьеркегор", "Хайдеггер", "Тиллих"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 8,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_phen_1",
+      "conceptId": "concept_phenomenology",
+      "name": "Интенциональность",
+      "definition": "Направленность сознания на предмет, фундаментальная структура опыта",
+      "source": "Логические исследования, Идеи I",
+      "traditions": ["феноменология", "философия сознания"],
+      "philosophers": ["Гуссерль", "Брентано", "Мерло-Понти"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 9,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_phen_2",
+      "conceptId": "concept_phenomenology",
+      "name": "Эпохе",
+      "definition": "Феноменологическая редукция, воздержание от суждений о существовании мира",
+      "source": "Идеи к чистой феноменологии",
+      "traditions": ["феноменология", "трансцендентализм"],
+      "philosophers": ["Гуссерль", "Финк", "Ингарден"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 8,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_phen_3",
+      "conceptId": "concept_phenomenology",
+      "name": "Жизненный мир",
+      "definition": "Дорефлексивный горизонт всякого опыта, мир повседневности",
+      "source": "Кризис европейских наук",
+      "traditions": ["феноменология", "герменевтика"],
+      "philosophers": ["Гуссерль", "Шюц", "Хабермас"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 8,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_phen_4",
+      "conceptId": "concept_phenomenology",
+      "name": "Горизонт",
+      "definition": "Неявный фон восприятия, обеспечивающий контекст понимания",
+      "source": "Идеи I, Картезианские размышления",
+      "traditions": ["феноменология", "герменевтика"],
+      "philosophers": ["Гуссерль", "Гадамер", "Мерло-Понти"],
+      "metrics": {
+        "centrality": 8,
+        "definition": 7,
+        "historical": 8
+      }
+    },
+    {
+      "id": "cat_post_1",
+      "conceptId": "concept_poststructuralism",
+      "name": "Деконструкция",
+      "definition": "Метод анализа текстов через выявление внутренних противоречий и скрытых предпосылок",
+      "source": "О грамматологии",
+      "traditions": ["постструктурализм", "деконструктивизм"],
+      "philosophers": ["Деррида", "де Ман", "Миллер"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 8,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_post_2",
+      "conceptId": "concept_poststructuralism",
+      "name": "Различание (différance)",
+      "definition": "Процесс одновременного различения и откладывания смысла во времени",
+      "source": "Письмо и различие",
+      "traditions": ["постструктурализм", "семиотика"],
+      "philosophers": ["Деррида", "Кристева", "Барт"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 7,
+        "historical": 8
+      }
+    },
+    {
+      "id": "cat_post_3",
+      "conceptId": "concept_poststructuralism",
+      "name": "Власть-знание",
+      "definition": "Неразрывная связь между структурами власти и производством знания",
+      "source": "Надзирать и наказывать, Археология знания",
+      "traditions": ["постструктурализм", "постмодернизм"],
+      "philosophers": ["Фуко", "Делёз", "Агамбен"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 9,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_post_4",
+      "conceptId": "concept_poststructuralism",
+      "name": "Ризома",
+      "definition": "Нелинейная, множественная структура мышления и бытия без центра и иерархии",
+      "source": "Тысяча плато",
+      "traditions": ["постструктурализм", "постмодернизм"],
+      "philosophers": ["Делёз", "Гваттари"],
+      "metrics": {
+        "centrality": 8,
+        "definition": 7,
+        "historical": 8
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel_ex_1",
+      "from": "cat_ex_1",
+      "to": "cat_ex_2",
+      "type": "functional",
+      "bidirectional": true,
+      "traditions": ["экзистенциализм"],
+      "philosophers": ["Сартр", "Хайдеггер"],
+      "strength": 10,
+      "certainty": 9
+    },
+    {
+      "id": "rel_ex_2",
+      "from": "cat_ex_2",
+      "to": "cat_ex_3",
+      "type": "dialectical",
+      "bidirectional": true,
+      "traditions": ["экзистенциализм", "абсурдизм"],
+      "philosophers": ["Камю"],
+      "strength": 8,
+      "certainty": 8
+    },
+    {
+      "id": "rel_ex_3",
+      "from": "cat_ex_1",
+      "to": "cat_ex_4",
+      "type": "derivative",
+      "bidirectional": false,
+      "traditions": ["экзистенциализм"],
+      "philosophers": ["Хайдеггер", "Кьеркегор"],
+      "strength": 9,
+      "certainty": 9
+    },
+    {
+      "id": "rel_phen_1",
+      "from": "cat_phen_1",
+      "to": "cat_phen_2",
+      "type": "functional",
+      "bidirectional": true,
+      "traditions": ["феноменология"],
+      "philosophers": ["Гуссерль"],
+      "strength": 9,
+      "certainty": 9
+    },
+    {
+      "id": "rel_phen_2",
+      "from": "cat_phen_3",
+      "to": "cat_phen_4",
+      "type": "associative",
+      "bidirectional": true,
+      "traditions": ["феноменология"],
+      "philosophers": ["Гуссерль"],
+      "strength": 8,
+      "certainty": 8
+    },
+    {
+      "id": "rel_phen_3",
+      "from": "cat_phen_2",
+      "to": "cat_phen_3",
+      "type": "dialectical",
+      "bidirectional": false,
+      "traditions": ["феноменология"],
+      "philosophers": ["Гуссерль"],
+      "strength": 7,
+      "certainty": 8
+    },
+    {
+      "id": "rel_post_1",
+      "from": "cat_post_1",
+      "to": "cat_post_2",
+      "type": "functional",
+      "bidirectional": true,
+      "traditions": ["постструктурализм"],
+      "philosophers": ["Деррида"],
+      "strength": 10,
+      "certainty": 9
+    },
+    {
+      "id": "rel_post_2",
+      "from": "cat_post_3",
+      "to": "cat_post_4",
+      "type": "associative",
+      "bidirectional": true,
+      "traditions": ["постструктурализм"],
+      "philosophers": ["Делёз", "Фуко"],
+      "strength": 7,
+      "certainty": 7
+    },
+    {
+      "id": "rel_post_3",
+      "from": "cat_post_1",
+      "to": "cat_post_3",
+      "type": "dialectical",
+      "bidirectional": false,
+      "traditions": ["постструктурализм"],
+      "philosophers": ["Фуко", "Деррида"],
+      "strength": 8,
+      "certainty": 8
+    },
+    {
+      "id": "rel_cross_1",
+      "from": "cat_ex_1",
+      "to": "cat_phen_1",
+      "type": "associative",
+      "bidirectional": true,
+      "traditions": ["экзистенциализм", "феноменология"],
+      "philosophers": ["Хайдеггер", "Сартр"],
+      "strength": 9,
+      "certainty": 9
+    },
+    {
+      "id": "rel_cross_2",
+      "from": "cat_phen_3",
+      "to": "cat_ex_3",
+      "type": "associative",
+      "bidirectional": false,
+      "traditions": ["феноменология", "экзистенциализм"],
+      "philosophers": ["Мерло-Понти", "Камю"],
+      "strength": 6,
+      "certainty": 7
+    },
+    {
+      "id": "rel_cross_3",
+      "from": "cat_post_1",
+      "to": "cat_phen_2",
+      "type": "critical",
+      "bidirectional": false,
+      "traditions": ["постструктурализм", "феноменология"],
+      "philosophers": ["Деррида"],
+      "strength": 8,
+      "certainty": 8
+    }
+  ],
+  "relationTypes": [
+    {
+      "id": "hierarchical",
+      "name": "Иерархическая"
+    },
+    {
+      "id": "causal",
+      "name": "Причинно-следственная"
+    },
+    {
+      "id": "dialectical",
+      "name": "Диалектическая"
+    },
+    {
+      "id": "functional",
+      "name": "Функциональная"
+    },
+    {
+      "id": "derivative",
+      "name": "Производная"
+    },
+    {
+      "id": "associative",
+      "name": "Ассоциативная"
+    },
+    {
+      "id": "critical",
+      "name": "Критическая"
+    }
+  ],
+  "apiKey": "",
+  "exportDate": "2024-04-15T12:30:00.000Z"
+}

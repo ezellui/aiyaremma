@@ -1,0 +1,22 @@
+--- предыдущая/runt-prevention-strategies-spec.md
++++ текущая/runt-prevention-strategies-spec.md
+@@ -309,7 +309,8 @@
+ 
+   const logEntry = {
+     strategy: 'B',
+-    pPreview: (p.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60),
++    pPreview: ((typeof p.innerText === 'string' ? p.innerText : p.textContent) || '')
++                .replace(/\s+/g, ' ').trim().slice(0, 60),
+     lineCount: runt.lineCount,
+     lastLineWidth: Math.round(runt.lastLineWidth),
+     penultLineWidth: Math.round(runt.penultLineWidth),
+@@ -503,7 +504,8 @@
+ 
+   const logEntry = {
+     strategy: 'C',
+-    pPreview: (p.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60),
++    pPreview: ((typeof p.innerText === 'string' ? p.innerText : p.textContent) || '')
++                .replace(/\s+/g, ' ').trim().slice(0, 60),
+     lineCount: runt.lineCount,
+     lastLineWidth: Math.round(runt.lastLineWidth),
+     penultLineWidth: Math.round(runt.penultLineWidth),

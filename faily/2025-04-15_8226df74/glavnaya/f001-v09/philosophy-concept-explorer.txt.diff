@@ -1,0 +1,492 @@
+--- предыдущая/philosophy-concept-explorer.txt
++++ текущая/philosophy-concept-explorer.txt
+@@ -1,4 +1,392 @@
+-<!DOCTYPE html>
++          // Функция обновления выводов
++          const updateConclusions = () => {
++            const newConclusions = [];
++            let complexImplications = []; // Массив для сложных философских импликаций
++            
++            // Проверка онтологических положений
++            if (selectedCategories.existence && selectedCategories.substance) {
++              newConclusions.push("Система признает существование субстанции как фундаментальной основы бытия.");
++              
++              if (selectedCategories.form) {
++                newConclusions.push("Система рассматривает бытие как единство субстанции и формы, следуя аристотелевской традиции.");
++              }
++              
++              if (selectedCategories.matter && !selectedCategories.form) {
++                newConclusions.push("Система постулирует материальную субстанцию как первооснову всего сущего, склоняясь к материалистическому монизму.");
++              }
++            }
++            
++            if (selectedCategories.essence && selectedCategories.form) {
++              newConclusions.push("Система делает акцент на эссенциализме, признавая важность форм и сущностей вещей.");
++              
++              if (selectedCategories.universality) {
++                newConclusions.push("Система предполагает, что сущности представляют собой универсалии, существующие вне конкретных вещей, склоняясь к платоническому реализму.");
++              }
++              
++              if (selectedCategories.particularity && !selectedCategories.universality) {
++                newConclusions.push("Система утверждает, что сущности существуют только в конкретных вещах, склоняясь к умеренному аристотелевскому реализму.");
++              }
++              
++              if (selectedCategories.knowledge && selectedCategories.rationalism) {
++                complexImplications.push("Метафизический интуитивизм: сущности вещей постигаемы разумом, а не чувственным опытом.");
++              }
++            }
++            
++            if (selectedCategories.matter && !selectedCategories.form) {
++              newConclusions.push("Система тяготеет к материализму, признавая материю первичной по отношению к форме.");
++              
++              if (selectedCategories.causality) {
++                newConclusions.push("Система развивает представление о причинной обусловленности всех материальных процессов, развивая натуралистический детерминизм.");
++              }
++              
++              if (selectedCategories.consciousness) {
++                newConclusions.push("Система сталкивается с необходимостью объяснения феномена сознания в терминах материальных процессов, тяготея к теории тождества сознания и мозга или эмерджентизму.");
++                complexImplications.push("Проблема квалиа: как из физических процессов возникает субъективное переживание?");
++              }
++            }
++            
++            if (selectedCategories.form && !selectedCategories.matter) {
++              newConclusions.push("Система тяготеет к идеализму, признавая первичность формы и идей по отношению к материи.");
++              
++              if (selectedCategories.consciousness) {
++                newConclusions.push("Система развивается в направлении субъективного идеализма, где формы/идеи существуют в сознании познающего субъекта.");
++              } else if (selectedCategories.universality) {
++                newConclusions.push("Система развивается в направлении объективного идеализма, где идеи существуют независимо от индивидуального сознания.");
++              }
++              
++              if (selectedCategories.society) {
++                complexImplications.push("Социальный идеализм: общественные отношения и институты формируются коллективными идеями и представлениями.");
++              }
++            }
++            
++            if (selectedCategories.potentiality && selectedCategories.actuality) {
++              newConclusions.push("Система признает диалектику потенциального и актуального как философскую категорию изменения и становления.");
++              
++              if (selectedCategories.teleology) {
++                newConclusions.push("Система утверждает, что актуализация потенциального имеет целенаправленный характер, тяготея к телеологическому пониманию развития.");
++              }
++              
++              if (selectedCategories.causality && !selectedCategories.teleology) {
++                newConclusions.push("Система утверждает, что переход от потенциального к актуальному обусловлен каузальными факторами, отвергая необходимость телеологического объяснения.");
++              }
++              
++              if (selectedCategories.identity) {
++                complexImplications.push("Диалектика устойчивости и изменчивости: идентичность сущего сохраняется в процессе актуализации его потенциалов.");
++              }
++            }
++            
++            // Проверка эпистемологических положений
++            if (selectedCategories.knowledge && selectedCategories.truth) {
++              newConclusions.push("Система предполагает возможность достижения истинного знания.");
++              
++              if (selectedCategories.justification) {
++                newConclusions.push("Система требует обоснования истинности знания, склоняясь к эвиденциализму.");
++                
++                if (selectedCategories.empiricism) {
++                  newConclusions.push("Система считает, что обоснование знания должно опираться на эмпирические свидетельства, придерживаясь эмпирического фундаментализма.");
++                } 
++                
++                if (selectedCategories.rationalism) {
++                  newConclusions.push("Система предполагает, что надежное обоснование знания должно опираться на рациональную интуицию и дедукцию, склоняясь к рационалистическому фундаментализму.");
++                }
++                
++                if (selectedCategories.empiricism && selectedCategories.rationalism) {
++                  complexImplications.push("Критический рационализм: надежное знание требует как эмпирического подтверждения, так и рациональной критики.");
++                }
++              }
++              
++              if (selectedCategories.universality && !selectedCategories.particularity) {
++                newConclusions.push("Система ориентирована на достижение универсальных истин, применимых во всех возможных контекстах.");
++              }
++              
++              if (selectedCategories.particularity && !selectedCategories.universality) {
++                newConclusions.push("Система признает контекстуальный характер истины, склоняясь к эпистемологическому партикуляризму или релятивизму.");
++              }
++            }
++            
++            if (selectedCategories.empiricism && !selectedCategories.rationalism) {
++              newConclusions.push("Система тяготеет к эмпиризму, признавая опыт главным источником знания.");
++              
++              if (selectedCategories.causality) {
++                newConclusions.push("Система сталкивается с проблемой Юма: возможно ли обосновать знание о причинности, опираясь только на опыт?");
++              }
++              
++              if (selectedCategories.universality) {
++                newConclusions.push("Система должна объяснить, как из частных опытных данных возникает универсальное знание, сталкиваясь с проблемой индукции.");
++              }
++              
++              if (selectedCategories.essence) {
++                complexImplications.push("Сенсуалистический эссенциализм: сущности вещей доступны чувственному познанию, что проблематизирует их объективный статус.");
++              }
++            }
++            
++            if (selectedCategories.rationalism && !selectedCategories.empiricism) {
++              newConclusions.push("Система тяготеет к рационализму, признавая разум главным источником знания.");
++              
++              if (selectedCategories.necessity) {
++                newConclusions.push("Система утверждает, что разум способен постигать необходимые истины, независимые от опыта, развивая учение об априорном знании.");
++              }
++              
++              if (selectedCategories.existence && selectedCategories.substance) {
++                newConclusions.push("Система тяготеет к онтологическому рационализму, где фундаментальная реальность постигается через рациональное мышление.");
++              }
++              
++              if (selectedCategories.possibility) {
++                complexImplications.push("Модальный рационализм: разум способен постигать не только действительное, но и возможное, раскрывая модальную структуру реальности.");
++              }
++            }
++            
++            if (selectedCategories.empiricism && selectedCategories.rationalism) {
++              newConclusions.push("Система признает как эмпирический, так и рациональный пути познания, стремясь к их синтезу.");
++              
++              if (selectedCategories.knowledge && selectedCategories.justification) {
++                newConclusions.push("Система развивается в направлении критической эпистемологии, где опыт предоставляет содержание знания, а разум его форму и структуру.");
++              }
++              
++              if (selectedCategories.necessity && selectedCategories.causality) {
++                complexImplications.push("Трансцендентальный идеализм: необходимые причинные связи представляют собой априорные формы понимания опыта, а не свойства вещей самих по себе.");
++              }
++            }
++            
++            if (selectedCategories.belief && !selectedCategories.knowledge) {
++              newConclusions.push("Система склоняется к фидеизму, придавая вере приоритет над рациональным знанием.");
++              
++              if (selectedCategories.ethics) {
++                newConclusions.push("Система развивает нарративный подход к          // Функция для генерации названия концепции на основе выбранных категорий
++          const generateConceptName = () => {
++            // Количество выбранных категорий
++            const selectedCount = Object.values(selectedCategories).filter(Boolean).length;
++            
++            // Если категории не выбраны, устанавливаем базовое название
++            if (selectedCount === 0) {
++              setConceptName("Ваша философская концепция");
++              return;
++            }
++            
++            // Префиксы для названий на основе онтологических категорий с учётом рода
++            const ontologyPrefixes = {
++              existence: {prefix: "Экзистенц", gender: "feminine"},
++              substance: {prefix: "Субстанц", gender: "feminine"},
++              essence: {prefix: "Эссенц", gender: "feminine"},
++              matter: {prefix: "Матер", gender: "feminine"},
++              form: {prefix: "Форм", gender: "feminine"},
++              potentiality: {prefix: "Потенц", gender: "feminine"},
++              actuality: {prefix: "Актуал", gender: "feminine"},
++              nature: {prefix: "Натур", gender: "feminine"}
++            };
++            
++            // Суффиксы для названий на основе эпистемологических категорий с учётом рода
++            const epistemologySuffixes = {
++              knowledge: {suffix: "гнозия", gender: "feminine"},
++              belief: {suffix: "пистия", gender: "feminine"},
++              reason: {suffix: "логия", gender: "feminine"},
++              empiricism: {suffix: "эмпирика", gender: "feminine"},
++              rationalism: {suffix: "рационализм", gender: "masculine"},
++              truth: {suffix: "алетейя", gender: "feminine"},
++              justification: {suffix: "верификация", gender: "feminine"},
++              understanding: {suffix: "герменевтика", gender: "feminine"}
++            };
++            
++            // Модификаторы на основе аксиологических категорий с учётом рода и падежа
++            const axiologyModifiers = {
++              // Массив [мужской род, женский род, средний род]
++              value: ["ценностный", "ценностная", "ценностное"],
++              ethics: ["этический", "этическая", "этическое"],
++              aesthetics: ["эстетический", "эстетическая", "эстетическое"],
++              good: ["благостный", "благостная", "благостное"],
++              beauty: ["прекрасный", "прекрасная", "прекрасное"],
++              virtue: ["добродетельный", "добродетельная", "добродетельное"]
++            };
++            
++            // Модификаторы на основе логических категорий с учётом рода и падежа
++            const logicModifiers = {
++              necessity: ["необходимостный", "необходимостная", "необходимостное"],
++              possibility: ["возможностный", "возможностная", "возможностное"],
++              universality: ["универсальный", "универсальная", "универсальное"],
++              particularity: ["частный", "частная", "частное"],
++              causality: ["причинный", "причинная", "причинное"],
++              teleology: ["целевой", "целевая", "целевое"],
++              dialectics: ["диалектический", "диалектическая", "диалектическое"],
++              pluralism: ["плюралистический", "плюралистическая", "плюралистическое"]
++            };
++            
++            // Модификаторы на основе антропологических категорий с учётом рода
++            const anthropologyModifiers = {
++              consciousness: ["сознательный", "сознательная", "сознательное"],
++              freedom: ["свободный", "свободная", "свободное"],
++              will: ["волевой", "волевая", "волевое"],
++              identity: ["идентичностный", "идентичностная", "идентичностное"],
++              person: ["личностный", "личностная", "личностное"],
++              society: ["социальный", "социальная", "социальное"],
++              history: ["исторический", "историческая", "историческое"],
++              language: ["лингвистический", "лингвистическая", "лингвистическое"],
++              power: ["властный", "властная", "властное"],
++              interpretation: ["интерпретативный", "интерпретативная", "интерпретативное"]
++            };
++            
++            // Строим имя концепции
++            let name = "";
++            let genderOfName = "feminine"; // По умолчанию женский род (для "философия")
++            
++            // Выбираем префикс из онтологических категорий
++            let prefix = null;
++            let hasPrefixSelected = false;
++            
++            Object.entries(ontologyPrefixes).forEach(([category, prefixData]) => {
++              if (!hasPrefixSelected && selectedCategories[category]) {
++                prefix = prefixData;
++                hasPrefixSelected = true;
++                genderOfName = prefixData.gender;
++              }
++            });
++            
++            // Если нет онтологического префикса, используем по умолчанию "Филос"
++            if (!hasPrefixSelected) {
++              prefix = { prefix: "Филос", gender: "feminine" };
++            }
++            
++            // Выбираем суффикс из эпистемологических категорий
++            let suffix = null;
++            let hasSuffixSelected = false;
++            
++            Object.entries(epistemologySuffixes).forEach(([category, suffixData]) => {
++              if (!hasSuffixSelected && selectedCategories[category]) {
++                suffix = suffixData;
++                hasSuffixSelected = true;
++                genderOfName = suffixData.gender; // Род определяется последним компонентом
++              }
++            });
++            
++            // Если нет эпистемологического суффикса, используем по умолчанию "офия"
++            if (!hasSuffixSelected) {
++              suffix = { suffix: "офия", gender: "feminine" };
++            }
++            
++            // Добавляем модификаторы, согласованные по роду
++            const modifiers = [];
++            
++            // Определяем индекс рода для модификаторов: 0 - мужской, 1 - женский, 2 - средний
++            const genderIndex = genderOfName === "masculine" ? 0 : genderOfName === "feminine" ? 1 : 2;
++            
++            // Добавляем выбранные модификаторы из аксиологических категорий
++            Object.entries(axiologyModifiers).forEach(([category, modifierForms]) => {
++              if (selectedCategories[category]) {
++                modifiers.push(modifierForms[genderIndex]);
++              }
++            });
++            
++            // Добавляем выбранные модификаторы из логических категорий
++            Object.entries(logicModifiers).forEach(([category, modifierForms]) => {
++              if (selectedCategories[category]) {
++                modifiers.push(modifierForms[genderIndex]);
++              }
++            });
++            
++            // Добавляем выбранные модификаторы из антропологических категорий
++            Object.entries(anthropologyModifiers).forEach(([category, modifierForms]) => {
++              if (selectedCategories[category]) {
++                modifiers.push(modifierForms[genderIndex]);
++              }
++            });
++            
++            // Выбираем 1-2 случайных модификатора, если их больше двух
++            if (modifiers.length > 2) {
++              // Перемешиваем массив
++              for (let i = modifiers.length - 1; i > 0; i--) {
++                const j = Math.floor(Math.random() * (i + 1));
++                [modifiers[i], modifiers[j]] = [modifiers[j], modifiers[i]];
++              }
++              // Обрезаем до 2 элементов
++              modifiers.length = 2;
++            }
++            
++            // Добавляем выбранные модификаторы в порядке: модификаторы + префикс + суффикс
++            name = modifiers.join(" ") + (modifiers.length > 0 ? " " : "") + prefix.prefix + suffix.suffix;
++            
++            // Добавляем классификатор на основе доминирующей группы
++            let dominantGroup = "";
++            let maxCount = 0;
++            
++            // Подсчитываем количество выбранных категорий в каждой группе
++            const ontologyCount = Object.keys(ontologyPrefixes).filter(category => 
++              selectedCategories[category]).length;
++            const epistemologyCount = Object.keys(epistemologySuffixes).filter(category => 
++              selectedCategories[category]).length;
++            const axiologyCount = Object.keys(axiologyModifiers).filter(category => 
++              selectedCategories[category]).length;
++            const logicCount = Object.keys(logicModifiers).filter(category => 
++              selectedCategories[category]).length;
++            const anthropologyCount = Object.keys(anthropologyModifiers).filter(category => 
++              selectedCategories[category]).length;
++            
++            // Определяем доминирующую группу с учетом рода основного термина
++            if (ontologyCount > maxCount) {
++              maxCount = ontologyCount;
++              dominantGroup = genderOfName === "masculine" ? " (онтологический)" : 
++                             genderOfName === "feminine" ? " (онтологическая)" : " (онтологическое)";
++            }
++            if (epistemologyCount > maxCount) {
++              maxCount = epistemologyCount;
++              dominantGroup = genderOfName === "masculine" ? " (эпистемологический)" : 
++                             genderOfName === "feminine" ? " (эпистемологическая)" : " (эпистемологическое)";
++            }
++            if (axiologyCount > maxCount) {
++              maxCount = axiologyCount;
++              dominantGroup = genderOfName === "masculine" ? " (аксиологический)" : 
++                             genderOfName === "feminine" ? " (аксиологическая)" : " (аксиологическое)";
++            }
++            if (logicCount > maxCount) {
++              maxCount = logicCount;
++              dominantGroup = genderOfName === "masculine" ? " (логический)" : 
++                             genderOfName === "feminine" ? " (логическая)" : " (логическое)";
++            }
++            if (anthropologyCount > maxCount) {
++              maxCount = anthropologyCount;
++              dominantGroup = genderOfName === "masculine" ? " (антропологический)" : 
++                             genderOfName === "feminine" ? " (антропологическая)" : " (антропологическое)";
++            }
++            
++            // Добавляем доминирующую группу к названию
++            name += dominantGroup;
++            
++            // Первая буква заглавная
++            name = name.charAt(0).toUpperCase() + name.slice(1);
++            
++            // Специальные случаи для известных философских направлений
++            if (selectedCategories.matter && !selectedCategories.consciousness && selectedCategories.existence) {
++              name = "Материализм";
++            } else if (!selectedCategories.matter && selectedCategories.consciousness && selectedCategories.form) {
++              name = "Идеализм";
++            } else if (selectedCategories.consciousness && selectedCategories.matter && selectedCategories.existence) {
++              name = "Дуализм";
++            } else if (selectedCategories.empiricism && selectedCategories.knowledge && !selectedCategories.rationalism) {
++              name = "Эмпиризм";
++            } else if (selectedCategories.rationalism && selectedCategories.reason && !selectedCategories.empiricism) {
++              name = "Рационализм";
++            } else if (selectedCategories.consciousness && selectedCategories.freedom && selectedCategories.existence) {
++              name = "Экзистенциализм";
++            } else if (selectedCategories.value && selectedCategories.good && selectedCategories.ethics) {
++              name = "Аксиология";
++            } else if (selectedCategories.causality && selectedCategories.necessity && !selectedCategories.freedom) {
++              name = "Детерминизм";
++            } else if (selectedCategories.value && selectedCategories.society && selectedCategories.history) {
++              name = "Социальная философия";
++            } else if (selectedCategories.beauty && selectedCategories.aesthetics) {
++              name = "Эстетика";
++            } else if (selectedCategories.freedom && selectedCategories.will && !selectedCategories.necessity) {
++              name = "Либертарианство";
++            } else if (selectedCategories.language && selectedCategories.interpretation && selectedCategories.understanding) {
++              name = "Герменевтика";
++            } else if (selectedCategories.dialectics && selectedCategories.history && selectedCategories.matter) {
++              name = "Диалектический материализм";
++            } else if (selectedCategories.language && selectedCategories.power && selectedCategories.interpretation) {
++              name = "Постструктурализм";
++            } else if (selectedCategories.knowledge && selectedCategories.knowledge && selectedCategories.causality) {
++              name = "Натурализм";
++            }
++            
++            setConceptName(name);
++          };<!DOCTYPE html>
+ <html lang="ru">
+ <head>
+     <meta charset="UTF-8">
+@@ -241,7 +629,94 @@
+             {
+               name: "Материализм",
+               requiredCategories: ["matter", "existence"],
+-              description: "Философское направление, признающее материю первичной и единственной субстанцией, а сознание — вторичным, производным от материи."
++              description: "Вопрос о том, обладает ли человек свободой выбора или все его действия предопределены внешними причинами.",
++              positions: [
++                "Детерминизм: все события, включая человеческие поступки, предопределены предшествующими причинами",
++                "Либертарианство: человек обладает подлинной свободой воли, независимой от причинно-следственных связей",
++                "Компатибилизм: свобода воли совместима с детерминизмом, если она понимается как отсутствие внешнего принуждения"
++              ]
++            },
++            {
++              name: "Проблема сознания и тела",
++              relatedCategories: ["consciousness", "matter", "substance", "identity"],
++              description: "Вопрос о взаимоотношении сознания (психического) и тела (физического), а также о природе сознания как такового.",
++              positions: [
++                "Дуализм: сознание и тело — две различные субстанции",
++                "Физикализм: сознание сводимо к физическим процессам в мозге",
++                "Функционализм: ментальные состояния определяются их функциональной ролью, а не физической природой"
++              ]
++            },
++            {
++              name: "Проблема обоснования знания",
++              relatedCategories: ["knowledge", "truth", "justification", "belief"],
++              description: "Вопрос о том, как можно обосновать истинность наших знаний и избежать бесконечного регресса в обосновании.",
++              positions: [
++                "Фундаментализм: существуют базовые, самоочевидные истины, не требующие дальнейшего обоснования",
++                "Когерентизм: обоснование знания состоит в его согласованности с другими убеждениями",
++                "Скептицизм: невозможно окончательно обосновать знание, всегда остается место для сомнения"
++              ]
++            },
++            {
++              name: "Этический релятивизм vs. абсолютизм",
++              relatedCategories: ["ethics", "value", "universality", "particularity"],
++              description: "Вопрос о том, существуют ли универсальные моральные принципы или этические нормы зависят от культуры, общества и эпохи.",
++              positions: [
++                "Моральный абсолютизм: существуют универсальные моральные принципы, верные для всех времен и культур",
++                "Культурный релятивизм: моральные нормы относительны и зависят от культуры",
++                "Субъективизм: моральные суждения выражают личные предпочтения и эмоции, а не объективные истины"
++              ]
++            },
++            {
++              name: "Проблема индукции",
++              relatedCategories: ["knowledge", "causality", "necessity", "possibility"],
++              description: "Вопрос о логическом обосновании индуктивных умозаключений: можно ли логически обосновать переход от частных случаев к общему закону?",
++              positions: [
++                "Индуктивизм: индукция оправдана прагматической полезностью и успешностью науки",
++                "Скептицизм относительно индукции: индукция логически не обоснована (проблема Юма)",
++                "Критический рационализм: научные теории не выводятся индуктивно, а создаются как гипотезы и проверяются опытом (Поппер)"
++              ]
++            },
++            {
++              name: "Проблема существования внешнего мира",
++              relatedCategories: ["existence", "knowledge", "consciousness", "truth"],
++              description: "Вопрос о том, существует ли внешний мир независимо от нашего сознания и как можно доказать его существование.",
++              positions: [
++                "Реализм: внешний мир существует независимо от нашего сознания",
++                "Идеализм: внешний мир существует только как идея в сознании",
++                "Скептицизм: невозможно доказать существование внешнего мира"
++              ]
++            },
++            {
++              name: "Проблема интерпретации",
++              relatedCategories: ["language", "interpretation", "understanding", "truth"],
++              description: "Вопрос о том, возможна ли объективная интерпретация текста или любая интерпретация неизбежно субъективна.",
++              positions: [
++                "Интенционализм: смысл текста определяется намерением автора",
++                "Текстуализм: смысл текста автономен от намерения автора и определяется самим текстом",
++                "Рецептивная теория: смысл текста возникает в процессе его восприятия читателем"
++              ]
++            },
++            {
++              name: "Проблема власти и знания",
++              relatedCategories: ["power", "knowledge", "society", "truth"],
++              description: "Вопрос о взаимосвязи властных отношений и производства знания в обществе.",
++              positions: [
++                "Критическая теория: знание не нейтрально и всегда связано с властными интересами",
++                "Археология знания: знание структурировано исторически сложившимися дискурсивными практиками",
++                "Классическая эпистемология: подлинное знание независимо от властных отношений и социальных факторов"
++              ]
++            },
++            {
++              name: "Проблема идентичности",
++              relatedCategories: ["identity", "person", "consciousness", "time"],
++              description: "Вопрос о том, что обеспечивает тождество личности во времени, несмотря на физические и психические изменения.",
++              positions: [
++                "Психологическая теория: идентичность определяется непрерывностью психологических связей",
++                "Соматическая теория: идентичность определяется непрерывностью телесного существования",
++                "Нарративная теория: идентичность конструируется через создание связного жизненного нарратива"
++              ]
++            }
++          ];"Философское направление, признающее материю первичной и единственной субстанцией, а сознание — вторичным, производным от материи."
+             },
+             {
+               name: "Идеализм",

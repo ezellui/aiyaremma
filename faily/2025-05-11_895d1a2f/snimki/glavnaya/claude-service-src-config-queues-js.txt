@@ -1,0 +1,180 @@
+/**
+ * Queue configuration for Claude Service
+ */
+
+module.exports = {
+  // Main task queue for Claude requests
+  claudeTasks: {
+    name: 'claude_tasks',
+    exchange: 'claude_exchange',
+    routingKey: 'claude.task',
+    options: {
+      durable: true,
+      arguments: {
+        'x-max-priority': 10,
+        'x-message-ttl': 86400000, // 24 hours
+      },
+    },
+    exchangeOptions: {
+      type: 'topic',
+      durable: true,
+    },
+  },
+  
+  // Priority levels for tasks
+  priorities: {
+    urgent: 10,
+    high: 8,
+    normal: 5,
+    low: 3,
+    background: 1,
+  },
+  
+  // Dead letter queue for failed tasks
+  deadLetter: {
+    name: 'claude_tasks_dlq',
+    exchange: 'claude_dlx',
+    routingKey: 'claude.failed',
+    options: {
+      durable: true,
+      arguments: {
+        'x-message-ttl': 604800000, // 7 days
+      },
+    },
+    exchangeOptions: {
+      type: 'topic',
+      durable: true,
+    },
+  },
+  
+  // Result notification queue
+  resultNotifications: {
+    name: 'claude_results',
+    exchange: 'claude_notifications',
+    routingKey: 'claude.result',
+    options: {
+      durable: true,
+      arguments: {
+        'x-message-ttl': 3600000, // 1 hour
+      },
+    },
+    exchangeOptions: {
+      type: 'topic',
+      durable: true,
+    },
+  },
+  
+  // Different task types that can be processed
+  taskTypes: {
+    // Graph validation and enrichment
+    GRAPH_VALIDATION: 'graph_validation',
+    GRAPH_ENRICHMENT: 'graph_enrichment',
+    CATEGORY_DESCRIPTION: 'category_description',
+    RELATIONSHIP_DESCRIPTION: 'relationship_description',
+    
+    // Thesis generation and analysis
+    THESIS_GENERATION: 'thesis_generation',
+    THESIS_ELABORATION: 'thesis_elaboration',
+    THESIS_COMPARISON: 'thesis_comparison',
+    GRAPH_FROM_THESIS: 'graph_from_thesis',
+    
+    // Synthesis operations
+    SYNTHESIS: 'synthesis',
+    COMPATIBILITY_ANALYSIS: 'compatibility_analysis',
+    SYNTHESIS_CRITIQUE: 'synthesis_critique',
+    
+    // Name and origin analysis
+    NAME_ANALYSIS: 'name_analysis',
+    ORIGIN_DETECTION: 'origin_detection',
+    
+    // Other analysis types
+    GENERAL_QUERY: 'general_query',
+  },
+  
+  // Task settings by type
+  taskSettings: {
+    graph_validation: {
+      priority: 'normal',
+      timeout: 60000, // 1 minute
+      retries: 2,
+    },
+    graph_enrichment: {
+      priority: 'normal',
+      timeout: 120000, // 2 minutes
+      retries: 3,
+    },
+    category_description: {
+      priority: 'normal',
+      timeout: 60000,
+      retries: 2,
+    },
+    relationship_description: {
+      priority: 'normal',
+      timeout: 60000,
+      retries: 2,
+    },
+    thesis_generation: {
+      priority: 'normal',
+      timeout: 180000, // 3 minutes
+      retries: 3,
+    },
+    thesis_elaboration: {
+      priority: 'low',
+      timeout: 120000,
+      retries: 2,
+    },
+    thesis_comparison: {
+      priority: 'normal',
+      timeout: 120000,
+      retries: 2,
+    },
+    graph_from_thesis: {
+      priority: 'normal',
+      timeout: 180000,
+      retries: 3,
+    },
+    synthesis: {
+      priority: 'high',
+      timeout: 300000, // 5 minutes
+      retries: 3,
+    },
+    compatibility_analysis: {
+      priority: 'normal',
+      timeout: 120000,
+      retries: 2,
+    },
+    synthesis_critique: {
+      priority: 'normal',
+      timeout: 180000,
+      retries: 2,
+    },
+    name_analysis: {
+      priority: 'low',
+      timeout: 60000,
+      retries: 2,
+    },
+    origin_detection: {
+      priority: 'normal',
+      timeout: 120000,
+      retries: 2,
+    },
+    general_query: {
+      priority: 'normal',
+      timeout: 60000,
+      retries: 2,
+    },
+  },
+  
+  // Retry configuration
+  retry: {
+    initialDelay: 5000, // 5 seconds
+    maxDelay: 60000, // 1 minute
+    factor: 2, // exponential backoff factor
+    maxRetries: 3,
+  },
+  
+  // Prefetch configuration for consumers
+  prefetch: {
+    count: 1, // Process one message at a time
+  },
+};

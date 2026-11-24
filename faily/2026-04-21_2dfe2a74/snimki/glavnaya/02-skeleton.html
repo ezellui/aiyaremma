@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Кафедра синэстематики и эмотивной лингволоники имени З. Е. Бальтазарского. Проектно-экспозиционный интерфейс.">
+<meta name="author" content="Кафедра синэстематики и эмотивной лингволоники">
+<meta name="robots" content="noindex, nofollow">
+<title>Синэстематика эмотивной лингволоники — Кафедра им. З. Е. Бальтазарского</title>
+
+<!-- ================================================================
+     ПОДКЛЮЧЕНИЕ ШРИФТОВ (заглушка)
+     Заменить на реальные ссылки Google Fonts / Fontshare при реализации.
+     Предполагаемые семейства:
+       - Cormorant Garamond (заголовки)
+       - Spectral (основной текст)
+       - JetBrains Mono (формулы, параметры)
+       - UnifrakturMaguntia (декоративные неологизмы)
+================================================================= -->
+<!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+<!-- <link rel="stylesheet" href="..."> -->
+
+<style>
+/* ================================================================
+   БЛОК 1. CSS CUSTOM PROPERTIES (ТОКЕНЫ)
+   Цветовая палитра, типографические токены, дистанции, тени.
+   Заполнить на фазе визуальной разработки.
+================================================================= */
+:root {
+    /* Цвета */
+    --parchment: #EAE1CE;
+    --ink: #1C1712;
+    --sepia: #7A5A3A;
+    --mauve: #5B3C6E;
+    --cinnabar: #9B2A2A;
+    --verdigris: #4E7A6B;
+    --gold-dust: #B8994E;
+    --abyss: #0B0912;
+    --quicksilver: #B6BDC4;
+
+    /* Векторы эмотивной розы (восемь) */
+    --rose-north: /* Световая благодать — TBD */;
+    --rose-northeast: /* Эфемерный восторг — TBD */;
+    --rose-east: /* Тёплая ностальгия — TBD */;
+    --rose-southeast: /* Пепельная ирония — TBD */;
+    --rose-south: /* Меланохолическая тень — TBD */;
+    --rose-southwest: /* Мутная тоска — TBD */;
+    --rose-west: /* Остроугольная тревога — TBD */;
+    --rose-northwest: /* Кристальная злоба — TBD */;
+
+    /* Типографика */
+    --font-display: 'Cormorant Garamond', 'Old Standard TT', serif;
+    --font-body: 'Spectral', 'Lora', Georgia, serif;
+    --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+    --font-rare: 'UnifrakturMaguntia', var(--font-display);
+
+    /* Прочее */
+    --vignette-radius: 48% 52% 44% 56% / 52% 48% 52% 48%;
+    --pulse-duration: 6.18s; /* золотое сечение, усл. */
+}
+
+/* ================================================================
+   БЛОК 2. БАЗОВЫЕ СТИЛИ (reset + body)
+   Минимальный сброс, базовая типографика, «пергаментная» подложка.
+================================================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
+body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--parchment);
+    /* TODO: наложить фоновую текстуру (SVG noise) и виньетку */
+}
+
+/* ================================================================
+   БЛОК 3. ГЛОБАЛЬНЫЕ КОМПОНЕНТЫ
+   Шапка, геральдика, нижняя служебная полоса, боковой «пульт».
+================================================================= */
+/* .cathedral-header {} */
+/* .cathedral-heraldry {} */
+/* .cathedral-nav {} */
+/* .cathedral-footer {} */
+/* .attention-strip {} */
+/* .console-pulpit {} */
+
+/* ================================================================
+   БЛОК 4. МОДУЛИ (КАЖДЫЙ — .module.module--<имя>)
+   Каждому модулю — собственная секция стилей. Заглушки ниже.
+================================================================= */
+.module { display: none; } /* активный модуль получает .module--active */
+.module--active { display: block; }
+
+/* 4.1. Лингволоноскоп */
+/* .module--linguolonoscope {} */
+
+/* 4.2. Таблица эмотивных элементов */
+/* .module--emotive-table {} */
+
+/* 4.3. Архив сновидческой лексики */
+/* .module--oneiric-archive {} */
+
+/* 4.4. Резонансная камера */
+/* .module--resonance-chamber {} */
+
+/* 4.5. Эмотивный спектрограф */
+/* .module--emotive-spectrograph {} */
+
+/* 4.6. Атлас синэстем */
+/* .module--synesteme-atlas {} */
+
+/* 4.7. Глоссарий */
+/* .module--glossary {} */
+
+/* 4.8. Хроника кафедры */
+/* .module--chronicle {} */
+
+/* 4.9. Пневматическая эмотека */
+/* .module--pneumatic-emotheca {} */
+
+/* ================================================================
+   БЛОК 5. АНИМАЦИИ (keyframes)
+   Пульсации, мерцания, хроматическая аберрация, глитчи.
+================================================================= */
+/* @keyframes breathe {} */
+/* @keyframes flicker {} */
+/* @keyframes chromatic-aberration {} */
+/* @keyframes slow-drift {} */
+
+/* ================================================================
+   БЛОК 6. МЕДИАЗАПРОСЫ И ДОСТУПНОСТЬ
+   Адаптивность к узким экранам, prefers-reduced-motion.
+================================================================= */
+/* @media (prefers-reduced-motion: reduce) {} */
+/* @media (max-width: 900px) {} */
+/* @media (max-width: 600px) {} */
+</style>
+</head>
+
+<body>
+
+<!-- ====================================================================
+     ПРЕАМБУЛА-ЗАСТАВКА
+     Закрывается после клика «Войти». Показывает геральдику, девиз,
+     фразу о целях кафедры. Анимация медленного разворота.
+==================================================================== -->
+<section id="preamble" class="preamble" aria-label="Преамбула кафедры">
+    <div class="preamble__heraldry" aria-hidden="true">
+        <!-- TODO: SVG-геральдика, восьмилучевая роза, сургучная печать -->
+        <svg viewBox="0 0 200 200" role="img" aria-labelledby="preamble-seal-title">
+            <title id="preamble-seal-title">Печать Кафедры</title>
+            <!-- геральдический знак — заглушка -->
+        </svg>
+    </div>
+    <h1 class="preamble__title">Синэстематика эмотивной лингволоники</h1>
+    <p class="preamble__motto">
+        <em>Verbum resonat, anima palpitat</em>
+    </p>
+    <p class="preamble__subtitle">
+        Кафедра имени Зиновия Ермолаевича Бальтазарского
+    </p>
+    <button id="enter-cathedral" type="button" class="preamble__enter">
+        Войти
+    </button>
+</section>
+
+<!-- ====================================================================
+     ОСНОВНАЯ ОБОЛОЧКА
+==================================================================== -->
+<main id="cathedral" class="cathedral" hidden>
+
+    <!-- ============================================================
+         ВЕРХНЯЯ ЛЕНТА: ГЕРАЛЬДИКА + НАВИГАЦИЯ
+    ============================================================ -->
+    <header class="cathedral-header" role="banner">
+        <div class="cathedral-heraldry">
+            <!-- TODO: малая геральдика -->
+        </div>
+        <h2 class="cathedral-title">Кафедра синэстематики</h2>
+        <nav class="cathedral-nav" aria-label="Навигация по модулям кафедры">
+            <ul>
+                <li><button data-target="linguolonoscope">Лингволоноскоп</button></li>
+                <li><button data-target="emotive-table">Таблица эмотивных элементов</button></li>
+                <li><button data-target="oneiric-archive">Архив сновидческой лексики</button></li>
+                <li><button data-target="resonance-chamber">Резонансная камера</button></li>
+                <li><button data-target="emotive-spectrograph">Эмотивный спектрограф</button></li>
+                <li><button data-target="synesteme-atlas">Атлас синэстем</button></li>
+                <li><button data-target="glossary">Глоссарий</button></li>
+                <li><button data-target="chronicle">Хроника кафедры</button></li>
+                <li><button data-target="pneumatic-emotheca">Пневматическая эмотека</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ============================================================
+         ЦЕНТРАЛЬНАЯ СЦЕНА — ВЫТЯНУТАЯ ОБЛАСТЬ МОДУЛЕЙ
+    ============================================================ -->
+    <div class="cathedral-stage">
+
+        <!-- ========================================================
+             МОДУЛЬ 4.1. ЛИНГВОЛОНОСКОП
+             Ввод слова, расчёт параметров, выдача синэстематической
+             карты и паспорта лингволона.
+        ======================================================== -->
+        <section id="linguolonoscope" class="module module--linguolonoscope module--active" aria-label="Лингволоноскоп">
+            <header class="module__header">
+                <h3>Лингволоноскоп</h3>
+                <p class="module__subtitle">Прибор для синэстематической проекции отдельного лингволона</p>
+            </header>
+
+            <div class="linguolonoscope__stage">
+                <form class="linguolonoscope__form" onsubmit="return false;">
+                    <label for="linguolon-input">Лингволон для проекции</label>
+                    <input id="linguolon-input" type="text" autocomplete="off" spellcheck="false" placeholder="Введите слово">
+                    <button id="project-button" type="button">Спроецировать</button>
+                </form>
+
+                <!-- Розетка результатов — шестилучевая звезда модальностей -->
+                <div id="linguolon-rosette" class="linguolonoscope__rosette" aria-live="polite">
+                    <!-- TODO: SVG-роза из шести секторов с заглушками модальностей -->
+                </div>
+
+                <!-- Паспорт лингволона -->
+                <div id="linguolon-passport" class="linguolonoscope__passport" hidden>
+                    <div class="passport__field passport__field--name">
+                        <span class="passport__label">Инвентарное имя</span>
+                        <span class="passport__value" data-field="name">—</span>
+                    </div>
+                    <div class="passport__field passport__field--freq">
+                        <span class="passport__label">Частота, Гэк</span>
+                        <span class="passport__value" data-field="frequency">—</span>
+                    </div>
+                    <div class="passport__field passport__field--amp">
+                        <span class="passport__label">Амплитуда, эмот</span>
+                        <span class="passport__value" data-field="amplitude">—</span>
+                    </div>
+                    <div class="passport__field passport__field--phase">
+                        <span class="passport__label">Фаза, °с</span>
+                        <span class="passport__value" data-field="phase">—</span>
+                    </div>
+                    <div class="passport__field passport__field--pole">
+                        <span class="passport__label">Поляризация</span>
+                        <span class="passport__value" data-field="polarization">—</span>
+                    </div>
+                    <div class="passport__field passport__field--q">
+                        <span class="passport__label">Добротность Q</span>
+                        <span class="passport__value" data-field="quality">—</span>
+                    </div>
+                    <div class="passport__field passport__field--k">
+                        <span class="passport__label">Когерентность K</span>
+                        <span class="passport__value" data-field="coherence">—</span>
+                    </div>
+                    <div class="passport__commentary">
+                        <span class="passport__label">Замечание кафедры</span>
+                        <p class="passport__value" data-field="commentary">—</p>
+                    </div>
+
+                    <div class="passport__actions">
+                        <button data-action="play-tone">Прослушать чистый тон</button>
+                        <button data-action="send-to-resonance">Отправить в Резонансную камеру</button>
+                        <button data-action="send-to-spectrograph">Добавить в Спектрограф</button>
+                        <button data-action="save-to-emotheca">Сохранить в Пневматическую эмотеку</button>
+                        <button data-action="send-to-archive">Отправить в Архив</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================
+             МОДУЛЬ 4.2. ТАБЛИЦА ЭМОТИВНЫХ ЭЛЕМЕНТОВ
+             Периодическая таблица 8×8 элементов.
+        ======================================================== -->
+        <section id="emotive-table" class="module module--emotive-table" aria-label="Таблица эмотивных элементов">
+            <header class="module__header">
+                <h3>Таблица эмотивных элементов</h3>
+                <p class="module__subtitle">Систематика 64 элементов в координатах «вектор — плотность»</p>
+            </header>
+
+            <div class="emotive-table__legend">
+                <!-- TODO: цветовая легенда осей розы -->
+            </div>
+
+            <div id="emotive-table-grid" class="emotive-table__grid" role="grid">
+                <!-- TODO: 8 строк × 8 колонок = 64 клетки, генерируются из данных -->
+            </div>
+
+            <aside id="emotive-element-card" class="emotive-table__card" aria-live="polite">
+                <!-- TODO: карточка выбранного элемента -->
+            </aside>
+        </section>
+
+        <!-- ========================================================
+             МОДУЛЬ 4.3. АРХИВ СНОВИДЧЕСКОЙ ЛЕКСИКИ
+             Коллекция 12–16 начальных экспонатов + пользовательские.
+        ======================================================== -->
+        <section id="oneiric-archive" class="module module--oneiric-archive" aria-label="Архив сновидческой лексики">
+            <header class="module__header">
+                <h3>Архив сновидческой лексики</h3>
+                <p class="module__subtitle">Избранные экспонаты и описания лингволонов редкой плотности</p>
+            </header>
+
+            <div class="archive__controls">
+                <input type="search" id="archive-search" placeholder="Поиск по экспонатам">
+                <select id="archive-filter">
+                    <option value="all">Все</option>
+                    <option value="ancient">Архаические</option>
+                    <option value="modern">Новые</option>
+                    <option value="user">Пользовательские</option>
+                </select>
+            </div>
+
+            <div id="archive-carousel" class="archive__carousel">
+                <!-- TODO: картотечная вертушка из карточек -->
+            </div>
+
+            <article id="archive-detail" class="archive__detail" hidden>
+                <!-- TODO: развёрнутая карточка экспоната -->
+            </article>
+        </section>
+
+        <!-- ========================================================
+             МОДУЛЬ 4.4. РЕЗОНАНСНАЯ КАМЕРА
+             Интерферометр двух лингволонов с canvas-визуализацией.
+        ======================================================== -->
+        <section id="resonance-chamber" class="module module--resonance-chamber" aria-label="Резонансная камера">
+            <header class="module__header">
+                <h3>Резонансная камера</h3>
+                <p class="module__subtitle">Интерферометр для двух лингволонов</p>
+            </header>
+
+            <div class="chamber__sockets">
+                <div class="chamber__socket" data-slot="1">
+                    <label>Первый лингволон</label>
+                    <input type="text" data-role="socket-input" data-slot="1">
+                </div>
+                <div class="chamber__socket" data-slot="2">
+                    <label>Второй лингволон</label>
+                    <input type="text" data-role="socket-input" data-slot="2">
+                </div>
+            </div>
+
+            <div class="chamber__controls">
+                <label>Фазовый сдвиг, °с: <input type="range" id="phase-shift" min="0" max="360" value="0"></label>
+                <label>Дистанция: <input type="range" id="source-distance" min="0" max="100" value="50"></label>
+                <label>Угол наблюдения, °: <input type="range" id="observation-angle" min="0" max="180" value="90"></label>
+                <button id="start-resonance" type="button">Проявить</button>
+                <button id="stop-resonance" type="button">Погасить</button>
+            </div>
+
+            <canvas id="resonance-canvas" class="chamber__canvas" width="800" height="500" aria-label="Интерференционная картина">
+                <!-- TODO: фолбек для браузеров без canvas -->
+            </canvas>
+
+            <div id="resonance-reading" class="chamber__reading" aria-live="polite">
+                <!-- TODO: текстовая интерпретация результата -->
+            </div>
+        </section>
+
+        <!-- ========================================================
+             МОДУЛЬ 4.5. ЭМОТИВНЫЙ СПЕКТРОГРАФ
+             Анализ целого текста, построение волны.
+        ======================================================== -->
+        <section id="emotive-spectrograph" class="module module--emotive-spectrograph" aria-label="Эмотивный спектрограф">
+            <header class="module__header">
+                <h3>Эмотивный спектрограф</h3>
+                <p class="module__subtitle">Развёртка эмотивной амплитуды во времени речи</p>
+            </header>
+
+            <textarea id="spectrograph-input" class="spectrograph__input" rows="8" placeholder="Введите абзац, строфу или цепочку слов"></textarea>
+
+            <div class="spectrograph__controls">
+                <button id="analyze-text" type="button">Проявить кардиограмму</button>
+                <button id="save-cardiogram" type="button">Сохранить как кардиограмму</button>
+                <button id="clear-spectrograph" type="button">Очистить</button>
+            </div>
+
+            <canvas id="spectrograph-canvas" class="spectrograph__canvas" width="1000" height="300" aria-label="Эмотивная волна">
+                <!-- TODO: canvas для отрисовки волны -->
+            </canvas>
+
+            <div id="spectrograph-summary" class="spectrograph__summary" aria-live="polite">
+                <!-- TODO: общий диагноз + компактная эмотивная роза -->
+            </div>
+        </section>
+
+        <!-- ========================================================
+             МОДУЛЬ 4.6. АТЛАС СИНЭСТЕМ
+             Галерея визуальных отпечатков.
+        ======================================================== -->
+        <section id="synesteme-atlas" class="module module--synesteme-atlas" aria-label="Атлас синэстем">
+            <header class="module__header">
+                <h3>Атлас синэстем</h3>
+                <p class="module__subtitle">Галерея визуальных отпечатков лингволонов</p>
+            </header>
+
+            <div class="atlas__controls">
+                <input type="text" id="atlas-word" placeholder="Ввести слово и повесить рядом">
+                <button id="atlas-add" type="button">Повесить отпечаток</button>
+            </div>
+
+            <div id="atlas-gallery" class="atlas__gallery">
+                <!-- TODO: сетка 4×3 рам с заглушками -->
+            </div>
+
+            <div id="atlas-frame-detail" class="atlas__detail" hidden>
+                <!-- TODO: увеличенный отпечаток с описанием -->
+            </div>
+        </section>
+
+        <!-- ========================================================
+             МОДУЛЬ 4.7. ГЛОССАРИЙ
+             Алфавитный указатель терминов.
+        ======================================================== -->
+        <section id="glossary" class="module module--glossary" aria-label="Глоссарий">
+            <header class="module__header">
+                <h3>Глоссарий</h3>
+                <p class="module__subtitle">Алфавитный указатель терминов синэстематики</p>
+            </header>
+
+            <nav class="glossary__alphabet" aria-label="Алфавит">
+                <!-- TODO: кнопки А, Б, В, Г ... -->
+            </nav>
+
+            <div class="glossary__layout">
+                <ul id="glossary-list" class="glossary__list">
+                    <!-- TODO: термины с определениями -->
+                </ul>
+                <aside id="glossary-highlight" class="glossary__highlight">
+                    <!-- TODO: выделенный термин с перекрёстными ссылками -->
+                </aside>
+            </div>
+
+            <div class="glossary__teaching">
+                <button id="glossary-random">Случайный термин</button>
+            </div>
+        </section>
+
+        <!-- ========================================================
+             МОДУЛЬ 4.8. ХРОНИКА КАФЕДРЫ
+             Псевдоисторическая справка.
+        ======================================================== -->
+        <section id="chronicle" class="module module--chronicle" aria-label="Хроника кафедры">
+            <header class="module__header">
+                <h3>Хроника кафедры</h3>
+                <p class="module__subtitle">Краткая история дисциплины и её деятелей</p>
+            </header>
+
+            <article class="chronicle__article">
+                <!-- TODO: 4–6 абзацев исторической справки -->
+            </article>
+
+            <div class="chronicle__timeline">
+                <!-- TODO: горизонтальная лента с датами 1891–наст. вр. -->
+            </div>
+
+            <section class="chronicle__portraits">
+                <!-- TODO: пять SVG-медальонов учёных -->
+            </section>
+
+            <section class="chronicle__bibliography">
+                <!-- TODO: список из 12 несуществующих работ -->
+            </section>
+
+            <aside class="chronicle__today">
+                <!-- TODO: раздел «Настоящее положение дисциплины» -->
+            </aside>
+        </section>
+
+        <!-- ========================================================
+             МОДУЛЬ 4.9. ПНЕВМАТИЧЕСКАЯ ЭМОТЕКА
+             Личная коллекция пользователя.
+        ======================================================== -->
+        <section id="pneumatic-emotheca" class="module module--pneumatic-emotheca" aria-label="Пневматическая эмотека">
+            <header class="module__header">
+                <h3>Пневматическая эмотека</h3>
+                <p class="module__subtitle">Личная коллекция лингволонов, кардиограмм и экспонатов</p>
+            </header>
+
+            <div class="emotheca__shelf">
+                <!-- TODO: SVG-склянки, каждая подписана -->
+            </div>
+
+            <aside id="emotheca-vial" class="emotheca__vial-detail" hidden>
+                <!-- TODO: раскрытое содержимое выбранной склянки -->
+            </aside>
+
+            <div class="emotheca__actions">
+                <button id="emotheca-export">Экспортировать как JSON</button>
+                <label class="emotheca__import">
+                    Импортировать JSON
+                    <input type="file" id="emotheca-import" accept="application/json" hidden>
+                </label>
+                <button id="emotheca-clear">Опустошить эмотеку</button>
+            </div>
+        </section>
+
+    </div>
+    <!-- /cathedral-stage -->
+
+    <!-- ============================================================
+         БОКОВОЙ «ПУЛЬТ» — ГЛОБАЛЬНЫЕ ИНДИКАТОРЫ
+    ============================================================ -->
+    <aside id="console-pulpit" class="console-pulpit" aria-label="Служебный пульт">
+        <div class="pulpit__clock">
+            <!-- TODO: часы-маятник с тиканием -->
+        </div>
+        <div class="pulpit__rose">
+            <!-- TODO: миниатюрная эмотивная роза текущего активного лингволона -->
+        </div>
+        <button id="sound-toggle" class="pulpit__sound" type="button">
+            Звук: <span data-role="sound-state">выключен</span>
+        </button>
+        <div class="pulpit__cursor-hint" aria-hidden="true">
+            <!-- TODO: подсказка текущего курсора -->
+        </div>
+    </aside>
+
+    <!-- ============================================================
+         НИЖНЯЯ ЛЕНТА — «ТЕКУЩИЙ ПАРАМЕТР ВНИМАНИЯ»
+    ============================================================ -->
+    <footer class="cathedral-footer attention-strip" role="contentinfo">
+        <div class="attention-strip__breadcrumb">
+            <!-- TODO: путь «Кафедра → Модуль → Элемент» -->
+        </div>
+        <div class="attention-strip__parameter">
+            <!-- TODO: текущее наблюдаемое поле -->
+        </div>
+        <div class="attention-strip__micro">
+            <!-- TODO: микротекст: номер зала, девиз, цитата -->
+        </div>
+    </footer>
+
+</main>
+<!-- /cathedral -->
+
+<!-- ====================================================================
+     СКРЫТЫЙ РЕЖИМ «АПОФАТИКА»
+     Активируется нажатием «Спроецировать» семь раз подряд при
+     пустом поле. Чёрная комната с мерцающим символом ∅.
+==================================================================== -->
+<div id="apophatic-room" class="apophatic-room" hidden aria-hidden="true">
+    <!-- TODO: чёрная комната, единственный символ, звук длинного вдоха -->
+</div>
+
+<script>
+/* ================================================================
+   БЛОК 1. ЕДИНОЕ ХРАНИЛИЩЕ СОСТОЯНИЯ
+================================================================= */
+const state = {
+    activeModule: 'linguolonoscope',
+    currentLinguolon: null,
+    resonance: { slot1: null, slot2: null, running: false },
+    spectrograph: { lastText: '', lastPoints: [] },
+    emotheca: [],       // загружается из localStorage
+    apophaticCounter: 0,
+    soundEnabled: false
+};
+
+/* ================================================================
+   БЛОК 2. ДАННЫЕ: БАЗОВЫЙ СЛОВАРЬ ЛИНГВОЛОНОВ (ЯКОРИ)
+   Порядка 200 слов с готовыми параметрами. Заполнить на фазе данных.
+================================================================= */
+const LINGUOLON_ANCHORS = [
+    // { word: 'тишина', nu: 6, A: 3, phi: 12, P: 'north', Q: 720, K: 0.8, modalities: {...} },
+    // ... ~200 слов
+];
+
+/* ================================================================
+   БЛОК 3. ДАННЫЕ: 64 ЭМОТИВНЫХ ЭЛЕМЕНТА
+================================================================= */
+const EMOTIVE_ELEMENTS = [
+    // { number: 1, symbol: 'Мл', name: 'Меланол', vector: 'south', density: 7, ... },
+    // ... 64 элемента
+];
+
+/* ================================================================
+   БЛОК 4. ДАННЫЕ: АРХИВ ЭКСПОНАТОВ
+================================================================= */
+const ARCHIVE_EXHIBITS = [
+    // { catalogNumber: '000.012.003', word: 'Сочельник', etymology: '...', testimonies: [...], ... }
+];
+
+/* ================================================================
+   БЛОК 5. ДАННЫЕ: ГЛОССАРИЙ
+================================================================= */
+const GLOSSARY_TERMS = [
+    // { letter: 'А', term: 'Апофатика', definition: '...' },
+    // ... 60–80 терминов
+];
+
+/* ================================================================
+   БЛОК 6. ДАННЫЕ: ХРОНОЛОГИЯ + БИОГРАФИИ + БИБЛИОГРАФИЯ
+================================================================= */
+const CHRONICLE_DATA = {
+    timeline: [],
+    portraits: [],
+    bibliography: []
+};
+
+/* ================================================================
+   БЛОК 7. ЯДРО ВЫЧИСЛЕНИЙ
+   Функции: хеширование слова, проекция на модальности, генерация
+   паспорта и розы, описание резонанса, построение кардиограммы.
+================================================================= */
+
+/* function hashWord(word) { ... } */
+/* function computeLinguolon(word) { ... } */
+/* function projectToModalities(linguolon) { ... } */
+/* function generateCommentary(linguolon) { ... } */
+/* function computeInterference(l1, l2, phaseShift) { ... } */
+/* function buildCardiogram(text) { ... } */
+
+/* ================================================================
+   БЛОК 8. ГЕНЕРАТИВНАЯ ГРАФИКА (SVG)
+   Шестилучевая розетка, гербы векторов, отпечатки Атласа,
+   медальоны учёных, склянки эмотеки.
+================================================================= */
+/* function renderRosette(linguolon, container) { ... } */
+/* function renderFingerprint(linguolon) { ... } */
+/* function renderHeraldry(vector) { ... } */
+
+/* ================================================================
+   БЛОК 9. CANVAS-РЕНДЕРЕРЫ
+================================================================= */
+/* function renderInterference(canvas, l1, l2, params) { ... } */
+/* function renderCardiogram(canvas, points) { ... } */
+
+/* ================================================================
+   БЛОК 10. АУДИО (WebAudio API)
+================================================================= */
+/* let audioContext = null; */
+/* function initAudio() { ... } */
+/* function playTone(frequency, amplitude, duration) { ... } */
+/* function playResonance(f1, f2) { ... } */
+/* function playApophaticPassage() { ... } */
+/* function startAmbientBreath() { ... } */
+
+/* ================================================================
+   БЛОК 11. УПРАВЛЕНИЕ МОДУЛЯМИ И НАВИГАЦИЕЙ
+================================================================= */
+/* function switchModule(id) { ... } */
+
+/* ================================================================
+   БЛОК 12. МОДУЛЬ «ЛИНГВОЛОНОСКОП» — ОБРАБОТЧИКИ
+================================================================= */
+/* function handleProject() { ... } */
+/* function renderPassport(linguolon) { ... } */
+
+/* ================================================================
+   БЛОК 13. МОДУЛЬ «ТАБЛИЦА ЭМОТИВНЫХ ЭЛЕМЕНТОВ»
+================================================================= */
+/* function renderEmotiveTable() { ... } */
+/* function selectElement(element) { ... } */
+
+/* ================================================================
+   БЛОК 14. МОДУЛЬ «АРХИВ СНОВИДЧЕСКОЙ ЛЕКСИКИ»
+================================================================= */
+/* function renderArchiveCarousel() { ... } */
+/* function openExhibit(id) { ... } */
+
+/* ================================================================
+   БЛОК 15. МОДУЛЬ «РЕЗОНАНСНАЯ КАМЕРА»
+================================================================= */
+/* function handleResonanceStart() { ... } */
+
+/* ================================================================
+   БЛОК 16. МОДУЛЬ «ЭМОТИВНЫЙ СПЕКТРОГРАФ»
+================================================================= */
+/* function handleAnalyzeText() { ... } */
+/* function exportCardiogramSVG() { ... } */
+
+/* ================================================================
+   БЛОК 17. МОДУЛЬ «АТЛАС СИНЭСТЕМ»
+================================================================= */
+/* function renderAtlas() { ... } */
+
+/* ================================================================
+   БЛОК 18. МОДУЛЬ «ГЛОССАРИЙ»
+================================================================= */
+/* function renderGlossary() { ... } */
+/* function highlightTerm(term) { ... } */
+
+/* ================================================================
+   БЛОК 19. МОДУЛЬ «ХРОНИКА КАФЕДРЫ»
+================================================================= */
+/* function renderChronicle() { ... } */
+
+/* ================================================================
+   БЛОК 20. МОДУЛЬ «ПНЕВМАТИЧЕСКАЯ ЭМОТЕКА»
+================================================================= */
+/* function loadEmotheca() { ... } */
+/* function saveEmothecaEntry(entry) { ... } */
+/* function exportEmotheca() { ... } */
+/* function importEmotheca(file) { ... } */
+/* function clearEmotheca() { ... } */
+
+/* ================================================================
+   БЛОК 21. СКРЫТЫЕ РЕЖИМЫ
+================================================================= */
+/* function enterApophaticMode() { ... } */
+/* function maybeShowBalthasarTelegram() { ... } */
+/* function collectMarginCipher() { ... } */
+
+/* ================================================================
+   БЛОК 22. ИНИЦИАЛИЗАЦИЯ
+================================================================= */
+document.addEventListener('DOMContentLoaded', () => {
+    // TODO: привязать обработчики, подготовить первую отрисовку
+    // bindNavigation();
+    // loadEmotheca();
+    // renderEmotiveTable();
+    // renderArchiveCarousel();
+    // renderAtlas();
+    // renderGlossary();
+    // renderChronicle();
+    // startAmbientBreath();
+});
+</script>
+
+</body>
+</html>

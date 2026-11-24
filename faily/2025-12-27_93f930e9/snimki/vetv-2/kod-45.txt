@@ -1,0 +1,11 @@
+shared/src/
+├── constants/
+│   ├── category-types.js
+│   ├── relationship-types.js
+│   └── innovation-levels.js
+├── utils/
+│   ├── logger.js
+│   ├── validators.js
+│   └── errors.js
+└── middleware/
+    └── async-handler.js

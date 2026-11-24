@@ -13,7 +13,7 @@ aliases: [relatio_aidani_codex, codex-to-pdf, Codex Aidani, кодекс Айд�
 - [stated] Каноном латинского текста считается кодекс: la и переводы ru/en выправляются по нему; в кодексе намеренно оставлены «commune» (поздняя рука), «ipsedepinxi» и написания cepi/cepisset (без oe) [s:4098b2d23d5d7859]
 - [stated] la — это как бы современное издание: словесно следует кодексу, но пунктуация в нём современная (тире, а не двоеточия кодекса); «ipse depinxi» раздельно, «commune» без [sic] [s:4098b2d23d5d7859]
 - [stated] Происхождение проекта: просил у Claude фанфик о плавании в духе Брендана, но явно в Аман к эльфам, стилем кельтского монаха; ждал архаической русской речи, а получил латынь — и решил превратить её в полноценную имитацию кодекса; затем появились переводы (la/ru/en), потом вымышленная научная серия (Studia Codicologica Insularia: synthetica, historia codicis R, de testimonio Tolkienis, conspectus) [s:e65d7ae363c34a26]
-- [stated] «Псевдо-Айдан Самарский» (teubner.md в Ranatar/Synthesises-of-concepts) возник, когда делался «Вестник Петра-Дубравы» — Claude предложил его сам [s:e65d7ae363c34a26]
+- [stated] «Псевдо-Айдан Самарский» (teubner.md в USER/Synthesises-of-concepts) возник, когда делался «Вестник Петра-Дубравы» — Claude предложил его сам [s:e65d7ae363c34a26]
 - [stated] Противоречие колофона Коэмана («Gemma… in theca argentea servatur») с запретом Финрода («neque in vase argenteo posueris») оставлено намеренно; заключительная фраза колофона («Adiuva, Domine, infirmos nos et indignos») задумана двусмысленной — и как протокольная формула, и как намёк, что Коэман понимает нарушение [s:e65d7ae363c34a26]
 
 <!-- обновлено: 2026-10-20T05:42:07.502693+00:00 -->

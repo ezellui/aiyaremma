@@ -1,0 +1,99 @@
+Anime character sheet poster, 90s magical girl aesthetic.
+Background: warm amber-gold and deep cobalt cosmic space,
+graph edges connecting stars, golden spiraling series in the air.
+
+LAYOUT — infographic style with decorated panels, Russian text labels:
+
+TOP CENTER: large full-body illustration —
+amber-gold and cobalt blue uniform, auburn hair, golden quill weapon,
+one eye luminous-silver (inner vision), warm radiant expression.
+Title: "СЕЙЛОР ПОНТЕС"
+Subtitle: "Хранительница Бесконечных Мостов"
+
+TOP RIGHT panel "ПРЕВРАЩЕНИЕ":
+Transformation phrase in decorative box:
+"Через Мост Реального и Мнимого —
+Euler Aurum Power, Make Up!"
+Illustration of golden quill writing e^(iπ)+1=0 in glowing script.
+
+LEFT panels:
+- "ЧЕРТЫ":
+  ★ неисчерпаема — никогда не заканчивает работу
+  ★ видит связи там, где другие видят разрыв
+  ★ слепота — не потеря, а вторая форма зрения
+  ★ тёплая и домашняя — любит детей и простые вещи
+  ★ вера как основа, не как ограничение
+  ★ пишет даже когда незачем останавливаться
+
+- "СИЛА":
+  Владычица Мостов и Тождеств.
+  Её сила — соединять несоединимое:
+  действительное с мнимым, конечное с бесконечным,
+  анализ с комбинаторикой, физику с геометрией.
+  Когда она пишет — уравнения становятся реальностью.
+  Когда она слепнет — видит точнее.
+
+- "ХАРАКТЕР":
+  Тихая радость от работы.
+  Тринадцать детей и бесконечное число теорем —
+  она не выбирала между ними.
+  Говорит мало, пишет всегда.
+  Её сострадание выражается в том,
+  что она объясняет до тех пор,
+  пока не поймут.
+  Small illustration: seven bridges over a river, seen from above.
+
+CENTER BOTTOM data card:
+ИМЯ: Сейлор Понтес
+ПЛАНЕТА: Базель / Петербург / Берлин
+  (она везде своя)
+КАМЕНЬ: Топаз (преломляет свет,
+  как комплексная плоскость)
+ЦВЕТА: янтарный, кобальтовый, золотой
+ЦВЕТОК: Подсолнух
+  (всегда повёрнут к свету, всегда считает)
+ЛЮБИМОЕ: бесконечные ряды, семья,
+  Библия, граф без пересечений,
+  задача без решения
+
+RIGHT MIDDLE panel "АТАКА":
+"Тождество Понтес!"
+Пишет золотым пером формулу в воздухе —
+уравнение разворачивается в мост из света,
+соединяющий всё, что казалось несвязанным.
+Противник не уничтожается — понимает.
+Small action illustration: golden equation arcs spanning the void.
+
+RIGHT BOTTOM panel "КОМНАТА":
+Маленький кабинет в Петербурге.
+Свечи — всегда несколько, даже когда уже не нужны.
+Стопки рукописей до потолка.
+На полу — меловые чертежи, которые некому стирать.
+Кресло у окна смотрит на Неву.
+Illustation: warm candlelit study, manuscripts everywhere,
+faint graph drawings on the floor.
+
+BOTTOM ROW "ОБРАЗЫ ВНЕ ПРЕВРАЩЕНИЯ":
+5 figures with labels:
+"Петербургский период" — молодая, строгий костюм 18 века, острый взгляд
+"Берлинский период" — увереннее, книга под мышкой
+"После ослепления" — один глаз серебристый, спокойная улыбка, диктует
+"С детьми" — простая одежда, смеётся
+"В момент тождества" — пишет в воздухе e^(iπ)+1=0, свет от руки
+
+BOTTOM RIGHT "МИССИЯ":
+Там, где разрыв кажется непреодолимым —
+построить мост.
+Там, где темнота полная —
+начать видеть иначе.
+И помнить: красота формулы
+не нуждается в оправдании.
+
+"Читая Эйлера, я вижу перст Господень."
+— Лаплас
+
+Color palette: warm amber, deep cobalt, antique gold, ivory white, 
+soft radiant glow.
+Style: 90s anime cel-shading, Russian text labels,
+decorative compass and graph-edge dividers between panels,
+collectible character encyclopedia composition.

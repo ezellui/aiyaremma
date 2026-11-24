@@ -1,0 +1,21 @@
+evolution-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── mongo-connection.js
+│   │   ├── postgres-connection.js
+│   │   └── neo4j-connection.js
+│   ├── models/
+│   │   └── ConceptEvolution.js
+│   ├── controllers/
+│   │   └── evolution.controller.js
+│   ├── services/
+│   │   └── evolution.service.js
+│   └── routes/
+│       └── evolution.routes.js
+└── tests/

@@ -1,0 +1,38 @@
+flowchart TD
+    Constants[philosophy-constants.js] --> SharedConstants[shared/constants/philosophy-constants.js]
+    
+    subgraph Базы данных
+        SharedConstants --> MongoDB[MongoDB коллекции & схемы]
+        SharedConstants --> Neo4j[Neo4j графовые запросы]
+        SharedConstants --> PostgreSQL[PostgreSQL таблицы & запросы]
+    end
+    
+    subgraph Сервисы
+        SharedConstants --> DS[DataSynchronizer.js]
+        SharedConstants --> DIV[DataIntegrityValidator.js]
+        SharedConstants --> ThesisService[Сервис тезисов]
+        SharedConstants --> GraphService[Сервис графов]
+        SharedConstants --> SynthesisService[Сервис синтеза]
+        SharedConstants --> EvolutionService[Сервис эволюции]
+        SharedConstants --> HistoricalService[Сервис исторической контекстуализации]
+        SharedConstants --> PracticalService[Сервис практического применения]
+        SharedConstants --> DialogueService[Сервис диалогов]
+    end
+    
+    subgraph Клиент
+        SharedConstants --> UI[React компоненты UI]
+        SharedConstants --> Forms[Формы и валидация]
+        SharedConstants --> Formatters[Форматирование данных]
+        SharedConstants --> Visualizations[Визуализации графов]
+    end
+    
+    subgraph Тесты
+        SharedConstants --> UnitTests[Unit тесты]
+        SharedConstants --> IntegrationTests[Интеграционные тесты]
+        SharedConstants --> MockData[Тестовые данные]
+    end
+
+    classDef original fill:#f96,stroke:#333,stroke-width:2px;
+    classDef shared fill:#9cf,stroke:#333,stroke-width:2px;
+    class Constants original;
+    class SharedConstants shared;

@@ -1,0 +1,35 @@
+user-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── connection.js               # Подключение к PostgreSQL
+│   │   └── migrations/
+│   │       ├── 001_create_users.sql
+│   │       ├── 002_add_api_keys.sql
+│   │       └── 003_create_shared_keys.sql
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── SharedApiKey.js
+│   │   └── ApiKeyUsage.js
+│   ├── controllers/
+│   │   ├── auth.controller.js
+│   │   ├── user.controller.js
+│   │   └── api-key.controller.js
+│   ├── services/
+│   │   ├── auth.service.js
+│   │   ├── user.service.js
+│   │   ├── api-key.service.js
+│   │   └── encryption.service.js       # Шифрование ключей
+│   ├── routes/
+│   │   ├── auth.routes.js
+│   │   ├── user.routes.js
+│   │   └── api-key.routes.js
+│   └── middleware/
+│       ├── auth.middleware.js
+│       └── validation.middleware.js
+└── tests/

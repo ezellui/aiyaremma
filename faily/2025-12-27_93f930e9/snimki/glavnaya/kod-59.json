@@ -1,0 +1,21 @@
+{
+  "name": "@philos/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and constants for philosophy concept services",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": ["shared", "utilities", "philosophy"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "winston": "^3.11.0",
+    "joi": "^17.11.0",
+    "axios": "^1.6.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

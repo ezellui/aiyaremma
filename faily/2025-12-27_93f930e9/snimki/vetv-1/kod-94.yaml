@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # Базы данных
+  postgres:
+    image: postgres:14
+    container_name: philos_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: philos
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: philos_concepts
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U philos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - philos_network
+
+  neo4j:
+    image: neo4j:4.4
+    container_name: philos_neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_dbms_memory_heap_max__size: 1G
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - ./init/neo4j:/var/lib/neo4j/import:ro
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "password", "RETURN 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - philos_network
+
+  mongodb:
+    image: mongo:5
+    container_name: philos_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: philos
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: philos_concepts
+    volumes:
+      - mongo_data:/data/db
+      - ./init/mongo:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - philos_network
+
+  # Кэш и очередь сообщений
+  redis:
+    image: redis:7-alpine
+    container_name: philos_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - philos_network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: philos_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: philos
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - philos_network
+
+volumes:
+  postgres_data:
+  neo4j_data:
+  neo4j_logs:
+  mongo_data:
+  redis_data:
+  rabbitmq_data:
+
+networks:
+  philos_network:
+    driver: bridge

@@ -1,0 +1,373 @@
+--- предыдущая/mkubuntu-usb.sh
++++ текущая/mkubuntu-usb.sh
+@@ -4,6 +4,9 @@
+ #
+ # Пример:
+ #   sudo ./mkubuntu-usb.sh --device /dev/sdb --user USER --hostname ubuntu-usb
++#
++# С обменным разделом (видимым из Windows/Android):
++#   sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB
+ #
+ # Проверить, что доступно:
+ #   ./mkubuntu-usb.sh --help
+@@ -27,6 +30,12 @@
+ FIRMWARE_MODE="uefi"     # варианты: uefi | bios
+ MOUNT_POINT="/mnt/target"
+ ASSUME_YES="no"
++
++# Обменный раздел (видимый из Windows/Android)
++DATA_SIZE=""             # "0" или пусто = не делать; иначе напр. "32GiB", "16GiB"
++DATA_FS="exfat"          # exfat (default) | fat32
++DATA_LABEL="SHARED"
++DATA_MOUNT="/media/shared"
+ 
+ # ============================================================
+ # Разбор аргументов
+@@ -54,13 +63,42 @@
+                            lubuntu-desktop | none
+                          (default: xubuntu-core)
+   --firmware MODE        uefi | bios (default: uefi)
+-  --mount-point PATH     Куда монтировать флешку (default: /mnt/target)
++  --mount-point PATH     Куда монтировать флешку при сборке
++                         (default: /mnt/target)
++
++Обменный раздел (видимый из Windows/Android/macOS):
++  --data-size SIZE       Размер обменного раздела, напр. 32GiB, 16GiB, 50%.
++                         Если не задан или 0 — обменного раздела не будет.
++                         Раздел создаётся ПЕРВЫМ на флешке, для совместимости
++                         со старыми Android.
++  --data-fs FS           Файловая система обменного раздела:
++                           exfat (default) — без лимита 4 ГБ на файл,
++                                             нужен Android 7+/Win10/macOS 10.6+
++                           fat32           — максимальная совместимость,
++                                             но файлы > 4 ГБ не поддерживаются
++  --data-label NAME      Метка обменного раздела (default: SHARED)
++  --data-mount PATH      Точка монтирования внутри Ubuntu
++                         (default: /media/shared)
++
++Прочее:
+   -y, --yes              Не спрашивать подтверждения перед разметкой
+   -h, --help             Показать эту справку
+ 
+ Примеры:
++  # Простая сборка без обменного раздела
+   sudo ./mkubuntu-usb.sh --device /dev/sdb
+-  sudo ./mkubuntu-usb.sh --device /dev/sdb --user alice --desktop lubuntu-desktop
++
++  # 64 ГБ флешка: 32 ГБ exFAT (обмен) + ESP + остаток под Ubuntu
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB
++
++  # Своё имя пользователя и легковесный desktop
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --user alice \
++                         --desktop lubuntu-desktop --data-size 16GiB
++
++  # Для старого Android, который не умеет exFAT
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 20GiB --data-fs fat32
++
++  # BIOS-only целевая машина, без desktop, без подтверждения
+   sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios --desktop none -y
+ EOF
+ }
+@@ -79,6 +117,10 @@
+         --desktop)        DESKTOP="$2"; shift 2 ;;
+         --firmware)       FIRMWARE_MODE="$2"; shift 2 ;;
+         --mount-point)    MOUNT_POINT="$2"; shift 2 ;;
++        --data-size)      DATA_SIZE="$2"; shift 2 ;;
++        --data-fs)        DATA_FS="$2"; shift 2 ;;
++        --data-label)     DATA_LABEL="$2"; shift 2 ;;
++        --data-mount)     DATA_MOUNT="$2"; shift 2 ;;
+         -y|--yes)         ASSUME_YES="yes"; shift ;;
+         -h|--help)        print_help; exit 0 ;;
+         *) echo "Неизвестный аргумент: $1" >&2; print_help; exit 2 ;;
+@@ -103,6 +145,12 @@
+ }
+ trap cleanup EXIT INT TERM
+ 
++# Нормализация флага «делать ли обменный раздел»
++WANT_DATA="no"
++if [[ -n "$DATA_SIZE" && "$DATA_SIZE" != "0" ]]; then
++    WANT_DATA="yes"
++fi
++
+ # ============================================================
+ # Проверки окружения
+ # ============================================================
+@@ -114,6 +162,9 @@
+ 
+ case "$FIRMWARE_MODE" in uefi|bios) ;; *) die "--firmware должен быть uefi или bios" ;; esac
+ case "$DESKTOP" in ubuntu-desktop-minimal|xubuntu-core|lubuntu-desktop|none) ;; *) die "--desktop: недопустимое значение '$DESKTOP'" ;; esac
++if [[ "$WANT_DATA" == "yes" ]]; then
++    case "$DATA_FS" in exfat|fat32|vfat) ;; *) die "--data-fs должен быть exfat или fat32" ;; esac
++fi
+ 
+ # Защита от выбора системного диска
+ ROOT_SRC=$(findmnt -no SOURCE / | sed 's/[0-9]*$//')
+@@ -131,6 +182,10 @@
+ 
+ # Проверка нужных утилит
+ NEEDED=(debootstrap parted mkfs.vfat mkfs.ext4 blkid wipefs arch-chroot)
++if [[ "$WANT_DATA" == "yes" && "$DATA_FS" == "exfat" ]]; then
++    NEEDED+=(mkfs.exfat)
++fi
++
+ MISSING=()
+ for cmd in "${NEEDED[@]}"; do
+     command -v "$cmd" >/dev/null || MISSING+=("$cmd")
+@@ -138,7 +193,9 @@
+ if (( ${#MISSING[@]} )); then
+     log "Доставляю недостающие пакеты: ${MISSING[*]}"
+     apt-get update
+-    apt-get install -y debootstrap parted dosfstools arch-install-scripts
++    EXTRA_PKGS=()
++    [[ "$WANT_DATA" == "yes" && "$DATA_FS" == "exfat" ]] && EXTRA_PKGS+=(exfatprogs)
++    apt-get install -y debootstrap parted dosfstools arch-install-scripts "${EXTRA_PKGS[@]}"
+ fi
+ 
+ # ============================================================
+@@ -157,6 +214,11 @@
+ echo "  TZ / locale:    $TIMEZONE / $DEFAULT_LOCALE"
+ echo "  Desktop:        $DESKTOP"
+ echo "  Точка монт.:    $MOUNT_POINT"
++if [[ "$WANT_DATA" == "yes" ]]; then
++    echo "  Обменный:       $DATA_SIZE  $DATA_FS  label='$DATA_LABEL'  → $DATA_MOUNT"
++else
++    echo "  Обменный:       (нет)"
++fi
+ echo "=========================================================="
+ echo
+ 
+@@ -177,36 +239,112 @@
+ log "Затираю таблицу разделов на $DEVICE…"
+ wipefs -a "$DEVICE"
+ 
++# Префикс имён разделов: /dev/sdb → sdb1; /dev/nvme0n1 → nvme0n1p1
++probe_prefix() {
++    # После создания разделов узнаем, нужна ли p-нотация
++    if [[ -b "${DEVICE}p1" ]]; then
++        echo "${DEVICE}p"
++    else
++        echo "${DEVICE}"
++    fi
++}
++
++DATA_PART=""
++ESP_PART=""
++ROOT_PART=""
++
++# Вычислить конец раздела как START + 513 MiB (для ESP сразу после обменного)
++calc_esp_end() {
++    local start="$1"
++    python3 -c "
++import re, sys
++m = re.match(r'^([\d.]+)(KiB|MiB|GiB|TiB)?\$', '$start')
++if not m:
++    print('ERR: bad size: $start', file=sys.stderr); sys.exit(1)
++v = float(m.group(1)); u = m.group(2) or 'MiB'
++mult = {'KiB':1024,'MiB':1024**2,'GiB':1024**3,'TiB':1024**4}[u]
++end_bytes = int(v*mult) + 513*1024*1024
++print(f'{end_bytes // (1024*1024)}MiB')
++"
++}
++
+ if [[ "$FIRMWARE_MODE" == "uefi" ]]; then
+-    log "Разметка GPT: ESP (512 МБ FAT32) + root (ext4)…"
+-    parted "$DEVICE" --script mklabel gpt
+-    parted "$DEVICE" --script mkpart ESP fat32 1MiB 513MiB
+-    parted "$DEVICE" --script set 1 esp on
+-    parted "$DEVICE" --script mkpart primary ext4 513MiB 100%
+-    partprobe "$DEVICE" || true
+-    sleep 1
+-
+-    # На некоторых устройствах нужна p-нотация (nvme, mmc); для sdX — не нужна
+-    if [[ -b "${DEVICE}p1" ]]; then PART_PREFIX="${DEVICE}p"; else PART_PREFIX="${DEVICE}"; fi
+-    ESP_PART="${PART_PREFIX}1"
+-    ROOT_PART="${PART_PREFIX}2"
+-
++    if [[ "$WANT_DATA" == "yes" ]]; then
++        log "Разметка GPT: обмен ($DATA_FS, $DATA_SIZE) + ESP (512 МБ FAT32) + root (ext4)…"
++        ESP_END=$(calc_esp_end "$DATA_SIZE")
++        # Обменный раздел идёт первым — для совместимости со старыми Android,
++        # которые видят только первый раздел съёмного носителя
++        parted "$DEVICE" --script mklabel gpt
++        parted "$DEVICE" --script mkpart "$DATA_LABEL" 1MiB "$DATA_SIZE"
++        parted "$DEVICE" --script mkpart ESP fat32 "$DATA_SIZE" "$ESP_END"
++        parted "$DEVICE" --script set 2 esp on
++        parted "$DEVICE" --script mkpart primary ext4 "$ESP_END" 100%
++        partprobe "$DEVICE" || true
++        sleep 1
++        PREFIX=$(probe_prefix)
++        DATA_PART="${PREFIX}1"
++        ESP_PART="${PREFIX}2"
++        ROOT_PART="${PREFIX}3"
++    else
++        log "Разметка GPT: ESP (512 МБ FAT32) + root (ext4)…"
++        parted "$DEVICE" --script mklabel gpt
++        parted "$DEVICE" --script mkpart ESP fat32 1MiB 513MiB
++        parted "$DEVICE" --script set 1 esp on
++        parted "$DEVICE" --script mkpart primary ext4 513MiB 100%
++        partprobe "$DEVICE" || true
++        sleep 1
++        PREFIX=$(probe_prefix)
++        ESP_PART="${PREFIX}1"
++        ROOT_PART="${PREFIX}2"
++    fi
++else
++    # BIOS / MBR
++    if [[ "$WANT_DATA" == "yes" ]]; then
++        log "Разметка MBR: обмен ($DATA_FS, $DATA_SIZE) + root (ext4, boot)…"
++        parted "$DEVICE" --script mklabel msdos
++        parted "$DEVICE" --script mkpart primary 1MiB "$DATA_SIZE"
++        parted "$DEVICE" --script mkpart primary ext4 "$DATA_SIZE" 100%
++        parted "$DEVICE" --script set 2 boot on
++        partprobe "$DEVICE" || true
++        sleep 1
++        PREFIX=$(probe_prefix)
++        DATA_PART="${PREFIX}1"
++        ROOT_PART="${PREFIX}2"
++    else
++        log "Разметка MBR: один раздел ext4 с флагом boot…"
++        parted "$DEVICE" --script mklabel msdos
++        parted "$DEVICE" --script mkpart primary ext4 1MiB 100%
++        parted "$DEVICE" --script set 1 boot on
++        partprobe "$DEVICE" || true
++        sleep 1
++        PREFIX=$(probe_prefix)
++        ROOT_PART="${PREFIX}1"
++    fi
++fi
++
++# ============================================================
++# Форматирование
++# ============================================================
++
++if [[ -n "$DATA_PART" ]]; then
++    log "Форматирую обменный раздел $DATA_PART как $DATA_FS…"
++    case "$DATA_FS" in
++        exfat)
++            mkfs.exfat -L "$DATA_LABEL" "$DATA_PART"
++            ;;
++        fat32|vfat)
++            mkfs.vfat -F32 -n "${DATA_LABEL:0:11}" "$DATA_PART"
++            ;;
++    esac
++fi
++
++if [[ -n "$ESP_PART" ]]; then
++    log "Форматирую ESP $ESP_PART как FAT32…"
+     mkfs.vfat -F32 -n ESP "$ESP_PART"
+-    mkfs.ext4 -F -L ubuntu-usb "$ROOT_PART"
+-else
+-    log "Разметка MBR: один раздел ext4 с флагом boot…"
+-    parted "$DEVICE" --script mklabel msdos
+-    parted "$DEVICE" --script mkpart primary ext4 1MiB 100%
+-    parted "$DEVICE" --script set 1 boot on
+-    partprobe "$DEVICE" || true
+-    sleep 1
+-
+-    if [[ -b "${DEVICE}p1" ]]; then PART_PREFIX="${DEVICE}p"; else PART_PREFIX="${DEVICE}"; fi
+-    ESP_PART=""
+-    ROOT_PART="${PART_PREFIX}1"
+-
+-    mkfs.ext4 -F -L ubuntu-usb "$ROOT_PART"
+-fi
++fi
++
++log "Форматирую корень $ROOT_PART как ext4…"
++mkfs.ext4 -F -L ubuntu-usb "$ROOT_PART"
+ 
+ # ============================================================
+ # Монтирование
+@@ -216,7 +354,7 @@
+ mkdir -p "$MOUNT_POINT"
+ mount "$ROOT_PART" "$MOUNT_POINT"
+ 
+-if [[ "$FIRMWARE_MODE" == "uefi" ]]; then
++if [[ -n "$ESP_PART" ]]; then
+     mkdir -p "$MOUNT_POINT/boot/efi"
+     mount "$ESP_PART" "$MOUNT_POINT/boot/efi"
+ fi
+@@ -240,18 +378,31 @@
+ 
+ log "Пишу fstab по UUID…"
+ ROOT_UUID=$(blkid -s UUID -o value "$ROOT_PART")
+-if [[ "$FIRMWARE_MODE" == "uefi" ]]; then
+-    ESP_UUID=$(blkid -s UUID -o value "$ESP_PART")
+-    cat > "$MOUNT_POINT/etc/fstab" <<EOF
+-UUID=$ROOT_UUID / ext4 defaults,noatime,errors=remount-ro 0 1
+-UUID=$ESP_UUID /boot/efi vfat defaults,umask=0077 0 2
+-tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
+-EOF
+-else
+-    cat > "$MOUNT_POINT/etc/fstab" <<EOF
+-UUID=$ROOT_UUID / ext4 defaults,noatime,errors=remount-ro 0 1
+-tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
+-EOF
++
++{
++    echo "UUID=$ROOT_UUID / ext4 defaults,noatime,errors=remount-ro 0 1"
++    if [[ -n "$ESP_PART" ]]; then
++        ESP_UUID=$(blkid -s UUID -o value "$ESP_PART")
++        echo "UUID=$ESP_UUID /boot/efi vfat defaults,umask=0077 0 2"
++    fi
++    if [[ -n "$DATA_PART" ]]; then
++        DATA_UUID=$(blkid -s UUID -o value "$DATA_PART")
++        case "$DATA_FS" in
++            exfat)
++                # uid/gid 1000 — первый созданный пользователь (adduser даёт ему 1000)
++                echo "UUID=$DATA_UUID $DATA_MOUNT exfat rw,uid=1000,gid=1000,umask=0022,nofail 0 0"
++                ;;
++            fat32|vfat)
++                echo "UUID=$DATA_UUID $DATA_MOUNT vfat rw,uid=1000,gid=1000,umask=0022,nofail 0 0"
++                ;;
++        esac
++    fi
++    echo "tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0"
++} | tee "$MOUNT_POINT/etc/fstab" >/dev/null
++
++# Создать точку монтирования для обменного раздела заранее
++if [[ -n "$DATA_PART" ]]; then
++    mkdir -p "$MOUNT_POINT$DATA_MOUNT"
+ fi
+ 
+ # ============================================================
+@@ -276,6 +427,8 @@
+ MIRROR="$MIRROR"
+ DESKTOP="$DESKTOP"
+ FIRMWARE_MODE="$FIRMWARE_MODE"
++WANT_DATA="$WANT_DATA"
++DATA_FS="$DATA_FS"
+ 
+ echo "=> hostname / hosts"
+ echo "\$HOSTNAME" > /etc/hostname
+@@ -312,7 +465,14 @@
+ else
+     BOOT_PKGS="grub-pc"
+ fi
+-apt-get install -y \$BASE_PKGS \$BOOT_PKGS
++
++# Поддержка exFAT, если обменный раздел задан
++EXTRA_PKGS=""
++if [[ "\$WANT_DATA" == "yes" && "\$DATA_FS" == "exfat" ]]; then
++    EXTRA_PKGS="exfatprogs"
++fi
++
++apt-get install -y \$BASE_PKGS \$BOOT_PKGS \$EXTRA_PKGS
+ 
+ echo "=> рабочее окружение: \$DESKTOP"
+ case "\$DESKTOP" in
+@@ -381,6 +541,15 @@
+ echo
+ echo "=========================================================="
+ echo "  Готово."
++if [[ "$WANT_DATA" == "yes" ]]; then
++    echo "  Разметка:"
++    echo "    $DATA_PART  — $DATA_FS, label '$DATA_LABEL'  (обмен; виден везде)"
++    [[ -n "$ESP_PART" ]] && echo "    $ESP_PART  — FAT32 ESP"
++    echo "    $ROOT_PART  — ext4 Ubuntu"
++    echo "  При загрузке Ubuntu обменный раздел будет смонтирован"
++    echo "  в $DATA_MOUNT (с правами пользователя uid=1000)."
++fi
++echo
+ echo "  Теперь: Devices → USB → снять галочку с флешки в GUI"
+ echo "  VirtualBox (или просто выключить виртуалку), 'Безопасно"
+ echo "  извлечь' на хосте, нести на целевую машину и грузиться"

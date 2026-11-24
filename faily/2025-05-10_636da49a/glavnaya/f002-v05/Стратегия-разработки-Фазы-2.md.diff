@@ -1,0 +1,110 @@
+--- предыдущая/Стратегия-разработки-Фазы-2.md
++++ текущая/Стратегия-разработки-Фазы-2.md
+@@ -59,11 +59,18 @@
+ 
+ #### Контекст из Фазы 1
+ - `shared/models/User.js` - базовая модель пользователя
+-- `shared/lib/db/postgres/*` - утилиты для работы с PostgreSQL
+-- `shared/lib/auth/*` - утилиты аутентификации
+-- `shared/lib/validation/*` - валидаторы
+-- `shared/lib/errors/*` - обработка ошибок
+-- `shared/lib/logging/*` - логирование
++- `shared/lib/db/postgres/client.js` - клиент PostgreSQL
++- `shared/lib/db/postgres/queryBuilder.js` - построитель запросов
++- `shared/lib/auth/jwtHelper.js` - утилиты для работы с JWT
++- `shared/lib/auth/roleHelper.js` - утилиты для работы с ролями
++- `shared/lib/validation/validators.js` - общие валидаторы
++- `shared/lib/validation/schemas/conceptSchemas.js` - схемы для концепций
++- `shared/lib/errors/AppError.js` - базовый класс ошибки
++- `shared/lib/errors/HttpErrors.js` - HTTP-ошибки
++- `shared/lib/errors/ValidationError.js` - ошибки валидации
++- `shared/lib/errors/NotFoundError.js` - ошибки не найденных ресурсов
++- `shared/lib/logging/logger.js` - общий логгер
++- `shared/lib/logging/requestLogger.js` - логирование запросов
+ - `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
+ - `templates/backend/controllers/specialized-controller-template.js` - шаблон специализированного контроллера
+ - `templates/backend/services/crud-service-template.js` - шаблон CRUD-сервиса
+@@ -114,10 +121,17 @@
+    - `templates/synthesisTemplates.js` - базовые шаблоны
+ 
+ #### Контекст из Фазы 1
+-- `shared/lib/messaging/rabbitmq/*` - утилиты для RabbitMQ
+-- `shared/lib/db/postgres/*` - для хранения истории взаимодействий
+-- `shared/lib/errors/*` - обработка ошибок
+-- `shared/lib/logging/*` - логирование
++- `shared/lib/messaging/rabbitmq/connection.js` - соединение с RabbitMQ
++- `shared/lib/messaging/rabbitmq/channelManager.js` - управление каналами
++- `shared/lib/messaging/producers.js` - продюсеры сообщений
++- `shared/lib/messaging/consumers.js` - потребители сообщений
++- `shared/lib/db/postgres/client.js` - клиент PostgreSQL
++- `shared/lib/db/postgres/queryBuilder.js` - построитель запросов
++- `shared/lib/errors/AppError.js` - базовый класс ошибки
++- `shared/lib/errors/HttpErrors.js` - HTTP-ошибки
++- `shared/lib/errors/ValidationError.js` - ошибки валидации
++- `shared/lib/logging/logger.js` - общий логгер
++- `shared/lib/logging/requestLogger.js` - логирование запросов
+ - `templates/backend/controllers/specialized-controller-template.js` - шаблон специализированного контроллера
+ - `templates/backend/services/specialized-service-template.js` - шаблон специализированного сервиса
+ - `templates/backend/repositories/postgres-repository-template.js` - шаблон репозитория PostgreSQL
+@@ -161,7 +175,8 @@
+ 
+ #### Контекст из Фазы 1
+ - `shared/models/Graph.js` - базовая модель графа
+-- `shared/lib/db/neo4j/*` - утилиты для работы с Neo4j
++- `shared/lib/db/neo4j/driver.js` - драйвер Neo4j
++- `shared/lib/db/neo4j/cypherBuilder.js` - построитель Cypher-запросов
+ - `shared/lib/validation/schemas/graphSchemas.js` - схемы валидации
+ - `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
+ - `templates/backend/controllers/specialized-controller-template.js` - шаблон специализированного контроллера
+@@ -207,7 +222,8 @@
+ 
+ #### Контекст из Фазы 1
+ - `shared/models/Thesis.js` - базовая модель тезиса
+-- `shared/lib/db/mongodb/*` - утилиты для работы с MongoDB
++- `shared/lib/db/mongodb/client.js` - клиент MongoDB
++- `shared/lib/db/mongodb/queryBuilder.js` - построитель запросов
+ - `shared/lib/validation/schemas/thesisSchemas.js` - схемы валидации
+ - `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
+ - `templates/backend/controllers/specialized-controller-template.js` - шаблон специализированного контроллера
+@@ -251,7 +267,8 @@
+ 
+ #### Контекст из Фазы 1
+ - `shared/models/Concept.js` - базовая модель концепции
+-- `shared/lib/db/postgres/*` - утилиты для работы с PostgreSQL
++- `shared/lib/db/postgres/client.js` - клиент PostgreSQL
++- `shared/lib/db/postgres/queryBuilder.js` - построитель запросов
+ - `shared/lib/validation/schemas/conceptSchemas.js` - схемы валидации
+ - `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
+ - `templates/backend/services/crud-service-template.js` - шаблон CRUD-сервиса
+@@ -291,10 +308,15 @@
+    - `utils/responseFormatter.js`, `utils/healthCheck.js`
+ 
+ #### Контекст из Фазы 1
+-- `shared/lib/auth/*` - для middleware аутентификации
+-- `shared/lib/errors/*` - для обработки ошибок
+-- `shared/lib/logging/*` - для логирования
+-- `shared/lib/http/*` - HTTP-утилиты
++- `shared/lib/auth/jwtHelper.js` - утилиты для работы с JWT
++- `shared/lib/auth/roleHelper.js` - утилиты для работы с ролями
++- `shared/lib/errors/AppError.js` - базовый класс ошибки
++- `shared/lib/errors/HttpErrors.js` - HTTP-ошибки
++- `shared/lib/errors/ValidationError.js` - ошибки валидации
++- `shared/lib/logging/logger.js` - общий логгер
++- `shared/lib/logging/requestLogger.js` - логирование запросов
++- `shared/lib/http/client.js` - HTTP-клиент
++- `shared/lib/http/responseFormatter.js` - форматирование ответов
+ - `templates/backend/tests/unit-test-template.js` - шаблон юнит-теста
+ - `templates/backend/tests/integration-test-template.js` - шаблон интеграционного теста
+ - `templates/api-tests/api-test-template.js` - шаблон для тестирования API
+@@ -350,7 +372,10 @@
+ - `templates/frontend/hooks/use-form-template.ts` - шаблон хука для работы с формами
+ - `templates/frontend/services/api-service-template.ts` - шаблон сервиса API
+ - `templates/frontend/services/entity-service-template.ts` - шаблон сервиса для работы с сущностями
+-- `shared/constants/*` - константы для использования в UI
++- `shared/constants/errorCodes.js` - коды ошибок
++- `shared/constants/statuses.js` - статусы
++- `shared/constants/roles.js` - роли
++- `shared/constants/philosophyConstants.js` - константы философских понятий
+ - Схемы данных из TypeScript-типов, созданных в процессе разработки
+ 
+ ## Рекомендации по работе с Claude 3.7

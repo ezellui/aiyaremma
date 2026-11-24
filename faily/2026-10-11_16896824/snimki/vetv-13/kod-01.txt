@@ -1,0 +1,50 @@
+Create a photorealistic archival photograph of a single aged paper document from an invented alternative history. Portrait orientation (2:3). Everything below is fiction; render it as a straight, deadpan museum record — not a fantasy illustration, no monsters drawn, no comedy.
+
+WORLD CONTEXT (for correct details):
+In this fictional world, the 1921 Kronstadt uprising gave birth not to the USSR but to the Р.С.Ф.Г.Р. — the "Russian Socialist Federative Fungal Republic", a Soviet-style bureaucratic state fused with the cult of the sleeping Cthulhu. Lenin is believed to be not dead but asleep, like Cthulhu; the official slogan is "Ктулху фхтагнъ — Ленинъ фхтагнъ". The capital is the city of R'lyeh (Р'льехъ) on the Arctic coast of the Kara Sea. Citizens are not buried but "dissolved" into the Great Mycelium (Великая Грибница), a single living fungal network that is the state itself; families receive one spore instead of the body. Neighbouring countries are not conquered but "grafted" (привиты) as vassal states. Since 1951 ("Era of Awakening") the Mycelium itself speaks, and its "voice" is the highest authority. In the Mongolian Gobi vassal state a heresy arose: its people accepted not the earthly Mycelium but the alien fungus of the Mi-Go from the planet Yuggoth. This document is the official excommunication of that vassal state by the central authority in R'lyeh. The state keeps pre-1918 Russian spelling (with the letters ѣ, і and the hard sign ъ at the ends of words). State emblem: a red five-pointed star with a spiral inside it (never a hammer and sickle). Official seals are violet ink stamps showing an octopus.
+
+THE OBJECT:
+A single A4-like sheet of yellowed, slightly brittle 1950s office paper, letterpress-printed form filled in partly by typewriter, lying flat on a dark charcoal-grey archive cloth, photographed from directly above with soft even museum lighting, slight shadow under the curled corners. Two punched filing holes on the left edge, a rusty paperclip mark, faint foxing, one horizontal fold line, small tear at the bottom right corner. Classic Russian pre-revolutionary/1920s government typography: serif and condensed grotesque typefaces, double-rule thin frame around the text, small typographic ornaments. Colours: black print, one red printed element (the star), violet stamps, grey graphite and red-pencil handwriting.
+
+EXACT TEXT — reproduce letter for letter, keep the old spelling, do not modernize, do not translate, do not add any other words:
+
+Top centre, small caps: "Р. С. Ф. Г. Р."
+Under it: "Центральное Управленіе Грибницъ · градъ Р'льехъ"
+Then a small red five-pointed star with a spiral inside it.
+Top right, typewritten in a field: "Дѣло № 2207-Ю"
+Below it: "Споролѣтіе XXXIII · годъ III Эры Пробужденія"
+
+Large heading, bold condensed letters, printed in dark red: "РЕЗОЛЮЦІЯ"
+Subheading in black: "О ЮГГОТСКОЙ ЕРЕСИ"
+
+A form line: "Территорія:  Гобійскій вассалатъ" — the word "вассалатъ" is struck through by hand with a thick red pencil line, and above it the word "отпавшій" is handwritten in red pencil.
+
+Typewritten line: "Слушали: гласъ Великой Грибницы отъ 13 сентября."
+Then, letter-spaced: "П О С Т А Н О В И Л И :"
+Five numbered typewritten points:
+"1. Признать ученіе о Ми-Го ересью, а грибъ Юггота — чужимъ тѣломъ."
+"2. Привитыя грибницы Гобійскаго края отсѣчь по Алтайской межѣ."
+"3. Споры изъ Урги не принимать, сосуды не выдавать."
+"4. Марку «Грибъ Ми-Го — пища будущаго» изъять изъ обращенія."
+"5. Съ отпавшими не переписываемся."
+
+Centred under a thin ornamental rule: "Ктулху фхтагнъ — Ленинъ фхтагнъ."
+
+Bottom right: "Замѣститель Народнаго Комиссара Здороваго Безумія" followed by a dotted line, a fluid ink signature, and the typed name "А. П. Ивановъ".
+
+STAMPS AND MARKS:
+- Bottom left, a round violet ink stamp, slightly smudged and tilted, with an octopus in the centre and the circular inscription "ЦЕНТРАЛЬНОЕ УПРАВЛЕНІЕ ГРИБНИЦЪ · Р.С.Ф.Г.Р.".
+- Across the upper right part of the text, a large rectangular red ink stamp at a 10° angle reading "ОТЛУЧЕНО", ink unevenly pressed, partly overlapping the typed lines.
+- Left margin, faint grey pencil archive note: "Арх. 8/ IX-53".
+
+ATTACHED SCRAP:
+Pinned to the upper left corner with a rusty pin, a small torn fragment of a different, cheaper, greyish-pink rough paper: part of a heretical leaflet showing a fine engraving of an alien pinkish ribbed fungus (folded, crab-like, not a normal mushroom cap) and the hand-printed word "ЮГГОѲЪ" (spelled with the letter ѳ — fita — on purpose). The scrap overlaps only the margin, not the main text.
+
+TYPOGRAPHY RULES (important):
+- The letter ѣ (yat) looks like a Cyrillic ь with a horizontal bar crossing its tall stem; it is NOT the same as е. Use ѣ exactly where written above.
+- The letter і is a dotted Latin-style i.
+- The letter ъ appears at the end of words after consonants (градъ, отъ, изъ, Ивановъ).
+- The letter ѳ (fita) appears only in "ЮГГОѲЪ" on the pinned scrap.
+- No hammer and sickle, no swastika, no portraits, no modern fonts, no English text, no watermark, no extra captions.
+
+MOOD: cold, bureaucratic, authentic; it should look like a real scanned page from a state archive of a country that never existed.

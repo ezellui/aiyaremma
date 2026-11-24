@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru" data-lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eldarische Sammlung · Эльдаринское собрание</title>
+<style>
+:root{
+  --stone:#e7e8e6;        /* холодный каменный фон */
+  --paper:#f1f2f0;        /* панели */
+  --ink:#1b2329;          /* холодная почти-чёрная */
+  --muted:#6c757a;        /* вторичный серый */
+  --steel:#46646e;        /* институциональный акцент (аппарат) */
+  --steel-dk:#33505a;
+  --oxblood:#6a2f29;      /* «голос» самих предметов */
+  --silver:#9aa1a3;       /* волоски, звезда */
+  --line:#c9ccc8;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--stone);color:var(--ink);
+  font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:17px;line-height:1.62;
+  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
+}
+.serif{font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif}
+.mono{font-family:ui-monospace,"SF Mono","Cascadia Code","DejaVu Sans Mono",Consolas,monospace}
+
+/* --- переключатель языка: показываем активный, прячем другой --- */
+body[data-lang="ru"] [lang="de"]{display:none}
+body[data-lang="de"] [lang="ru"]{display:none}
+
+.wrap{max-width:900px;margin:0 auto;padding:0 24px}
+
+/* звезда-сигнатура */
+.ic-star{display:inline-block;width:1em;height:1em;color:var(--silver);vertical-align:-0.12em}
+.ic-star use{fill:currentColor}
+
+/* --- верхняя панель --- */
+.bar{position:sticky;top:0;z-index:20;background:rgba(231,232,230,.93);
+  backdrop-filter:saturate(120%) blur(6px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;min-height:54px;gap:16px}
+.bar .who{font-size:12.5px;letter-spacing:.04em;color:var(--muted)}
+.bar .who .ic-star{font-size:13px;color:var(--steel);margin-right:.45em}
+.lang{display:inline-flex;border:1px solid var(--steel);border-radius:2px;overflow:hidden;flex:none}
+.lang button{appearance:none;border:0;background:transparent;color:var(--steel);
+  font:600 12.5px/1 inherit;letter-spacing:.06em;padding:7px 12px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--steel);color:#fff}
+.lang button:focus-visible{outline:2px solid var(--steel-dk);outline-offset:-2px}
+
+/* --- шапка-герой --- */
+header.hero{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.hero .emblem{font-size:46px;color:var(--silver);line-height:1;margin-bottom:22px}
+.hero .eyebrow{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+.hero h1{font-size:clamp(30px,5.4vw,46px);line-height:1.06;margin:0 0 16px;font-weight:600;letter-spacing:.005em}
+.hero .thesis{font-size:clamp(17px,2.4vw,21px);color:var(--steel-dk);max-width:38ch;margin:0;font-style:italic}
+
+/* --- навигация по разделам --- */
+nav.toc{position:sticky;top:54px;z-index:10;background:var(--stone);border-bottom:1px solid var(--line)}
+nav.toc .wrap{display:flex;flex-wrap:wrap;gap:2px 22px;padding-top:11px;padding-bottom:11px}
+nav.toc a{font-size:13px;letter-spacing:.02em;color:var(--muted);text-decoration:none;padding:2px 0;border-bottom:1px solid transparent}
+nav.toc a:hover{color:var(--ink);border-bottom-color:var(--steel)}
+
+/* --- секции --- */
+section{padding:46px 0;border-bottom:1px solid var(--line)}
+section h2{font-size:25px;font-weight:600;margin:0 0 18px;letter-spacing:.005em;display:flex;align-items:baseline;gap:.5em}
+section h2 .ic-star{font-size:15px;color:var(--steel);flex:none}
+section p{margin:0 0 14px;max-width:64ch}
+.lede{font-size:18.5px}
+
+/* список принципов */
+ol.princ{list-style:none;counter-reset:p;margin:6px 0 0;padding:0;max-width:64ch}
+ol.princ li{counter-increment:p;position:relative;padding:13px 0 13px 44px;border-top:1px solid var(--line)}
+ol.princ li:before{content:counter(p,decimal-leading-zero);position:absolute;left:0;top:13px;
+  font:600 13px/1.6 ui-monospace,Consolas,monospace;color:var(--steel)}
+
+/* --- каталог экспонатов --- */
+.item{display:grid;grid-template-columns:248px 1fr;gap:28px;padding:30px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.plate{position:relative;aspect-ratio:4/3;background:
+  repeating-linear-gradient(135deg,#edeeec 0 9px,#eaebe9 9px 18px);
+  border:1px solid var(--silver);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;padding:14px}
+.plate .ic-star{font-size:40px;color:#cfd3d0}
+.plate .pinv{position:absolute;top:9px;left:10px;font:600 11px/1 ui-monospace,Consolas,monospace;
+  letter-spacing:.04em;color:var(--oxblood)}
+.plate .plink{position:absolute;bottom:9px;left:0;right:0;font-size:11.5px;letter-spacing:.03em}
+.plate .plink a{color:var(--steel-dk);text-decoration:none;border-bottom:1px solid var(--silver)}
+.plate .plink a:hover{border-bottom-color:var(--steel)}
+
+.label .inv{font:600 12px/1 ui-monospace,Consolas,monospace;letter-spacing:.05em;color:var(--oxblood);
+  display:flex;align-items:center;gap:.5em;margin-bottom:8px}
+.label .inv .ic-star{font-size:12px;color:var(--oxblood)}
+.label h3{font-size:20px;font-weight:600;margin:0 0 3px;line-height:1.2}
+.label .date{font:13px/1 ui-monospace,Consolas,monospace;color:var(--muted);margin-bottom:14px}
+.label .desc{margin:0 0 12px;max-width:60ch}
+.meta{font-size:14px;color:var(--muted);margin:0;max-width:60ch}
+.meta .meta-k{font-weight:600;color:var(--steel-dk)}
+.note{font-size:13.5px;color:var(--muted);font-style:italic;margin:10px 0 0;max-width:60ch;
+  padding-left:14px;border-left:2px solid var(--line)}
+
+/* подлинная надпись — «голос» предмета, виден всегда */
+.orig{margin:0 0 14px;padding:11px 14px;background:#f3eeed;border-left:3px solid var(--oxblood)}
+.orig .orig-k{display:block;font:600 10.5px/1 ui-monospace,Consolas,monospace;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--oxblood);margin-bottom:6px}
+.orig .orig-t{margin:0;font-size:14.5px;font-family:ui-monospace,"SF Mono","DejaVu Sans Mono",Consolas,monospace;
+  color:var(--ink);line-height:1.5}
+.orig .orig-n{display:block;margin-top:5px;font-size:12.5px;color:var(--muted);font-family:inherit}
+
+/* --- реквизиты --- */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:64ch}
+.cols h3{font-size:15px;margin:0 0 7px;font-weight:600}
+.cols address{font-style:normal;font-size:14.5px;line-height:1.66;color:var(--muted)}
+.cols a{color:var(--steel-dk)}
+.colophon{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);
+  font-size:13px;color:var(--muted);max-width:64ch}
+.colophon .ic-star{font-size:12px;color:var(--silver);margin-right:.4em}
+
+footer{padding:30px 0 60px;color:var(--muted);font-size:12.5px}
+
+@media (max-width:720px){
+  body{font-size:16px}
+  .item{grid-template-columns:1fr;gap:16px}
+  .plate{max-width:320px}
+  .cols{grid-template-columns:1fr}
+  nav.toc{display:none}
+}
+@media (prefers-reduced-motion:no-preference){
+  header.hero{animation:fade .7s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+a:focus-visible,button:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+</style>
+</head>
+<body data-lang="ru">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="star" viewBox="0 0 100 100">
+    <rect x="30" y="30" width="40" height="40"/>
+    <rect x="30" y="30" width="40" height="40" transform="rotate(45 50 50)"/>
+  </symbol>
+</svg>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="who">
+      <svg class="ic-star"><use href="#star"/></svg>
+      <span lang="ru">Музей послевоенной эпохи · Франкфурт-на-Майне</span>
+      <span lang="de">Museum der Nachkriegszeit · Frankfurt am Main</span>
+    </div>
+    <div class="lang" role="group" aria-label="Sprache / Язык">
+      <button type="button" data-set="ru" aria-pressed="true">РУС</button>
+      <button type="button" data-set="de" aria-pressed="false">DEU</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="emblem"><svg class="ic-star"><use href="#star"/></svg></div>
+    <p class="eyebrow">
+      <span lang="ru">Эльдаринское собрание</span>
+      <span lang="de">Eldarische Sammlung</span>
+    </p>
+    <h1 class="serif">
+      <span lang="ru">Материальная культура эльдаризированного Рейха</span>
+      <span lang="de">Die materielle Kultur des eldarisierten Reiches</span>
+    </h1>
+    <p class="thesis serif">
+      <span lang="ru">прочитанная, переведённая и описанная.</span>
+      <span lang="de">gelesen, übersetzt und verzeichnet.</span>
+    </p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#einfuehrung"><span lang="ru">Введение</span><span lang="de">Einführung</span></a>
+    <a href="#ziele"><span lang="ru">Цели</span><span lang="de">Ziele</span></a>
+    <a href="#geschichte"><span lang="ru">История раздела</span><span lang="de">Geschichte</span></a>
+    <a href="#auswahl"><span lang="ru">Отбор</span><span lang="de">Auswahl</span></a>
+    <a href="#exponate"><span lang="ru">Экспонаты</span><span lang="de">Exponate</span></a>
+    <a href="#impressum"><span lang="ru">Реквизиты</span><span lang="de">Impressum</span></a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="einfuehrung">
+    <h2 class="serif"><svg class="ic-star"><use href="#star"/></svg>
+      <span lang="ru">Введение</span><span lang="de">Einführung</span></h2>
+    <p class="lede" lang="ru">Собрание документирует материальную культуру Великогерманского Рейха его эльдаризированной поздней поры (приблизительно 1990–2030): официальные изделия, предметы повседневности, свидетельства низового движения и отклики извне. Подлинные надписи на немецком языке и квенья приводятся без изменений и сопровождаются переводом.</p>
+    <p class="lede" lang="de">Die Sammlung dokumentiert die materielle Kultur des Großdeutschen Reiches in seiner eldarisierten Spätzeit (etwa 1990–2030): amtliche Erzeugnisse, Gegenstände des Alltags, Zeugnisse der Bewegung von unten und Reaktionen von außen. Die Originalaufschriften in deutscher Sprache und in Quenya werden unverändert wiedergegeben und übersetzt.</p>
+    <p lang="ru">Изложение рассчитано на посетителя, знакомого с общей историей эпохи; общий очерк дан в основной экспозиции музея.</p>
+    <p lang="de">Die Darstellung wendet sich an Besucher, denen die allgemeine Geschichte der Epoche vertraut ist; ein Überblick findet sich in der Hauptausstellung des Museums.</p>
+  </section>
+
+  <section id="ziele">
+    <h2 class="serif"><svg class="ic-star"><use href="#star"/></svg>
+      <span lang="ru">Цели</span><span lang="de">Ziele</span></h2>
+    <p lang="ru">Сохранить и описать вещественное наследие эпохи. Прочесть и перевести материалы на квенья и тенгваре — те самые, которые государство к концу своего существования перестало читать само. Сделать их доступными для исследования. И держаться равно в стороне как от прославления, так и от забвения.</p>
+    <p lang="de">Das materielle Erbe der Epoche zu bewahren und zu erschließen. Die in Quenya und Tengwar abgefassten Stücke zu entziffern und zu übersetzen — eben jene, die der Staat am Ende selbst nicht mehr lesen konnte. Sie der Forschung zugänglich zu machen. Und gleichen Abstand zu Verherrlichung wie zu Vergessen zu halten.</p>
+  </section>
+
+  <section id="geschichte">
+    <h2 class="serif"><svg class="ic-star"><use href="#star"/></svg>
+      <span lang="ru">История раздела</span><span lang="de">Geschichte der Abteilung</span></h2>
+    <p lang="ru">Раздел основан в 2073 году как совместное начинание Музея послевоенной эпохи (Франкфурт-на-Майне) и Среднеазиатского института истории и письменности (Ташкент). Первые предметы поступили в государственные собрания ещё в 2030-е годы, вскоре после распада, — из оставленных служебных помещений и с антикварного рынка; систематическое собрание и программа расшифровки сложились позднее.</p>
+    <p lang="de">Die Abteilung wurde 2073 als gemeinsames Vorhaben des Museums der Nachkriegszeit (Frankfurt am Main) und des Mittelasiatischen Instituts für Geschichte und Schriftkunde (Taschkent) gegründet. Erste Stücke gelangten bereits in den 2030er Jahren, kurz nach dem Untergang, aus geräumten Amtsräumen und vom Antiquitätenmarkt in öffentliche Sammlungen; die systematische Sammlung und das Entzifferungsprogramm entstanden später.</p>
+    <p lang="ru">Ведущую роль в чтении эльдаризированных материалов взяли на себя филологи института, для которого словесность Толкина издавна была предметом перевода и изучения, — а не предметом веры. Вопрос о принадлежности и истолковании наследия остаётся предметом обсуждения между участниками.</p>
+    <p lang="de">Die Lesung der eldarisierten Materialien übernahmen maßgeblich die Philologen des Instituts, dem Tolkiens Dichtung seit langem Gegenstand der Übersetzung und Forschung war — nicht des Glaubens. Die Frage nach Eigentum und Deutung des Erbes bleibt zwischen den Beteiligten Gegenstand der Erörterung.</p>
+  </section>
+
+  <section id="auswahl">
+    <h2 class="serif"><svg class="ic-star"><use href="#star"/></svg>
+      <span lang="ru">Принципы отбора</span><span lang="de">Grundsätze der Auswahl</span></h2>
+    <ol class="princ">
+      <li><span lang="ru"><strong>Подлинность и задокументированное происхождение.</strong> Предметы без установленной истории бытования в собрание не включаются.</span><span lang="de"><strong>Echtheit und belegte Herkunft.</strong> Stücke ohne nachweisbare Überlieferungsgeschichte werden nicht aufgenommen.</span></li>
+      <li><span lang="ru"><strong>Представительность по регистрам.</strong> Государственный, повседневный, низовой, диссидентский и внешний взгляд представлены наравне.</span><span lang="de"><strong>Repräsentativität nach Registern.</strong> Amtliche, alltägliche, von unten getragene, dissidentische und äußere Sicht stehen gleichberechtigt nebeneinander.</span></li>
+      <li><span lang="ru"><strong>Сохранение подлинных надписей.</strong> Тексты на немецком и квенья приводятся как есть, с переводом и без поновления.</span><span lang="de"><strong>Bewahrung der Originalaufschriften.</strong> Texte in Deutsch und Quenya werden im Wortlaut, mit Übersetzung und ohne Überarbeitung wiedergegeben.</span></li>
+      <li><span lang="ru"><strong>Контекст вместо любования.</strong> Предметы показываются с пояснением, а не как святыни; экспонирование исключает культовое прочтение.</span><span lang="de"><strong>Einordnung statt Verehrung.</strong> Stücke werden erläutert, nicht als Reliquien gezeigt; die Präsentation schließt eine kultische Lesart aus.</span></li>
+    </ol>
+  </section>
+
+  <section id="exponate">
+    <h2 class="serif"><svg class="ic-star"><use href="#star"/></svg>
+      <span lang="ru">Экспонаты</span><span lang="de">Exponate</span></h2>
+    <p lang="ru">Избранные предметы собрания. Под каждым — подлинная надпись и её перевод.</p>
+    <p lang="de">Ausgewählte Stücke der Sammlung. Unter jedem die Originalaufschrift und ihre Übersetzung.</p>
+
+    <!-- 1. Карта -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">ES&#8209;2074&#8209;001</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/es-2074-001.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2074-001</div>
+        <h3 class="serif"><span lang="ru">Настенная карта «Кривая победа»</span><span lang="de">Wandkarte „Der krumme Sieg“</span></h3>
+        <div class="date">2020</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">„Der krumme Sieg — Die Aufteilung der Welt nach dem Zweiten Weltkrieg · um 1948“</p>
+          <span class="orig-n"><span lang="ru">заголовок фрактурой; титульная строка продублирована тенгваром</span><span lang="de">Titel in Fraktur; Titelzeile zusätzlich in Tengwar</span></span>
+        </div>
+        <p class="desc" lang="ru">Официальное картографическое издание, отражающее миропорядок Урегулирования. Названия даны по-немецки и на квенья. Образец позднего государственного стиля, соединяющего имперскую геральдику с эльфийской орнаментикой; в верхнем картуше — орёл, держащий восьмиконечную звезду.</p>
+        <p class="desc" lang="de">Amtliche kartographische Ausgabe, die die Weltordnung des Ausgleichs darstellt. Die Benennungen erscheinen deutsch und in Quenya. Ein Beispiel des späten Staatsstils, der imperiale Heraldik mit elbischer Ornamentik verbindet; in der oberen Kartusche der Adler mit achtzackigem Stern.</p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">из оставленных помещений правительственного квартала; поступление 2030-х гг.</span><span lang="de">aus geräumten Amtsräumen des Regierungsviertels; Zugang in den 2030er Jahren.</span></p>
+      </div>
+    </article>
+
+    <!-- 2. Орден -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">ES&#8209;2076&#8209;014</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/es-2076-014.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2076-014</div>
+        <h3 class="serif"><span lang="ru">Орден Белого Древа</span><span lang="de">Orden des Weißen Baumes</span></h3>
+        <div class="date">2010-е / 2010er</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">„ORDEN DES WEISSEN BAUMES“</p>
+          <span class="orig-n"><span lang="ru">по краю медальона — круговая надпись тенгваром</span><span lang="de">am Rand des Medaillons eine umlaufende Tengwar-Inschrift</span></span>
+        </div>
+        <p class="desc" lang="ru">Высокая государственная награда. В медальоне — имперский орёл, держащий восьмиконечную звезду Эльдар и ветвь Белого Древа: характерный пример сублимации прежней символики в эльфийскую. Лента в чёрно-оксбладово-серебряных цветах.</p>
+        <p class="desc" lang="de">Hohe staatliche Auszeichnung. Im Medaillon der Reichsadler, der einen achtzackigen Eldar-Stern und einen Zweig des Weißen Baumes hält — ein bezeichnendes Beispiel der Überführung der früheren Symbolik ins Elbische. Band in Schwarz, Ochsenblutrot und Silber.</p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">антикварный рынок; приобретение 2076 г.</span><span lang="de">Antiquitätenmarkt; Erwerb 2076.</span></p>
+      </div>
+    </article>
+
+    <!-- 3. Листовка кружка -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">ES&#8209;2078&#8209;103</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/es-2078-103.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2078-103</div>
+        <h3 class="serif"><span lang="ru">Листовка кружка изучения тенгвара</span><span lang="de">Flugblatt eines Tengwar-Lesekreises</span></h3>
+        <div class="date">1980-е / 1980er</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">„STUDIENKREIS · DIE HOHE SPRACHE (QUENYA) · Lesekreis für Tengwar · jeden Donnerstag 19 Uhr“</p>
+        </div>
+        <p class="desc" lang="ru">Размноженная на копире уличная листовка ранней, ещё низовой поры движения, задолго до его официального признания. Свидетельство субкультурного происхождения эльдаризма в годы «Затмения».</p>
+        <p class="desc" lang="de">Ein fotokopiertes Straßenflugblatt aus der frühen, noch von unten getragenen Zeit der Bewegung, lange vor ihrer amtlichen Anerkennung. Ein Zeugnis der subkulturellen Herkunft des Eldarismus in den Jahren der „Verdüsterung“.</p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">частное дарение из личного архива.</span><span lang="de">private Schenkung aus einem Nachlass.</span></p>
+      </div>
+    </article>
+
+    <!-- 4. Паспорт -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">ES&#8209;2075&#8209;052</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/es-2075-052.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2075-052</div>
+        <h3 class="serif"><span lang="ru">Паспорт рейхсбюргера с «истинным именем»</span><span lang="de">Reichsbürgerpass mit „wahrem Namen“</span></h3>
+        <div class="date">2010-е / 2010er</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">„Gegebener Name: Heinrich Vogel · Wahrer Name: Tar-Voronwë Ar-Mithlond“</p>
+        </div>
+        <p class="desc" lang="ru">Удостоверение личности, где наряду с данным именем указано «истинное» эльфийское имя с приставками Tar- и Ar-. Показывает проникновение титулатуры в обыденный документооборот.</p>
+        <p class="desc" lang="de">Ein Ausweis, der neben dem gegebenen Namen den „wahren“ elbischen Namen mit den Vorsilben Tar- und Ar- führt. Er zeigt das Eindringen der Titulatur in den alltäglichen Schriftverkehr.</p>
+        <p class="note"><span lang="ru">Примечание. Приставки Tar- (квенийская, царей-Верных) и Ar- (адунайская, Людей Короля) в исходном легендариуме принадлежат двум враждебным традициям имянаречения; их соединение в одном имени — устойчивая черта эльдаризированной номенклатуры.</span><span lang="de">Anmerkung. Die Vorsilben Tar- (quenya, der treuen Könige) und Ar- (adûnaisch, der „Königsmenschen“) gehören im zugrunde liegenden Legendarium zwei verfeindeten Namenstraditionen an; ihre Verbindung in einem Namen ist ein durchgängiges Merkmal der eldarisierten Nomenklatur.</span></p>
+      </div>
+    </article>
+
+    <!-- 5. Соглашение о переводе -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">TAS&#8209;2031&#8209;009</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/tas-2031-009.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> TAS-2031-009</div>
+        <h3 class="serif"><span lang="ru">Соглашение о русском переводе рукописей Толкина</span><span lang="de">Vereinbarung über die russische Übersetzung von Tolkien-Manuskripten</span></h3>
+        <div class="date">2015</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">„REICHSSTIFTUNG J. R. R. TOLKIEN, Berlin · Госиздат «Художественная литература» · Stockholm 2015“</p>
+        </div>
+        <p class="desc" lang="ru">Межблоковый лицензионный договор: правами на наследие Толкина, как британского автора, распоряжался Рейх, а советский госиздат приобретал право на русский перевод. Документ свидетельствует и об управлении наследием из Рейха, и о параллельном — литературном, а не культовом — прочтении Толкина на русском Востоке.</p>
+        <p class="desc" lang="de">Ein Lizenzvertrag über die Blockgrenze hinweg: die Rechte am Erbe Tolkiens, eines britischen Autors, verwaltete das Reich, während ein sowjetischer Staatsverlag das Recht auf die russische Übersetzung erwarb. Das Stück bezeugt zugleich die Verwaltung des Erbes durch das Reich und die parallele — literarische, nicht kultische — Lesart Tolkiens im russischen Osten.</p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">из архива Среднеазиатского института (Ташкент).</span><span lang="de">aus dem Archiv des Mittelasiatischen Instituts (Taschkent).</span></p>
+      </div>
+    </article>
+
+    <!-- 6. Накладные уши -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">2031&#8209;447</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/2031-447.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> 2031-447</div>
+        <h3 class="serif"><span lang="ru">Накладные эльфийские уши</span><span lang="de">Aufsteckbare Elbenohren</span></h3>
+        <div class="date">2020-е / 2020er</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись (карточка)</span><span lang="de">Originaltext (Begleitkarte)</span></span>
+          <p class="orig-t">„Ohrprothesen, getragen bei einem Staatsempfang · Großdeutsches Reich, 2020er“</p>
+        </div>
+        <p class="desc" lang="ru">Силиконовые накладные уши, которые представители верхушки носили на государственных приёмах, придавая себе облик бессмертных эльфов. Предмет поздней декадентской поры; сохранены следы тонального грима.</p>
+        <p class="desc" lang="de">Aufsteckbare Ohren aus Silikon, die Angehörige der Führungsschicht bei Staatsempfängen trugen, um sich das Aussehen der unsterblichen Elben zu geben. Ein Stück der späten dekadenten Zeit; Spuren von Hautton-Schminke erhalten.</p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">ранее в другом собрании; поступление 2031 г., передано в раздел позднее (сохранён исходный номер).</span><span lang="de">vormals in anderer Sammlung; Zugang 2031, später an die Abteilung überführt (ursprüngliche Nummer beibehalten).</span></p>
+      </div>
+    </article>
+
+    <!-- Völkischer Beobachter -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">ES&#8209;2079&#8209;188</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/es-2079-188.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2079-188</div>
+        <h3 class="serif"><span lang="ru">Газетная полоса «Die Heimkehr der Hohen Sprache»</span><span lang="de">Zeitungsseite „Die Heimkehr der Hohen Sprache“</span></h3>
+        <div class="date">2005</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">„DIE HEIMKEHR DER HOHEN SPRACHE — Völkischer Beobachter, Reichsausgabe, 15. September 2005“</p>
+        </div>
+        <p class="desc" lang="ru">Передовица официальной газеты Рейха, торжественно представляющая принятие Высокой Речи как священное «возвращение». Внутренний, славящий голос режима — прямая пара к зарубежной передовице о тех же событиях (ES-2080-211).</p>
+        <p class="desc" lang="de">Leitartikel der amtlichen Zeitung des Reiches, der die Annahme der Hohen Sprache als heilige „Heimkehr“ feiert. Die innere, verherrlichende Stimme des Regimes — unmittelbares Gegenstück zum ausländischen Kommentar über dieselben Ereignisse (ES-2080-211).</p>
+        <p class="note"><span lang="ru">Примечание. Заключительный образ статьи — «как некогда Высокие плыли за море на Запад, навстречу негасимому свету» — воспроизводит, по-видимому неосознанно, ту самую гордыню Низвержения Нуменора, против которой предостерегает легендариум.</span><span lang="de">Anmerkung. Das Schlussbild des Artikels — „wie einst die Hohen über das Meer nach Westen fuhren, dem unvergänglichen Lichte entgegen“ — wiederholt, offenbar unbewusst, eben jene Hybris des Untergangs von Númenor, vor der das Legendarium warnt.</span></p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">из газетного архива (микрофильм).</span><span lang="de">aus einem Zeitungsarchiv (Mikrofilm).</span></p>
+      </div>
+    </article>
+
+    <!-- 7. Американская передовица -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">ES&#8209;2080&#8209;211</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/es-2080-211.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2080-211</div>
+        <h3 class="serif"><span lang="ru">Газетная передовица «Berlin’s Rulers Go Elvish»</span><span lang="de">Zeitungskommentar „Berlin’s Rulers Go Elvish“</span></h3>
+        <div class="date">2005</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">„WHAT’S IN A NAME? BERLIN’S RULERS GO ELVISH — The Washington Herald, 6 October 2005“</p>
+        </div>
+        <p class="desc" lang="ru">Полоса мнений панамериканской газеты — взгляд извне, с недоумением воспринимающий принятие верхушкой Рейха эльфийских имён на Tar-. Ценна как внешнее свидетельство о том, как «Кривую победу» видели за пределами германской сферы.</p>
+        <p class="desc" lang="de">Eine Meinungsseite einer panamerikanischen Zeitung — eine Außensicht, die die Annahme elbischer Tar-Namen durch die Führung des Reiches mit Befremden verzeichnet. Wertvoll als Zeugnis von außen über die Wahrnehmung des „krummen Sieges“ jenseits der deutschen Sphäre.</p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">из газетного архива (микрофильм).</span><span lang="de">aus einem Zeitungsarchiv (Mikrofilm).</span></p>
+      </div>
+    </article>
+
+    <!-- Японская афиша Twilight Ray -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">ES&#8209;2085&#8209;026</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/es-2085-026.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2085-026</div>
+        <h3 class="serif"><span lang="ru">Афиша аниме-фильма «Сумеречный луч» (Twilight Ray)</span><span lang="de">Filmplakat des Anime „Twilight Ray“</span></h3>
+        <div class="date">2025</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">「黄昏の光芒（トワイライト・レイ）」 · TWILIGHT RAY — 2025</p>
+          <span class="orig-n"><span lang="ru">текст афиши на японском языке</span><span lang="de">Plakattext in japanischer Sprache</span></span>
+        </div>
+        <p class="desc" lang="ru">Японская киноафиша «обратного исекая»: эльфийка из фэнтези-мира попадает в эльдаризированный Рейх. Поп-культурный отклик соперничающей державы, перерабатывающий мрачную самомифологию Рейха в развлекательный сюжет; название почти созвучно «Twilight Reich». Свидетельство восприятия Рейха массовой культурой за пределами германской сферы.</p>
+        <p class="desc" lang="de">Japanisches Filmplakat eines „umgekehrten Isekai“: eine Elbe aus einer Fantasiewelt gerät in das eldarisierte Reich. Eine popkulturelle Reaktion einer rivalisierenden Macht, die die düstere Selbstmythologie des Reiches zur Unterhaltung verarbeitet; der Titel klingt fast wie „Twilight Reich“. Ein Zeugnis der Wahrnehmung des Reiches in der Massenkultur jenseits der deutschen Sphäre.</p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">из японского собрания киноплакатов.</span><span lang="de">aus einer japanischen Plakatsammlung.</span></p>
+      </div>
+    </article>
+
+    <!-- 8. Диссидентская листовка -->
+    <article class="item">
+      <div class="plate">
+        <span class="pinv">ES&#8209;2082&#8209;300</span>
+        <svg class="ic-star"><use href="#star"/></svg>
+        <span class="plink"><a href="media/es-2082-300.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
+      </div>
+      <div class="label">
+        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2082-300</div>
+        <h3 class="serif"><span lang="ru">Подпольная листовка с цитатой из «Аккалабет»</span><span lang="de">Untergrund-Flugblatt mit einem Zitat aus der „Akallabêth“</span></h3>
+        <div class="date">2020-е / 2020er</div>
+        <div class="orig">
+          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
+          <p class="orig-t">„AUCH DIES REICH WIRD SINKEN, WIE NÚMENOR VERSANK“</p>
+          <span class="orig-n"><span lang="ru">ниже — та же строка тенгваром</span><span lang="de">darunter dieselbe Zeile in Tengwar</span></span>
+        </div>
+        <p class="desc" lang="ru">Листовка противников режима, обращающая против власти тот самый сюжет о низвержении Нуменора, который эльдаризм читал как героический образец. Редкий пример «верного прочтения» легендариума, ставшего орудием сопротивления.</p>
+        <p class="desc" lang="de">Ein Flugblatt von Gegnern des Regimes, das die Erzählung vom Untergang Númenors — die der Eldarismus als heroisches Vorbild las — gegen die Macht wendet. Ein seltenes Beispiel der „richtigen Lesart“ des Legendariums als Mittel des Widerstands.</p>
+        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">сохранилось за границей; передано в 2082 г.</span><span lang="de">im Ausland erhalten; Übergabe 2082.</span></p>
+      </div>
+    </article>
+
+  </section>
+
+  <section id="impressum">
+    <h2 class="serif"><svg class="ic-star"><use href="#star"/></svg>
+      <span lang="ru">Реквизиты</span><span lang="de">Impressum</span></h2>
+    <div class="cols">
+      <div>
+        <h3><span lang="ru">Местонахождение</span><span lang="de">Anschrift</span></h3>
+        <address>
+          <span lang="ru">Музей послевоенной эпохи<br>Эльдаринское собрание<br>Унтермайнкай 14, Франкфурт-на-Майне</span>
+          <span lang="de">Museum der Nachkriegszeit<br>Eldarische Sammlung<br>Untermainkai 14, Frankfurt am Main</span>
+          <br><br>
+          <span lang="ru">Часы работы: вт–вс, 10:00–18:00</span>
+          <span lang="de">Öffnungszeiten: Di–So, 10–18 Uhr</span><br>
+          <a href="mailto:eldarische-sammlung@mnz.example">eldarische-sammlung@mnz.example</a>
+        </address>
+      </div>
+      <div>
+        <h3><span lang="ru">Научное обеспечение</span><span lang="de">Wissenschaftliche Betreuung</span></h3>
+        <address>
+          <span lang="ru">Среднеазиатский институт истории и письменности<br>Отдел германистики и расшифровки<br>Ташкент</span>
+          <span lang="de">Mittelasiatisches Institut für Geschichte und Schriftkunde<br>Abteilung Germanistik und Entzifferung<br>Taschkent</span>
+          <br><br>
+          <a href="mailto:reich-archiv@migs.example">reich-archiv@migs.example</a>
+        </address>
+      </div>
+    </div>
+    <p class="colophon">
+      <svg class="ic-star"><use href="#star"/></svg>
+      <span lang="ru"><strong>Совместное издание.</strong> Музей послевоенной эпохи (Франкфурт-на-Майне) и Среднеазиатский институт истории и письменности (Ташкент). Подлинные надписи приводятся по оригиналам; переводы и комментарий — отдела расшифровки института. По состоянию на 2094 год.</span>
+      <span lang="de"><strong>Gemeinschaftsausgabe.</strong> Museum der Nachkriegszeit (Frankfurt am Main) und Mittelasiatisches Institut für Geschichte und Schriftkunde (Taschkent). Originalaufschriften nach den Vorlagen; Übersetzung und Kommentar von der Entzifferungsabteilung des Instituts. Stand 2094.</span>
+    </p>
+  </section>
+
+  <footer>
+    <span lang="ru">Изображения экспонатов доступны по запросу в научный отдел. Воспроизведение — со ссылкой на собрание.</span>
+    <span lang="de">Abbildungen der Exponate sind auf Anfrage bei der wissenschaftlichen Abteilung erhältlich. Wiedergabe nur mit Quellenangabe.</span>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  var body=document.body, btns=document.querySelectorAll('.lang button');
+  function set(l){
+    body.dataset.lang=l;
+    document.documentElement.lang=l;
+    btns.forEach(function(b){b.setAttribute('aria-pressed', b.dataset.set===l ? 'true':'false');});
+  }
+  btns.forEach(function(b){ b.addEventListener('click', function(){ set(b.dataset.set); }); });
+})();
+</script>
+</body>
+</html>

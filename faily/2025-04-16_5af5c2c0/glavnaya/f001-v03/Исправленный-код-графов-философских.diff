@@ -1,0 +1,12 @@
+--- предыдущая/Исправленный-код-графов-философских-концепций.html
++++ текущая/Исправленный-код-графов-философских-концепций.html
+@@ -3,8 +3,7 @@
+ <head>
+ <meta charset="UTF-8">
+ <title>Графы философских концепций</title>
+-<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js"></script>
+-<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-data/7.1.2/vis-data.min.js"></script>
++<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+ 
+ <style>
+ body {

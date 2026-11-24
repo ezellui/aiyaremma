@@ -1,0 +1,67 @@
+flowchart TB
+    subgraph client ["Веб-интерфейс (React)"]
+        UI[Пользовательский интерфейс]
+        ConceptList[Список концепций]
+        ConceptViewer[Просмотр концепций]
+        ConceptGenerator[Генератор новых концепций]
+    end
+    
+    subgraph servers ["Серверная часть"]
+        subgraph api ["API Сервис (Express)"]
+            ConceptsAPI[Управление концепциями]
+            GenerationAPI[API генерации]
+            AuthAPI[Аутентификация]
+        end
+        
+        subgraph generator ["Сервис генерации"]
+            ClaudeClient[Клиент Claude]
+            ThesisProcessor[Обработчик тезисов]
+            ConflictDetector[Детектор конфликтов]
+        end
+        
+        subgraph db ["База данных (MongoDB)"]
+            ConceptsDB[(Коллекция концепций)]
+            ThesesDB[(Коллекция тезисов)]
+            RequestsDB[(Коллекция запросов)]
+            UsersDB[(Коллекция пользователей)]
+        end
+    end
+    
+    subgraph claude ["Claude API"]
+        ClaudeAPI[Claude 3.7 API]
+    end
+    
+    %% Связи между компонентами
+    UI --> ConceptList
+    UI --> ConceptViewer
+    UI --> ConceptGenerator
+    
+    ConceptList --> ConceptsAPI
+    ConceptViewer --> ConceptsAPI
+    ConceptGenerator --> GenerationAPI
+    
+    ConceptsAPI --> ConceptsDB
+    ConceptsAPI --> ThesesDB
+    GenerationAPI --> RequestsDB
+    GenerationAPI --> ThesisProcessor
+    AuthAPI --> UsersDB
+    
+    ThesisProcessor --> ConflictDetector
+    ThesisProcessor --> ClaudeClient
+    ConflictDetector --> ThesesDB
+    
+    ClaudeClient --> ClaudeAPI
+    
+    %% Формат связей и стили
+    classDef red fill:#f9d0c4,stroke:#333,stroke-width:1px;
+    classDef blue fill:#c4dcf9,stroke:#333,stroke-width:1px;
+    classDef green fill:#c4f9c7,stroke:#333,stroke-width:1px;
+    classDef yellow fill:#f9f9c4,stroke:#333,stroke-width:1px;
+    classDef purple fill:#e6c4f9,stroke:#333,stroke-width:1px;
+    
+    class client green;
+    class servers blue;
+    class claude purple;
+    class api yellow;
+    class generator red;
+    class db blue;

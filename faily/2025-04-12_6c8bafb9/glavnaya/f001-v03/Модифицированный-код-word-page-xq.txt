@@ -1,0 +1,494 @@
+if ($inflectimport module namespace c = "common.xq" at "common.xq";
+
+declare function local:print-deriv($deriv as node()?) as element() {
+    <span>
+{c:print-word($deriv/c:get-ref(.), <print-word show-link="parent" show-lang="y"/>)}
+&gt;
+{c:print-wordlet($deriv/@i1, ' &gt; ')}
+{c:print-wordlet($deriv/@i2, ' &gt; ')}
+{c:print-wordlet($deriv/@i3, ' &gt; ')}
+{c:print-word($deriv/parent::ref, <print-word show-link="parent" show-lang="y"/>)}
+    </span>
+};
+
+declare function local:is-match($s1 as xs:string?, $s2 as xs:string?) as xs:boolean {
+    not(c:normalize-for-match($s1) != c:normalize-for-match($s2))
+};
+
+declare function local:print-ref($ref as element(), $ref-set) as element()* {
+    let $other-ref := $ref-set/@other-ref
+    let $deref := if ($other-ref) then c:get-ref($ref) else $ref/ancestor-or-self::ref
+    let $show-notes := $ref-set/@show-notes
+    let $show-mark := $ref-set/@show-mark
+    let $show-lang := $ref-set/@show-lang
+    let $show-gloss := $ref-set/@gloss
+    let $show-rule := $ref-set/@show-rule
+    let $show-value := $ref-set/@v
+    let $short-mode := $ref-set/@short-mode
+
+    let $notes := $ref[$show-notes]/string()
+    return
+    if ($deref) then
+    <span>{c:print-source-link($deref, $short-mode)}{
+        let $do-print-lang := $show-lang != $deref/@l return
+        if ($show-rule) then (
+            text {' ('}, 
+            let $deriv-ref := c:get-ref($deref/deriv[1])
+            return c:print-word($deriv-ref, local:print-word-control($do-print-lang)), 
+            text {' &gt; '},
+            c:print-wordlet($deref/deriv[1]/@i1, ' &gt; '),
+            c:print-wordlet($deref/deriv[1]/@i2, ' &gt; '),
+            c:print-wordlet($deref/deriv[1]/@i3, ' &gt; '),
+            c:print-word($deref, local:print-word-control($do-print-lang)), 
+            if ($deref/deriv[1]/string()) then ('; ', xdb:html($deref/deriv[1])) else (), 
+            text {')'}
+        ) else 
+        if (not($show-value) and not($show-mark != $deref/@mark) and not($show-lang != $deref/@l)) then () else 
+        let $do-print-word :=
+            (not(local:is-match($deref/@v, $show-value) and not($deref/@mark))) or
+            ($show-mark and $deref/@mark)
+        let $do-print-gloss := $deref/@gloss != $show-gloss
+        let $do-print-notes := $notes != ''
+        return if ($do-print-word or $do-print-gloss or $do-print-notes) then (
+            text {' ('}, 
+            if ($do-print-word) then c:print-word($deref, local:print-word-control($do-print-lang)) else (), 
+            if ($do-print-word and $do-print-gloss) then text{' '} else (),
+            if ($do-print-gloss) then text {c:print-gloss-no-space($deref)} else (), 
+            if ($do-print-notes and ($do-print-gloss or $do-print-word)) then text{', '} else (),
+            if ($do-print-notes) then xdb:html($notes) else (),
+            text {')'}
+        ) else ()
+    }</span> else ()
+};
+
+declare function local:print-ref-set($refs as element()*, $ref-set as element()) as node()* { (
+    if ($refs) then text{' ✧&#160;'} else (),
+    let $group := <div>{for $ref in $refs return local:print-ref($ref, $ref-set)}</div>
+    for $item in $group/*
+    return ($item/node(), if ($item/following-sibling::*) then text {'; '} else ())
+) };
+
+declare function local:get-translated-form-variant($form as xs:string?, $variant as xs:string?) as xs:string {
+    let $combined := string-join(
+        (
+            if ($form) then c:print-inflect-value($form) else (),
+            if ($variant) then c:print-inflect-value($variant) else ()
+        ),
+        ' '
+    )
+    return normalize-space($combined)
+};
+
+declare function local:normalize-and-translate-with-forms($mark as xs:string?, $form as xs:string?, $variant as xs:string?) as xs:string {
+    let $translated-form := if ($form) then c:print-inflect-value($form) else ()
+    let $translated-variant := if ($variant) then c:print-inflect-value($variant) else ()
+    return normalize-space(concat($mark, ' ', $translated-form, ' ', $translated-variant))
+};
+
+declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {
+    <print-word> { (
+        if ($show-lang) then attribute show-lang {'y'} else (),
+        if ($show-link) then attribute show-link {$show-link} else ()
+    ) } </print-word>
+};
+
+declare function local:print-word-control($show-lang as xs:boolean) as element() {
+    local:print-word-control($show-lang, ())
+};
+
+declare function local:ref-sig($ref as element()*, $ref-name) as xs:string {
+    let $att-values :=
+        <element>{$ref/@*[not(name()='source')][$ref-name != 'element' or not(name()='gloss')]/string()}:{
+            $ref/*[name()=$ref-name]/@*[not(name()='source') and not(name()='v')]/string()}:{
+            $ref/*[name()=$ref-name]/string()}</element>
+    return $att-values/string()
+};
+
+declare function local:change-sig($ref as element()*, $ref-name) as xs:string {
+    let $change-element := $ref/*[name()=$ref-name]
+    let $change := $change-element
+    let $att-values :=
+        <element>{$ref-name}:{$ref/@v/string()}:{$ref/@gloss/string()}:{
+        $change-element/text()
+        }:{$change/@v/string()}:{$ref/@change/string()}</element>
+    return $att-values/string()
+};
+
+declare function local:element-sig($ref as element()*) as xs:string {
+    let $element := $ref/c:get-ref($ref)/..
+    let $att-values :=
+        <element>
+            {$element/@*/string()}:{name($ref)}:{
+            $ref/@*[not(name()='source') and not(name()='v')]/string()}:{
+            $ref/string()}</element>
+    return $att-values/string()
+};
+
+declare function local:print-element-in($word as element()?, $pubmode) as node()* {
+    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, 'element-in-ref', @source)[c:get-ref(.)]
+    let $element-ins := xdb:key($word, 'element-in', $word/@v)[element[@v = $word/@v]/@l = c:get-lang($word) or
+        (not(element[@v = $word/@v]/@l) and c:get-lang(.) = c:get-lang($word))]
+    let $unmatched := $element-in-refs/..[not(@v = $element-ins/@v)]
+    return (
+        <ul> { (
+        for $element-in in $element-ins
+        let $control := <ref-set short-mode="{$pubmode}">{if (c:get-speech($element-in) = 'phrase' or c:get-speech($element-in) = 'text') then () else $element-in/@v}</ref-set>
+        let $is-neo := c:is-neo($element-in)
+        order by $element-in/@l, c:normalize-for-sort($element-in/@v)
+        return
+            <li>
+                { if ($is-neo) then attribute class {'neo'} else () }
+                {c:print-word($element-in, <print-word show-lang="y" show-link="y"/>)}
+                {c:print-gloss($element-in)}
+                {local:print-ref-set($element-in-refs[c:get-ref(.)[../@v = $element-in/@v]], $control)}
+            </li>,
+        for $element-in in $unmatched
+        let $control := <ref-set short-mode="{$pubmode}">{if (c:get-speech($element-in) = 'phrase' or c:get-speech($element-in) = 'text') then () else $element-in/@v}</ref-set>
+        let $is-neo := c:is-neo($element-in)
+        order by $element-in/@l, c:normalize-for-sort($element-in/@v)
+        return
+            <li>
+                { if ($is-neo) then attribute class {'neo'} else () }
+                {c:print-word($element-in, <print-word show-lang="y" show-link="y"/>)}
+                {c:print-gloss($element-in)}
+                {local:print-ref-set($element-in-refs[c:get-ref(.)[../@v = $element-in/@v]], $control)}
+            </li>
+        ) } </ul>
+    )
+};
+
+declare function local:print-derivations($word as element()?, $priors as element()*, $pubmode) as node()* {
+    let $deriv-refs := $word/ref[c:get-ref(.)]/deriv[c:get-ref(.)]
+    let $derivs := $deriv-refs/c:get-ref(.)/.. | $word/deriv/c:get-word(.)
+    return (
+        for $deriv in $derivs[not(xdb:hashcode(.) = $priors/xdb:hashcode(.))]
+        let $deriv-link := $word/deriv[xdb:hashcode(c:get-word(.)) = xdb:hashcode($deriv)]
+        let $deriv-mark := $deriv-link/@mark/string()
+        let $refs := $deriv-refs[xdb:key($word, 'ref', @source)[../@v = $deriv/@v]]
+        let $value := $deriv/@v/string()
+        let $is-neo := c:is-neo(c:get-word($deriv))
+        return
+            <li>
+                { attribute class { if ($is-neo) then 'neo c-bullet' else 'c-bullet' } }
+                &lt; 
+                {c:print-word($deriv, <print-word show-lang="y" show-link="y"/>)}
+                {$deriv-mark}
+                {c:print-gloss($deriv)}
+                {local:print-ref-set($refs, <ref-set short-mode="{$pubmode}" v="{$value}" other-ref="y"/>)}
+                <ul>{(
+                    for $ref in $refs[@i1 or . != '']
+                    return
+                    <li style="list-style-type:none; text-indent: -1em;">{(
+                        ' &lt; ',
+                        c:print-wordlet($ref/@i3, ' &lt; '),
+                        c:print-wordlet($ref/@i2, ' &lt; '),
+                        c:print-wordlet($ref/@i1, ' &lt; '),
+                        <i>{$ref/@v/string()}</i>,
+                        if ($ref != '') then (', ', xdb:html($ref/string())) else (),
+                        local:print-ref-set($ref, <ref-set short-mode="{$pubmode}" other-ref="y"/>)
+                    )}</li>,
+                    if (xdb:hashcode($word) = xdb:hashcode($deriv)) then () else local:print-derivations($deriv, ($priors, $word), $pubmode))
+                }</ul>
+            </li>
+    )
+};
+
+declare function local:print-derivatives($word as element()?, $pubmode) as node()* {
+    if (c:get-speech($word) = 'phoneme') then () else
+    local:print-derivatives($word, true(), (), $pubmode)
+};
+
+declare function local:print-derivatives($word as element()?, $top-level as xs:boolean, $priors as element()*, $pubmode) as node()* {
+    let $is-root := c:is-root($word)
+    let $deriv-only := ($top-level and not($is-root)) or c:get-speech($word) = 'phoneme'
+    let $deriv-to-refs := $word/ref[c:get-ref(.)]/xdb:key($word, 'deriv-to-ref', @source)[c:get-ref(.)]
+    let $word-derivs := xdb:key($word, 'deriv-to', $word/@v)[deriv/c:get-word(.)/xdb:hashcode(.) = $word/xdb:hashcode(.)]
+    let $deriv-tos := $deriv-to-refs/.. | $word-derivs
+    let $element-in-refs := $word/ref[c:get-ref(.)]/xdb:key($word, 'element-in-ref', @source)[c:get-ref(.)]
+    let $word-elements := xdb:key($word, 'element-in', $word/@v)
+        [element/c:get-word(.)/xdb:hashcode(.) = $word/xdb:hashcode(.)]
+    let $element-ins := if ($deriv-only) then () else $element-in-refs/.. | $word-elements
+    return (
+        if ($top-level and ($deriv-tos or $element-ins)) then <p><u>Производные</u></p> else (),
+        <ul> { (
+        if (not($top-level) and not($deriv-tos) and (count($element-ins) gt 3)) then
+            <li>
+                ⇒ {count($element-ins)} compounds
+            </li>
+        else
+        let $child-derivs := $deriv-tos[not(c:get-speech(.) = 'phrase' or c:get-speech(.) = 'text')] |
+            $element-ins[not(c:get-speech(.) = 'phrase' or c:get-speech(.) = 'text')][not(xdb:hashcode(.) = $deriv-tos/xdb:hashcode(.))]
+        for $deriv-to in $child-derivs
+        let $is-neo := c:is-neo($deriv-to)
+        order by c:get-lang($deriv-to), c:normalize-for-sort($deriv-to/@v)
+        return
+            <li>
+                { if ($is-neo) then attribute class {'neo c-bullet'} else attribute class {'c-bullet'} }
+                {$word/derivatives/@no-roots}
+                {if (xdb:hashcode($deriv-to) = $deriv-tos/xdb:hashcode(.)) then '&gt; ' else '⇒ '}
+                {c:print-word($deriv-to, <print-word show-lang="y" show-link="y"/>)}
+                {c:print-gloss($deriv-to)}
+                {local:print-ref-set(($deriv-to-refs|$element-in-refs)[c:get-ref(.)[xdb:hashcode(..) = xdb:hashcode($deriv-to)]], <ref-set short-mode="{$pubmode}"/>)}
+                {if (xdb:hashcode($word) = xdb:hashcode($deriv-to)) then ()
+                else if ($word/derivatives/@no-roots and c:is-root($deriv-to)) then ()
+                else
+                let $print-derivatives := local:print-derivatives($deriv-to, false(), ($priors, $child-derivs), $pubmode) return
+                if (string($print-derivatives) != '' and not(contains(string($print-derivatives), ' compounds')) and $priors[xdb:hashcode(.) = xdb:hashcode($deriv-to)]) then 
+                    <ul><li>⇒ [см. выше]</li></ul>
+                else
+                $print-derivatives
+            } </li>
+        ) } </ul>
+    )
+};
+
+declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {
+    let $inflect-list := tokenize($inflections, ' ')
+    let $word := $ref/ancestor-or-self::word[1]
+    for $inflection at $pos in $inflect-list
+    let $translated-inflection := c:print-inflect-value($inflection)
+    let $inflect-word := xdb:key($word, 'inflect-table', $inflection)
+        [not(@speech) or @speech=c:get-speech($word)]/
+        ..[c:get-lang(.) = c:get-lang($word)]
+    let $link := if ($inflect-word) then c:to-word-link($inflect-word) else () 
+    return
+    if ($inflect-word)
+    then (<a href="{$link}">{$translated-inflection}</a>, if ($pos = count($inflect-list)) then () else text {' '})
+    else text { ($translated-inflection), if ($pos = count($inflect-list)) then () else ' ' }
+};
+
+declare function local:print-examples($ref as element()?) as node()* {(
+    if ($ref/example) then text{' например: '} else (),
+    for $example in $ref/example
+    let $example-refs := xdb:key($ref, 'ref', $example/@source)
+    let $example-ref := $example-refs[1]
+    let $show-lang := c:other-lang($ref, $example-ref)
+    return (
+        if ($example/preceding-sibling::example) then text {', '} else (),
+        c:print-word($example-ref, local:print-word-control($show-lang, 'parent')),
+        if (not(count($example-refs)=1)) then text {' [ERROR:MISMATCH] '} else (),
+        if (not($example/@t)) then c:print-gloss($example-ref) else (),
+        if (not($example/@t='transform')) then () else
+            let $example-transform-refs := xdb:key($example-ref, 'ref', $example-ref/transform/@source)
+            let $example-transform-ref := $example-transform-refs[1]
+            let $show-transform-lang := c:other-lang($example-ref, $example-transform-ref)
+            return (
+                text {' ← '},
+                if (not(count($example-transform-refs)=1)) then text {' [ERROR:MISMATCH] '} else (),
+                c:print-word($example-transform-ref, local:print-word-control($show-transform-lang))
+            ),
+        if (not($example/@t='inflect')) then () else
+            let $example-inflect-refs := xdb:key($example-ref, 'ref', $example-ref/inflect/@source)
+            let $example-inflect-ref := $example-inflect-refs[1]
+            let $show-inflect-lang := c:other-lang($example-ref, $example-inflect-ref)
+            return (
+                text {' ← '},
+                if (not(count($example-inflect-refs)=1)) then text {' [ERROR:MISMATCH] '} else (),
+                c:print-word($example-inflect-ref, local:print-word-control($show-inflect-lang))
+            ),
+        if (not($example/@t[starts-with(., 'deriv')])) then () else (
+            if ($example-ref/deriv[@source]) then text {' < '} else (),
+            c:print-wordlet($example-ref/deriv[1]/@i3, ' &lt; '),
+            c:print-wordlet($example-ref/deriv[1]/@i2, ' &lt; '),
+            c:print-wordlet($example-ref/deriv[1]/@i1, ' &lt; '),
+            for $example-deriv in $example-ref/deriv[@source]
+                let $example-deriv-v := $example-deriv/@v
+                let $example-deriv-source := $example-deriv/@source/string()
+                let $example-deriv-refs := xdb:key($example-ref, 'ref', $example-deriv-source)
+                let $example-deriv-ref := $example-deriv-refs[@v=$example-deriv-v][1]
+                let $show-deriv-lang := c:other-lang($example-ref, $example-deriv-ref)
+            return (
+                c:print-word($example-deriv-ref, local:print-word-control($show-deriv-lang, 'parent')),
+                if ($example-deriv/following-sibling::deriv) then text {'/'} else ()
+            ),
+            for $example-deriv in $example-ref/deriv[@from]
+            return (
+                <span> [&lt; {c:print-word($example-ref/.., <print-word show-link='y'/>)}]</span>
+            )
+        )
+    )
+)};
+
+declare function local:print-matching-refs($value as xs:string, $variation-refs as element()*, $pubmode) as element() {
+    let $matching-refs := for $i in $variation-refs[c:normalize-for-match(@v)=$value] order by translate($i/@mark, '-', '→') return $i
+    return
+    <li>{c:print-word($matching-refs[1], <print-word style="bold"/>)}
+    {local:print-ref-set($matching-refs,
+        <ref-set short-mode="{$pubmode}" show-mark="{$matching-refs[1]/@mark}" show-lang="{c:get-lang($matching-refs[1]/..)}"/>)}</li>
+};
+
+declare variable $pubmode external;
+declare variable $code external;
+declare variable $words := xdb:key(/*, 'word-code', $code);
+declare variable $l := c:get-lang($words[1]);
+declare variable $lang := //language[@id=$l]/@name/string();
+declare variable $neo-lang-word := if ($words[1]/combine) then c:get-word($words[1]/combine) else $words[1];
+declare variable $allow-neo-nav :=
+    if (ends-with(c:get-speech($words[1]), '-name')) then false()
+    else if (c:get-speech($words[1]) = 'phrase' or c:get-speech($words[1]) = 'text') then false()
+    else if (c:get-speech($words[1]) = 'grammar') then false()
+    else if (c:get-speech($words[1]) = 'root') then true()
+    else if (starts-with(c:get-speech($words[1]), 'phone')) then false()
+    else true();
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"></meta>
+<title>Eldamo : {$lang} : {$words[1]/@v/string()}</title>
+<link type="text/css" rel="stylesheet" href="../../css/global.css" />
+
+<script src="../../js/glaemscribe.min.js"></script>
+<script src="../../js/tengwar_ds_eldamar.cst.js"></script>
+<script src="../../js/quenya.glaem.js"></script>
+<script src="../../js/sindarin-beleriand.glaem.js"></script>
+<script src="../../js/sindarin-classical.glaem.js"></script>
+<script src="../../js/transcribe.js"></script>
+
+<style>
+li ul li {{list-style-type:none}}
+</style>
+</head>
+<body>
+
+<div id="nav-block" class="nav-block">
+<span class="hierarchy-nav">
+<span class="breadcrumb-nav">
+    [<a href="../../index.html">На главную страницу</a>] »
+    <a href="../languages/index.html">Языки</a> »
+    <a href="../language-pages/lang-{$l}.html">{$lang}</a> »&#160;
+</span>
+{
+if (ends-with(c:get-speech($words[1]), '-name')) then    
+    <a href="../name-indexes/names-{$l}.html">{$lang} - Имена</a>
+else if (c:get-speech($words[1]) = 'phrase' or c:get-speech($words[1]) = 'text') then    
+    <a href="../phrase-indexes/phrases-{$l}.html">{$lang} - Фразы</a>
+else if (c:get-speech($words[1]) = 'grammar') then    
+    <a href="../grammar-indexes/grammars-{$l}.html">{$lang} - Грамматика</a>
+else if (c:get-speech($words[1]) = 'root') then    
+    <a href="../root-indexes/roots-{$l}.html">{$lang} - Корни</a>
+else if (starts-with(c:get-speech($words[1]), 'phone')) then    
+    <a href="../phonetic-indexes/phonetics-{$l}.html">{$lang} - Фонетика</a>
+else
+    <a href="../word-indexes/words-{$l}.html">{$lang} - Слова</a>
+}
+</span>
+<span class="search-nav-link">[<a href="../search/search.html">Поиск</a>]</span>
+<hr class="nav-break"/>
+<span class="list-nav"> {
+let $lang := $l
+let $base-word := if ($words[1]/combine) then c:get-word($words[1]/combine) else $words[1]
+let $base-word-speech := c:get-speech($base-word)
+let $base-word-set := c:lang-words(/*, $lang)
+let $word-set := 
+    if (ends-with($base-word-speech, '-name')) then    
+        $base-word-set[ends-with(c:get-speech(.), '-name')]
+    else if ($base-word-speech = 'phrase' or $base-word-speech = 'text') then    
+        $base-word-set[c:get-speech(.)='phrase' or c:get-speech(.)='text']
+    else if ($base-word-speech = 'grammar') then    
+        $base-word-set[c:get-speech(.)='grammar']
+    else if ($base-word-speech = 'phonetic-group') then    
+        $base-word-set[c:get-speech(.)='phonetic-group']
+    else if ($base-word-speech = 'phonetic-rule') then    
+        $base-word-set[c:get-speech(.)='phonetic-rule']
+    else if ($base-word-speech = 'phoneme') then    
+        $base-word-set[c:get-speech(.)='phoneme']
+    else if ($base-word-speech = 'root') then    
+        $base-word-set[c:get-speech(.)='root']
+    else
+        $base-word-set
+            [not(ends-with(c:get-speech(.), '-name'))]
+            [not(c:get-speech(.)='phrase' or c:get-speech(.)='text')]
+            [not(starts-with(c:get-speech(.), 'phone'))]
+            [not(c:get-speech(.)='grammar')]
+            [not(c:get-speech(.)='root')]
+let $sorted-word-set :=
+    <group> {
+        for $item in $word-set
+        order by $item/@order, c:normalize-for-sort(c:normalize-spelling($item/@v))
+        return
+        <word l="{c:get-lang($item)}" v="{$item/@v}"> {
+            if (xdb:hashcode($item) = xdb:hashcode($base-word)) then 'match' else ()
+        } </word>
+    } </group>
+let $match-in-word-set := $sorted-word-set/*[text()='match'][1]
+let $preceding-word := $match-in-word-set/preceding-sibling::*[1]
+let $following-word := $match-in-word-set/following-sibling::*[1]
+return (
+    if ($preceding-word) then <span class="previous-nav-link">
+        [<a href="{c:to-word-link($preceding-word)}">← Предыдущее</a>]
+    </span> else (),
+    <span class="next-nav-link">{ if ($following-word) then
+        ('[', <a href="{c:to-word-link($following-word)}">Следующее →</a>, ']')
+    else ('&#160;') }</span>,
+    <span class="search-nav-link2">[<a href="../search/search.html">Поиск</a>]</span>
+) }
+</span>
+</div>
+)}
+let $lang := $words[1]/ancestor-or-self::*[@l][1]/@l/string()
+let $base-word := $words[1]/ancestor-or-self::*[@l=$lang][last()]
+let $base-word-speech := c:get-speech($base-word)
+let $base-word-set := xdb:key($words[1], 'language', $lang)
+let $word-set := 
+    if (ends-with($base-word-speech, '-name')) then    
+        $base-word-set[ends-with(c:get-speech(.), '-name')]
+    else if ($base-word-speech = 'phrase' or $base-word-speech = 'text') then    
+        $base-word-set[c:get-speech(.)='phrase' or c:get-speech(.)='text']
+    else if ($base-word-speech = 'grammar') then    
+        $base-word-set[c:get-speech(.)='grammar']
+    else if ($base-word-speech = 'phonetic-group') then    
+        $base-word-set[c:get-speech(.)='phonetic-group']
+    else if ($base-word-speech = 'phonetic-rule') then    
+        $base-word-set[c:get-speech(.)='phonetic-rule']
+    else if ($base-word-speech = 'phoneme') then    
+        $base-word-set[c:get-speech(.)='phoneme']
+    else if ($base-word-speech = 'root') then    
+        $base-word-set[c:get-speech(.)='root']
+    else
+        $base-word-set
+            [not(ends-with(c:get-speech(.), '-name'))]
+            [not(c:get-speech(.)='phrase' or c:get-speech(.)='text')]
+            [not(starts-with(c:get-speech(.), 'phone'))]
+            [not(c:get-speech(.)='grammar')]
+            [not(c:get-speech(.)='root')]
+let $sorted-word-set :=
+    <group> {
+        for $item in $word-set
+        order by $item/@order, c:normalize-for-sort($item/@v)
+        return
+        <word l="{c:get-lang($item)}" v="{$item/@v}"> {
+            if (xdb:hashcode($item) = xdb:hashcode($words[1])) then 'match' else ()
+        } </word>
+    } </group>
+let $match-in-word-set := $sorted-word-set/*[text()='match'][1]
+let $preceding-word := $match-in-word-set/preceding-sibling::*[1]
+let $following-word := $match-in-word-set/following-sibling::*[1]
+let $parent := $words[1]/ancestor::word[not(see)][1]
+let $is-neo-parent := c:is-neo($parent)
+return (
+    if (not($parent) or $is-neo-parent) then '' else <span class="parent-nav-link">
+        [↑{c:print-word($parent, <print-word show-lang="y" show-link="y"/>)}]
+    </span>,
+    if ($preceding-word) then <span class="previous-nav-link">
+        [<a href="{c:to-word-link($preceding-word)}">← Предыдущее</a>]
+    </span> else (),
+    <span class="next-nav-link">{ if ($following-word) then
+        ('[', <a href="{c:to-word-link($following-word)}">Следующее →</a>, ']')
+    else ('&#160;') }</span>,
+    <span class="search-nav-link2">[<a href="../search/search.html">Поиск</a>]</span>
+) }
+</span>
+</div>
+{
+let $neo-lang := //language[@id=c:get-neo-lang($words[1])]
+let $l := $neo-lang/@id/string()
+let $lang := $neo-lang/@name/string()
+return
+if (not($neo-lang) or not($allow-neo-nav)) then () else (
+<div id="neo-nav-block" class="neo-nav-block">
+<span class="hierarchy-nav">
+<span class="breadcrumb-nav">
+    [<a href="../../index.html">На главную страницу</a>] »
+    <a href="../languages/index.html">Языки</a> »
+    <a href="../language-pages/lang-{$neo-lang/@id/string()}.html">{$lang}</a> »&#160;
+</span>

@@ -1,0 +1,124 @@
+--- предыдущая/canvas_lod_and_simulation_fixes.md
++++ текущая/canvas_lod_and_simulation_fixes.md
+@@ -143,6 +143,121 @@
+ }
+ ```
+ 
++### Полная замена функции `drawNodes()`:
++
++```javascript
++function drawNodes() {
++    const currentLOD = LOD.getCurrentLevel();
++    const isMaxDetail = !lodEnabled || currentLOD === 'ultra'; // Максимальная детализация
++    
++    const drawLabels = lodEnabled ? LOD.shouldDrawLabels() : true;
++    const drawGlow = lodEnabled ? LOD.shouldDrawGlow() : true;
++    const nodeRadius = lodEnabled ? LOD.getNodeRadius() : 18;
++    const fontSize = lodEnabled ? LOD.getFontSize() : 10;
++    
++    nodes.forEach(node => {
++        // Viewport culling
++        if (!isInViewport(node.x, node.y, nodeRadius * 2)) {
++            return;
++        }
++        
++        const isDimmed = node._dimmed || false;
++        const isHighlighted = node._highlighted || false;
++        const isSelected = node._selected || false;
++        const isHovered = node._hovered || false;
++        
++        // Определяем opacity
++        let opacity = 1.0;
++        if (isDimmed) opacity = 0.2; // из .node.dimmed
++        
++        const color = philosopherConcepts[node.concept].color;
++        
++        ctx.save();
++        ctx.globalAlpha = opacity;
++        
++        if (isMaxDetail) {
++            // МАКСИМАЛЬНАЯ ДЕТАЛИЗАЦИЯ - точное свечение как в исходных CSS
++            
++            // Свечение для выделенных узлов (filter: drop-shadow)
++            if ((isHighlighted || isSelected) && drawGlow) {
++                // .node.highlighted circle и .node.selected circle
++                const shadowBlur = isSelected ? 15 : 20;
++                ctx.shadowBlur = shadowBlur / transform.k;
++                ctx.shadowColor = isSelected ? '#ffd700' : 'rgba(255,255,255,0.8)';
++            }
++            
++            // Дополнительное свечение при hover
++            if (isHovered) {
++                ctx.shadowBlur = 10 / transform.k;
++                ctx.shadowColor = 'rgba(255,255,255,0.4)';
++            }
++        } else {
++            // УРОВНИ ДЕТАЛИЗАЦИИ С LOD (первоначальная версия - градиент)
++            if ((isHighlighted || isSelected) && drawGlow) {
++                const glowRadius = nodeRadius + 10;
++                const gradient = ctx.createRadialGradient(
++                    node.x, node.y, nodeRadius,
++                    node.x, node.y, glowRadius
++                );
++                gradient.addColorStop(0, color + '40');
++                gradient.addColorStop(1, 'transparent');
++                ctx.fillStyle = gradient;
++                ctx.beginPath();
++                ctx.arc(node.x, node.y, glowRadius, 0, Math.PI * 2);
++                ctx.fill();
++            }
++            
++            if (isHovered) {
++                ctx.shadowBlur = 10 / transform.k;
++                ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
++            }
++        }
++        
++        // Основной круг узла
++        ctx.fillStyle = color;
++        ctx.beginPath();
++        ctx.arc(node.x, node.y, nodeRadius / transform.k, 0, Math.PI * 2);
++        ctx.fill();
++        
++        // Обводка
++        if (isSelected) {
++            ctx.strokeStyle = '#ffd700'; // .node.selected circle
++            ctx.lineWidth = 6 / transform.k;
++        } else if (isHighlighted) {
++            ctx.strokeStyle = '#fff';
++            ctx.lineWidth = 5 / transform.k; // .node.highlighted circle
++        } else {
++            ctx.strokeStyle = '#fff';
++            ctx.lineWidth = 3 / transform.k; // .node circle
++        }
++        ctx.stroke();
++        
++        ctx.shadowBlur = 0;
++        ctx.shadowColor = 'transparent';
++        
++        // Текст (метка узла)
++        if (drawLabels && fontSize > 0) {
++            ctx.fillStyle = '#fff';
++            ctx.font = `600 ${fontSize / transform.k}px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`;
++            ctx.textAlign = 'center';
++            ctx.textBaseline = 'bottom';
++            
++            // Тень для текста (text-shadow: 0 0 4px black)
++            ctx.shadowColor = 'black';
++            ctx.shadowBlur = 4 / transform.k;
++            ctx.shadowOffsetX = 0;
++            ctx.shadowOffsetY = 0;
++            
++            ctx.fillText(node.label, node.x, node.y - (nodeRadius / transform.k) - (7 / transform.k));
++            
++            ctx.shadowBlur = 0;
++        }
++        
++        ctx.restore();
++    });
++}
++```
++
+ ---
+ 
+ ## Исправление 2: Правильная работа симуляции при drag

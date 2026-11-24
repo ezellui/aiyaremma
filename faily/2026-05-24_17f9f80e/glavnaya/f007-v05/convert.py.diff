@@ -1,0 +1,38 @@
+--- предыдущая/convert.py
++++ текущая/convert.py
+@@ -36,6 +36,9 @@
+ 
+ # статьи, у которых примечания начинаем с новой страницы
+ NOTES_NEWPAGE = {'derrida'}
++
++# сколько пустых страниц вставить после данного вида
++BLANK_AFTER = {'cover': 1, 'contents': 1, 'afterword': 2}
+ 
+ # ----- экранирование текста -----
+ UNI = {'\u00a0': '~', '§': r'\S{}', '↔': r'\(\leftrightarrow\)',
+@@ -333,6 +336,7 @@
+ \fancyhead[C]{\footnotesize\itshape Изоморфизмы}
+ \fancyfoot[C]{\small\thepage}
+ \renewcommand{\headrulewidth}{0.2pt}
++\newcommand{\blankpage}{\clearpage\thispagestyle{empty}\null\clearpage}
+ 
+ \begin{document}
+ '''
+@@ -347,10 +351,13 @@
+     parts.append(set_accent(accent_class))
+     if key == 'cover':
+         parts.append(render_cover(v))
+-        continue
+-    parts.append('\\clearpage\n')
+-    wrap = v.find('div', class_='wrap')
+-    parts.append(render_generic(wrap, key))
++    else:
++        parts.append('\\clearpage\n')
++        wrap = v.find('div', class_='wrap')
++        parts.append(render_generic(wrap, key))
++    blanks = BLANK_AFTER.get(key, 0)
++    if blanks:
++        parts.append('\\blankpage\n' * blanks)
+ parts.append('\n\\end{document}\n')
+ 
+ open(OUT, 'w', encoding='utf-8').write(''.join(parts))

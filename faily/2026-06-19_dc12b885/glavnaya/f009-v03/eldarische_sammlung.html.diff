@@ -1,0 +1,13 @@
+--- предыдущая/eldarische_sammlung.html
++++ текущая/eldarische_sammlung.html
+@@ -199,8 +199,8 @@
+   <section id="ziele">
+     <h2 class="serif"><svg class="ic-star"><use href="#star"/></svg>
+       <span lang="ru">Цели</span><span lang="de">Ziele</span></h2>
+-    <p lang="ru">Сохранить и описать вещественное наследие эпохи. Прочесть и перевести материалы на квенья и тенгваре — те самые, которые государство к концу своего существования перестало читать само. Сделать их доступными для исследования. И держаться равно в стороне как от прославления, так и от забвения.</p>
+-    <p lang="de">Das materielle Erbe der Epoche zu bewahren und zu erschließen. Die in Quenya und Tengwar abgefassten Stücke zu entziffern und zu übersetzen — eben jene, die der Staat am Ende selbst nicht mehr lesen konnte. Sie der Forschung zugänglich zu machen. Und gleichen Abstand zu Verherrlichung wie zu Vergessen zu halten.</p>
++    <p lang="ru">Сохранить и описать вещественное наследие эпохи. Прочесть и перевести материалы на квенья и тенгваре — те самые, которые государство к концу своего существования перестало читать само. Сделать их доступными для исследования. И держаться равно в стороне как от прославления, так и от забвения. Сама эта открытость противоположна тому, чем кончил Рейх: спрятав себя в квенья и тенгвар, он к концу перестал читаться даже для самого себя — здесь он сделан открыто читаемым для всех.</p>
++    <p lang="de">Das materielle Erbe der Epoche zu bewahren und zu erschließen. Die in Quenya und Tengwar abgefassten Stücke zu entziffern und zu übersetzen — eben jene, die der Staat am Ende selbst nicht mehr lesen konnte. Sie der Forschung zugänglich zu machen. Und gleichen Abstand zu Verherrlichung wie zu Vergessen zu halten. Eben diese Offenheit ist das Gegenteil dessen, womit das Reich endete: indem es sich in Quenya und Tengwar verbarg, wurde es zuletzt nicht einmal für sich selbst lesbar — hier ist es offen für alle lesbar gemacht.</p>
+   </section>
+ 
+   <section id="geschichte">

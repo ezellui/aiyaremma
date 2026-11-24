@@ -1,0 +1,116 @@
+erDiagram
+    CONCEPTS {
+        uuid concept_id PK
+        uuid creator_id FK
+        string name
+        text description
+        boolean is_synthesis
+        uuid[] parent_concepts
+        enum synthesis_method
+        enum innovation_degree
+        string focus
+    }
+    
+    CATEGORIES {
+        uuid category_id PK
+        uuid concept_id FK
+        string name
+        string definition
+        enum type
+        float centrality
+        float certainty
+        float historical_significance
+        enum innovation_degree
+        float clarity
+        float breadth
+        float depth
+        float applicability
+    }
+    
+    RELATIONSHIPS {
+        uuid relationship_id PK
+        uuid source_id FK
+        uuid target_id FK
+        enum type
+        enum direction
+        float strength
+        float certainty
+        enum innovation_degree
+        float logical_necessity
+        float context_dependence
+        float historical_support
+    }
+    
+    THESES {
+        objectid thesis_id PK
+        uuid concept_id FK
+        enum type
+        text content
+        uuid[] related_categories
+        enum style
+        date created_at
+    }
+    
+    TRADITIONS {
+        uuid tradition_id PK
+        string name
+        enum tradition_type
+        enum time_period
+        text description
+    }
+    
+    PRACTICAL_APPLICATIONS {
+        objectid application_id PK
+        uuid concept_id FK
+        array domains
+        array implementation_methods
+        text application_analysis
+    }
+    
+    SYNTHESES {
+        objectid synthesis_id PK
+        uuid concept_id FK
+        uuid[] parent_concepts
+        enum synthesis_type
+        array compatibility_criteria
+        enum innovation_level
+    }
+    
+    CLAUDE_INTERACTIONS {
+        uuid interaction_id PK
+        uuid user_id FK
+        uuid concept_id FK
+        enum query_type
+        text query_content
+        text response_content
+    }
+    
+    CONCEPTS ||--o{ CATEGORIES : includes
+    CATEGORIES ||--o{ RELATIONSHIPS : has
+    CONCEPTS ||--o{ THESES : contains
+    CONCEPTS }|--o{ TRADITIONS : belongs_to
+    CONCEPTS ||--o{ PRACTICAL_APPLICATIONS : has
+    CONCEPTS ||--o{ SYNTHESES : has
+    CONCEPTS ||--o{ CLAUDE_INTERACTIONS : involves
+    
+    %% Связи с enumerated типами из philosophy-constants.js
+    CONSTANTS_ENUM {
+        string[] CATEGORY_TYPES
+        string[] RELATIONSHIP_TYPES
+        string[] RELATIONSHIP_DIRECTIONS
+        string[] THESIS_TYPES
+        string[] THESIS_STYLES
+        string[] PHILOSOPHICAL_TRADITIONS
+        string[] PRACTICAL_DOMAINS
+        string[] IMPLEMENTATION_METHODS
+        string[] SYNTHESIS_TYPES
+        int[] INNOVATION_LEVELS
+    }
+    
+    CONSTANTS_ENUM ||--o{ CATEGORIES : type
+    CONSTANTS_ENUM ||--o{ RELATIONSHIPS : type_and_direction
+    CONSTANTS_ENUM ||--o{ THESES : type_and_style
+    CONSTANTS_ENUM ||--o{ TRADITIONS : tradition_type
+    CONSTANTS_ENUM ||--o{ PRACTICAL_APPLICATIONS : domains_and_methods
+    CONSTANTS_ENUM ||--o{ SYNTHESES : synthesis_type
+    CONSTANTS_ENUM ||--o{ CONCEPTS : synthesis_method_and_innovation

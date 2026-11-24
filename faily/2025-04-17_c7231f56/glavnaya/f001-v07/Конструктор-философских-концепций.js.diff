@@ -1,0 +1,421 @@
+--- предыдущая/Конструктор-философских-концепций.jsx
++++ текущая/Конструктор-философских-концепций.jsx
+@@ -97,7 +97,353 @@
+                   setActiveMode('node');
+                 }}
+               >
+-                <Plus size={16} className="mr-1" />import React, { useState, useEffect, useRef, useCallback } from 'react';
++                <Plus size={16} className="mr-1" /> Добавить узел
++              </button>
++            )}
++            
++            {/* Легенда категорий */}
++            {categoryLegend()}
++          </div>
++          
++          {/* Инструменты работы со связями */}
++          <div className="mt-4">
++            <h4 className="text-sm font-medium mb-2">Связи</h4>
++            
++            {isAddingEdge ? (
++              <div className="mb-3 p-3 bg-white rounded-md shadow-sm">
++                <div className="mb-2">
++                  <label className="block text-sm mb-1">Тип связи:</label>
++                  <select 
++                    className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
++                    value={selectedRelationType}
++                    onChange={(e) => setSelectedRelationType(e.target.value)}
++                  >
++                    {relationTypes.map(type => (
++                      <option key={type} value={type}>{type}</option>
++                    ))}
++                  </select>
++                </div>
++                
++                <div className="mb-2">
++                  <label className="flex items-center text-sm">
++                    <input 
++                      type="checkbox" 
++                      checked={bidirectional}
++                      onChange={() => setBidirectional(!bidirectional)}
++                      className="mr-1"
++                    />
++                    Двунаправленная связь
++                  </label>
++                </div>
++                
++                <div className="mt-2 text-sm">
++                  {sourceNode === null ? (
++                    <p>Выберите узел-источник</p>
++                  ) : (
++                    <p>Выберите узел-назначение</p>
++                  )}
++                </div>
++                
++                <div className="flex justify-between mt-2">
++                  <button 
++                    className="bg-gray-400 text-white px-2 py-1 rounded text-sm"
++                    onClick={() => {
++                      setIsAddingEdge(false);
++                      setActiveMode(null);
++                      setSourceNode(null);
++                    }}
++                  >
++                    Отмена
++                  </button>
++                </div>
++              </div>
++            ) : (
++              <button 
++                className="bg-green-500 text-white px-3 py-2 rounded w-full flex items-center justify-center text-sm mb-3"
++                onClick={() => {
++                  if (isAddingNode) {
++                    setIsAddingNode(false);
++                    setCustomNodeName('');
++                    setShowCustomCategory(false);
++                    setCustomCategory('');
++                  }
++                  setIsAddingEdge(true);
++                  setActiveMode('edge');
++                }}
++              >
++                <Plus size={16} className="mr-1" /> Добавить связь
++              </button>
++            )}
++          </div>
++          
++          {/* Инструменты навигации и вида */}
++          <div className="mt-4">
++            <h4 className="text-sm font-medium mb-2">Вид</h4>
++            <div className="flex flex-wrap gap-2">
++              <button 
++                className="bg-gray-500 text-white px-2 py-1 rounded text-sm flex items-center"
++                onClick={() => setScale(Math.min(5, scale * 1.2))}
++              >
++                <ZoomIn size={14} className="mr-1" /> Приблизить
++              </button>
++              <button 
++                className="bg-gray-500 text-white px-2 py-1 rounded text-sm flex items-center"
++                onClick={() => setScale(Math.max(0.2, scale * 0.8))}
++              >
++                <ZoomOut size={14} className="mr-1" /> Отдалить
++              </button>
++              <button 
++                className="bg-gray-500 text-white px-2 py-1 rounded text-sm flex items-center"
++                onClick={handleResetView}
++              >
++                <Maximize size={14} className="mr-1" /> Сброс вида
++              </button>
++              <button 
++                className="bg-gray-500 text-white px-2 py-1 rounded text-sm flex items-center"
++                onClick={handleAutoLayout}
++              >
++                <RotateCcw size={14} className="mr-1" /> Автораспределение
++              </button>
++            </div>
++            <div className="mt-2 text-xs text-gray-600">
++              <p>* Используйте колесо мыши для масштабирования</p>
++              <p>* Правая кнопка мыши для панорамирования</p>
++            </div>
++          </div>
++          
++          {/* История действий */}
++          <div className="mt-4">
++            <h4 className="text-sm font-medium mb-2">История</h4>
++            <div className="flex gap-2">
++              <button 
++                className={`bg-gray-500 text-white px-2 py-1 rounded text-sm flex items-center ${historyIndex <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
++                onClick={handleUndo}
++                disabled={historyIndex <= 0}
++              >
++                <Undo size={14} className="mr-1" /> Отменить
++              </button>
++              <button 
++                className={`bg-gray-500 text-white px-2 py-1 rounded text-sm flex items-center ${historyIndex >= history.length - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
++                onClick={handleRedo}
++                disabled={historyIndex >= history.length - 1}
++              >
++                <Redo size={14} className="mr-1" /> Вернуть
++              </button>
++            </div>
++          </div>
++          
++          {/* Примеры готовых концепций */}
++          <div className="mt-4">
++            <h4 className="text-sm font-medium mb-2">Примеры концепций</h4>
++            <div className="bg-white rounded-md shadow-sm p-2">
++              <div 
++                className="border border-gray-200 rounded p-2 cursor-pointer hover:bg-gray-100 mb-2"
++                onClick={() => {
++                  if (nodes.length > 0) {
++                    showConfirmationDialog(
++                      "Загрузка примера заменит текущую концепцию. Продолжить?",
++                      () => {
++                        // Пример: Онтология Гегеля
++                        const hegelNodes = [
++                          {id: 0, name: "Бытие", category: "Бытие", x: 300, y: 100},
++                          {id: 1, name: "Ничто", category: "Бытие", x: 500, y: 100},
++                          {id: 2, name: "Становление", category: "Бытие", x: 400, y: 200},
++                          {id: 3, name: "Сущность", category: "Сущность", x: 400, y: 300},
++                          {id: 4, name: "Понятие", category: "Сознание", x: 400, y: 400},
++                          {id: 5, name: "Идея", category: "Целое", x: 400, y: 500}
++                        ];
++                        
++                        const hegelEdges = [
++                          {source: 0, target: 1, type: "Диалектическое противоречие", bidirectional: true},
++                          {source: 0, target: 2, type: "Эволюционная", bidirectional: false},
++                          {source: 1, target: 2, type: "Эволюционная", bidirectional: false},
++                          {source: 2, target: 3, type: "Эволюционная", bidirectional: false},
++                          {source: 3, target: 4, type: "Эволюционная", bidirectional: false},
++                          {source: 4, target: 5, type: "Телеологическая", bidirectional: false}
++                        ];
++                        
++                        setNodes(hegelNodes);
++                        setEdges(hegelEdges);
++                        setCurrentConceptName("Диалектическая онтология Гегеля");
++                        setConceptDescription("Схематическое представление диалектической системы Гегеля, начинающееся с противоречия бытия и ничто и развивающееся к абсолютной идее");
++                        setScale(1);
++                        setOffsetX(0);
++                        setOffsetY(0);
++                      }
++                    );
++                  } else {
++                    // Пример: Онтология Гегеля
++                    const hegelNodes = [
++                      {id: 0, name: "Бытие", category: "Бытие", x: 300, y: 100},
++                      {id: 1, name: "Ничто", category: "Бытие", x: 500, y: 100},
++                      {id: 2, name: "Становление", category: "Бытие", x: 400, y: 200},
++                      {id: 3, name: "Сущность", category: "Сущность", x: 400, y: 300},
++                      {id: 4, name: "Понятие", category: "Сознание", x: 400, y: 400},
++                      {id: 5, name: "Идея", category: "Целое", x: 400, y: 500}
++                    ];
++                    
++                    const hegelEdges = [
++                      {source: 0, target: 1, type: "Диалектическое противоречие", bidirectional: true},
++                      {source: 0, target: 2, type: "Эволюционная", bidirectional: false},
++                      {source: 1, target: 2, type: "Эволюционная", bidirectional: false},
++                      {source: 2, target: 3, type: "Эволюционная", bidirectional: false},
++                      {source: 3, target: 4, type: "Эволюционная", bidirectional: false},
++                      {source: 4, target: 5, type: "Телеологическая", bidirectional: false}
++                    ];
++                    
++                    setNodes(hegelNodes);
++                    setEdges(hegelEdges);
++                    setCurrentConceptName("Диалектическая онтология Гегеля");
++                    setConceptDescription("Схематическое представление диалектической системы Гегеля, начинающееся с противоречия бытия и ничто и развивающееся к абсолютной идее");
++                  }
++                }}
++              >
++                <div className="font-medium">Диалектическая онтология Гегеля</div>
++                <div className="text-sm text-gray-500">6 узлов • 6 связей</div>
++              </div>
++              
++              <div 
++                className="border border-gray-200 rounded p-2 cursor-pointer hover:bg-gray-100 mb-2"
++                onClick={() => {
++                  if (nodes.length > 0) {
++                    showConfirmationDialog(
++                      "Загрузка примера заменит текущую концепцию. Продолжить?",
++                      () => {
++                        // Пример: Эпистемология Канта
++                        const kantNodes = [
++                          {id: 0, name: "Вещь-в-себе", category: "Трансцендентное", x: 200, y: 150},
++                          {id: 1, name: "Явление", category: "Феномен", x: 400, y: 150},
++                          {id: 2, name: "Рассудок", category: "Сознание", x: 400, y: 300},
++                          {id: 3, name: "Чувственность", category: "Сознание", x: 200, y: 300},
++                          {id: 4, name: "Пространство", category: "Пространство", x: 100, y: 400},
++                          {id: 5, name: "Время", category: "Время", x: 300, y: 400},
++                          {id: 6, name: "Категории", category: "Знание", x: 500, y: 400}
++                        ];
++                        
++                        const kantEdges = [
++                          {source: 0, target: 1, type: "Феноменологическая", bidirectional: false},
++                          {source: 3, target: 1, type: "Конституирующая", bidirectional: false},
++                          {source: 2, target: 1, type: "Конституирующая", bidirectional: false},
++                          {source: 3, target: 4, type: "Конституирующая", bidirectional: false},
++                          {source: 3, target: 5, type: "Конституирующая", bidirectional: false},
++                          {source: 2, target: 6, type: "Конституирующая", bidirectional: false}
++                        ];
++                        
++                        setNodes(kantNodes);
++                        setEdges(kantEdges);
++                        setCurrentConceptName("Эпистемология Канта");
++                        setConceptDescription("Схема кантовской теории познания с разделением на вещи-в-себе и явления, а также структурой познавательных способностей");
++                        setScale(1);
++                        setOffsetX(0);
++                        setOffsetY(0);
++                      }
++                    );
++                  } else {
++                    // Пример: Эпистемология Канта
++                    const kantNodes = [
++                      {id: 0, name: "Вещь-в-себе", category: "Трансцендентное", x: 200, y: 150},
++                      {id: 1, name: "Явление", category: "Феномен", x: 400, y: 150},
++                      {id: 2, name: "Рассудок", category: "Сознание", x: 400, y: 300},
++                      {id: 3, name: "Чувственность", category: "Сознание", x: 200, y: 300},
++                      {id: 4, name: "Пространство", category: "Пространство", x: 100, y: 400},
++                      {id: 5, name: "Время", category: "Время", x: 300, y: 400},
++                      {id: 6, name: "Категории", category: "Знание", x: 500, y: 400}
++                    ];
++                    
++                    const kantEdges = [
++                      {source: 0, target: 1, type: "Феноменологическая", bidirectional: false},
++                      {source: 3, target: 1, type: "Конституирующая", bidirectional: false},
++                      {source: 2, target: 1, type: "Конституирующая", bidirectional: false},
++                      {source: 3, target: 4, type: "Конституирующая", bidirectional: false},
++                      {source: 3, target: 5, type: "Конституирующая", bidirectional: false},
++                      {source: 2, target: 6, type: "Конституирующая", bidirectional: false}
++                    ];
++                    
++                    setNodes(kantNodes);
++                    setEdges(kantEdges);
++                    setCurrentConceptName("Эпистемология Канта");
++                    setConceptDescription("Схема кантовской теории познания с разделением на вещи-в-себе и явления, а также структурой познавательных способностей");
++                  }
++                }}
++              >
++                <div className="font-medium">Эпистемология Канта</div>
++                <div className="text-sm text-gray-500">7 узлов • 6 связей</div>
++              </div>
++              
++              <div 
++                className="border border-gray-200 rounded p-2 cursor-pointer hover:bg-gray-100"
++                onClick={() => {
++                  if (nodes.length > 0) {
++                    showConfirmationDialog(
++                      "Загрузка примера заменит текущую концепцию. Продолжить?",
++                      () => {
++                        // Пример: Онтология Хайдеггера
++                        const heideggerNodes = [
++                          {id: 0, name: "Dasein", category: "Бытие", x: 400, y: 150},
++                          {id: 1, name: "Мир", category: "Мир", x: 250, y: 250},
++                          {id: 2, name: "Бытие-в-мире", category: "Бытие", x: 400, y: 250},
++                          {id: 3, name: "Временность", category: "Время", x: 550, y: 250},
++                          {id: 4, name: "Забота", category: "Сознание", x: 400, y: 350},
++                          {id: 5, name: "Смерть", category: "Разрыв", x: 250, y: 350},
++                          {id: 6, name: "Язык", category: "Язык", x: 550, y: 350},
++                          {id: 7, name: "Бытие", category: "Бытие", x: 400, y: 450}
++                        ];
++                        
++                        const heideggerEdges = [
++                          {source: 0, target: 2, type: "Конституирующая", bidirectional: false},
++                          {source: 1, target: 2, type: "Конституирующая", bidirectional: false},
++                          {source: 0, target: 4, type: "Конституирующая", bidirectional: false},
++                          {source: 3, target: 0, type: "Конституирующая", bidirectional: false},
++                          {source: 5, target: 0, type: "Конституирующая", bidirectional: false},
++                          {source: 0, target: 7, type: "Герменевтическая", bidirectional: false},
++                          {source: 6, target: 7, type: "Репрезентационная", bidirectional: false}
++                        ];
++                        
++                        setNodes(heideggerNodes);
++                        setEdges(heideggerEdges);
++                        setCurrentConceptName("Фундаментальная онтология Хайдеггера");
++                        setConceptDescription("Схематизация основных концептов фундаментальной онтологии Мартина Хайдеггера, центрированная вокруг Dasein");
++                        setScale(1);
++                        setOffsetX(0);
++                        setOffsetY(0);
++                      }
++                    );
++                  } else {
++                    // Пример: Онтология Хайдеггера
++                    const heideggerNodes = [
++                      {id: 0, name: "Dasein", category: "Бытие", x: 400, y: 150},
++                      {id: 1, name: "Мир", category: "Мир", x: 250, y: 250},
++                      {id: 2, name: "Бытие-в-мире", category: "Бытие", x: 400, y: 250},
++                      {id: 3, name: "Временность", category: "Время", x: 550, y: 250},
++                      {id: 4, name: "Забота", category: "Сознание", x: 400, y: 350},
++                      {id: 5, name: "Смерть", category: "Разрыв", x: 250, y: 350},
++                      {id: 6, name: "Язык", category: "Язык", x: 550, y: 350},
++                      {id: 7, name: "Бытие", category: "Бытие", x: 400, y: 450}
++                    ];
++                    
++                    const heideggerEdges = [
++                      {source: 0, target: 2, type: "Конституирующая", bidirectional: false},
++                      {source: 1, target: 2, type: "Конституирующая", bidirectional: false},
++                      {source: 0, target: 4, type: "Конституирующая", bidirectional: false},
++                      {source: 3, target: 0, type: "Конституирующая", bidirectional: false},
++                      {source: 5, target: 0, type: "Конституирующая", bidirectional: false},
++                      {source: 0, target: 7, type: "Герменевтическая", bidirectional: false},
++                      {source: 6, target: 7, type: "Репрезентационная", bidirectional: false}
++                    ];
++                    
++                    setNodes(heideggerNodes);
++                    setEdges(heideggerEdges);
++                    setCurrentConceptName("Фундаментальная онтология Хайдеггера");
++                    setConceptDescription("Схематизация основных концептов фундаментальной онтологии Мартина Хайдеггера, центрированная вокруг Dasein");
++                  }
++                }}
++              >
++                <div className="font-medium">Фундаментальная онтология Хайдеггера</div>
++                <div className="text-sm text-gray-500">8 узлов • 7 связей</div>
++              </div>
++            </div>
++          </div>
++        </div>import React, { useState, useEffect, useRef, useCallback } from 'react';
+ import { ChevronDown, ChevronUp, Plus, Trash, Save, Download, Info, X, Edit, Check, Undo, Redo, ZoomIn, ZoomOut, Move, Maximize, Upload, AlertTriangle, RotateCcw } from 'lucide-react';
+ 
+ const PhilosophyGraph = () => {
+@@ -1667,7 +2013,23 @@
+             onMouseMove={handleCanvasMouseMove}
+             onMouseDown={handleCanvasMouseDown}
+             onMouseUp={handleCanvasMouseUp}
++            onWheel={handleCanvasWheel}
++            onContextMenu={handleCanvasContextMenu}
+           ></canvas>
++          
++          {/* Скрытый input для импорта */}
++          <input 
++            type="file" 
++            ref={fileInputRef} 
++            className="hidden" 
++            accept=".json"
++            onChange={handleFileInputChange}
++          />
++          
++          {/* Индикатор масштаба */}
++          <div className="absolute bottom-2 right-2 bg-white bg-opacity-75 px-2 py-1 rounded text-xs">
++            Масштаб: {Math.round(scale * 100)}%
++          </div>
+         </div>
+         
+         {/* Правая панель свойств */}
+@@ -1679,6 +2041,39 @@
+           {selectedInfo()}
+         </div>
+       </div>
++      
++      {/* Диалог подтверждения */}
++      {showConfirmDialog && (
++        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
++          <div className="bg-white rounded-lg p-6 max-w-md w-full">
++            <div className="flex items-start mb-4">
++              <AlertTriangle className="text-amber-500 mr-3 mt-1" size={24} />
++              <div>
++                <h3 className="text-lg font-semibold mb-2">Подтверждение</h3>
++                <p className="text-gray-600">{confirmMessage}</p>
++              </div>
++            </div>
++            <div className="flex justify-end space-x-3 mt-4">
++              <button 
++                className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
++                onClick={() => setShowConfirmDialog(false)}
++              >
++                Отмена
++              </button>
++              <button 
++                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
++                onClick={() => {
++                  if (confirmAction) confirmAction();
++                  setShowConfirmDialog(false);
++                  setConfirmAction(null);
++                }}
++              >
++                Подтвердить
++              </button>
++            </div>
++          </div>
++        </div>
++      )}
+     </div>
+   );
+ };

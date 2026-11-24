@@ -1,0 +1,386 @@
+--- предыдущая/mkubuntu-usb.sh
++++ текущая/mkubuntu-usb.sh
+@@ -2,8 +2,8 @@
+ # mkubuntu-usb.sh — сборка полноценной Ubuntu на USB-флешке через debootstrap
+ # Запускать внутри гостевой Ubuntu Server, где флешка уже проброшена из VirtualBox.
+ #
+-# Пример:
+-#   sudo ./mkubuntu-usb.sh --device /dev/sdb --user USER --hostname ubuntu-usb
++# Пример (универсальная флешка UEFI+BIOS, без обменного раздела):
++#   sudo ./mkubuntu-usb.sh --device /dev/sdb
+ #
+ # С обменным разделом (видимым из Windows/Android):
+ #   sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB
+@@ -26,14 +26,14 @@
+ TIMEZONE="Europe/Samara"
+ LOCALES="en_US.UTF-8 ru_RU.UTF-8"
+ DEFAULT_LOCALE="ru_RU.UTF-8"
+-DESKTOP="xubuntu-core"   # варианты: ubuntu-desktop-minimal | xubuntu-core | lubuntu-desktop | none
+-FIRMWARE_MODE="uefi"     # варианты: uefi | bios
++DESKTOP="xubuntu-core"
++FIRMWARE_MODE="both"       # both (default) | uefi | bios
+ MOUNT_POINT="/mnt/target"
+ ASSUME_YES="no"
+ 
+ # Обменный раздел (видимый из Windows/Android)
+-DATA_SIZE=""             # "0" или пусто = не делать; иначе напр. "32GiB", "16GiB"
+-DATA_FS="exfat"          # exfat (default) | fat32
++DATA_SIZE=""
++DATA_FS="exfat"
+ DATA_LABEL="SHARED"
+ DATA_MOUNT="/media/shared"
+ 
+@@ -62,7 +62,11 @@
+                            ubuntu-desktop-minimal | xubuntu-core |
+                            lubuntu-desktop | none
+                          (default: xubuntu-core)
+-  --firmware MODE        uefi | bios (default: uefi)
++  --firmware MODE        both (default)  — универсальная: грузится и на UEFI,
++                                          и на BIOS. GPT + BIOS Boot Partition
++                                          (2 МБ, bios_grub) + ESP + root
++                         uefi            — только UEFI (без BIOS Boot Partition)
++                         bios            — только BIOS (MBR, без ESP)
+   --mount-point PATH     Куда монтировать флешку при сборке
+                          (default: /mnt/target)
+ 
+@@ -85,20 +89,19 @@
+   -h, --help             Показать эту справку
+ 
+ Примеры:
+-  # Простая сборка без обменного раздела
++  # Универсальная флешка (UEFI+BIOS), без обменного раздела — вариант по умолчанию
+   sudo ./mkubuntu-usb.sh --device /dev/sdb
+ 
+-  # 64 ГБ флешка: 32 ГБ exFAT (обмен) + ESP + остаток под Ubuntu
++  # 64 ГБ: 32 ГБ обмен (exFAT) + BIOS Boot + ESP + Ubuntu
+   sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB
+ 
+-  # Своё имя пользователя и легковесный desktop
+-  sudo ./mkubuntu-usb.sh --device /dev/sdb --user alice \
+-                         --desktop lubuntu-desktop --data-size 16GiB
++  # Только UEFI, если точно знаете, что BIOS-машин не будет
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware uefi --data-size 32GiB
+ 
+   # Для старого Android, который не умеет exFAT
+   sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 20GiB --data-fs fat32
+ 
+-  # BIOS-only целевая машина, без desktop, без подтверждения
++  # BIOS-only целевая машина (MBR), без desktop, без подтверждения
+   sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios --desktop none -y
+ EOF
+ }
+@@ -151,6 +154,22 @@
+     WANT_DATA="yes"
+ fi
+ 
++# Нужны ли UEFI/BIOS загрузчики
++WANT_UEFI="no"
++WANT_BIOS="no"
++case "$FIRMWARE_MODE" in
++    both) WANT_UEFI="yes"; WANT_BIOS="yes" ;;
++    uefi) WANT_UEFI="yes" ;;
++    bios) WANT_BIOS="yes" ;;
++    *) die "--firmware должен быть both, uefi или bios" ;;
++esac
++
++# Для обоих загрузчиков нужна GPT (BIOS Boot Partition работает только на GPT)
++USE_GPT="yes"
++if [[ "$WANT_UEFI" == "no" && "$WANT_BIOS" == "yes" ]]; then
++    USE_GPT="no"   # чистый BIOS — классический MBR
++fi
++
+ # ============================================================
+ # Проверки окружения
+ # ============================================================
+@@ -160,7 +179,6 @@
+ [[ -n "$DEVICE" ]] || { print_help; die "Не задан --device"; }
+ [[ -b "$DEVICE" ]] || die "$DEVICE не блочное устройство"
+ 
+-case "$FIRMWARE_MODE" in uefi|bios) ;; *) die "--firmware должен быть uefi или bios" ;; esac
+ case "$DESKTOP" in ubuntu-desktop-minimal|xubuntu-core|lubuntu-desktop|none) ;; *) die "--desktop: недопустимое значение '$DESKTOP'" ;; esac
+ if [[ "$WANT_DATA" == "yes" ]]; then
+     case "$DATA_FS" in exfat|fat32|vfat) ;; *) die "--data-fs должен быть exfat или fat32" ;; esac
+@@ -206,7 +224,7 @@
+ echo "=========================================================="
+ echo "  Устройство:     $DEVICE  (будет затёрто!)"
+ lsblk -o NAME,SIZE,TYPE,MODEL,SERIAL "$DEVICE" || true
+-echo "  Прошивка:       $FIRMWARE_MODE"
++echo "  Прошивка:       $FIRMWARE_MODE  (UEFI=$WANT_UEFI, BIOS=$WANT_BIOS, GPT=$USE_GPT)"
+ echo "  Пользователь:   $USERNAME"
+ echo "  Hostname:       $HOSTNAME"
+ echo "  Релиз:          $SUITE ($ARCH)"
+@@ -241,7 +259,6 @@
+ 
+ # Префикс имён разделов: /dev/sdb → sdb1; /dev/nvme0n1 → nvme0n1p1
+ probe_prefix() {
+-    # После создания разделов узнаем, нужна ли p-нотация
+     if [[ -b "${DEVICE}p1" ]]; then
+         echo "${DEVICE}p"
+     else
+@@ -249,59 +266,88 @@
+     fi
+ }
+ 
++# Прибавить delta к размеру start и выдать в MiB:
++#   add_size "32GiB" "2MiB" → "32770MiB"
++add_size() {
++    python3 -c "
++import re, sys
++def parse(s):
++    m = re.match(r'^([\d.]+)(KiB|MiB|GiB|TiB)?\$', s)
++    if not m: raise SystemExit('bad size: '+s)
++    v = float(m.group(1)); u = m.group(2) or 'MiB'
++    mult = {'KiB':1024,'MiB':1024**2,'GiB':1024**3,'TiB':1024**4}[u]
++    return int(v*mult)
++start = parse('$1'); delta = parse('$2')
++print(f'{(start+delta) // (1024*1024)}MiB')
++"
++}
++
+ DATA_PART=""
++BIOSBOOT_PART=""
+ ESP_PART=""
+ ROOT_PART=""
+ 
+-# Вычислить конец раздела как START + 513 MiB (для ESP сразу после обменного)
+-calc_esp_end() {
+-    local start="$1"
+-    python3 -c "
+-import re, sys
+-m = re.match(r'^([\d.]+)(KiB|MiB|GiB|TiB)?\$', '$start')
+-if not m:
+-    print('ERR: bad size: $start', file=sys.stderr); sys.exit(1)
+-v = float(m.group(1)); u = m.group(2) or 'MiB'
+-mult = {'KiB':1024,'MiB':1024**2,'GiB':1024**3,'TiB':1024**4}[u]
+-end_bytes = int(v*mult) + 513*1024*1024
+-print(f'{end_bytes // (1024*1024)}MiB')
+-"
+-}
+-
+-if [[ "$FIRMWARE_MODE" == "uefi" ]]; then
++if [[ "$USE_GPT" == "yes" ]]; then
++    # ===== GPT разметка =====
++    # Порядок разделов (с обменным):
++    #   1. SHARED (exFAT) — обменный, большой, первым для старых Android
++    #   2. BIOSBOOT (bios_grub, 2 MiB) — только если нужен BIOS
++    #   3. ESP (FAT32, 513 MiB) — только если нужен UEFI
++    #   4. ubuntu-usb (ext4) — корень
++    # Без обменного — те же, но начиная с BIOS Boot / ESP.
++
++    parted "$DEVICE" --script mklabel gpt
++
++    POS="1MiB"
++    PART_IDX=0
++
+     if [[ "$WANT_DATA" == "yes" ]]; then
+-        log "Разметка GPT: обмен ($DATA_FS, $DATA_SIZE) + ESP (512 МБ FAT32) + root (ext4)…"
+-        ESP_END=$(calc_esp_end "$DATA_SIZE")
+-        # Обменный раздел идёт первым — для совместимости со старыми Android,
+-        # которые видят только первый раздел съёмного носителя
+-        parted "$DEVICE" --script mklabel gpt
+-        parted "$DEVICE" --script mkpart "$DATA_LABEL" 1MiB "$DATA_SIZE"
+-        parted "$DEVICE" --script mkpart ESP fat32 "$DATA_SIZE" "$ESP_END"
+-        parted "$DEVICE" --script set 2 esp on
+-        parted "$DEVICE" --script mkpart primary ext4 "$ESP_END" 100%
+-        partprobe "$DEVICE" || true
+-        sleep 1
+-        PREFIX=$(probe_prefix)
+-        DATA_PART="${PREFIX}1"
+-        ESP_PART="${PREFIX}2"
+-        ROOT_PART="${PREFIX}3"
+-    else
+-        log "Разметка GPT: ESP (512 МБ FAT32) + root (ext4)…"
+-        parted "$DEVICE" --script mklabel gpt
+-        parted "$DEVICE" --script mkpart ESP fat32 1MiB 513MiB
+-        parted "$DEVICE" --script set 1 esp on
+-        parted "$DEVICE" --script mkpart primary ext4 513MiB 100%
+-        partprobe "$DEVICE" || true
+-        sleep 1
+-        PREFIX=$(probe_prefix)
+-        ESP_PART="${PREFIX}1"
+-        ROOT_PART="${PREFIX}2"
+-    fi
++        PART_IDX=$((PART_IDX+1))
++        log "GPT раздел $PART_IDX: $DATA_LABEL (обмен, $DATA_FS, $DATA_SIZE)"
++        parted "$DEVICE" --script mkpart "$DATA_LABEL" "$POS" "$DATA_SIZE"
++        POS="$DATA_SIZE"
++        DATA_IDX=$PART_IDX
++    fi
++
++    if [[ "$WANT_BIOS" == "yes" ]]; then
++        PART_IDX=$((PART_IDX+1))
++        NEXT=$(add_size "$POS" "2MiB")
++        log "GPT раздел $PART_IDX: BIOSBOOT (bios_grub, 2 MiB)"
++        parted "$DEVICE" --script mkpart BIOSBOOT "$POS" "$NEXT"
++        parted "$DEVICE" --script set "$PART_IDX" bios_grub on
++        POS="$NEXT"
++        BIOSBOOT_IDX=$PART_IDX
++    fi
++
++    if [[ "$WANT_UEFI" == "yes" ]]; then
++        PART_IDX=$((PART_IDX+1))
++        NEXT=$(add_size "$POS" "513MiB")
++        log "GPT раздел $PART_IDX: ESP (FAT32, 513 MiB)"
++        parted "$DEVICE" --script mkpart ESP fat32 "$POS" "$NEXT"
++        parted "$DEVICE" --script set "$PART_IDX" esp on
++        POS="$NEXT"
++        ESP_IDX=$PART_IDX
++    fi
++
++    PART_IDX=$((PART_IDX+1))
++    log "GPT раздел $PART_IDX: корень (ext4, до конца)"
++    parted "$DEVICE" --script mkpart primary ext4 "$POS" 100%
++    ROOT_IDX=$PART_IDX
++
++    partprobe "$DEVICE" || true
++    sleep 1
++
++    PREFIX=$(probe_prefix)
++    [[ "$WANT_DATA" == "yes" ]] && DATA_PART="${PREFIX}${DATA_IDX}"
++    [[ "$WANT_BIOS" == "yes" ]] && BIOSBOOT_PART="${PREFIX}${BIOSBOOT_IDX}"
++    [[ "$WANT_UEFI" == "yes" ]] && ESP_PART="${PREFIX}${ESP_IDX}"
++    ROOT_PART="${PREFIX}${ROOT_IDX}"
++
+ else
+-    # BIOS / MBR
++    # ===== MBR разметка (чистый BIOS) =====
++    parted "$DEVICE" --script mklabel msdos
+     if [[ "$WANT_DATA" == "yes" ]]; then
+-        log "Разметка MBR: обмен ($DATA_FS, $DATA_SIZE) + root (ext4, boot)…"
+-        parted "$DEVICE" --script mklabel msdos
++        log "MBR: обмен ($DATA_FS, $DATA_SIZE) + root (ext4, boot)…"
+         parted "$DEVICE" --script mkpart primary 1MiB "$DATA_SIZE"
+         parted "$DEVICE" --script mkpart primary ext4 "$DATA_SIZE" 100%
+         parted "$DEVICE" --script set 2 boot on
+@@ -311,8 +357,7 @@
+         DATA_PART="${PREFIX}1"
+         ROOT_PART="${PREFIX}2"
+     else
+-        log "Разметка MBR: один раздел ext4 с флагом boot…"
+-        parted "$DEVICE" --script mklabel msdos
++        log "MBR: один раздел ext4 с флагом boot…"
+         parted "$DEVICE" --script mkpart primary ext4 1MiB 100%
+         parted "$DEVICE" --script set 1 boot on
+         partprobe "$DEVICE" || true
+@@ -329,12 +374,8 @@
+ if [[ -n "$DATA_PART" ]]; then
+     log "Форматирую обменный раздел $DATA_PART как $DATA_FS…"
+     case "$DATA_FS" in
+-        exfat)
+-            mkfs.exfat -L "$DATA_LABEL" "$DATA_PART"
+-            ;;
+-        fat32|vfat)
+-            mkfs.vfat -F32 -n "${DATA_LABEL:0:11}" "$DATA_PART"
+-            ;;
++        exfat)      mkfs.exfat -L "$DATA_LABEL" "$DATA_PART" ;;
++        fat32|vfat) mkfs.vfat -F32 -n "${DATA_LABEL:0:11}" "$DATA_PART" ;;
+     esac
+ fi
+ 
+@@ -342,6 +383,8 @@
+     log "Форматирую ESP $ESP_PART как FAT32…"
+     mkfs.vfat -F32 -n ESP "$ESP_PART"
+ fi
++
++# BIOSBOOT раздел не форматируется — grub-install пишет туда core.img напрямую
+ 
+ log "Форматирую корень $ROOT_PART как ext4…"
+ mkfs.ext4 -F -L ubuntu-usb "$ROOT_PART"
+@@ -389,7 +432,6 @@
+         DATA_UUID=$(blkid -s UUID -o value "$DATA_PART")
+         case "$DATA_FS" in
+             exfat)
+-                # uid/gid 1000 — первый созданный пользователь (adduser даёт ему 1000)
+                 echo "UUID=$DATA_UUID $DATA_MOUNT exfat rw,uid=1000,gid=1000,umask=0022,nofail 0 0"
+                 ;;
+             fat32|vfat)
+@@ -400,7 +442,6 @@
+     echo "tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0"
+ } | tee "$MOUNT_POINT/etc/fstab" >/dev/null
+ 
+-# Создать точку монтирования для обменного раздела заранее
+ if [[ -n "$DATA_PART" ]]; then
+     mkdir -p "$MOUNT_POINT$DATA_MOUNT"
+ fi
+@@ -427,6 +468,8 @@
+ MIRROR="$MIRROR"
+ DESKTOP="$DESKTOP"
+ FIRMWARE_MODE="$FIRMWARE_MODE"
++WANT_UEFI="$WANT_UEFI"
++WANT_BIOS="$WANT_BIOS"
+ WANT_DATA="$WANT_DATA"
+ DATA_FS="$DATA_FS"
+ 
+@@ -460,7 +503,16 @@
+ echo "=> ядро + загрузчик + инструменты"
+ BASE_PKGS="linux-generic network-manager sudo nano vim less curl wget ca-certificates \
+ console-setup keyboard-configuration openssh-server tzdata"
+-if [[ "\$FIRMWARE_MODE" == "uefi" ]]; then
++
++# GRUB-пакеты.
++# Для гибрида (both) ставим ТОЛЬКО -bin и -signed пакеты, т.к. метапакеты
++# grub-pc и grub-efi-amd64 конфликтуют. Для чисто-UEFI/чисто-BIOS можно
++# использовать соответствующий метапакет.
++if [[ "\$WANT_UEFI" == "yes" && "\$WANT_BIOS" == "yes" ]]; then
++    BOOT_PKGS="grub2-common grub-common \
++               grub-pc-bin \
++               grub-efi-amd64-bin grub-efi-amd64-signed shim-signed efibootmgr"
++elif [[ "\$WANT_UEFI" == "yes" ]]; then
+     BOOT_PKGS="grub-efi-amd64 grub-efi-amd64-signed shim-signed efibootmgr"
+ else
+     BOOT_PKGS="grub-pc"
+@@ -493,11 +545,14 @@
+ systemctl enable ssh
+ 
+ echo "=> GRUB"
+-if [[ "\$FIRMWARE_MODE" == "uefi" ]]; then
++if [[ "\$WANT_BIOS" == "yes" ]]; then
++    echo "   grub-install BIOS (i386-pc) → MBR + BIOS Boot Partition"
++    grub-install --target=i386-pc --recheck "$DEVICE"
++fi
++if [[ "\$WANT_UEFI" == "yes" ]]; then
++    echo "   grub-install UEFI (x86_64-efi) → ESP/EFI/BOOT/BOOTX64.EFI"
+     grub-install --target=x86_64-efi --efi-directory=/boot/efi \
+                  --removable --no-nvram --recheck
+-else
+-    grub-install --target=i386-pc --recheck "$DEVICE"
+ fi
+ 
+ # Нормальное меню, timeout 3 c
+@@ -514,8 +569,13 @@
+ 
+ echo "=> проверка, что ядро и загрузчик на месте:"
+ ls /boot/ | grep -E "vmlinuz|initrd" || true
+-if [[ "\$FIRMWARE_MODE" == "uefi" ]]; then
++if [[ "\$WANT_UEFI" == "yes" ]]; then
++    echo "   ESP:"
+     ls /boot/efi/EFI/BOOT/ || true
++fi
++if [[ "\$WANT_BIOS" == "yes" ]]; then
++    echo "   /boot/grub/i386-pc:"
++    ls /boot/grub/i386-pc/ 2>/dev/null | head || true
+ fi
+ 
+ echo "=> готово внутри chroot"
+@@ -541,13 +601,14 @@
+ echo
+ echo "=========================================================="
+ echo "  Готово."
+-if [[ "$WANT_DATA" == "yes" ]]; then
+-    echo "  Разметка:"
+-    echo "    $DATA_PART  — $DATA_FS, label '$DATA_LABEL'  (обмен; виден везде)"
+-    [[ -n "$ESP_PART" ]] && echo "    $ESP_PART  — FAT32 ESP"
+-    echo "    $ROOT_PART  — ext4 Ubuntu"
+-    echo "  При загрузке Ubuntu обменный раздел будет смонтирован"
+-    echo "  в $DATA_MOUNT (с правами пользователя uid=1000)."
++echo "  Разметка на $DEVICE:"
++[[ -n "$DATA_PART" ]]     && echo "    $DATA_PART     — $DATA_FS, label '$DATA_LABEL'  (обмен; виден везде)"
++[[ -n "$BIOSBOOT_PART" ]] && echo "    $BIOSBOOT_PART — bios_grub, 2 МБ (для BIOS-загрузки)"
++[[ -n "$ESP_PART" ]]      && echo "    $ESP_PART      — FAT32 ESP (для UEFI-загрузки)"
++echo "    $ROOT_PART     — ext4 Ubuntu"
++if [[ "$WANT_UEFI" == "yes" && "$WANT_BIOS" == "yes" ]]; then
++    echo
++    echo "  Флешка грузится и на UEFI, и на обычном BIOS."
+ fi
+ echo
+ echo "  Теперь: Devices → USB → снять галочку с флешки в GUI"

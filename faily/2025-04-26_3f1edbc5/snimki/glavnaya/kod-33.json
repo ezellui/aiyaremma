@@ -1,0 +1,25 @@
+"template": "Проанализируй связь типа {{connection_type}} между категориями {{source_category}} и {{target_category}} в контексте философской концепции {{concept_name}}.
+
+Описание концепции: {{concept_description}}
+Описание связи: {{connection_description}}
+{{#if tradition_concepts}}
+Связь используется в традициях: {{#each tradition_concepts}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+{{/if}}
+{{#if philosophers}}
+Связь упоминается у философов: {{#each philosophers}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+{{/if}}
+
+Предложи философское обоснование этой связи, возможные контраргументы и примеры аналогичных связей в других философских системах.
+
+Структурируй ответ следующим образом:...",
+
+"parameters": [
+  "connection_type",
+  "source_category",
+  "target_category",
+  "concept_name",
+  "concept_description",
+  "connection_description",
+  "tradition_concepts",
+  "philosophers"
+],

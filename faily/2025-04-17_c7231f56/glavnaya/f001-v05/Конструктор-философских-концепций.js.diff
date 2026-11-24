@@ -1,0 +1,381 @@
+--- предыдущая/Конструктор-философских-концепций.jsx
++++ текущая/Конструктор-философских-концепций.jsx
+@@ -1,5 +1,5 @@
+-import React, { useState, useEffect, useRef } from 'react';
+-import { ChevronDown, ChevronUp, Plus, Trash, Save, Download, Info, X, Edit, Check } from 'lucide-react';
++import React, { useState, useEffect, useRef, useCallback } from 'react';
++import { ChevronDown, ChevronUp, Plus, Trash, Save, Download, Info, X, Edit, Check, Undo, Redo, ZoomIn, ZoomOut, Move, Maximize, Upload, AlertTriangle, RotateCcw } from 'lucide-react';
+ 
+ const PhilosophyGraph = () => {
+   // Основные категории и типы связей из задания
+@@ -43,8 +43,81 @@
+   // Флаг для проверки одновременного состояния
+   const [activeMode, setActiveMode] = useState(null); // 'node', 'edge', or null
+   
+-  const canvasRef = useRef(null);
+-  const containerRef = useRef(null);
++  // История действий для Undo/Redo
++  const [history, setHistory] = useState([]);
++  const [historyIndex, setHistoryIndex] = useState(-1);
++  const [ignoreHistoryUpdate, setIgnoreHistoryUpdate] = useState(false);
++  
++  // Настройки масштабирования и панорамирования
++  const [scale, setScale] = useState(1);
++  const [offsetX, setOffsetX] = useState(0);
++  const [offsetY, setOffsetY] = useState(0);
++  const [isPanning, setIsPanning] = useState(false);
++  const [panStartX, setPanStartX] = useState(0);
++  const [panStartY, setPanStartY] = useState(0);
++  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
++  const [confirmAction, setConfirmAction] = useState(null);
++  const [confirmMessage, setConfirmMessage] = useState('');
++  
++  // Функция для добавления действия в историю
++  const addToHistory = useCallback((nodesCurrent, edgesCurrent) => {
++    if (ignoreHistoryUpdate) return;
++    
++    // Обрезаем историю если мы находимся не в конце (случай Undo и нового действия)
++    const newHistory = history.slice(0, historyIndex + 1);
++    
++    // Добавляем новое состояние
++    newHistory.push({
++      nodes: JSON.parse(JSON.stringify(nodesCurrent)),
++      edges: JSON.parse(JSON.stringify(edgesCurrent))
++    });
++    
++    // Если история слишком длинная, удаляем старые записи
++    if (newHistory.length > 30) {
++      newHistory.shift();
++    }
++    
++    setHistory(newHistory);
++    setHistoryIndex(newHistory.length - 1);
++  }, [history, historyIndex, ignoreHistoryUpdate]);
++
++  // Функция Undo
++  const handleUndo = useCallback(() => {
++    if (historyIndex > 0) {
++      setIgnoreHistoryUpdate(true);
++      const prevState = history[historyIndex - 1];
++      setNodes(prevState.nodes);
++      setEdges(prevState.edges);
++      setHistoryIndex(historyIndex - 1);
++      setTimeout(() => setIgnoreHistoryUpdate(false), 0);
++    }
++  }, [history, historyIndex]);
++
++  // Функция Redo
++  const handleRedo = useCallback(() => {
++    if (historyIndex < history.length - 1) {
++      setIgnoreHistoryUpdate(true);
++      const nextState = history[historyIndex + 1];
++      setNodes(nextState.nodes);
++      setEdges(nextState.edges);
++      setHistoryIndex(historyIndex + 1);
++      setTimeout(() => setIgnoreHistoryUpdate(false), 0);
++    }
++  }, [history, historyIndex]);
++
++  // Отслеживаем изменения nodes и edges для истории
++  useEffect(() => {
++    if (!ignoreHistoryUpdate && (nodes.length > 0 || edges.length > 0)) {
++      addToHistory(nodes, edges);
++    }
++  }, [nodes, edges, addToHistory]);
++
++  // Инициализация истории
++  useEffect(() => {
++    if (history.length === 0 && (nodes.length > 0 || edges.length > 0)) {
++      addToHistory(nodes, edges);
++    }
++  }, [history, nodes, edges, addToHistory]);
+ 
+   // Цветовая схема для категорий (группируем их по смыслу)
+   const categoryColors = {
+@@ -118,6 +191,13 @@
+     const context = canvas.getContext('2d');
+     context.clearRect(0, 0, canvas.width, canvas.height);
+     
++    // Сохраняем текущую трансформацию
++    context.save();
++    
++    // Применяем масштабирование и смещение
++    context.translate(offsetX, offsetY);
++    context.scale(scale, scale);
++    
+     // Рисуем связи
+     edges.forEach((edge, index) => {
+       const sourceNode = nodes.find(n => n.id === edge.source);
+@@ -126,7 +206,7 @@
+       if (sourceNode && targetNode) {
+         // Определяем цвет связи
+         context.strokeStyle = selectedEdge === index ? '#FF4757' : '#808080';
+-        context.lineWidth = selectedEdge === index ? 3 : 2;
++        context.lineWidth = selectedEdge === index ? 3/scale : 2/scale;
+         
+         // Вычисляем координаты
+         const startX = sourceNode.x;
+@@ -149,13 +229,13 @@
+         
+         // Рисуем текст типа связи
+         context.fillStyle = '#000000';
+-        context.font = '12px Arial';
++        context.font = `${12/scale}px Arial`;
+         context.textAlign = 'center';
+         context.textBaseline = 'middle';
+-        context.fillText(edge.type, midX, midY - 10);
++        context.fillText(edge.type, midX, midY - 10/scale);
+         
+         // Рисуем стрелку на целевом узле
+-        const arrowSize = 10;
++        const arrowSize = 10/scale;
+         const arrowX = startX + dx * 0.9;
+         const arrowY = startY + dy * 0.9;
+         const angle = Math.atan2(dy, dx);
+@@ -203,7 +283,7 @@
+       
+       // Если узел выбран или используется для связи, подсвечиваем его
+       if (selectedNode === index || sourceNode === index || (isDragging && draggedNode === index)) {
+-        context.shadowBlur = 15;
++        context.shadowBlur = 15/scale;
+         context.shadowColor = '#2684FF';
+       } else {
+         context.shadowBlur = 0;
+@@ -211,7 +291,7 @@
+       
+       // Рисуем кружок для узла
+       context.beginPath();
+-      context.arc(node.x, node.y, 20, 0, 2 * Math.PI);
++      context.arc(node.x, node.y, 20/scale, 0, 2 * Math.PI);
+       context.fill();
+       
+       // Сбрасываем тень
+@@ -219,14 +299,14 @@
+       
+       // Рисуем текст узла
+       context.fillStyle = '#000000';
+-      context.font = '12px Arial';
++      context.font = `${12/scale}px Arial`;
+       context.textAlign = 'center';
+       context.textBaseline = 'middle';
+       context.fillText(node.name, node.x, node.y);
+       
+       // Рисуем категорию под узлом
+-      context.font = '10px Arial';
+-      context.fillText(node.category, node.x, node.y + 30);
++      context.font = `${10/scale}px Arial`;
++      context.fillText(node.category, node.x, node.y + 30/scale);
+     });
+     
+     // Если пользователь добавляет связь, рисуем временную линию от источника к текущей позиции мыши
+@@ -234,17 +314,24 @@
+       const source = nodes[sourceNode];
+       if (source) {
+         context.strokeStyle = '#2684FF';
+-        context.lineWidth = 2;
+-        context.setLineDash([5, 5]);
++        context.lineWidth = 2/scale;
++        context.setLineDash([5/scale, 5/scale]);
++        
++        // Преобразуем координаты мыши в координаты канваса с учетом масштаба и смещения
++        const mouseCanvasX = (canvas.mouseX - offsetX) / scale;
++        const mouseCanvasY = (canvas.mouseY - offsetY) / scale;
+         
+         context.beginPath();
+         context.moveTo(source.x, source.y);
+-        context.lineTo(canvas.mouseX || source.x + 100, canvas.mouseY || source.y);
++        context.lineTo(mouseCanvasX || source.x + 100, mouseCanvasY || source.y);
+         context.stroke();
+         
+         context.setLineDash([]);
+       }
+     }
++    
++    // Восстанавливаем трансформацию
++    context.restore();
+   };
+ 
+   // Обработчики мыши
+@@ -263,6 +350,182 @@
+     if (isDragging && draggedNode !== null) {
+       const newNodes = [...nodes];
+       // Проверяем, что индекс действителен
++      if (draggedNode >= 0 && draggedNode < newNodes.length) {
++        // Обновляем позицию с учетом масштаба и смещения
++        newNodes[draggedNode].x = (canvas.mouseX - offsetX) / scale;
++        newNodes[draggedNode].y = (canvas.mouseY - offsetY) / scale;
++        setNodes(newNodes);
++      } else {
++        // Сбрасываем состояние перетаскивания, если индекс недействителен
++        setIsDragging(false);
++        setDraggedNode(null);
++      }
++    }
++    
++    // Панорамирование
++    if (isPanning) {
++      const dx = canvas.mouseX - panStartX;
++      const dy = canvas.mouseY - panStartY;
++      setOffsetX(offsetX + dx);
++      setOffsetY(offsetY + dy);
++      setPanStartX(canvas.mouseX);
++      setPanStartY(canvas.mouseY);
++    }
++  };
++
++  const handleCanvasMouseDown = (e) => {
++    if (editingConceptName || editingDescription) {
++      // Если пользователь редактирует текст, игнорируем клики по холсту
++      return;
++    }
++    
++    const canvas = canvasRef.current;
++    const rect = canvas.getBoundingClientRect();
++    const x = e.clientX - rect.left;
++    const y = e.clientY - rect.top;
++    
++    // Сохраняем начальные координаты для панорамирования
++    setPanStartX(x);
++    setPanStartY(y);
++    
++    // Проверяем правую кнопку мыши для панорамирования
++    if (e.button === 2) {
++      e.preventDefault();
++      setIsPanning(true);
++      return;
++    }
++    
++    // Преобразуем координаты клика с учетом масштаба и смещения
++    const canvasX = (x - offsetX) / scale;
++    const canvasY = (y - offsetY) / scale;
++    
++    // Проверяем, кликнул ли пользователь по узлу
++    let nodeClicked = false;
++    nodes.forEach((node, index) => {
++      const distance = Math.sqrt((canvasX - node.x) ** 2 + (canvasY - node.y) ** 2);
++      if (distance <= 20 / scale) {
++        nodeClicked = true;
++        
++        if (isAddingEdge && sourceNode !== null) {
++          // Завершаем добавление связи
++          if (sourceNode !== index) {
++            const newEdge = {
++              source: nodes[sourceNode].id,
++              target: node.id,
++              type: selectedRelationType,
++              bidirectional: bidirectional
++            };
++            setEdges([...edges, newEdge]);
++          }
++          setSourceNode(null);
++          setIsAddingEdge(false);
++          setActiveMode(null);
++        } else if (isAddingEdge) {
++          // Начинаем добавление связи
++          setSourceNode(index);
++        } else {
++          // Начинаем перетаскивание или выбираем узел только если не в режиме добавления
++          if (!isAddingEdge && !isAddingNode) {
++            setIsDragging(true);
++            setDraggedNode(index);
++            setSelectedNode(index);
++            setSelectedEdge(null);
++          }
++        }
++      }
++    });
++    
++    // Проверяем, кликнул ли пользователь по связи
++    if (!nodeClicked && !isAddingEdge && !isAddingNode) {
++      let edgeClicked = false;
++      edges.forEach((edge, index) => {
++        const source = nodes.find(n => n.id === edge.source);
++        const target = nodes.find(n => n.id === edge.target);
++        
++        if (source && target) {
++          // Преобразуем координаты с учетом масштаба
++          const sx = source.x;
++          const sy = source.y;
++          const tx = target.x;
++          const ty = target.y;
++          
++          // Проверяем, находится ли точка достаточно близко к линии
++          const A = canvasY - sy;
++          const B = sx - canvasX;
++          const C = sx * sy - sx * canvasY;
++          
++          const distance = Math.abs(A * tx + B * ty + C) / Math.sqrt(A * A + B * B);
++          
++          // Проверяем, находится ли точка между двумя концами линии
++          const dotProduct = ((canvasX - sx) * (tx - sx) + (canvasY - sy) * (ty - sy));
++          const squaredLength = ((tx - sx) ** 2 + (ty - sy) ** 2);
++          
++          if (distance < 10 / scale && dotProduct >= 0 && dotProduct <= squaredLength) {
++            edgeClicked = true;
++            setSelectedEdge(index);
++            setSelectedNode(null);
++          }
++        }
++      });
++      
++      if (!edgeClicked) {
++        // Если пользователь кликнул по пустому месту и активен режим добавления узлов
++        if (isAddingNode) {
++          const newNode = {
++            id: nodes.length > 0 ? Math.max(...nodes.map(n => n.id)) + 1 : 0,
++            name: customNodeName || 'Узел ' + (nodes.length + 1),
++            category: showCustomCategory ? customCategory : selectedCategory,
++            x: canvasX,
++            y: canvasY
++          };
++          setNodes([...nodes, newNode]);
++          setIsAddingNode(false);
++          setActiveMode(null);
++          setCustomNodeName('');
++          setShowCustomCategory(false);
++          setCustomCategory('');
++        } else {
++          // Снимаем выделение
++          setSelectedNode(null);
++          setSelectedEdge(null);
++        }
++      }
++    }
++  };
++
++  const handleCanvasMouseUp = () => {
++    setIsDragging(false);
++    setDraggedNode(null);
++    setIsPanning(false);
++  };
++  
++  const handleCanvasWheel = (e) => {
++    e.preventDefault();
++    const canvas = canvasRef.current;
++    const rect = canvas.getBoundingClientRect();
++    const mouseX = e.clientX - rect.left;
++    const mouseY = e.clientY - rect.top;
++    
++    // Вычисляем точку, относительно которой будем масштабировать (позиция курсора)
++    const x = (mouseX - offsetX) / scale;
++    const y = (mouseY - offsetY) / scale;
++    
++    // Определяем новый масштаб
++    const delta = e.deltaY > 0 ? 0.9 : 1.1;
++    const newScale = Math.max(0.1, Math.min(5, scale * delta));
++    
++    // Корректируем смещение, чтобы центр масштабирования оставался под курсором
++    const newOffsetX = mouseX - x * newScale;
++    const newOffsetY = mouseY - y * newScale;
++    
++    setScale(newScale);
++    setOffsetX(newOffsetX);
++    setOffsetY(newOffsetY);
++  };
++  
++  const handleCanvasContextMenu = (e) => {
++    e.preventDefault(); // Отключаем стандартное контекстное меню
++  };, что индекс действителен
+       if (draggedNode >= 0 && draggedNode < newNodes.length) {
+         newNodes[draggedNode].x = canvas.mouseX;
+         newNodes[draggedNode].y = canvas.mouseY;

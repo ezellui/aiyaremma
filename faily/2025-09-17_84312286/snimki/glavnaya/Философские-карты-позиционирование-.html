@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Философские карты</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .chart-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .chart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .chart-btn.active {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            transform: scale(1.05);
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 700px;
+            margin: 0 auto 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .chart-title {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+        
+        svg {
+            width: 100%;
+            height: calc(100% - 50px);
+        }
+        
+        .axis {
+            stroke: #666;
+            stroke-width: 2;
+        }
+        
+        .axis-label {
+            fill: #333;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .grid-line {
+            stroke: #e0e0e0;
+            stroke-width: 0.5;
+            stroke-dasharray: 2,2;
+        }
+        
+        .philosopher-point {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .philosopher-point:hover {
+            transform: scale(1.5);
+        }
+        
+        .philosopher-label {
+            fill: #333;
+            font-size: 11px;
+            pointer-events: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .philosopher-label.highlight {
+            font-weight: 600;
+            opacity: 1;
+            fill: #764ba2;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .legend-text {
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Философские карты: позиционирование мыслителей</h1>
+        
+        <div class="chart-selector">
+            <button class="chart-btn active" onclick="showChart(0)">Идеализм/Материализм × Номинализм/Реализм</button>
+            <button class="chart-btn" onclick="showChart(1)">Рационализм/Эмпиризм × Монизм/Плюрализм</button>
+            <button class="chart-btn" onclick="showChart(2)">Детерминизм/Индетерминизм × Эссенциализм/Экзистенциализм</button>
+            <button class="chart-btn" onclick="showChart(3)">Абсолютизм/Релятивизм × Холизм/Редукционизм</button>
+            <button class="chart-btn" onclick="showChart(4)">Объективизм/Субъективизм × Трансцендентность/Имманентность</button>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-title" id="chartTitle"></div>
+            <svg id="chart"></svg>
+        </div>
+        
+        <div class="legend" id="legend"></div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        const charts = [
+            {
+                title: "Идеализм/Материализм × Номинализм/Реализм",
+                xAxis: { left: "Идеализм", right: "Материализм" },
+                yAxis: { bottom: "Номинализм", top: "Реализм" },
+                philosophers: [
+                    // Античность
+                    { name: "Платон", x: -9, y: 9, era: "ancient", desc: "Объективный идеализм, теория идей" },
+                    { name: "Аристотель", x: -2, y: 7, era: "ancient", desc: "Умеренный реализм, гилеморфизм" },
+                    { name: "Демокрит", x: 9, y: -3, era: "ancient", desc: "Атомистический материализм" },
+                    { name: "Парменид", x: -5, y: 8, era: "ancient", desc: "Элеатская школа, единое бытие" },
+                    { name: "Гераклит", x: 3, y: 4, era: "ancient", desc: "Логос и становление" },
+                    { name: "Пифагор", x: -7, y: 8, era: "ancient", desc: "Математический идеализм" },
+                    { name: "Эпикур", x: 8, y: -5, era: "ancient", desc: "Атомизм, материализм" },
+                    { name: "Плотин", x: -10, y: 9, era: "ancient", desc: "Неоплатонизм, эманации" },
+                    
+                    // Средневековье
+                    { name: "Августин", x: -8, y: 8, era: "medieval", desc: "Христианский платонизм" },
+                    { name: "Фома Аквинский", x: -3, y: 8, era: "medieval", desc: "Умеренный реализм, томизм" },
+                    { name: "Дунс Скот", x: -4, y: 6, era: "medieval", desc: "Волюнтаризм, haecceitas" },
+                    { name: "Оккам", x: -2, y: -7, era: "medieval", desc: "Номинализм, бритва Оккама" },
+                    { name: "Ансельм", x: -7, y: 9, era: "medieval", desc: "Онтологический аргумент" },
+                    { name: "Абеляр", x: -3, y: -4, era: "medieval", desc: "Концептуализм" },
+                    { name: "Росцелин", x: -1, y: -8, era: "medieval", desc: "Крайний номинализм" },
+                    
+                    // Новое время
+                    { name: "Декарт", x: -6, y: 5, era: "modern", desc: "Дуализм, cogito" },
+                    { name: "Спиноза", x: 2, y: 7, era: "modern", desc: "Субстанциальный монизм" },
+                    { name: "Лейбниц", x: -5, y: 6, era: "modern", desc: "Монадология, идеализм" },
+                    { name: "Локк", x: 4, y: -5, era: "modern", desc: "Эмпиризм, номинализм" },
+                    { name: "Беркли", x: -9, y: -3, era: "modern", desc: "Субъективный идеализм" },
+                    { name: "Юм", x: 3, y: -7, era: "modern", desc: "Скептицизм, номинализм" },
+                    { name: "Гоббс", x: 8, y: -6, era: "modern", desc: "Материализм, номинализм" },
+                    { name: "Бэкон", x: 5, y: -4, era: "modern", desc: "Эмпиризм, индуктивизм" },
+                    
+                    // Немецкий идеализм
+                    { name: "Кант", x: -4, y: 3, era: "german", desc: "Трансцендентальный идеализм" },
+                    { name: "Фихте", x: -8, y: 4, era: "german", desc: "Субъективный идеализм" },
+                    { name: "Шеллинг", x: -6, y: 7, era: "german", desc: "Натурфилософия" },
+                    { name: "Гегель", x: -7, y: 8, era: "german", desc: "Абсолютный идеализм" },
+                    { name: "Шопенгауэр", x: -5, y: 2, era: "german", desc: "Волюнтативный идеализм" },
+                    
+                    // 19-20 век
+                    { name: "Маркс", x: 8, y: 3, era: "modern", desc: "Диалектический материализм" },
+                    { name: "Энгельс", x: 8, y: 2, era: "modern", desc: "Диалектический материализм" },
+                    { name: "Фейербах", x: 7, y: -2, era: "modern", desc: "Антропологический материализм" },
+                    { name: "Ницше", x: 2, y: -6, era: "modern", desc: "Перспективизм" },
+                    { name: "Милль", x: 5, y: -5, era: "modern", desc: "Утилитаризм, номинализм" },
+                    { name: "Пирс", x: -1, y: 5, era: "modern", desc: "Прагматизм, семиотика" },
+                    { name: "Джеймс", x: 1, y: -3, era: "modern", desc: "Прагматизм" },
+                    
+                    // Современность
+                    { name: "Гуссерль", x: -5, y: 5, era: "contemporary", desc: "Феноменология" },
+                    { name: "Хайдеггер", x: -2, y: 1, era: "contemporary", desc: "Фундаментальная онтология" },
+                    { name: "Сартр", x: 3, y: -5, era: "contemporary", desc: "Экзистенциализм" },
+                    { name: "Витгенштейн", x: 0, y: -8, era: "contemporary", desc: "Языковые игры" },
+                    { name: "Рассел", x: 2, y: -6, era: "contemporary", desc: "Логический атомизм" },
+                    { name: "Куайн", x: 4, y: -7, era: "contemporary", desc: "Натурализм, холизм" },
+                    { name: "Поппер", x: 3, y: 4, era: "contemporary", desc: "Критический рационализм" },
+                    { name: "Деррида", x: -1, y: -7, era: "contemporary", desc: "Деконструкция" },
+                    { name: "Фуко", x: 2, y: -6, era: "contemporary", desc: "Генеалогия власти" },
+                    { name: "Делёз", x: 4, y: -4, era: "contemporary", desc: "Имманентизм, ризома" }
+                ]
+            },
+            {
+                title: "Рационализм/Эмпиризм × Монизм/Плюрализм",
+                xAxis: { left: "Рационализм", right: "Эмпиризм" },
+                yAxis: { bottom: "Плюрализм", top: "Монизм" },
+                philosophers: [
+                    // Античность
+                    { name: "Платон", x: -8, y: 6, era: "ancient", desc: "Рационализм, дуализм идей и материи" },
+                    { name: "Аристотель", x: -2, y: -3, era: "ancient", desc: "Умеренный рационализм, плюрализм субстанций" },
+                    { name: "Парменид", x: -9, y: 10, era: "ancient", desc: "Чистый рационализм, абсолютный монизм" },
+                    { name: "Гераклит", x: -4, y: 7, era: "ancient", desc: "Логос, единство противоположностей" },
+                    { name: "Демокрит", x: 2, y: -5, era: "ancient", desc: "Атомизм, множественность" },
+                    { name: "Пифагор", x: -9, y: 5, era: "ancient", desc: "Математический рационализм" },
+                    { name: "Эмпедокл", x: 1, y: -7, era: "ancient", desc: "Четыре элемента, плюрализм" },
+                    { name: "Анаксагор", x: -3, y: -6, era: "ancient", desc: "Нус и гомеомерии" },
+                    { name: "Плотин", x: -8, y: 9, era: "ancient", desc: "Эманационный монизм" },
+                    { name: "Стоики", x: -5, y: 8, era: "ancient", desc: "Рационализм, материальный монизм" },
+                    
+                    // Средневековье
+                    { name: "Августин", x: -7, y: 7, era: "medieval", desc: "Иллюминизм, теоцентризм" },
+                    { name: "Фома Аквинский", x: -4, y: 3, era: "medieval", desc: "Синтез разума и веры" },
+                    { name: "Дунс Скот", x: -5, y: -4, era: "medieval", desc: "Волюнтаризм, индивидуация" },
+                    { name: "Оккам", x: 3, y: -5, era: "medieval", desc: "Эмпиризм, номинализм" },
+                    { name: "Ансельм", x: -9, y: 6, era: "medieval", desc: "Априорное доказательство" },
+                    { name: "Авиценна", x: -6, y: 7, era: "medieval", desc: "Эманационизм" },
+                    { name: "Аверроэс", x: -5, y: 8, era: "medieval", desc: "Аристотелизм, единство интеллекта" },
+                    
+                    // Новое время
+                    { name: "Декарт", x: -9, y: 4, era: "modern", desc: "Методический рационализм, дуализм" },
+                    { name: "Спиноза", x: -8, y: 10, era: "modern", desc: "Геометрический метод, субстанциальный монизм" },
+                    { name: "Лейбниц", x: -7, y: -8, era: "modern", desc: "Рационализм, монадический плюрализм" },
+                    { name: "Локк", x: 8, y: -2, era: "modern", desc: "Эмпиризм, tabula rasa" },
+                    { name: "Беркли", x: 6, y: 5, era: "modern", desc: "Эмпирический идеализм" },
+                    { name: "Юм", x: 9, y: -3, era: "modern", desc: "Радикальный эмпиризм" },
+                    { name: "Гоббс", x: 4, y: 7, era: "modern", desc: "Материалистический монизм" },
+                    { name: "Бэкон", x: 9, y: -1, era: "modern", desc: "Индуктивный метод" },
+                    { name: "Паскаль", x: -3, y: 2, era: "modern", desc: "Сердце и разум" },
+                    
+                    // Немецкий идеализм  
+                    { name: "Кант", x: -4, y: 1, era: "german", desc: "Синтез рационализма и эмпиризма" },
+                    { name: "Фихте", x: -7, y: 8, era: "german", desc: "Наукоучение, Я-монизм" },
+                    { name: "Шеллинг", x: -5, y: 9, era: "german", desc: "Тождество, натурфилософия" },
+                    { name: "Гегель", x: -8, y: 10, era: "german", desc: "Панлогизм, абсолютный монизм" },
+                    { name: "Шопенгауэр", x: -2, y: 8, era: "german", desc: "Воля как единая сущность" },
+                    
+                    // 19-20 век
+                    { name: "Маркс", x: 3, y: 7, era: "modern", desc: "Материалистический монизм" },
+                    { name: "Ницше", x: 2, y: -6, era: "modern", desc: "Перспективизм, плюрализм" },
+                    { name: "Бергсон", x: 4, y: 6, era: "modern", desc: "Интуитивизм, жизненный порыв" },
+                    { name: "Джеймс", x: 7, y: -7, era: "modern", desc: "Радикальный эмпиризм, плюрализм" },
+                    { name: "Пирс", x: 5, y: -4, era: "modern", desc: "Прагматизм, тихизм" },
+                    { name: "Брэдли", x: -6, y: 9, era: "modern", desc: "Абсолютный идеализм" },
+                    
+                    // Современность
+                    { name: "Гуссерль", x: -6, y: 3, era: "contemporary", desc: "Феноменологический метод" },
+                    { name: "Хайдеггер", x: 1, y: 5, era: "contemporary", desc: "Бытие как горизонт" },
+                    { name: "Витгенштейн", x: 3, y: -5, era: "contemporary", desc: "Языковые игры, плюрализм" },
+                    { name: "Рассел", x: 6, y: -6, era: "contemporary", desc: "Логический атомизм" },
+                    { name: "Карнап", x: 7, y: -2, era: "contemporary", desc: "Логический позитивизм" },
+                    { name: "Куайн", x: 8, y: 6, era: "contemporary", desc: "Натуралистический монизм" },
+                    { name: "Поппер", x: 5, y: -3, era: "contemporary", desc: "Фаллибилизм" },
+                    { name: "Делёз", x: 2, y: -8, era: "contemporary", desc: "Множественности, ризома" },
+                    { name: "Деррида", x: 0, y: -7, era: "contemporary", desc: "Дифферанс, деконструкция" },
+                    { name: "Рорти", x: 6, y: -6, era: "contemporary", desc: "Неопрагматизм, антирепрезентационизм" }
+                ]
+            },
+            {
+                title: "Детерминизм/Индетерминизм × Эссенциализм/Экзистенциализм",
+                xAxis: { left: "Детерминизм", right: "Индетерминизм" },
+                yAxis: { bottom: "Экзистенциализм", top: "Эссенциализм" },
+                philosophers: [
+                    // Античность
+                    { name: "Платон", x: -5, y: 9, era: "ancient", desc: "Идеи как сущности" },
+                    { name: "Аристотель", x: -6, y: 8, era: "ancient", desc: "Телеология, энтелехия" },
+                    { name: "Стоики", x: -9, y: 6, era: "ancient", desc: "Фатализм, логос" },
+                    { name: "Эпикур", x: 5, y: -3, era: "ancient", desc: "Клинамен, свобода атомов" },
+                    { name: "Гераклит", x: -7, y: 4, era: "ancient", desc: "Логос и необходимость" },
+                    { name: "Демокрит", x: -8, y: 5, era: "ancient", desc: "Атомистический детерминизм" },
+                    { name: "Парменид", x: -9, y: 9, era: "ancient", desc: "Неизменное бытие" },
+                    
+                    // Средневековье
+                    { name: "Августин", x: 3, y: 7, era: "medieval", desc: "Свобода воли, предопределение" },
+                    { name: "Фома Аквинский", x: -2, y: 8, era: "medieval", desc: "Сущность и существование" },
+                    { name: "Дунс Скот", x: 4, y: 6, era: "medieval", desc: "Волюнтаризм, haecceitas" },
+                    { name: "Оккам", x: 5, y: -2, era: "medieval", desc: "Номинализм, контингентность" },
+                    { name: "Боэций", x: -4, y: 7, era: "medieval", desc: "Провидение и свобода" },
+                    
+                    // Новое время
+                    { name: "Спиноза", x: -10, y: 8, era: "modern", desc: "Абсолютный детерминизм" },
+                    { name: "Декарт", x: 2, y: 6, era: "modern", desc: "Дуализм, свобода воли" },
+                    { name: "Лейбниц", x: -7, y: 7, era: "modern", desc: "Предустановленная гармония" },
+                    { name: "Гоббс", x: -8, y: 5, era: "modern", desc: "Механистический детерминизм" },
+                    { name: "Юм", x: 6, y: -4, era: "modern", desc: "Критика причинности" },
+                    { name: "Локк", x: -3, y: 3, era: "modern", desc: "Совместимость свободы и детерминизма" },
+                    
+                    // Немецкий идеализм
+                    { name: "Кант", x: 0, y: 5, era: "german", desc: "Антиномия свободы" },
+                    { name: "Фихте", x: 3, y: 2, era: "german", desc: "Самополагание Я" },
+                    { name: "Шеллинг", x: 2, y: 4, era: "german", desc: "Свобода и природа" },
+                    { name: "Гегель", x: -6, y: 9, era: "german", desc: "Разумная необходимость" },
+                    { name: "Шопенгауэр", x: -7, y: 1, era: "german", desc: "Воля и представление" },
+                    
+                    // 19-20 век
+                    { name: "Ницше", x: 4, y: -7, era: "modern", desc: "Воля к власти, становление" },
+                    { name: "Кьеркегор", x: 7, y: -8, era: "modern", desc: "Экзистенциальный выбор" },
+                    { name: "Маркс", x: -5, y: -2, era: "modern", desc: "Исторический материализм" },
+                    { name: "Бергсон", x: 6, y: -3, era: "modern", desc: "Творческая эволюция" },
+                    { name: "Джеймс", x: 7, y: -5, era: "modern", desc: "Воля к вере" },
+                    
+                    // Современность
+                    { name: "Хайдеггер", x: 3, y: -8, era: "contemporary", desc: "Брошенность, проект" },
+                    { name: "Сартр", x: 8, y: -10, era: "contemporary", desc: "Радикальная свобода" },
+                    { name: "Камю", x: 6, y: -9, era: "contemporary", desc: "Абсурд и бунт" },
+                    { name: "Де Бовуар", x: 7, y: -8, era: "contemporary", desc: "Ситуационная этика" },
+                    { name: "Мерло-Понти", x: 4, y: -6, era: "contemporary", desc: "Воплощенная свобода" },
+                    { name: "Левинас", x: 5, y: -5, era: "contemporary", desc: "Этика как первая философия" },
+                    { name: "Поппер", x: 8, y: 2, era: "contemporary", desc: "Индетерминизм, открытое общество" },
+                    { name: "Деннет", x: -4, y: -3, era: "contemporary", desc: "Компатибилизм" },
+                    { name: "Делёз", x: 5, y: -4, era: "contemporary", desc: "Имманентность, становление" },
+                    { name: "Фуко", x: -2, y: -6, era: "contemporary", desc: "Субъект и власть" }
+                ]
+            },
+            {
+                title: "Абсолютизм/Релятивизм × Холизм/Редукционизм",
+                xAxis: { left: "Абсолютизм", right: "Релятивизм" },
+                yAxis: { bottom: "Редукционизм", top: "Холизм" },
+                philosophers: [
+                    // Античность
+                    { name: "Платон", x: -8, y: 7, era: "ancient", desc: "Абсолютные идеи, космос как целое" },
+                    { name: "Аристотель", x: -5, y: 5, era: "ancient", desc: "Телеология, органицизм" },
+                    { name: "Протагор", x: 9, y: -2, era: "ancient", desc: "Человек - мера всех вещей" },
+                    { name: "Парменид", x: -10, y: 8, era: "ancient", desc: "Абсолютное бытие" },
+                    { name: "Гераклит", x: 3, y: 6, era: "ancient", desc: "Единство противоположностей" },
+                    { name: "Демокрит", x: -4, y: -8, era: "ancient", desc: "Атомистический редукционизм" },
+                    { name: "Стоики", x: -6, y: 8, era: "ancient", desc: "Космический логос" },
+                    { name: "Скептики", x: 8, y: 0, era: "ancient", desc: "Эпохе, воздержание от суждений" },
+                    
+                    // Средневековье
+                    { name: "Августин", x: -9, y: 6, era: "medieval", desc: "Абсолютная истина Бога" },
+                    { name: "Фома Аквинский", x: -7, y: 5, era: "medieval", desc: "Иерархия бытия" },
+                    { name: "Николай Кузанский", x: -2, y: 8, era: "medieval", desc: "Совпадение противоположностей" },
+                    { name: "Оккам", x: 2, y: -6, era: "medieval", desc: "Номинализм, простота" },
+                    
+                    // Новое время
+                    { name: "Декарт", x: -7, y: -5, era: "modern", desc: "Ясные и отчетливые идеи" },
+                    { name: "Спиноза", x: -8, y: 9, era: "modern", desc: "Субстанция, всеединство" },
+                    { name: "Лейбниц", x: -6, y: 7, era: "modern", desc: "Предустановленная гармония" },
+                    { name: "Локк", x: 3, y: -4, era: "modern", desc: "Эмпирический анализ" },
+                    { name: "Беркли", x: 4, y: 3, era: "modern", desc: "Субъективизм восприятия" },
+                    { name: "Юм", x: 6, y: -5, era: "modern", desc: "Скептицизм, атомизм впечатлений" },
+                    { name: "Гоббс", x: -3, y: -7, era: "modern", desc: "Механистический редукционизм" },
+                    { name: "Паскаль", x: 2, y: 4, era: "modern", desc: "Порядки величин" },
+                    
+                    // Немецкий идеализм
+                    { name: "Кант", x: -4, y: 3, era: "german", desc: "Категорический императив, антиномии" },
+                    { name: "Фихте", x: -5, y: 6, era: "german", desc: "Абсолютное Я" },
+                    { name: "Шеллинг", x: -4, y: 8, era: "german", desc: "Натурфилософия, организм" },
+                    { name: "Гегель", x: -9, y: 10, era: "german", desc: "Абсолютный дух, система" },
+                    { name: "Шопенгауэр", x: -3, y: 5, era: "german", desc: "Воля как вещь в себе" },
+                    
+                    // 19-20 век
+                    { name: "Маркс", x: -2, y: 7, era: "modern", desc: "Исторический материализм, тотальность" },
+                    { name: "Ницше", x: 8, y: -3, era: "modern", desc: "Перспективизм" },
+                    { name: "Дильтей", x: 5, y: 6, era: "modern", desc: "Историцизм, герменевтика" },
+                    { name: "Бергсон", x: 3, y: 7, era: "modern", desc: "Длительность, целостность" },
+                    { name: "Милль", x: 1, y: -6, era: "modern", desc: "Методологический индивидуализм" },
+                    
+                    // Современность
+                    { name: "Гуссерль", x: -5, y: 4, era: "contemporary", desc: "Эйдетические сущности" },
+                    { name: "Хайдеггер", x: 2, y: 8, era: "contemporary", desc: "Бытие-в-мире" },
+                    { name: "Витгенштейн", x: 6, y: 2, era: "contemporary", desc: "Языковые игры" },
+                    { name: "Рассел", x: -1, y: -7, era: "contemporary", desc: "Логический атомизм" },
+                    { name: "Куайн", x: 4, y: 9, era: "contemporary", desc: "Холизм, неопределенность перевода" },
+                    { name: "Рорти", x: 9, y: 3, era: "contemporary", desc: "Антифундаментализм" },
+                    { name: "Фейерабенд", x: 10, y: 1, era: "contemporary", desc: "Эпистемологический анархизм" },
+                    { name: "Деррида", x: 8, y: 4, era: "contemporary", desc: "Деконструкция, дифферанс" },
+                    { name: "Луман", x: 1, y: 9, era: "contemporary", desc: "Системная теория" },
+                    { name: "Делёз", x: 7, y: 6, era: "contemporary", desc: "Ризома, ассамбляжи" }
+                ]
+            },
+            {
+                title: "Объективизм/Субъективизм × Трансцендентность/Имманентность",
+                xAxis: { left: "Объективизм", right: "Субъективизм" },
+                yAxis: { bottom: "Имманентность", top: "Трансцендентность" },
+                philosophers: [
+                    // Античность
+                    { name: "Платон", x: -7, y: 9, era: "ancient", desc: "Мир идей, трансцендентное благо" },
+                    { name: "Аристотель", x: -6, y: -2, era: "ancient", desc: "Форма в материи" },
+                    { name: "Плотин", x: -5, y: 10, era: "ancient", desc: "Единое за пределами бытия" },
+                    { name: "Стоики", x: -4, y: -6, era: "ancient", desc: "Логос в природе" },
+                    { name: "Эпикур", x: 2, y: -8, era: "ancient", desc: "Чувственный опыт" },
+                    { name: "Протагор", x: 8, y: -5, era: "ancient", desc: "Субъективизм восприятия" },
+                    
+                    // Средневековье
+                    { name: "Августин", x: -3, y: 9, era: "medieval", desc: "Бог и внутренний человек" },
+                    { name: "Псевдо-Дионисий", x: -6, y: 10, era: "medieval", desc: "Апофатическое богословие" },
+                    { name: "Фома Аквинский", x: -7, y: 7, era: "medieval", desc: "Аналогия бытия" },
+                    { name: "Мейстер Экхарт", x: 3, y: 8, era: "medieval", desc: "Мистический опыт" },
+                    { name: "Дунс Скот", x: -4, y: 5, era: "medieval", desc: "Univocity бытия" },
+                    { name: "Оккам", x: 4, y: -3, era: "medieval", desc: "Номинализм" },
+                    
+                    // Новое время
+                    { name: "Декарт", x: 5, y: 6, era: "modern", desc: "Cogito, дуализм" },
+                    { name: "Спиноза", x: -8, y: -9, era: "modern", desc: "Deus sive Natura" },
+                    { name: "Лейбниц", x: -3, y: 7, era: "modern", desc: "Монады и Бог" },
+                    { name: "Локк", x: 3, y: -4, era: "modern", desc: "Опыт и рефлексия" },
+                    { name: "Беркли", x: 9, y: 5, era: "modern", desc: "Esse est percipi" },
+                    { name: "Юм", x: 7, y: -6, era: "modern", desc: "Впечатления и идеи" },
+                    { name: "Паскаль", x: 4, y: 8, era: "modern", desc: "Бог Авраама" },
+                    
+                    // Немецкий идеализм
+                    { name: "Кант", x: -2, y: 8, era: "german", desc: "Вещь в себе, трансцендентальное" },
+                    { name: "Фихте", x: 7, y: 3, era: "german", desc: "Абсолютное Я" },
+                    { name: "Шеллинг", x: -3, y: -5, era: "german", desc: "Тождество природы и духа" },
+                    { name: "Гегель", x: -5, y: -7, era: "german", desc: "Абсолютный дух в истории" },
+                    { name: "Шопенгауэр", x: 6, y: 2, era: "german", desc: "Воля и представление" },
+                    { name: "Фейербах", x: 3, y: -8, era: "german", desc: "Антропология, проекция" },
+                    
+                    // 19-20 век
+                    { name: "Кьеркегор", x: 8, y: 7, era: "modern", desc: "Субъективность, парадокс веры" },
+                    { name: "Ницше", x: 6, y: -9, era: "modern", desc: "Имманентизм, воля к власти" },
+                    { name: "Маркс", x: -4, y: -7, era: "modern", desc: "Материальная практика" },
+                    { name: "Бергсон", x: 5, y: -3, era: "modern", desc: "Длительность, интуиция" },
+                    { name: "Джеймс", x: 7, y: -4, era: "modern", desc: "Поток сознания" },
+                    
+                    // Современность
+                    { name: "Гуссерль", x: 4, y: 4, era: "contemporary", desc: "Интенциональность" },
+                    { name: "Хайдеггер", x: 2, y: -5, era: "contemporary", desc: "Бытие-в-мире, конечность" },
+                    { name: "Сартр", x: 8, y: -7, era: "contemporary", desc: "Для-себя-бытие" },
+                    { name: "Левинас", x: 5, y: 9, era: "contemporary", desc: "Другой, бесконечность" },
+                    { name: "Мерло-Понти", x: 3, y: -8, era: "contemporary", desc: "Воплощенность, плоть мира" },
+                    { name: "Делёз", x: -2, y: -10, era: "contemporary", desc: "План имманенции" },
+                    { name: "Деррида", x: 6, y: 1, era: "contemporary", desc: "След, дифферанс" },
+                    { name: "Фуко", x: 4, y: -6, era: "contemporary", desc: "Дискурсивные практики" },
+                    { name: "Агамбен", x: 1, y: -7, era: "contemporary", desc: "Голая жизнь" },
+                    { name: "Нэнси", x: 0, y: -8, era: "contemporary", desc: "Бытие-с, сингулярность" }
+                ]
+            }
+        ];
+        
+        const colors = {
+            ancient: '#e74c3c',
+            medieval: '#9b59b6',
+            modern: '#3498db',
+            german: '#2ecc71',
+            contemporary: '#f39c12'
+        };
+        
+        const eraNames = {
+            ancient: 'Античность',
+            medieval: 'Средневековье',
+            modern: 'Новое время',
+            german: 'Немецкий идеализм',
+            contemporary: 'Современность'
+        };
+        
+        let currentChart = 0;
+        
+        function showChart(index) {
+            currentChart = index;
+            
+            // Update buttons
+            document.querySelectorAll('.chart-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            // Draw chart
+            drawChart(charts[index]);
+        }
+        
+        function drawChart(chart) {
+            const svg = document.getElementById('chart');
+            const tooltip = document.getElementById('tooltip');
+            
+            // Clear SVG
+            svg.innerHTML = '';
+            
+            // Set title
+            document.getElementById('chartTitle').textContent = chart.title;
+            
+            // Get dimensions
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+            const padding = 60;
+            
+            // Create scales
+            const xScale = (x) => padding + (x + 10) * (width - 2 * padding) / 20;
+            const yScale = (y) => height - padding - (y + 10) * (height - 2 * padding) / 20;
+            
+            // Draw grid
+            for (let i = -10; i <= 10; i += 5) {
+                // Vertical lines
+                const x = xScale(i);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', padding);
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', height - padding);
+                line.setAttribute('class', 'grid-line');
+                svg.appendChild(line);
+                
+                // Horizontal lines
+                const y = yScale(i);
+                const hline = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                hline.setAttribute('x1', padding);
+                hline.setAttribute('y1', y);
+                hline.setAttribute('x2', width - padding);
+                hline.setAttribute('y2', y);
+                hline.setAttribute('class', 'grid-line');
+                svg.appendChild(hline);
+            }
+            
+            // Draw axes
+            // X-axis
+            const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            xAxis.setAttribute('x1', padding);
+            xAxis.setAttribute('y1', yScale(0));
+            xAxis.setAttribute('x2', width - padding);
+            xAxis.setAttribute('y2', yScale(0));
+            xAxis.setAttribute('class', 'axis');
+            svg.appendChild(xAxis);
+            
+            // Y-axis
+            const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            yAxis.setAttribute('x1', xScale(0));
+            yAxis.setAttribute('y1', padding);
+            yAxis.setAttribute('x2', xScale(0));
+            yAxis.setAttribute('y2', height - padding);
+            yAxis.setAttribute('class', 'axis');
+            svg.appendChild(yAxis);
+            
+            // Add axis labels
+            // Left label
+            const leftLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            leftLabel.setAttribute('x', padding - 10);
+            leftLabel.setAttribute('y', yScale(0) - 10);
+            leftLabel.setAttribute('text-anchor', 'end');
+            leftLabel.setAttribute('class', 'axis-label');
+            leftLabel.textContent = chart.xAxis.left;
+            svg.appendChild(leftLabel);
+            
+            // Right label
+            const rightLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            rightLabel.setAttribute('x', width - padding + 10);
+            rightLabel.setAttribute('y', yScale(0) - 10);
+            rightLabel.setAttribute('text-anchor', 'start');
+            rightLabel.setAttribute('class', 'axis-label');
+            rightLabel.textContent = chart.xAxis.right;
+            svg.appendChild(rightLabel);
+            
+            // Bottom label
+            const bottomLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            bottomLabel.setAttribute('x', xScale(0) + 10);
+            bottomLabel.setAttribute('y', height - padding + 20);
+            bottomLabel.setAttribute('text-anchor', 'start');
+            bottomLabel.setAttribute('class', 'axis-label');
+            bottomLabel.textContent = chart.yAxis.bottom;
+            svg.appendChild(bottomLabel);
+            
+            // Top label
+            const topLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            topLabel.setAttribute('x', xScale(0) + 10);
+            topLabel.setAttribute('y', padding - 10);
+            topLabel.setAttribute('text-anchor', 'start');
+            topLabel.setAttribute('class', 'axis-label');
+            topLabel.textContent = chart.yAxis.top;
+            svg.appendChild(topLabel);
+            
+            // Plot philosophers
+            chart.philosophers.forEach(phil => {
+                const x = xScale(phil.x);
+                const y = yScale(phil.y);
+                
+                // Create point
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', x);
+                circle.setAttribute('cy', y);
+                circle.setAttribute('r', 6);
+                circle.setAttribute('fill', colors[phil.era]);
+                circle.setAttribute('class', 'philosopher-point');
+                circle.setAttribute('data-name', phil.name);
+                
+                // Add hover events
+                circle.addEventListener('mouseenter', (e) => {
+                    tooltip.innerHTML = `<strong>${phil.name}</strong><br>${phil.desc}<br><small>${eraNames[phil.era]}</small>`;
+                    tooltip.style.opacity = '1';
+                    tooltip.style.left = e.pageX + 10 + 'px';
+                    tooltip.style.top = e.pageY - 30 + 'px';
+                    
+                    // Highlight label
+                    const label = svg.querySelector(`text[data-name="${phil.name}"]`);
+                    if (label) label.classList.add('highlight');
+                });
+                
+                circle.addEventListener('mousemove', (e) => {
+                    tooltip.style.left = e.pageX + 10 + 'px';
+                    tooltip.style.top = e.pageY - 30 + 'px';
+                });
+                
+                circle.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                    const label = svg.querySelector(`text[data-name="${phil.name}"]`);
+                    if (label) label.classList.remove('highlight');
+                });
+                
+                svg.appendChild(circle);
+                
+                // Create label
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', x);
+                text.setAttribute('y', y - 8);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('class', 'philosopher-label');
+                text.setAttribute('data-name', phil.name);
+                text.textContent = phil.name;
+                svg.appendChild(text);
+            });
+            
+            // Update legend
+            updateLegend();
+        }
+        
+        function updateLegend() {
+            const legend = document.getElementById('legend');
+            legend.innerHTML = '';
+            
+            Object.entries(eraNames).forEach(([key, name]) => {
+                const item = document.createElement('div');
+                item.className = 'legend-item';
+                
+                const color = document.createElement('div');
+                color.className = 'legend-color';
+                color.style.backgroundColor = colors[key];
+                
+                const text = document.createElement('span');
+                text.className = 'legend-text';
+                text.textContent = name;
+                
+                item.appendChild(color);
+                item.appendChild(text);
+                legend.appendChild(item);
+            });
+        }
+        
+        // Initialize
+        showChart(0);
+        
+        // Make chart responsive
+        window.addEventListener('resize', () => {
+            drawChart(charts[currentChart]);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+--- предыдущая/Конструктор-философских-концепций.jsx
++++ текущая/Конструктор-философских-концепций.jsx
+@@ -543,24 +543,48 @@
+   // Функция Undo
+   const handleUndo = useCallback(() => {
+     if (historyIndex > 0) {
++      // Устанавливаем флаг игнорирования обновления истории,
++      // чтобы избежать рекурсивных вызовов
+       setIgnoreHistoryUpdate(true);
++      
++      // Получаем предыдущее состояние
+       const prevState = history[historyIndex - 1];
+-      setNodes(prevState.nodes);
+-      setEdges(prevState.edges);
++      
++      // Используем глубокое копирование для предотвращения проблем с ссылками
++      const nodesCopy = JSON.parse(JSON.stringify(prevState.nodes));
++      const edgesCopy = JSON.parse(JSON.stringify(prevState.edges));
++      
++      // Устанавливаем новое состояние
++      setNodes(nodesCopy);
++      setEdges(edgesCopy);
+       setHistoryIndex(historyIndex - 1);
+-      setTimeout(() => setIgnoreHistoryUpdate(false), 0);
++      
++      // Сбрасываем флаг игнорирования с небольшой задержкой
++      // чтобы убедиться, что все обновления завершены
++      setTimeout(() => setIgnoreHistoryUpdate(false), 50);
+     }
+   }, [history, historyIndex]);
+ 
+   // Функция Redo
+   const handleRedo = useCallback(() => {
+     if (historyIndex < history.length - 1) {
++      // Устанавливаем флаг игнорирования обновления истории
+       setIgnoreHistoryUpdate(true);
++      
++      // Получаем следующее состояние
+       const nextState = history[historyIndex + 1];
+-      setNodes(nextState.nodes);
+-      setEdges(nextState.edges);
++      
++      // Используем глубокое копирование для предотвращения проблем с ссылками
++      const nodesCopy = JSON.parse(JSON.stringify(nextState.nodes));
++      const edgesCopy = JSON.parse(JSON.stringify(nextState.edges));
++      
++      // Устанавливаем новое состояние
++      setNodes(nodesCopy);
++      setEdges(edgesCopy);
+       setHistoryIndex(historyIndex + 1);
+-      setTimeout(() => setIgnoreHistoryUpdate(false), 0);
++      
++      // Сбрасываем флаг игнорирования с небольшой задержкой
++      setTimeout(() => setIgnoreHistoryUpdate(false), 50);
+     }
+   }, [history, historyIndex]);
+ 

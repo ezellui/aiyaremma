@@ -1,0 +1,206 @@
+
+<svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Определение стилей -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+    </marker>
+    <marker id="circle" markerWidth="8" markerHeight="8" refX="4" refY="4">
+      <circle cx="4" cy="4" r="3" fill="#333" />
+    </marker>
+    <marker id="recursive-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8E24AA" />
+    </marker>
+  </defs>
+  
+  <!-- Узлы графа -->
+  <!-- Основные категории метафилософии -->
+  <g>
+    <!-- Центральные понятия -->
+    <circle cx="500" cy="400" r="50" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/>
+    <text x="500" y="400" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Философская рефлексия</text>
+    
+    <circle cx="500" cy="250" r="50" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/>
+    <text x="500" y="250" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Метафилософия</text>
+    
+    <!-- Рекурсивный узел -->
+    <circle cx="350" cy="325" r="45" fill="#E1BEE7" stroke="#8E24AA" stroke-width="2"/>
+    <text x="350" y="325" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Самоопределение философии</text>
+    
+    <!-- Сущностные понятия метафилософии -->
+    <circle cx="300" cy="200" r="40" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="300" y="200" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Природа философии</text>
+    
+    <circle cx="700" cy="200" r="40" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="700" y="200" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Методология философии</text>
+    
+    <circle cx="200" cy="400" r="40" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="200" y="400" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Границы философского знания</text>
+    
+    <circle cx="800" cy="400" r="40" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="800" y="400" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Критерии философской истины</text>
+    
+    <circle cx="300" cy="600" r="40" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="300" y="600" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Историчность философии</text>
+    
+    <circle cx="700" cy="600" r="40" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="700" y="600" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" font-weight="bold">Диалектика изучения и создания</text>
+    
+    <!-- Вторичные понятия -->
+    <circle cx="120" cy="300" r="35" fill="#fff8e1" stroke="#ff8f00" stroke-width="2"/>
+    <text x="120" y="300" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12">Легитимация философии</text>
+    
+    <circle cx="150" cy="500" r="35" fill="#fff8e1" stroke="#ff8f00" stroke-width="2"/>
+    <text x="150" y="500" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12">Герменевтика философских текстов</text>
+    
+    <circle cx="450" cy="650" r="35" fill="#fff8e1" stroke="#ff8f00" stroke-width="2"/>
+    <text x="450" y="650" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12">Философская традиция</text>
+    
+    <circle cx="550" cy="650" r="35" fill="#fff8e1" stroke="#ff8f00" stroke-width="2"/>
+    <text x="550" y="650" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12">Философское творчество</text>
+    
+    <circle cx="850" cy="300" r="35" fill="#fff8e1" stroke="#ff8f00" stroke-width="2"/>
+    <text x="850" y="300" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12">Концептуальный аппарат</text>
+    
+    <circle cx="880" cy="500" r="35" fill="#fff8e1" stroke="#ff8f00" stroke-width="2"/>
+    <text x="880" y="500" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12">Философский аргумент</text>
+    
+    <circle cx="450" cy="150" r="35" fill="#fff8e1" stroke="#ff8f00" stroke-width="2"/>
+    <text x="450" y="150" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12">Онтологические предпосылки</text>
+    
+    <circle cx="550" cy="150" r="35" fill="#fff8e1" stroke="#ff8f00" stroke-width="2"/>
+    <text x="550" y="150" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12">Эпистемологические основания</text>
+    
+    <!-- Периферийные понятия -->
+    <circle cx="100" cy="175" r="30" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+    <text x="100" y="175" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="11">Философская интуиция</text>
+    
+    <circle cx="900" cy="175" r="30" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+    <text x="900" y="175" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="11">Философская практика</text>
+    
+    <circle cx="150" cy="650" r="30" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+    <text x="150" y="650" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="11">Идентичность философа</text>
+    
+    <circle cx="850" cy="650" r="30" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+    <text x="850" y="650" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="11">Философский прогресс</text>
+  </g>
+  
+  <!-- Рекурсивные связи -->
+  <g stroke="#8E24AA" stroke-width="2.5" stroke-dasharray="5,2" marker-end="url(#recursive-arrow)">
+    <!-- Самореференция философской рефлексии -->
+    <path d="M 550,400 C 590,350 590,450 550,400" fill="none"/>
+    <text x="600" y="400" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="middle">Самореференция</text>
+    
+    <!-- Взаимоконституирование метафилософии и рефлексии -->
+    <path d="M 500,300 L 500,350" fill="none"/>
+    <text x="480" y="325" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="end">Взаимоконституирование</text>
+    
+    <path d="M 500,350 L 500,300" fill="none"/>
+    
+    <!-- Рекурсивное переопределение между природой и историчностью -->
+    <path d="M 300,240 C 250,350 250,450 300,560" fill="none"/>
+    <text x="240" y="400" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="middle">Рекурсивное переопределение</text>
+    
+    <!-- Рекурсивное переопределение между историчностью и рефлексией -->
+    <path d="M 340,600 C 400,550 450,500 460,450" fill="none"/>
+    <text x="430" y="520" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="middle">Рекурсивное переопределение</text>
+    
+    <!-- Рекурсивное переопределение между рефлексией и природой -->
+    <path d="M 460,350 C 400,300 380,250 340,220" fill="none"/>
+    <text x="380" y="280" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="middle">Рекурсивное переопределение</text>
+    
+    <!-- Рекурсивное самоопределение философии -->
+    <path d="M 320,300 C 290,280 290,340 320,320" fill="none"/>
+    <text x="270" y="310" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="middle">Рекурсивное переопределение</text>
+    
+    <!-- Взаимоопределение метафилософии и самоопределения философии -->
+    <path d="M 455,260 L 395,305" fill="none"/>
+    <text x="420" y="270" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="middle">Взаимоопределение</text>
+    
+    <path d="M 395,345 L 455,290" fill="none"/>
+    <text x="410" y="330" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="middle">Взаимоопределение</text>
+    
+    <!-- Взаимоопределение природы и самоопределения философии -->
+    <path d="M 320,225 L 335,280" fill="none"/>
+    <text x="310" y="250" font-family="Arial" font-size="10" fill="#8E24AA" text-anchor="middle">Взаимоопределение</text>
+    
+    <path d="M 335,300 L 320,240" fill="none"/>
+  </g>
+  
+  <!-- Связи-рёбра графа -->
+  <!-- 1. Конституирование - определяет сущностные характеристики -->
+  <g stroke="#2e7d32" stroke-width="2" stroke-dasharray="none" marker-end="url(#arrowhead)">
+    <path d="M 500,350 L 350,220" fill="none"/>
+    <text x="400" y="265" font-family="Arial" font-size="10" fill="#2e7d32" text-anchor="middle">Конституирует</text>
+    
+    <path d="M 500,350 L 650,220" fill="none"/>
+    <text x="600" y="265" font-family="Arial" font-size="10" fill="#2e7d32" text-anchor="middle">Конституирует</text>
+    
+    <path d="M 450,350 L 240,380" fill="none"/>
+    <text x="335" y="345" font-family="Arial" font-size="10" fill="#2e7d32" text-anchor="middle">Конституирует</text>
+    
+    <path d="M 550,350 L 760,380" fill="none"/>
+    <text x="665" y="345" font-family="Arial" font-size="10" fill="#2e7d32" text-anchor="middle">Конституирует</text>
+    
+    <path d="M 475,275 L 395,310" fill="none"/>
+    <text x="430" y="300" font-family="Arial" font-size="10" fill="#2e7d32" text-anchor="middle">Конституирует</text>
+  </g>
+  
+  <!-- 2. Диалектическое единство - противоположности, образующие целое -->
+  <g stroke="#9c27b0" stroke-width="2" stroke-dasharray="5,3" marker-start="url(#circle)" marker-end="url(#circle)">
+    <path d="M 335,600 L 665,600" fill="none"/>
+    <text x="500" y="580" font-family="Arial" font-size="10" fill="#9c27b0" text-anchor="middle">Диалектическое единство</text>
+    
+    <path d="M 285,220 L 420,170" fill="none"/>
+    <text x="350" y="180" font-family="Arial" font-size="10" fill="#9c27b0" text-anchor="middle">Диалектическое единство</text>
+    
+    <path d="M 715,220 L 580,170" fill="none"/>
+    <text x="650" y="180" font-family="Arial" font-size="10" fill="#9c27b0" text-anchor="middle">Диалектическое единство</text>
+    
+    <path d="M 450,620 L 450,680" fill="none"/>
+    <text x="420" y="650" font-family="Arial" font-size="10" fill="#9c27b0" text-anchor="middle">Диалектическое единство</text>
+    
+    <path d="M 550,620 L 550,680" fill="none"/>
+    <text x="580" y="650" font-family="Arial" font-size="10" fill="#9c27b0" text-anchor="middle">Диалектическое единство</text>
+    
+    <path d="M 395,325 L 465,375" fill="none"/>
+    <text x="440" y="340" font-family="Arial" font-size="10" fill="#9c27b0" text-anchor="middle">Диалектическое единство</text>
+  </g>
+  
+  <!-- 3. Герменевтическое отношение - интерпретирует, осмысляет -->
+  <g stroke="#ff5722" stroke-width="2" stroke-dasharray="8,2" marker-end="url(#arrowhead)">
+    <path d="M 180,480 L 275,570" fill="none"/>
+    <text x="210" y="530" font-family="Arial" font-size="10" fill="#ff5722" text-anchor="middle">Интерпретирует</text>
+    
+    <path d="M 265,580 L 180,520" fill="none"/>
+    <text x="205" y="560" font-family="Arial" font-size="10" fill="#ff5722" text-anchor="middle">Обогащает</text>
+    
+    <path d="M 180,485 L 420,635" fill="none"/>
+    <text x="275" y="550" font-family="Arial" font-size="10" fill="#ff5722" text-anchor="middle">Интерпретирует</text>
+    
+    <path d="M 180,465 L 320,350" fill="none"/>
+    <text x="230" y="420" font-family="Arial" font-size="10" fill="#ff5722" text-anchor="middle">Интерпретирует</text>
+  </g>
+  
+  <!-- 4. Методологическое обоснование - обеспечивает инструментами познания -->
+  <g stroke="#1976d2" stroke-width="2" stroke-dasharray="4,2,1,2" marker-end="url(#arrowhead)">
+    <path d="M 735,220 L 830,280" fill="none"/>
+    <text x="795" y="235" font-family="Arial" font-size="10" fill="#1976d2" text-anchor="middle">Обосновывает</text>
+    
+    <path d="M 820,340 L 835,465" fill="none"/>
+    <text x="810" y="400" font-family="Arial" font-size="10" fill="#1976d2" text-anchor="middle">Обосновывает</text>
+    
+    <path d="M 765,400 L 845,480" fill="none"/>
+    <text x="795" y="450" font-family="Arial" font-size="10" fill="#1976d2" text-anchor="middle">Верифицирует</text>
+    
+    <path d="M 890,470 L 830,420" fill="none"/>
+    <text x="875" y="435" font-family="Arial" font-size="10" fill="#1976d2" text-anchor="middle">Реализует</text>
+    
+    <path d="M 680,220 L 520,230" fill="none"/>
+    <text x="600" y="215" font-family="Arial" font-size="10" fill="#1976d2" text-anchor="middle">Обосновывает</text>
+  </g>
+  
+  <!-- 5. Историческая преемственность - обеспечивает развитие во времени -->
+  <g stroke="#f57c00" stroke-width="2" stroke-dasharray="1,1" marker-end="url(#arrowhead)">
+    <path d="M 300,560 L 300,450" fill="none"/>
+    <text x="280" y="505" font-family="Arial

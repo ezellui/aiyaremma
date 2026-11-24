@@ -1,0 +1,60 @@
+--- предыдущая/eldarische_sammlung.html
++++ текущая/eldarische_sammlung.html
+@@ -357,6 +357,28 @@
+       </div>
+     </article>
+ 
++    <!-- Völkischer Beobachter -->
++    <article class="item">
++      <div class="plate">
++        <span class="pinv">ES&#8209;2079&#8209;188</span>
++        <svg class="ic-star"><use href="#star"/></svg>
++        <span class="plink"><a href="media/es-2079-188.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
++      </div>
++      <div class="label">
++        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2079-188</div>
++        <h3 class="serif"><span lang="ru">Газетная полоса «Die Heimkehr der Hohen Sprache»</span><span lang="de">Zeitungsseite „Die Heimkehr der Hohen Sprache“</span></h3>
++        <div class="date">2005</div>
++        <div class="orig">
++          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
++          <p class="orig-t">„DIE HEIMKEHR DER HOHEN SPRACHE — Völkischer Beobachter, Reichsausgabe, 15. September 2005“</p>
++        </div>
++        <p class="desc" lang="ru">Передовица официальной газеты Рейха, торжественно представляющая принятие Высокой Речи как священное «возвращение». Внутренний, славящий голос режима — прямая пара к зарубежной передовице о тех же событиях (ES-2080-211).</p>
++        <p class="desc" lang="de">Leitartikel der amtlichen Zeitung des Reiches, der die Annahme der Hohen Sprache als heilige „Heimkehr“ feiert. Die innere, verherrlichende Stimme des Regimes — unmittelbares Gegenstück zum ausländischen Kommentar über dieselben Ereignisse (ES-2080-211).</p>
++        <p class="note"><span lang="ru">Примечание. Заключительный образ статьи — «как некогда Высокие плыли за море на Запад, навстречу негасимому свету» — воспроизводит, по-видимому неосознанно, ту самую гордыню Низвержения Нуменора, против которой предостерегает легендариум.</span><span lang="de">Anmerkung. Das Schlussbild des Artikels — „wie einst die Hohen über das Meer nach Westen fuhren, dem unvergänglichen Lichte entgegen“ — wiederholt, offenbar unbewusst, eben jene Hybris des Untergangs von Númenor, vor der das Legendarium warnt.</span></p>
++        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">из газетного архива (микрофильм).</span><span lang="de">aus einem Zeitungsarchiv (Mikrofilm).</span></p>
++      </div>
++    </article>
++
+     <!-- 7. Американская передовица -->
+     <article class="item">
+       <div class="plate">
+@@ -375,6 +397,28 @@
+         <p class="desc" lang="ru">Полоса мнений панамериканской газеты — взгляд извне, с недоумением воспринимающий принятие верхушкой Рейха эльфийских имён на Tar-. Ценна как внешнее свидетельство о том, как «Кривую победу» видели за пределами германской сферы.</p>
+         <p class="desc" lang="de">Eine Meinungsseite einer panamerikanischen Zeitung — eine Außensicht, die die Annahme elbischer Tar-Namen durch die Führung des Reiches mit Befremden verzeichnet. Wertvoll als Zeugnis von außen über die Wahrnehmung des „krummen Sieges“ jenseits der deutschen Sphäre.</p>
+         <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">из газетного архива (микрофильм).</span><span lang="de">aus einem Zeitungsarchiv (Mikrofilm).</span></p>
++      </div>
++    </article>
++
++    <!-- Японская афиша Twilight Ray -->
++    <article class="item">
++      <div class="plate">
++        <span class="pinv">ES&#8209;2085&#8209;026</span>
++        <svg class="ic-star"><use href="#star"/></svg>
++        <span class="plink"><a href="media/es-2085-026.jpg"><span lang="ru">Открыть изображение</span><span lang="de">Abbildung öffnen</span></a></span>
++      </div>
++      <div class="label">
++        <div class="inv"><svg class="ic-star"><use href="#star"/></svg> ES-2085-026</div>
++        <h3 class="serif"><span lang="ru">Афиша аниме-фильма «Сумеречный луч» (Twilight Ray)</span><span lang="de">Filmplakat des Anime „Twilight Ray“</span></h3>
++        <div class="date">2025</div>
++        <div class="orig">
++          <span class="orig-k"><span lang="ru">Подлинная надпись</span><span lang="de">Originaltext</span></span>
++          <p class="orig-t">「黄昏の光芒（トワイライト・レイ）」 · TWILIGHT RAY — 2025</p>
++          <span class="orig-n"><span lang="ru">текст афиши на японском языке</span><span lang="de">Plakattext in japanischer Sprache</span></span>
++        </div>
++        <p class="desc" lang="ru">Японская киноафиша «обратного исекая»: эльфийка из фэнтези-мира попадает в эльдаризированный Рейх. Поп-культурный отклик соперничающей державы, перерабатывающий мрачную самомифологию Рейха в развлекательный сюжет; название почти созвучно «Twilight Reich». Свидетельство восприятия Рейха массовой культурой за пределами германской сферы.</p>
++        <p class="desc" lang="de">Japanisches Filmplakat eines „umgekehrten Isekai“: eine Elbe aus einer Fantasiewelt gerät in das eldarisierte Reich. Eine popkulturelle Reaktion einer rivalisierenden Macht, die die düstere Selbstmythologie des Reiches zur Unterhaltung verarbeitet; der Titel klingt fast wie „Twilight Reich“. Ein Zeugnis der Wahrnehmung des Reiches in der Massenkultur jenseits der deutschen Sphäre.</p>
++        <p class="meta"><span class="meta-k"><span lang="ru">Происхождение:</span><span lang="de">Herkunft:</span></span> <span lang="ru">из японского собрания киноплакатов.</span><span lang="de">aus einer japanischen Plakatsammlung.</span></p>
+       </div>
+     </article>
+ 

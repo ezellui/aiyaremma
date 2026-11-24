@@ -1,0 +1,25 @@
+--- предыдущая/build_map3.py
++++ текущая/build_map3.py
+@@ -168,7 +168,7 @@
+     return ''.join(out)
+ L='#e4e9f2'
+ # великие державы — капитель в разрядку, тон заливки, без обводки
+-rx,ry=to_svg(*project(49,55))
++rx,ry=to_svg(*project(40,51))
+ for i,word in enumerate(('Großdeutsches','Reich')):
+     S.append(f'<text x="{rx:.0f}" y="{ry+i*31:.0f}" text-anchor="middle" font-size="31" '
+              f'fill="#dde6e8" font-family="\'UnifrakturMaguntia\',\'SchwabacherReich\',serif">{word}</text>')
+@@ -192,10 +192,10 @@
+ S.append(f'<text x="{cx:.0f}" y="91" text-anchor="middle" font-size="17" font-style="italic" fill="#4a5a62" letter-spacing="1">Die Aufteilung der Welt nach dem Zweiten Weltkrieg · um 1948</text>')
+ 
+ # ---- легенда -----------------------------------------------------------------
+-ly=PADT+H+42; lx=PADL+30; cw=380
+-S.append(f'<text x="{lx}" y="{ly-14}" font-size="15" font-weight="700" fill="#1d2a30">Einflusssphären</text>')
++ly=PADT+H+46; lx=PADL+30; cw=380
++S.append(f'<text x="{lx}" y="{ly-24}" font-size="15" font-weight="700" fill="#1d2a30">Einflusssphären</text>')
+ for i,(k,name,color,_) in enumerate(BLOCS):
+-    bx=lx+(i//4)*cw; by=ly+(i%4)*34
++    bx=lx+(i//4)*cw; by=ly+(i%4)*35
+     S.append(f'<rect x="{bx}" y="{by-13}" width="22" height="16" fill="{color}" stroke="#27343a" stroke-width=".4"/>')
+     S.append(f'<text x="{bx+30}" y="{by}" font-size="14.5" fill="#222">{name}</text>')
+ S.append(f'<text x="{TOTW-PADR-20}" y="{TOTH-22}" text-anchor="end" font-size="11" fill="#8a8f8a" font-style="italic">Geometrie: Natural Earth admin-1 · Robinson-Projektion · weltweit nach Verwaltungseinheiten aufgeteilt, Binnengrenzen aufgelöst</text>')

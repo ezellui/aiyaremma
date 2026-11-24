@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Философия Средиземья</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Philosopher:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            font-family: 'Philosopher', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a8a8a8;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+        
+        .quote-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quote-container::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 100px;
+            color: rgba(255, 215, 0, 0.1);
+            font-family: 'Cinzel', serif;
+        }
+        
+        .quote {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin: 20px 0;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .author {
+            font-size: 1.1rem;
+            color: #ffd700;
+            margin-top: 20px;
+            font-style: normal;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            margin: 20px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.5);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6); }
+        }
+        
+        .ring-decoration {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            border: 3px solid rgba(255, 215, 0, 0.2);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .ring-decoration:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-duration: 25s;
+        }
+        
+        .ring-decoration:nth-child(2) {
+            bottom: 10%;
+            right: 5%;
+            animation-duration: 30s;
+            animation-direction: reverse;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0.5; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="ring-decoration"></div>
+    <div class="ring-decoration"></div>
+    
+    <div class="container">
+        <h1>Философия Средиземья</h1>
+        <p class="subtitle">Где мудрость Валар встречается с экзистенциализмом</p>
+        
+        <div class="quote-container">
+            <p class="quote" id="quote">Нажмите кнопку для получения мудрости...</p>
+            <p class="author" id="author"></p>
+        </div>
+        
+        <button onclick="generateQuote()">Явить новую истину</button>
+    </div>
+    
+    <script>
+        // Философские концепции с указанием рода
+        const philosophicalConcepts = {
+            subjects: [
+                {word: 'бытие', gender: 'с', animate: false},
+                {word: 'небытие', gender: 'с', animate: false},
+                {word: 'сущность', gender: 'ж', animate: false},
+                {word: 'экзистенция', gender: 'ж', animate: false},
+                {word: 'трансцендентность', gender: 'ж', animate: false},
+                {word: 'имманентность', gender: 'ж', animate: false},
+                {word: 'императив', gender: 'м', animate: false},
+                {word: 'диалектика', gender: 'ж', animate: false},
+                {word: 'феноменология', gender: 'ж', animate: false},
+                {word: 'онтология', gender: 'ж', animate: false},
+                {word: 'эпистемология', gender: 'ж', animate: false},
+                {word: 'телеология', gender: 'ж', animate: false},
+                {word: 'детерминизм', gender: 'м', animate: false},
+                {word: 'солипсизм', gender: 'м', animate: false},
+                {word: 'нигилизм', gender: 'м', animate: false},
+                {word: 'абсурд', gender: 'м', animate: false},
+                {word: 'свобода', gender: 'ж', animate: false},
+                {word: 'субстанция', gender: 'ж', animate: false},
+                {word: 'монада', gender: 'ж', animate: false},
+                {word: 'ноумен', gender: 'м', animate: false},
+                {word: 'знание', gender: 'с', animate: false},
+                {word: 'эмпиризм', gender: 'м', animate: false},
+                {word: 'рационализм', gender: 'м', animate: false},
+                {word: 'прагматизм', gender: 'м', animate: false},
+                {word: 'этика', gender: 'ж', animate: false},
+                {word: 'эстетика', gender: 'ж', animate: false},
+                {word: 'метафизика', gender: 'ж', animate: false},
+                {word: 'аксиология', gender: 'ж', animate: false},
+                {word: 'герменевтика', gender: 'ж', animate: false},
+                {word: 'деконструкция', gender: 'ж', animate: false}
+            ],
+            // Глаголы с точным указанием управления
+            predicates: [
+                {verb: 'трансцендирует', object: 'acc', preposition: null},
+                {verb: 'имманентно присуще', object: 'dat', preposition: null},
+                {verb: 'диалектически снимается', object: 'prep', preposition: 'в'},
+                {verb: 'феноменологически редуцируется', object: 'dat', preposition: 'к'},
+                {verb: 'онтологически укоренено', object: 'prep', preposition: 'в'},
+                {verb: 'экзистенциально переживается', object: 'inst', preposition: null},
+                {verb: 'категорически утверждает', object: 'acc', preposition: null},
+                {verb: 'априорно постигается', object: 'inst', preposition: 'через'},
+                {verb: 'эмпирически верифицируется', object: 'prep', preposition: 'в'},
+                {verb: 'герменевтически истолковывается', object: 'inst', preposition: 'как'},
+                {verb: 'деконструирует', object: 'acc', preposition: null},
+                {verb: 'субстанциально определяет', object: 'acc', preposition: null},
+                {verb: 'телеологически направлено', object: 'dat', preposition: 'к'},
+                {verb: 'каузально обусловливает', object: 'acc', preposition: null},
+                {verb: 'трансформируется', object: 'prep', preposition: 'в'},
+                {verb: 'манифестируется', object: 'prep', preposition: 'в'},
+                {verb: 'актуализируется', object: 'inst', preposition: 'через'}
+            ],
+            // Прилагательные
+            attributes: [
+                'трансцендентальн', 'имманентн', 'априорн', 'апостериорн',
+                'категорическ', 'гипотетическ', 'онтологическ', 'феноменологическ',
+                'экзистенциальн', 'эссенциальн', 'диалектическ', 'метафизическ',
+                'эпистемологическ', 'аксиологическ', 'телеологическ', 'каузальн',
+                'субстанциальн', 'акцидентальн', 'ноуменальн', 'феноменальн'
+            ]
+        };
+
+        // Элементы из Легендариума с родом
+        const tolkienElements = {
+            characters: [
+                {word: 'Эру Илуватар', gender: 'м', animate: true},
+                {word: 'Манвэ', gender: 'м', animate: true, indeclinable: true},
+                {word: 'Мелькор', gender: 'м', animate: true},
+                {word: 'Варда', gender: 'ж', animate: true},
+                {word: 'Ульмо', gender: 'м', animate: true, indeclinable: true},
+                {word: 'Ауле', gender: 'м', animate: true, indeclinable: true},
+                {word: 'Йаванна', gender: 'ж', animate: true},
+                {word: 'Мандос', gender: 'м', animate: true},
+                {word: 'Вайрэ', gender: 'ж', animate: true, indeclinable: true},
+                {word: 'Эстэ', gender: 'ж', animate: true, indeclinable: true},
+                {word: 'Ниенна', gender: 'ж', animate: true},
+                {word: 'Ороме', gender: 'м', animate: true, indeclinable: true},
+                {word: 'Тулкас', gender: 'м', animate: true},
+                {word: 'Нэсса', gender: 'ж', animate: true},
+                {word: 'Вана', gender: 'ж', animate: true},
+                {word: 'Гэндальф', gender: 'м', animate: true},
+                {word: 'Саруман', gender: 'м', animate: true},
+                {word: 'Радагаст', gender: 'м', animate: true},
+                {word: 'Саурон', gender: 'м', animate: true},
+                {word: 'Элронд', gender: 'м', animate: true},
+                {word: 'Галадриэль', gender: 'ж', animate: true},
+                {word: 'Фродо', gender: 'м', animate: true, indeclinable: true},
+                {word: 'Арагорн', gender: 'м', animate: true},
+                {word: 'Леголас', gender: 'м', animate: true},
+                {word: 'Гимли', gender: 'м', animate: true},
+                {word: 'Боромир', gender: 'м', animate: true},
+                {word: 'Фарамир', gender: 'м', animate: true},
+                {word: 'Эовин', gender: 'ж', animate: true},
+                {word: 'Теоден', gender: 'м', animate: true},
+                {word: 'Денетор', gender: 'м', animate: true},
+                {word: 'Том Бомбадил', gender: 'м', animate: true},
+                {word: 'Голдберри', gender: 'ж', animate: true},
+                {word: 'Древобород', gender: 'м', animate: true},
+                {word: 'Берен', gender: 'м', animate: true},
+                {word: 'Лютиэн', gender: 'ж', animate: true},
+                {word: 'Туор', gender: 'м', animate: true},
+                {word: 'Идриль', gender: 'ж', animate: true},
+                {word: 'Эарендил', gender: 'м', animate: true},
+                {word: 'Элвинг', gender: 'ж', animate: true},
+                {word: 'Феанор', gender: 'м', animate: true},
+                {word: 'Финголфин', gender: 'м', animate: true}
+            ],
+            places: [
+                {word: 'Валинор', gender: 'м'},
+                {word: 'Средиземье', gender: 'с'},
+                {word: 'Амман', gender: 'м'},
+                {word: 'Танкветиль', gender: 'м'},
+                {word: 'Мандос', gender: 'м'},
+                {word: 'Лориэн', gender: 'м'},
+                {word: 'Ривенделл', gender: 'м'},
+                {word: 'Лотлориэн', gender: 'м'},
+                {word: 'Изенгард', gender: 'м'},
+                {word: 'Мордор', gender: 'м'},
+                {word: 'Гондор', gender: 'м'},
+                {word: 'Рохан', gender: 'м'},
+                {word: 'Шир', gender: 'м'},
+                {word: 'Мория', gender: 'ж'},
+                {word: 'Дол Гулдур', gender: 'м'},
+                {word: 'Барад-дур', gender: 'м'},
+                {word: 'Минас Тирит', gender: 'м'},
+                {word: 'Минас Моргул', gender: 'м'},
+                {word: 'Ортханк', gender: 'м'},
+                {word: 'Хелмова Падь', gender: 'ж'},
+                {word: 'Осгилиат', gender: 'м'},
+                {word: 'Итилиен', gender: 'м'},
+                {word: 'Фангорн', gender: 'м'},
+                {word: 'Белерианд', gender: 'м'},
+                {word: 'Дориат', gender: 'м'},
+                {word: 'Нарготронд', gender: 'м'},
+                {word: 'Гондолин', gender: 'м'},
+                {word: 'Нуменор', gender: 'м'},
+                {word: 'Эрегион', gender: 'м'},
+                {word: 'Арнор', gender: 'м'},
+                {word: 'Ангмар', gender: 'м'}
+            ],
+            artifacts: [
+                {word: 'Единое Кольцо', gender: 'с'},
+                {word: 'Сильмарилы', gender: 'мн'},
+                {word: 'палантир', gender: 'м'},
+                {word: 'Нарсил', gender: 'м'},
+                {word: 'Андурил', gender: 'м'},
+                {word: 'Гламдринг', gender: 'м'},
+                {word: 'Оркрист', gender: 'м'},
+                {word: 'Жало', gender: 'с'},
+                {word: 'Вилья', gender: 'ж'},
+                {word: 'Нарья', gender: 'ж'},
+                {word: 'Ненья', gender: 'ж'},
+                {word: 'Элендилмир', gender: 'м'},
+                {word: 'Аркенстон', gender: 'м'},
+                {word: 'Два Древа', gender: 'мн'},
+                {word: 'фиал Галадриэль', gender: 'м'},
+                {word: 'Рог Боромира', gender: 'м'},
+                {word: 'эльфийские плащи', gender: 'мн'},
+                {word: 'лембас', gender: 'м'},
+                {word: 'мифрил', gender: 'м'},
+                {word: 'цепь Ангайнор', gender: 'ж'},
+                {word: 'молот Грон', gender: 'м'},
+                {word: 'лук Белега', gender: 'м'},
+                {word: 'меч Англахел', gender: 'м'},
+                {word: 'Гуртанг', gender: 'м'},
+                {word: 'Рингил', gender: 'м'},
+                {word: 'Элессар', gender: 'м'},
+                {word: 'Железная Корона', gender: 'ж'}
+            ],
+            concepts: [
+                {word: 'Музыка Айнур', gender: 'ж'},
+                {word: 'Тайное Пламя', gender: 'с'},
+                {word: 'Тень', gender: 'ж'},
+                {word: 'Свет Амана', gender: 'м'},
+                {word: 'Морская Тоска', gender: 'ж'},
+                {word: 'Дар Людей', gender: 'м'},
+                {word: 'Бессмертие Эльфов', gender: 'с'},
+                {word: 'Клятва Феанора', gender: 'ж'},
+                {word: 'Пророчество Мандоса', gender: 'с'},
+                {word: 'Искажение Арды', gender: 'с'},
+                {word: 'Исцеление Арды', gender: 'с'},
+                {word: 'Затмение Валинор', gender: 'с'},
+                {word: 'Падение Нуменора', gender: 'с'},
+                {word: 'Последний Союз', gender: 'м'},
+                {word: 'Война Кольца', gender: 'ж'},
+                {word: 'Четвертая Эпоха', gender: 'ж'},
+                {word: 'Серые Гавани', gender: 'мн'},
+                {word: 'Прямой Путь', gender: 'м'},
+                {word: 'Изогнутый Мир', gender: 'м'},
+                {word: 'Бдение Мандоса', gender: 'с'},
+                {word: 'Чертоги Ожидания', gender: 'мн'},
+                {word: 'Кольца Власти', gender: 'мн'},
+                {word: 'миссия Истари', gender: 'ж'},
+                {word: 'видение палантири', gender: 'с'},
+                {word: 'свет Телпериона', gender: 'м'},
+                {word: 'сияние Лаурелин', gender: 'с'},
+                {word: 'Безвременные Чертоги', gender: 'мн'}
+            ],
+            races: [
+                {word: 'Валар', gender: 'мн'},
+                {word: 'Майар', gender: 'мн'},
+                {word: 'Эльдар', gender: 'мн'},
+                {word: 'Нолдор', gender: 'мн'},
+                {word: 'Синдар', gender: 'мн'},
+                {word: 'Тэлери', gender: 'мн'},
+                {word: 'Ваньяр', gender: 'мн'},
+                {word: 'Люди', gender: 'мн'},
+                {word: 'Дунэдайн', gender: 'мн'},
+                {word: 'Рохиррим', gender: 'мн'},
+                {word: 'Гномы', gender: 'мн'},
+                {word: 'Хоббиты', gender: 'мн'},
+                {word: 'Энты', gender: 'мн'},
+                {word: 'Орлы', gender: 'мн'},
+                {word: 'Орки', gender: 'мн'},
+                {word: 'Урук-хай', gender: 'мн'},
+                {word: 'Тролли', gender: 'мн'},
+                {word: 'Драконы', gender: 'мн'},
+                {word: 'Балроги', gender: 'мн'},
+                {word: 'Назгул', gender: 'мн'},
+                {word: 'Авари', gender: 'мн'},
+                {word: 'Лаиквенди', gender: 'мн'},
+                {word: 'Нандор', gender: 'мн'},
+                {word: 'Эдайн', gender: 'мн'},
+                {word: 'Друэдайн', gender: 'мн'},
+                {word: 'Истерлинги', gender: 'мн'},
+                {word: 'Харадрим', gender: 'мн'},
+                {word: 'народ Беорна', gender: 'м'}
+            ]
+        };
+
+        // Улучшенная функция склонения существительных
+        function decline(wordObj, caseType) {
+            const word = wordObj.word;
+            const gender = wordObj.gender;
+            const animate = wordObj.animate || false;
+            
+            // Несклоняемые слова
+            if (wordObj.indeclinable) return word;
+            
+            // Особые случаи для эльфийских имен
+            if (['Ауле', 'Ороме', 'Манвэ', 'Ульмо', 'Вайрэ', 'Эстэ', 'Фродо'].includes(word)) return word;
+            
+            switch(caseType) {
+                case 'gen': // Родительный падеж
+                    if (gender === 'мн') {
+                        if (word === 'Люди') return 'Людей';
+                        if (word === 'Дети') return 'Детей';
+                        if (word.endsWith('ы')) return word.slice(0, -1) + (word.includes('ц') ? 'ев' : 'ов');
+                        if (word.endsWith('и')) return word.slice(0, -1) + 'ей';
+                        if (word.endsWith('ар') || word.endsWith('айн')) return word;
+                        return word + 'ов';
+                    }
+                    if (gender === 'м') {
+                        if (word === 'Мандос') return 'Мандоса';
+                        if (word.endsWith('ь')) return word.slice(0, -1) + 'я';
+                        if (word.endsWith('й')) return word.slice(0, -1) + 'я';
+                        if (word.endsWith('ор') || word.endsWith('ир') || word.endsWith('ар')) return word + 'а';
+                        return word + 'а';
+                    }
+                    if (gender === 'ж') {
+                        if (word === 'Галадриэль') return 'Галадриэли';
+                        if (word.endsWith('ость')) return word.slice(0, -4) + 'ости';
+                        if (word.endsWith('ия')) return word.slice(0, -2) + 'ии';
+                        if (word.endsWith('ка')) return word.slice(0, -2) + 'ки';
+                        if (word.endsWith('ь')) return word.slice(0, -1) + 'и';
+                        if (word.endsWith('а')) return word.slice(0, -1) + 'ы';
+                        if (word.endsWith('я')) return word.slice(0, -1) + 'и';
+                    }
+                    if (gender === 'с') {
+                        if (word.endsWith('ие')) return word.slice(0, -2) + 'ия';
+                        if (word.endsWith('ье')) return word.slice(0, -2) + 'ья';
+                        if (word.endsWith('о')) return word.slice(0, -1) + 'а';
+                        if (word.endsWith('е')) return word.slice(0, -1) + 'я';
+                        if (word.endsWith('мя')) return word.slice(0, -2) + 'мени';
+                    }
+                    break;
+                    
+                case 'dat': // Дательный падеж
+                    if (gender === 'мн') {
+                        if (word === 'Люди') return 'Людям';
+                        if (word.endsWith('ы')) return word.slice(0, -1) + 'ам';
+                        if (word.endsWith('и')) return word.slice(0, -1) + 'ям';
+                        if (word.endsWith('ар') || word.endsWith('айн')) return word + 'ам';
+                        return word + 'ам';
+                    }
+                    if (gender === 'м') {
+                        if (word === 'Мандос') return 'Мандосу';
+                        if (word.endsWith('ь')) return word.slice(0, -1) + 'ю';
+                        if (word.endsWith('й')) return word.slice(0, -1) + 'ю';
+                        return word + 'у';
+                    }
+                    if (gender === 'ж') {
+                        if (word === 'Галадриэль') return 'Галадриэли';
+                        if (word.endsWith('ость')) return word.slice(0, -4) + 'ости';
+                        if (word.endsWith('ия')) return word.slice(0, -2) + 'ии';
+                        if (word.endsWith('ь')) return word.slice(0, -1) + 'и';
+                        if (word.endsWith('а')) return word.slice(0, -1) + 'е';
+                        if (word.endsWith('я')) return word.slice(0, -1) + 'е';
+                    }
+                    if (gender === 'с') {
+                        if (word.endsWith('ие')) return word.slice(0, -2) + 'ию';
+                        if (word.endsWith('ье')) return word.slice(0, -2) + 'ью';
+                        if (word.endsWith('о')) return word.slice(0, -1) + 'у';
+                        if (word.endsWith('е')) return word.slice(0, -1) + 'ю';
+                        if (word.endsWith('мя')) return word.slice(0, -2) + 'мени';
+                    }
+                    break;
+                    
+                case 'acc': // Винительный падеж
+                    if (gender === 'мн') return animate ? decline(wordObj, 'gen') : word;
+                    if (gender === 'м') return animate ? decline(wordObj, 'gen') : word;
+                    if (gender === 'ж') {
+                        if (word === 'Галадриэль') return 'Галадриэль';
+                        if (word.endsWith('ость')) return word;
+                        if (word.endsWith('ь')) return word;
+                        if (word.endsWith('а')) return word.slice(0, -1) + 'у';
+                        if (word.endsWith('я')) return word.slice(0, -1) + 'ю';
+                        if (word.endsWith('ия')) return word.slice(0, -2) + 'ию';
+                    }
+                    if (gender === 'с') return word;
+                    break;
+                    
+                case 'inst': // Творительный падеж
+                    if (gender === 'мн') {
+                        if (word === 'Люди') return 'Людьми';
+                        if (word.endsWith('ы')) return word.slice(0, -1) + 'ами';
+                        if (word.endsWith('и')) return word.slice(0, -1) + 'ями';
+                        return word + 'ами';
+                    }
+                    if (gender === 'м') {
+                        if (word === 'Мандос') return 'Мандосом';
+                        if (word.endsWith('ь')) return word.slice(0, -1) + 'ем';
+                        if (word.endsWith('й')) return word.slice(0, -1) + 'ем';
+                        return word + 'ом';
+                    }
+                    if (gender === 'ж') {
+                        if (word === 'Галадриэль') return 'Галадриэлью';
+                        if (word.endsWith('ость')) return word.slice(0, -4) + 'остью';
+                        if (word.endsWith('ь')) return word + 'ю';
+                        if (word.endsWith('а')) return word.slice(0, -1) + 'ой';
+                        if (word.endsWith('я')) return word.slice(0, -1) + 'ей';
+                        if (word.endsWith('ия')) return word.slice(0, -2) + 'ией';
+                    }
+                    if (gender === 'с') {
+                        if (word.endsWith('ие')) return word.slice(0, -2) + 'ием';
+                        if (word.endsWith('о')) return word.slice(0, -1) + 'ом';
+                        if (word.endsWith('е')) return word.slice(0, -1) + 'ем';
+                        if (word.endsWith('мя')) return word.slice(0, -2) + 'менем';
+                    }
+                    break;
+                    
+                case 'prep': // Предложный падеж
+                    if (gender === 'мн') {
+                        if (word === 'Люди') return 'Людях';
+                        if (word.endsWith('ы')) return word.slice(0, -1) + 'ах';
+                        if (word.endsWith('и')) return word.slice(0, -1) + 'ях';
+                        return word + 'ах';
+                    }
+                    if (gender === 'м') {
+                        if (word === 'Мандос') return 'Мандосе';
+                        if (word === 'Шир') return 'Шире';
+                        if (word.endsWith('ий')) return word.slice(0, -2) + 'ии';
+                        if (word.endsWith('ь')) return word.slice(0, -1) + 'е';
+                        if (word.endsWith('й')) return word.slice(0, -1) + 'е';
+                        return word + 'е';
+                    }
+                    if (gender === 'ж') {
+                        if (word === 'Галадриэль') return 'Галадриэли';
+                        if (word.endsWith('ость')) return word.slice(0, -4) + 'ости';
+                        if (word.endsWith('ия')) return word.slice(0, -2) + 'ии';
+                        if (word.endsWith('ь')) return word.slice(0, -1) + 'и';
+                        if (word.endsWith('а')) return word.slice(0, -1) + 'е';
+                        if (word.endsWith('я')) return word.slice(0, -1) + 'е';
+                    }
+                    if (gender === 'с') {
+                        if (word === 'Средиземье') return 'Средиземье';
+                        if (word.endsWith('ие')) return word.slice(0, -2) + 'ии';
+                        if (word.endsWith('ье')) return word.slice(0, -2) + 'ье';
+                        if (word.endsWith('о')) return word.slice(0, -1) + 'е';
+                        if (word.endsWith('е')) return word.slice(0, -1) + 'и';
+                        if (word.endsWith('мя')) return word.slice(0, -2) + 'мени';
+                    }
+                    break;
+            }
+            
+            return word;
+        }
+
+        // Улучшенная функция согласования прилагательного
+        function agreeAdjective(adjBase, gender, caseType = 'nom', plural = false) {
+            const genderKey = plural ? 'мн' : gender;
+            
+            // Мягкие основы
+            if (adjBase.endsWith('н')) {
+                const softEndings = {
+                    nom: {м: 'ий', ж: 'яя', с: 'ее', мн: 'ие'},
+                    gen: {м: 'его', ж: 'ей', с: 'его', мн: 'их'},
+                    dat: {м: 'ему', ж: 'ей', с: 'ему', мн: 'им'},
+                    acc: {м: 'ий', ж: 'юю', с: 'ее', мн: 'ие'},
+                    inst: {м: 'им', ж: 'ей', с: 'им', мн: 'ими'},
+                    prep: {м: 'ем', ж: 'ей', с: 'ем', мн: 'их'}
+                };
+                return adjBase + softEndings[caseType][genderKey];
+            }
+            
+            // Основы на -ическ
+            if (adjBase.endsWith('ическ')) {
+                const endings = {
+                    nom: {м: 'ий', ж: 'ая', с: 'ое', мн: 'ие'},
+                    gen: {м: 'ого', ж: 'ой', с: 'ого', мн: 'их'},
+                    dat: {м: 'ому', ж: 'ой', с: 'ому', мн: 'им'},
+                    acc: {м: 'ий', ж: 'ую', с: 'ое', мн: 'ие'},
+                    inst: {м: 'им', ж: 'ой', с: 'им', мн: 'ими'},
+                    prep: {м: 'ом', ж: 'ой', с: 'ом', мн: 'их'}
+                };
+                return adjBase + endings[caseType][genderKey];
+            }
+            
+            // Твердые основы
+            const hardEndings = {
+                nom: {м: 'ый', ж: 'ая', с: 'ое', мн: 'ые'},
+                gen: {м: 'ого', ж: 'ой', с: 'ого', мн: 'ых'},
+                dat: {м: 'ому', ж: 'ой', с: 'ому', мн: 'ым'},
+                acc: {м: 'ый', ж: 'ую', с: 'ое', мн: 'ые'},
+                inst: {м: 'ым', ж: 'ой', с: 'ым', мн: 'ыми'},
+                prep: {м: 'ом', ж: 'ой', с: 'ом', мн: 'ых'}
+            };
+            
+            return adjBase + hardEndings[caseType][genderKey];
+        }
+
+        // Функция для получения случайного элемента
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        // Улучшенные шаблоны предложений
+        const sentenceTemplates = [
+            // Простые структуры
+            {
+                template: (elements) => {
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const adj = agreeAdjective(getRandomElement(philosophicalConcepts.attributes), subj.gender);
+                    const char = getRandomElement(tolkienElements.characters);
+                    const pred = getRandomElement(philosophicalConcepts.predicates);
+                    const obj = getRandomElement(tolkienElements.concepts);
+                    
+                    let result = `${adj} ${subj.word} ${decline(char, 'gen')} `;
+                    
+                    if (pred.preposition) {
+                        result += `${pred.verb} ${pred.preposition} ${decline(obj, pred.object)}`;
+                    } else {
+                        result += `${pred.verb} ${decline(obj, pred.object)}`;
+                    }
+                    
+                    return result;
+                }
+            },
+            // Сравнительные конструкции
+            {
+                template: (elements) => {
+                    const race1 = getRandomElement(tolkienElements.races);
+                    const race2 = getRandomElement(tolkienElements.races);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const adj = agreeAdjective(getRandomElement(philosophicalConcepts.attributes), 'ж');
+                    const concept = getRandomElement(tolkienElements.concepts);
+                    
+                    return `${race1.word} постигают ${decline(subj, 'acc')} иначе, чем ${race2.word}, ибо их ${adj} природа связана с ${decline(concept, 'inst')}`;
+                }
+            },
+            // С локацией
+            {
+                template: (elements) => {
+                    const place = getRandomElement(tolkienElements.places);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const pred = getRandomElement(philosophicalConcepts.predicates);
+                    const artifact = getRandomElement(tolkienElements.artifacts);
+                    const concept = getRandomElement(tolkienElements.concepts);
+                    
+                    let result = `В ${decline(place, 'prep')} ${subj.word} `;
+                    
+                    if (pred.preposition) {
+                        result += `${pred.verb} ${pred.preposition} ${decline(concept, pred.object)}, подобно тому, как ${artifact.word} воплощает ${decline(concept, 'acc')}`;
+                    } else {
+                        result += `${pred.verb} ${decline(concept, pred.object)} через силу ${decline(artifact, 'gen')}`;
+                    }
+                    
+                    return result;
+                }
+            },
+            // Цитата персонажа
+            {
+                template: (elements) => {
+                    const char = getRandomElement(tolkienElements.characters);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const concept1 = getRandomElement(tolkienElements.concepts);
+                    const concept2 = getRandomElement(tolkienElements.concepts);
+                    
+                    return `Как говорил ${char.word}, ${subj.word} есть лишь отражение ${decline(concept1, 'gen')}, преломленное через ${decline(concept2, 'acc')}`;
+                }
+            },
+            // Учение персонажа
+            {
+                template: (elements) => {
+                    const char = getRandomElement(tolkienElements.characters);
+                    const adj = getRandomElement(philosophicalConcepts.attributes);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const concept = getRandomElement(tolkienElements.concepts);
+                    const pred = getRandomElement(philosophicalConcepts.predicates);
+                    const concept2 = getRandomElement(tolkienElements.concepts);
+                    
+                    const adjAgree = agreeAdjective(adj, subj.gender);
+                    
+                    let result = `${char.word} учил, что ${adjAgree} ${subj.word} ${decline(concept, 'gen')} `;
+                    
+                    if (pred.preposition) {
+                        result += `${pred.verb} ${pred.preposition} ${decline(concept2, pred.object)}`;
+                    } else {
+                        result += `${pred.verb} ${decline(concept2, pred.object)}`;
+                    }
+                    
+                    return result;
+                }
+            },
+            // Эпохальные изменения
+            {
+                template: (elements) => {
+                    const artifact = getRandomElement(tolkienElements.artifacts);
+                    const place = getRandomElement(tolkienElements.places);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const adj = getRandomElement(philosophicalConcepts.attributes);
+                    
+                    const adjAgree = agreeAdjective(adj, 'ж', 'acc');
+                    
+                    return `Когда ${artifact.word} был создан в ${decline(place, 'prep')}, ${subj.word} обрело свою ${adjAgree} сущность`;
+                }
+            },
+            // Философия рас
+            {
+                template: (elements) => {
+                    const concept = getRandomElement(tolkienElements.concepts);
+                    const race = getRandomElement(tolkienElements.races);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const race2 = getRandomElement(tolkienElements.races);
+                    const concept2 = getRandomElement(tolkienElements.concepts);
+                    
+                    return `${concept.word} ${decline(race, 'gen')} проявляется в ${decline(subj, 'prep')}, тогда как ${race2.word} ищут истину в ${decline(concept2, 'prep')}`;
+                }
+            },
+            // Мудрость персонажа
+            {
+                template: (elements) => {
+                    const char = getRandomElement(tolkienElements.characters);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const concept = getRandomElement(tolkienElements.concepts);
+                    const artifact = getRandomElement(tolkienElements.artifacts);
+                    
+                    return `Мудрость ${decline(char, 'gen')} гласит: "${subj.word} и ${concept.word} — две грани ${decline(artifact, 'gen')}"`;
+                }
+            },
+            // Познание в эпоху
+            {
+                template: (elements) => {
+                    const concept = getRandomElement(tolkienElements.concepts);
+                    const char = getRandomElement(tolkienElements.characters);
+                    const adj = getRandomElement(philosophicalConcepts.attributes);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const place = getRandomElement(tolkienElements.places);
+                    
+                    const adjAgree = agreeAdjective(adj, subj.gender);
+                    
+                    return `В эпоху ${decline(concept, 'gen')} ${char.word} познал, что ${adjAgree} ${subj.word} укоренено в ${decline(place, 'prep')}`;
+                }
+            },
+            // Понимание разными расами
+            {
+                template: (elements) => {
+                    const race = getRandomElement(tolkienElements.races);
+                    const race2 = getRandomElement(tolkienElements.races);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const pred = getRandomElement(philosophicalConcepts.predicates);
+                    const concept = getRandomElement(tolkienElements.concepts);
+                    
+                    let result = `${race.word}, в отличие от ${decline(race2, 'gen')}, понимают, что ${subj.word} `;
+                    
+                    if (pred.preposition) {
+                        result += `${pred.verb} ${pred.preposition} ${decline(concept, pred.object)}`;
+                    } else {
+                        result += `${pred.verb} ${decline(concept, pred.object)}`;
+                    }
+                    
+                    return result;
+                }
+            },
+            // Сложная трансформация
+            {
+                template: (elements) => {
+                    const artifact = getRandomElement(tolkienElements.artifacts);
+                    const adj = getRandomElement(philosophicalConcepts.attributes);
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const char = getRandomElement(tolkienElements.characters);
+                    const concept = getRandomElement(tolkienElements.concepts);
+                    const place = getRandomElement(tolkienElements.places);
+                    
+                    const adjAgree = agreeAdjective(adj, subj.gender);
+                    
+                    return `Подобно ${decline(artifact, 'dat')}, ${adjAgree} ${subj.word} ${decline(char, 'gen')} трансформирует ${decline(concept, 'acc')} в ${decline(place, 'prep')}`;
+                }
+            },
+            // Отрицание и утверждение
+            {
+                template: (elements) => {
+                    const subj = getRandomElement(philosophicalConcepts.subjects);
+                    const concept1 = getRandomElement(tolkienElements.concepts);
+                    const concept2 = getRandomElement(tolkienElements.concepts);
+                    const artifact = getRandomElement(tolkienElements.artifacts);
+                    
+                    return `Не ${subj.word} определяет ${decline(concept1, 'acc')}, но ${concept2.word} проявляется через ${decline(artifact, 'acc')}`;
+                }
+            }
+        ];
+
+        // Генерация псевдофилософского высказывания
+        function generateQuote() {
+            const template = getRandomElement(sentenceTemplates);
+            let quote = template.template();
+            
+            // Делаем первую букву заглавной
+            quote = quote.charAt(0).toUpperCase() + quote.slice(1) + '.';
+            
+            // Генерируем псевдо-автора
+            const authorTemplates = [
+                () => {
+                    const char = getRandomElement(tolkienElements.characters);
+                    const concept = getRandomElement(philosophicalConcepts.subjects);
+                    return `— ${char.word}, "${getRandomElement(['Трактат', 'Размышления', 'Диалоги', 'Записки', 'Хроники'])} о ${decline(concept, 'prep')}"`;
+                },
+                () => {
+                    const place = getRandomElement(tolkienElements.places);
+                    return `— Из "${getRandomElement(['Анналов', 'Летописей', 'Свитков', 'Книги', 'Песни'])} ${decline(place, 'gen')}"`;
+                },
+                () => {
+                    const race = getRandomElement(tolkienElements.races);
+                    return `— ${getRandomElement(['Древняя мудрость', 'Изречение', 'Пословица', 'Поговорка'])} ${decline(race, 'gen')}`;
+                },
+                () => {
+                    const char = getRandomElement(tolkienElements.characters);
+                    return `— ${char.word}, ${getRandomElement(['Первая', 'Вторая', 'Третья', 'Четвертая'])} Эпоха`;
+                },
+                () => {
+                    const place = getRandomElement(tolkienElements.places);
+                    return `— Надпись на ${getRandomElement(['стенах', 'вратах', 'скрижалях', 'камне'])} ${decline(place, 'gen')}`;
+                }
+            ];
+            
+            document.getElementById('quote').textContent = quote;
+            document.getElementById('author').textContent = getRandomElement(authorTemplates)();
+            
+            // Анимация появления
+            const quoteContainer = document.querySelector('.quote-container');
+            quoteContainer.style.animation = 'none';
+            setTimeout(() => {
+                quoteContainer.style.animation = 'fadeIn 0.5s ease-in';
+            }, 10);
+        }
+        
+        // Генерируем первое высказывание при загрузке
+        window.onload = () => generateQuote();
+    </script>
+</body>
+</html>

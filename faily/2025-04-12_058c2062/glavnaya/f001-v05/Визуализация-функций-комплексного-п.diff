@@ -1,0 +1,73 @@
+--- предыдущая/Визуализация-функций-комплексного-переменного.html
++++ текущая/Визуализация-функций-комплексного-переменного.html
+@@ -100,24 +100,24 @@
+             <ul>
+                 <li>z^2 или z**2 - функция f(z) = z²</li>
+                 <li>1/z - функция f(z) = 1/z</li>
+-                <li>sin(z) - синус</li>
+-                <li>exp(z) - экспонента</li>
++                <li>math.sin(z) - синус (важно использовать префикс math.)</li>
++                <li>math.exp(z) - экспонента</li>
+                 <li>(z^2 + 1)/(z^2 - 1) - рациональная функция</li>
+                 <li>z^3 - 1 - многочлен</li>
+-                <li>log(z) - натуральный логарифм</li>
+-                <li>cos(z)*sin(z) - произведение функций</li>
++                <li>math.log(z) - натуральный логарифм</li>
++                <li>math.cos(z)*math.sin(z) - произведение функций</li>
+                 <li>2*z - простое умножение</li>
+                 <li>z*(z+1) - умножение на сумму</li>
+             </ul>
+             <p>Доступные операции: +, -, *, /, ^, **</p>
+-            <p>Доступные функции: sin, cos, tan, exp, log, sqrt, abs, conj</p>
+-            <p><strong>Примечание:</strong> Программа автоматически исправляет некоторые распространенные ошибки записи (например, z2 → z*2, 2z → 2*z, z^2 → z**2, z(z+1) → z*(z+1)).</p>
++            <p>Доступные функции (используйте с префиксом math.): sin, cos, tan, exp, log, sqrt, abs, conj</p>
++            <p><strong>Примечание:</strong> Программа автоматически пытается исправить некоторые распространенные ошибки записи, но для математических функций рекомендуется явно использовать префикс math. (например, math.sin(z) вместо sin(z)).</p>
+         </div>
+         
+         <div class="control-panel">
+             <div class="input-group">
+                 <label for="function-input">Функция f(z):</label>
+-                <input type="text" id="function-input" value="z^2" placeholder="Введите функцию, например: z^2">
++                <input type="text" id="function-input" value="z^2" placeholder="Введите функцию, например: z^2, math.sin(z)">
+             </div>
+             
+             <div class="slider-group">
+@@ -211,20 +211,35 @@
+             let complexFunction;
+             
+             try {
+-                // Преобразуем некоторые распространенные ошибки ввода
++                // Предобработка для исправления распространенных ошибок ввода
+                 let processedFunctionStr = functionStr
++                    // Добавляем префикс math. к математическим функциям
++                    .replace(/sin\(/g, "math.sin(")
++                    .replace(/cos\(/g, "math.cos(")  
++                    .replace(/tan\(/g, "math.tan(")
++                    .replace(/exp\(/g, "math.exp(")
++                    .replace(/log\(/g, "math.log(")
++                    .replace(/sqrt\(/g, "math.sqrt(")
++                    .replace(/abs\(/g, "math.abs(")
++                    .replace(/conj\(/g, "math.conj(")
++                    // Затем применяем остальные преобразования
+                     .replace(/\^/g, "**")                     // заменяем ^ на **
+                     .replace(/([0-9])z/gi, "$1*z")            // заменяем 2z на 2*z
+                     .replace(/z([0-9])/gi, "z*$1")            // заменяем z2 на z*2
+                     .replace(/z\(/g, "z*(")                   // заменяем z( на z*(
+                     .replace(/\)z/g, ")*z")                   // заменяем )z на )*z
+                     .replace(/([0-9])([a-zA-Z])/g, "$1*$2")   // заменяем число+буква на число*буква
+-                    .replace(/\)\(/g, ")*(");                 // заменяем )( на )*(
++                    .replace(/\)\(/g, ")*(")                  // заменяем )( на )*(
++                    .replace(/(\w+\))(\w+)/g, "$1*$2")        // sin(z)cos(z) -> sin(z)*cos(z)
++                    .replace(/(\w+\))(\w+\()/g, "$1*$2");     // sin(z)cos(z) -> sin(z)*cos(z)
++                
++                console.log("Введено: " + functionStr);
++                console.log("Обработано: " + processedFunctionStr);
+                 
+                 // Парсинг функции с помощью math.js
+                 complexFunction = math.compile(processedFunctionStr);
+             } catch (error) {
+-                alert("Ошибка в функции: " + error.message);
++                alert("Ошибка в функции: " + error.message + "\nПопробуйте использовать префикс math. перед функциями, например: math.sin(z)");
+                 return;
+             }
+             

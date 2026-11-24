@@ -1,0 +1,53 @@
+frontend/
+├── index.html                          # Главная страница
+├── pages/
+│   ├── concepts-list.html              # Список концепций
+│   ├── concept-editor.html             # Редактор концепций
+│   ├── synthesis.html                  # Инструмент синтеза
+│   └── profile.html                    # Профиль пользователя
+├── js/
+│   ├── app.js                          # Главный файл приложения
+│   ├── api/
+│   │   ├── api-client.js               # HTTP клиент
+│   │   ├── auth-api.js                 # API аутентификации
+│   │   ├── concepts-api.js             # API концепций
+│   │   ├── graph-api.js                # API графов
+│   │   ├── thesis-api.js               # API тезисов
+│   │   ├── synthesis-api.js            # API синтеза
+│   │   ├── claude-api.js               # API Claude
+│   │   ├── name-analysis-api.js        # API анализа названий
+│   │   ├── origin-api.js               # API происхождения
+│   │   ├── historical-api.js           # API исторического контекста
+│   │   ├── practical-api.js            # API практического применения
+│   │   ├── dialogue-api.js             # API диалогов
+│   │   └── evolution-api.js            # API эволюции
+│   ├── components/
+│   │   ├── graph-visualizer.js         # Визуализация графа (D3.js)
+│   │   ├── category-manager.js         # Менеджер категорий
+│   │   ├── relationship-manager.js     # Менеджер связей
+│   │   ├── thesis-list.js              # Список тезисов
+│   │   ├── thesis-generator.js         # Генератор тезисов
+│   │   ├── synthesis-tool.js           # Инструмент синтеза
+│   │   ├── claude-interface.js         # Интерфейс Claude
+│   │   ├── element-approval.js         # Компонент одобрения новых элементов
+│   │   ├── name-analyzer.js            # Анализатор названий
+│   │   ├── origin-detector.js          # Детектор происхождения
+│   │   ├── historical-context.js       # Исторический контекст
+│   │   ├── practical-application.js    # Практическое применение
+│   │   ├── dialogue-generator.js       # Генератор диалогов
+│   │   ├── evolution-tool.js           # Инструмент эволюции
+│   │   └── quant-characteristics.js    # Редактор количественных характеристик
+│   ├── utils/
+│   │   ├── auth.js                     # Утилиты аутентификации
+│   │   ├── storage.js                  # LocalStorage обертка
+│   │   ├── validation.js               # Валидация форм
+│   │   └── formatters.js               # Форматирование данных
+│   └── state/
+│       └── store.js                    # Управление состоянием
+├── css/
+│   ├── main.css                        # Основные стили
+│   ├── graph.css                       # Стили графа
+│   ├── components.css                  # Стили компонентов
+│   └── responsive.css                  # Адаптивность
+└── assets/
+    └── icons/                          # Иконки

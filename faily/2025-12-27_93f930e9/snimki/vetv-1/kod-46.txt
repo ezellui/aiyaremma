@@ -1,0 +1,31 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Копируем файлы зависимостей
+COPY package*.json ./
+
+# Устанавливаем зависимости
+RUN npm ci --only=production
+
+# Копируем shared модуль
+COPY --from=shared /app ../shared
+
+# Копируем исходный код
+COPY src ./src
+
+# Создаем пользователя без привилегий
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Создаем директорию для логов
+RUN mkdir -p /app/logs && chown -R nodejs:nodejs /app/logs
+
+USER nodejs
+
+EXPOSE 4000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:4000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+CMD ["node", "src/index.js"]

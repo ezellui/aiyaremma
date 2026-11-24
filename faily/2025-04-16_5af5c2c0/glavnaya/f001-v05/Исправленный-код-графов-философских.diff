@@ -1,0 +1,177 @@
+--- предыдущая/Исправленный-код-графов-философских-концепций.html
++++ текущая/Исправленный-код-графов-философских-концепций.html
+@@ -3,6 +3,135 @@
+   { id: 1, label: 'Сознание', group: 'антропологическая' },
+   { id: 2, label: 'Интенциональность', group: 'эпистемологическая' },
+   { id: 3, label: 'Феномен', group: 'онтологическая' },
++  { id: 4, label: 'Эпохе', group: 'эпистемологическая' },
++  { id: 5, label: 'Жизненный мир', group: 'онтологическая' },
++  { id: 6, label: 'Понимание', group: 'эпистемологическая' },
++  { id: 7, label: 'Язык', group: 'антропологическая' },
++  { id: 8, label: 'Интерсубъективность', group: 'антропологическая' },
++  { id: 9, label: 'Время', group: 'онтологическая' },
++  { id: 10, label: 'Бытие-в-мире', group: 'онтологическая' }
++]);
++
++const phenomenologyEdges = new vis.DataSet([
++  { from: 1, to: 2, label: 'Понятийная связь', arrows: 'to' },
++  { from: 2, to: 3, label: 'Интерпретация', arrows: 'to' },
++  { from: 4, to: 3, label: 'Интерпретация', arrows: 'to' },
++  { from: 1, to: 5, label: 'Эмерджентность', arrows: 'to' },
++  { from: 6, to: 3, label: 'Понятийная связь', arrows: 'to' },
++  { from: 7, to: 6, label: 'Основание', arrows: 'to' },
++  { from: 1, to: 8, label: 'Эмерджентность', arrows: 'to' },
++  { from: 9, to: 1, label: 'Понятийная связь', arrows: 'to' },
++  { from: 10, to: 1, label: 'Основание', arrows: 'to' },
++  { from: 5, to: 10, label: 'Понятийная связь', arrows: 'to' }
++]);
++
++// Прагматизм
++const pragmatismNodes = new vis.DataSet([
++  { id: 1, label: 'Опыт', group: 'эпистемологическая' },
++  { id: 2, label: 'Истина', group: 'эпистемологическая' },
++  { id: 3, label: 'Полезность', group: 'аксиологическая' },
++  { id: 4, label: 'Знание', group: 'эпистемологическая' },
++  { id: 5, label: 'Действие', group: 'антропологическая' },
++  { id: 6, label: 'Верование', group: 'эпистемологическая' },
++  { id: 7, label: 'Сомнение', group: 'эпистемологическая' },
++  { id: 8, label: 'Исследование', group: 'эпистемологическая' },
++  { id: 9, label: 'Демократия', group: 'антропологическая' },
++  { id: 10, label: 'Плюрализм', group: 'аксиологическая' }
++]);
++
++const pragmatismEdges = new vis.DataSet([
++  { from: 1, to: 2, label: 'Основание', arrows: 'to' },
++  { from: 2, to: 3, label: 'Тождественность', arrows: 'to, from' },
++  { from: 4, to: 5, label: 'Инструмент для', arrows: 'to' },
++  { from: 6, to: 5, label: 'Направляет', arrows: 'to' },
++  { from: 7, to: 8, label: 'Причинность', arrows: 'to' },
++  { from: 8, to: 6, label: 'Причинность', arrows: 'to' },
++  { from: 1, to: 4, label: 'Основание', arrows: 'to' },
++  { from: 9, to: 10, label: 'Эмерджентность', arrows: 'to' },
++  { from: 10, to: 3, label: 'Понятийная связь', arrows: 'to' },
++  { from: 5, to: 1, label: 'Причинность', arrows: 'to' }
++]);
++
++// Структурализм
++const structuralismNodes = new vis.DataSet([
++  { id: 1, label: 'Структура', group: 'логическая' },
++  { id: 2, label: 'Знак', group: 'эпистемологическая' },
++  { id: 3, label: 'Означающее', group: 'эпистемологическая' },
++  { id: 4, label: 'Означаемое', group: 'эпистемологическая' },
++  { id: 5, label: 'Система', group: 'логическая' },
++  { id: 6, label: 'Бинарные\nоппозиции', group: 'логическая' },
++  { id: 7, label: 'Различие', group: 'логическая' },
++  { id: 8, label: 'Язык', group: 'антропологическая' },
++  { id: 9, label: 'Бессознательное', group: 'антропологическая' },
++  { id: 10, label: 'Культура', group: 'антропологическая' }
++]);
++
++const structuralismEdges = new vis.DataSet([
++  { from: 1, to: 5, label: 'Понятийная связь', arrows: 'to, from' },
++  { from: 2, to: 3, label: 'Основание', arrows: 'to' },
++  { from: 2, to: 4, label: 'Основание', arrows: 'to' },
++  { from: 3, to: 4, label: 'Противоположность', arrows: 'to, from' },
++  { from: 1, to: 6, label: 'Эмерджентность', arrows: 'to' },
++  { from: 6, to: 7, label: 'Понятийная связь', arrows: 'to' },
++  { from: 7, to: 2, label: 'Основание', arrows: 'to' },
++  { from: 8, to: 1, label: 'Основание', arrows: 'to' },
++  { from: 9, to: 1, label: 'Структурировано как', arrows: 'to' },
++  { from: 10, to: 8, label: 'Понятийная связь', arrows: 'to' }
++]);
++
++// Постмодернизм
++const postmodernismNodes = new vis.DataSet([
++  { id: 1, label: 'Деконструкция', group: 'эпистемологическая' },
++  { id: 2, label: 'Различие', group: 'логическая' },
++  { id: 3, label: 'Текст', group: 'эпистемологическая' },
++  { id: 4, label: 'Дискурс', group: 'эпистемологическая' },
++  { id: 5, label: 'Власть', group: 'антропологическая' },
++  { id: 6, label: 'Знание', group: 'эпистемологическая' },
++  { id: 7, label: 'Симулякр', group: 'онтологическая' },
++  { id: 8, label: 'Гиперреальность', group: 'онтологическая' },
++  { id: 9, label: 'Нарратив', group: 'эпистемологическая' },
++  { id: 10, label: 'Фрагментация', group: 'антропологическая' }
++]);
++
++const postmodernismEdges = new vis.DataSet([
++  { from: 1, to: 3, label: 'Интерпретация', arrows: 'to' },
++  { from: 2, to: 1, label: 'Основание', arrows: 'to' },
++  { from: 4, to: 5, label: 'Понятийная связь', arrows: 'to, from' },
++  { from: 5, to: 6, label: 'Производит', arrows: 'to' },
++  { from: 7, to: 8, label: 'Причинность', arrows: 'to' },
++  { from: 3, to: 9, label: 'Понятийная связь', arrows: 'to' },
++  { from: 9, to: 10, label: 'Эмерджентность', arrows: 'to' },
++  { from: 6, to: 4, label: 'Понятийная связь', arrows: 'to, from' },
++  { from: 3, to: 7, label: 'Интерпретация', arrows: 'to' },
++  { from: 1, to: 9, label: 'Редукция', arrows: 'to' }
++]);
++
++// Марксизм
++const marxismNodes = new vis.DataSet([
++  { id: 1, label: 'Базис', group: 'онтологическая' },
++  { id: 2, label: 'Надстройка', group: 'онтологическая' },
++  { id: 3, label: 'Классовая борьба', group: 'антропологическая' },
++  { id: 4, label: 'Отчуждение', group: 'антропологическая' },
++  { id: 5, label: 'Идеология', group: 'эпистемологическая' },
++  { id: 6, label: 'Капитализм', group: 'онтологическая' },
++  { id: 7, label: 'Коммунизм', group: 'онтологическая' },
++  { id: 8, label: 'Материализм', group: 'эпистемологическая' },
++  { id: 9, label: 'Диалектика', group: 'логическая' },
++  { id: 10, label: 'Классовое\nсознание', group: 'антропологическая' }
++]);
++
++const marxismEdges = new vis.DataSet([
++  { from: 1, to: 2, label: 'Причинность', arrows: 'to' },
++  { from: 3, to: 9, label: 'Понятийная связь', arrows: 'to' },
++  { from: 6, to: 4, label: 'Причинность', arrows: 'to' },
++  { from: 5, to: 2, label: 'Понятийная связь', arrows: 'to' },
++  { from: 6, to: 7, label: 'Диалектическое единство', arrows: 'to' },
++  { from: 8, to: 9, label: 'Основание', arrows: 'to' },
++  { from: 10, to: 3, label: 'Основание', arrows: 'to' },
++  { from: 4, to: 10, label: 'Противоположность', arrows: 'to' },
++  { from: 1, to: 6, label: 'Интерпретация', arrows: 'to' },
++  { from: 3, to: 7, label: 'Причинность', arrows: 'to' }
++]);3, label: 'Феномен', group: 'онтологическая' },
+   { id: 4, label: 'Эпохе', group: 'эпистемологическая' },
+   { id: 5, label: 'Жизненный мир', group: 'онтологическая' },
+   { id: 6, label: 'Понимание', group: 'эпистемологическая' },
+@@ -679,6 +808,38 @@
+     nodes: phenomenologyNodes,
+     edges: phenomenologyEdges
+   }, options);
++  
++  // Прагматизм
++  applyNodeColors(pragmatismNodes.get());
++  const pragmatismContainer = document.getElementById('pragmatism-graph');
++  networks.pragmatism = new vis.Network(pragmatismContainer, {
++    nodes: pragmatismNodes,
++    edges: pragmatismEdges
++  }, options);
++  
++  // Структурализм
++  applyNodeColors(structuralismNodes.get());
++  const structuralismContainer = document.getElementById('structuralism-graph');
++  networks.structuralism = new vis.Network(structuralismContainer, {
++    nodes: structuralismNodes,
++    edges: structuralismEdges
++  }, options);
++  
++  // Постмодернизм
++  applyNodeColors(postmodernismNodes.get());
++  const postmodernismContainer = document.getElementById('postmodernism-graph');
++  networks.postmodernism = new vis.Network(postmodernismContainer, {
++    nodes: postmodernismNodes,
++    edges: postmodernismEdges
++  }, options);
++  
++  // Марксизм
++  applyNodeColors(marxismNodes.get());
++  const marxismContainer = document.getElementById('marxism-graph');
++  networks.marxism = new vis.Network(marxismContainer, {
++    nodes: marxismNodes,
++    edges: marxismEdges
++  }, options);
+ 
+   // Установить начальное отображение
+   showConcept('platonism');

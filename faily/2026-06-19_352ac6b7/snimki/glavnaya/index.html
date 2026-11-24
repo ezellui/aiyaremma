@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Коалесцентная карта мира — интерактив</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside id="panel">
+  <h1>Коалесцентная карта</h1>
+  <p class="sub">Модель территориального охвата vs реальная карта</p>
+
+  <section>
+    <h2>Слой</h2>
+    <label class="radio"><input type="radio" name="layer" value="sim" checked> Симуляция</label>
+    <label class="radio"><input type="radio" name="layer" value="real"> Реальная карта</label>
+  </section>
+
+  <section>
+    <h2>Границы</h2>
+    <label class="chk"><input type="checkbox" id="opt-nat" checked> Внешние (национальные)</label>
+    <label class="chk"><input type="checkbox" id="opt-int"> Внутренние (регионы)</label>
+  </section>
+
+  <section>
+    <h2>Действия по клику</h2>
+    <label class="chk"><input type="checkbox" id="opt-hl" checked> Подсвечивать страну</label>
+    <label class="chk"><input type="checkbox" id="opt-env"> Рисовать огибающую</label>
+    <button id="reset">Сбросить выделение</button>
+  </section>
+
+  <section id="info">
+    <h2>Выбранная область</h2>
+    <div id="info-body" class="muted">Кликните по карте…</div>
+  </section>
+
+  <section class="hint">
+    <h2>Управление</h2>
+    <p>Колесо — масштаб, перетаскивание — сдвиг, клик — выбор страны. Наведение показывает страну внизу.</p>
+  </section>
+</aside>
+
+<main id="stage">
+  <div id="viewport">
+    <div id="world">
+      <img id="base" alt="">
+      <img id="bint" class="bord" alt="">
+      <img id="bnat" class="bord" alt="">
+      <canvas id="overlay"></canvas>
+    </div>
+  </div>
+  <div id="status"><span id="hover">—</span></div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

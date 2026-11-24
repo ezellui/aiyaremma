@@ -1,0 +1,42 @@
+--- предыдущая/build_map3.py
++++ текущая/build_map3.py
+@@ -134,11 +134,15 @@
+     return 'M'+' L'.join(f'{x:.1f},{y:.1f}' for x,y in pts)+' Z'
+ 
+ TOTW,TOTH=PADL+W+PADR,PADT+H+PADB
++import base64
++FRAK=base64.b64encode(open('maguntia.ttf','rb').read()).decode()
+ oc=outline()
+ S=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {TOTW} {TOTH}" font-family="\'Iowan Old Style\',\'Palatino Linotype\',\'Book Antiqua\',Palatino,Georgia,serif">']
+ S.append('<defs>'
+- '<style>.coast{stroke:#33424a;stroke-width:.55;stroke-opacity:.4;stroke-linejoin:round}'
+- '.grat{fill:none;stroke:#aebcc2;stroke-width:.6;stroke-opacity:.45}</style>'
++ "<style>"
++ f"@font-face{{font-family:'UnifrakturMaguntia';src:url(data:font/ttf;base64,{FRAK}) format('truetype');font-weight:400;font-style:normal;}}"
++ ".coast{stroke:#33424a;stroke-width:.55;stroke-opacity:.4;stroke-linejoin:round}"
++ ".grat{fill:none;stroke:#aebcc2;stroke-width:.6;stroke-opacity:.45}</style>"
+  f'<clipPath id="w"><path d="{oc}"/></clipPath></defs>')
+ S.append(f'<rect width="{TOTW}" height="{TOTH}" fill="#f4f1ea"/>')
+ S.append(f'<path d="{oc}" fill="#dbe6ea"/>')
+@@ -167,7 +171,8 @@
+ S.append(lab(-93,44,[('PANAMERIKANISCHE',19,400,'#e4e9f2',0.10,False),('UNION',19,400,'#e4e9f2',0.16,False)]))
+ S.append(lab(113,14,[('JAPANISCHE SPHÄRE',18,400,'#4e2018',0.13,False)]))
+ # имперские / региональные
+-S.append(lab(16,25,[('ITALIENISCHES',15,400,'#2c2f12',0.16,False),('IMPERIUM',15,400,'#2c2f12',0.18,False),('Mare Nostrum',11,400,'#3a3d1a',0.02,True)]))
++S.append(lab(16,25,[('ITALIENISCHES',15,400,'#2c2f12',0.16,False),('IMPERIUM',15,400,'#2c2f12',0.18,False)]))
++S.append(lab(16.5,35.2,[('Mare Nostrum',14,400,'#5f7a86',0.42,True)]))
+ S.append(lab(22,-2,[('MITTELAFRIKA',16,400,'#1f363a',0.18,False)]))
+ # второстепенные — курсив
+ S.append(lab(-60,-16,[('Südamerika',15,400,'#e4e9f2',0.03,True)]))
+@@ -177,8 +182,9 @@
+ 
+ # ---- заголовок ---------------------------------------------------------------
+ cx=TOTW/2
+-S.append(f'<text x="{cx:.0f}" y="60" text-anchor="middle" font-size="37" font-weight="600" fill="#23313b" letter-spacing="8">DER KRUMME SIEG</text>')
+-S.append(f'<text x="{cx:.0f}" y="89" text-anchor="middle" font-size="17" font-style="italic" fill="#4a5a62" letter-spacing="1">Die Aufteilung der Welt nach dem Zweiten Weltkrieg · um 1948</text>')
++S.append(f'<text x="{cx:.0f}" y="64" text-anchor="middle" font-size="46" fill="#26333c" '
++         f'letter-spacing="3" font-family="\'UnifrakturMaguntia\',\'Fette Fraktur\',serif">Der krumme Sieg</text>')
++S.append(f'<text x="{cx:.0f}" y="92" text-anchor="middle" font-size="17" font-style="italic" fill="#4a5a62" letter-spacing="1">Die Aufteilung der Welt nach dem Zweiten Weltkrieg · um 1948</text>')
+ 
+ # ---- легенда -----------------------------------------------------------------
+ ly=PADT+H+42; lx=PADL+30; cw=380

@@ -1,0 +1,35 @@
+# Service Configuration
+NODE_ENV=development
+PORT=4002
+SERVICE_NAME=concept-service
+
+# Database Configuration
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=philos_concepts
+POSTGRES_USER=philos
+POSTGRES_PASSWORD=password
+
+# MongoDB
+MONGO_URL=mongodb://philos:password@localhost:27017/philos_concepts
+
+# Neo4j
+NEO4J_URL=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=password
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# External Services
+CLAUDE_SERVICE_URL=http://localhost:4006
+GRAPH_SERVICE_URL=http://localhost:4003
+
+# Logging
+LOG_LEVEL=debug
+
+# CORS
+CORS_ORIGIN=*
+
+# Search
+SEARCH_RESULTS_LIMIT=50

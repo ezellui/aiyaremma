@@ -1,0 +1,11 @@
+--- предыдущая/Интерактивный-визуализатор-функций-комплексного-пе.html
++++ текущая/Интерактивный-визуализатор-функций-комплексного-пе.html
+@@ -549,7 +549,7 @@
+         </div>
+     </div>
+ 
+-    <script src="https://cdnjs.cloudflare.com/math.js/11.8.0/math.min.js"></script>
++    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+     <script>
+         // Устанавливаем размер холста по размеру контейнера
+         const canvas = document.getElementById('visualization-canvas');

@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Исследование функций комплексного переменного</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .template-section {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .visualization-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .visualization-tab {
+            flex-grow: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #eee;
+            border: 1px solid #ddd;
+        }
+        
+        .visualization-tab.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #canvas-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        .controls-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        
+        .control-group label {
+            margin-right: 5px;
+        }
+        
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        input[type="range"] {
+            width: 150px;
+        }
+        
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+        }
+        
+        .info-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #666;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .method-controls {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .method-controls.active {
+            display: block;
+        }
+        
+        .real-imag-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .real-imag-legend {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        /* Дополнительные стили для переключения между Re/Im */
+        .component-switch {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .component-btn {
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        
+        .component-btn.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        /* Стили для информации о точке под курсором */
+        .point-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            pointer-events: none;
+            display: none;
+        }
+        
+        /* Стили для кнопок сохранения и дополнительных функций */
+        .additional-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .additional-actions button {
+            padding: 8px 12px;
+            background-color: #3498db;
+        }
+        
+        .additional-actions button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .modal-close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        /* Стили для подсказок */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: help;
+        }
+        
+        .tooltip-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 18px;
+            height: 18px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Исследование функций комплексного переменного</h1>
+        
+        <div class="input-section">
+            <h2>Ввод функции</h2>
+            <div>
+                <input type="text" id="function-input" placeholder="Введите функцию комплексного переменного z, например: z^2, sin(z), e^z...">
+                <button id="visualize-btn">Визуализировать</button>
+            </div>
+            
+            <div class="template-section">
+                <h3>Шаблоны функций</h3>
+                <select id="function-templates" onchange="applyTemplate()">
+                    <option value="">Выберите шаблон...</option>
+                    <option value="z^2">z^2 (квадратичная функция)</option>
+                    <option value="z^3">z^3 (кубическая функция)</option>
+                    <option value="1/z">1/z (обратная функция)</option>
+                    <option value="e^z">e^z (экспонента)</option>
+                    <option value="sin(z)">sin(z) (синус)</option>
+                    <option value="cos(z)">cos(z) (косинус)</option>
+                    <option value="z^2 - 1">z^2 - 1</option>
+                    <option value="1/(z^2 + 1)">1/(z^2 + 1)</option>
+                    <option value="log(z)">log(z) (натуральный логарифм)</option>
+                    <option value="sqrt(z)">sqrt(z) (квадратный корень)</option>
+                    <option value="z^4 - 1">z^4 - 1 (полином 4 степени)</option>
+                    <option value="z/(z^2+1)">z/(z^2+1)</option>
+                    <option value="tan(z)">tan(z) (тангенс)</option>
+                    <option value="e^(1/z)">e^(1/z) (особая точка)</option>
+                    <option value="(z^2 - 1)/(z^2 + 1)">Отношение полиномов (z^2 - 1)/(z^2 + 1)</option>
+                </select>
+            </div>
+            
+            <div class="controls-container">
+                <div class="control-group">
+                    <label for="zoom-range">Масштаб:</label>
+                    <input type="range" id="zoom-range" min="0.5" max="5" step="0.1" value="1">
+                    <span id="zoom-value">1.0</span>
+                    <div class="tooltip">
+                        <span class="tooltip-icon">?</span>
+                        <span class="tooltip-text">Можно также масштабировать колесиком мыши</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="center-x">Центр X:</label>
+                    <input type="number" id="center-x" value="0" step="0.5">
+                </div>
+                
+                <div class="control-group">
+                    <label for="center-y">Центр Y:</label>
+                    <input type="number" id="center-y" value="0" step="0.5">
+                    <div class="tooltip">
+                        <span class="tooltip-icon">?</span>
+                        <span class="tooltip-text">Можно также перемещать вид, перетаскивая мышью</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <button id="reset-view-btn">Сбросить вид</button>
+                </div>
+            </div>
+            
+            <!-- Контроли специфичные для метода конформных отображений -->
+            <div id="conformal-controls" class="method-controls">
+                <div class="control-group">
+                    <label for="grid-density">Плотность сетки:</label>
+                    <input type="range" id="grid-density" min="2" max="20" step="1" value="10">
+                    <span id="grid-density-value">10</span>
+                </div>
+                <div class="control-group">
+                    <label for="grid-color">Цвет сетки:</label>
+                    <select id="grid-color">
+                        <option value="rainbow">Радуга</option>
+                        <option value="blue">Синий</option>
+                        <option value="red">Красный</option>
+                        <option value="black">Черный</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Контроли специфичные для метода векторных полей -->
+            <div id="vector-controls" class="method-controls">
+                <div class="control-group">
+                    <label for="vector-density">Плотность векторов:</label>
+                    <input type="range" id="vector-density" min="5" max="40" step="1" value="20">
+                    <span id="vector-density-value">20</span>
+                </div>
+                <div class="control-group">
+                    <label for="vector-scale">Масштаб векторов:</label>
+                    <input type="range" id="vector-scale" min="0.1" max="2" step="0.1" value="0.5">
+                    <span id="vector-scale-value">0.5</span>
+                </div>
+                <div class="control-group">
+                    <label for="vector-color">Цвет векторов:</label>
+                    <select id="vector-color">
+                        <option value="hue">По направлению</option>
+                        <option value="magnitude">По модулю</option>
+                        <option value="white">Белый</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Контроли специфичные для метода действительной и мнимой части -->
+            <div id="real-imag-controls" class="method-controls">
+                <div class="component-switch">
+                    <button class="component-btn active" id="both-btn">Обе части</button>
+                    <button class="component-btn" id="real-btn">Только Re</button>
+                    <button class="component-btn" id="imag-btn">Только Im</button>
+                </div>
+                <div class="real-imag-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ff0000;"></div>
+                        <span>Re > 0</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #0000ff;"></div>
+                        <span>Re < 0</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #00ff00;"></div>
+                        <span>Im > 0</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ffff00;"></div>
+                        <span>Im < 0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Контроли для Domain Coloring -->
+            <div id="domain-coloring-controls" class="method-controls">
+                <div class="control-group">
+                    <label for="show-modulus-rings">Показать кольца модуля:</label>
+                    <input type="checkbox" id="show-modulus-rings" checked>
+                </div>
+                <div class="control-group">
+                    <label for="show-phase-lines">Показать линии фазы:</label>
+                    <input type="checkbox" id="show-phase-lines" checked>
+                </div>
+                <div class="control-group">
+                    <label for="modulus-density">Плотность колец модуля:</label>
+                    <input type="range" id="modulus-density" min="1" max="20" step="1" value="10">
+                    <span id="modulus-density-value">10</span>
+                </div>
+                <div class="control-group">
+                    <label for="phase-density">Плотность линий фазы:</label>
+                    <input type="range" id="phase-density" min="4" max="36" step="4" value="12">
+                    <span id="phase-density-value">12</span>
+                </div>
+                <div class="control-group">
+                    <label for="color-intensity">Интенсивность цвета:</label>
+                    <input type="range" id="color-intensity" min="0.1" max="1.5" step="0.1" value="1.0">
+                    <span id="color-intensity-value">1.0</span>
+                </div>
+            </div>
+            
+            <!-- Дополнительные действия -->
+            <div class="additional-actions">
+                <button id="save-image-btn" title="Сохранить текущее изображение как PNG">Сохранить изображение</button>
+                <button id="help-btn" title="Показать справку по комплексным функциям">Справка</button>
+            </div>
+        </div>
+        
+        <div class="visualization-controls">
+            <div class="visualization-tab active" data-method="domain-coloring">Domain Coloring</div>
+            <div class="visualization-tab" data-method="conformal-mapping">Конформные отображения</div>
+            <div class="visualization-tab" data-method="vector-field">Векторные поля</div>
+            <div class="visualization-tab" data-method="real-imag">Действительная и мнимая части</div>
+        </div>
+        
+        <div id="canvas-container">
+            <canvas id="visualization-canvas"></canvas>
+            <div class="loading" id="loading-indicator">Визуализация...</div>
+            <div class="point-info" id="point-info"></div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>Информация о текущей визуализации</h3>
+            <p id="visualization-info">
+                Выберите функцию и метод визуализации чтобы увидеть результат.
+            </p>
+            <div id="method-info">
+                <h4>Domain Coloring</h4>
+                <p>
+                    Метод Domain Coloring использует цвет для представления значений комплексной функции f(z).
+                    Оттенок (hue) представляет аргумент числа (угол в полярной форме), а яркость представляет модуль.
+                    Раскраска происходит на комплексной плоскости, где оси X и Y соответствуют действительной и мнимой частям переменной z.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для помощи -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="help-modal-close">&times;</span>
+            <h2 class="modal-title">Справка по функциям комплексного переменного</h2>
+            <div id="help-content">
+                <h3>Основы комплексных чисел</h3>
+                <p>
+                    Комплексное число z = x + yi состоит из действительной части x и мнимой части y, где i - мнимая единица (i² = -1).
+                    Каждое комплексное число можно представить как точку на комплексной плоскости, где x - горизонтальная координата, 
+                    а y - вертикальная координата.
+                </p>
+                
+                <h3>Методы визуализации</h3>
+                <p><strong>Domain Coloring</strong> - метод, при котором каждой точке комплексной плоскости присваивается цвет, 
+                зависящий от значения функции f(z) в этой точке. Обычно оттенок (hue) представляет аргумент комплексного числа, 
+                а яркость - его модуль.</p>
+                
+                <p><strong>Конформные отображения</strong> - показывают, как функция f(z) трансформирует регулярную сетку на комплексной 
+                плоскости. Это позволяет увидеть, что функция сохраняет углы между кривыми (свойство конформности).</p>
+                
+                <p><strong>Векторные поля</strong> - представляют значение функции f(z) в виде векторов, где направление вектора 
+                соответствует аргументу, а длина - модулю значения функции.</p>
+                
+                <p><strong>Действительная и мнимая части</strong> - раздельное отображение Re(f(z)) и Im(f(z)) с использованием 
+                цветовой карты.</p>
+                
+                <h3>Работа с визуализатором</h3>
+                <ul>
+                    <li>Введите функцию вручную или выберите шаблон из списка</li>
+                    <li>Используйте колесико мыши для масштабирования</li>
+                    <li>Перетаскивайте мышью для перемещения по плоскости</li>
+                    <li>Наведите курсор на любую точку изображения, чтобы увидеть значения z и f(z)</li>
+                    <li>Используйте кнопку "Сохранить изображение" для сохранения текущей визуализации</li>
+                </ul>
+                
+                <h3>Популярные функции комплексного переменного</h3>
+                <ul>
+                    <li><strong>z²</strong> - квадратичная функция, поворачивает и растягивает комплексную плоскость</li>
+                    <li><strong>1/z</strong> - обратная функция, превращает окружности в прямые</li>
+                    <li><strong>e^z</strong> - комплексная экспонента, периодична по мнимой оси</li>
+                    <li><strong>sin(z), cos(z)</strong> - комплексные тригонометрические функции</li>
+                    <li><strong>log(z)</strong> - комплексный логарифм, имеет разрез на отрицательной действительной оси</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+    <script>
+        // Устанавливаем размер холста по размеру контейнера
+        const canvas = document.getElementById('visualization-canvas');
+        const container = document.getElementById('canvas-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const pointInfo = document.getElementById('point-info');
+        
+        // Контекст для рисования
+        const ctx = canvas.getContext('2d');
+        
+        // Параметры отображения
+        let zoomLevel = 1;
+        let centerX = 0;
+        let centerY = 0;
+        let currentFunction = null;
+        
+        // Параметры для метода конформных отображений
+        let gridDensity = 10;
+        let gridColor = 'rainbow';
+        
+        // Параметры для метода векторных полей
+        let vectorDensity = 20;
+        let vectorScale = 0.5;
+        let vectorColor = 'hue';
+        
+        // Параметры для метода действительной и мнимой части
+        let realImagMode = 'both'; // 'both', 'real', 'imag'
+        
+        // Параметры для Domain Coloring
+        let showModulusRings = true;
+        let showPhaseLines = true;
+        let modulusDensity = 10;
+        let phaseDensity = 12;
+        let colorIntensity = 1.0;
+        
+        // Переменные для перетаскивания
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let lastCenterX = centerX;
+        let lastCenterY = centerY;
+        
+        // Параметры области отображения (будут обновляться при каждой визуализации)
+        let minX, maxX, minY, maxY;
+        
+        function resizeCanvas() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // Перерисовываем после изменения размера, если функция уже задана
+            if (currentFunction) {
+                visualizeFunction();
+            }
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // Обновление информации о масштабе
+        document.getElementById('zoom-range').addEventListener('input', function() {
+            zoomLevel = parseFloat(this.value);
+            document.getElementById('zoom-value').textContent = zoomLevel.toFixed(1);
+        });
+        
+        // Обновление центра X
+        document.getElementById('center-x').addEventListener('change', function() {
+            centerX = parseFloat(this.value) || 0;
+        });
+        
+        // Обновление центра Y
+        document.getElementById('center-y').addEventListener('change', function() {
+            centerY = parseFloat(this.value) || 0;
+        });
+        
+        // Обновление плотности сетки для конформных отображений
+        document.getElementById('grid-density').addEventListener('input', function() {
+            gridDensity = parseInt(this.value);
+            document.getElementById('grid-density-value').textContent = gridDensity;
+        });
+        
+        // Обновление цвета сетки для конформных отображений
+        document.getElementById('grid-color').addEventListener('change', function() {
+            gridColor = this.value;
+        });
+        
+        // Обновление плотности векторов для векторных полей
+        document.getElementById('vector-density').addEventListener('input', function() {
+            vectorDensity = parseInt(this.value);
+            document.getElementById('vector-density-value').textContent = vectorDensity;
+        });
+        
+        // Обновление масштаба векторов для векторных полей
+        document.getElementById('vector-scale').addEventListener('input', function() {
+            vectorScale = parseFloat(this.value);
+            document.getElementById('vector-scale-value').textContent = vectorScale;
+        });
+        
+        // Обновление цвета векторов для векторных полей
+        document.getElementById('vector-color').addEventListener('change', function() {
+            vectorColor = this.value;
+        });
+        
+        // Обработка кнопок переключения между режимами отображения Re/Im
+        document.getElementById('both-btn').addEventListener('click', function() {
+            document.querySelectorAll('.component-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            realImagMode = 'both';
+        });
+        
+        document.getElementById('real-btn').addEventListener('click', function() {
+            document.querySelectorAll('.component-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            realImagMode = 'real';
+        });
+        
+        document.getElementById('imag-btn').addEventListener('click', function() {
+            document.querySelectorAll('.component-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            realImagMode = 'imag';
+        });
+        
+        // Обработка элементов управления для Domain Coloring
+        document.getElementById('show-modulus-rings').addEventListener('change', function() {
+            showModulusRings = this.checked;
+        });
+        
+        document.getElementById('show-phase-lines').addEventListener('change', function() {
+            showPhaseLines = this.checked;
+        });
+        
+        document.getElementById('modulus-density').addEventListener('input', function() {
+            modulusDensity = parseInt(this.value);
+            document.getElementById('modulus-density-value').textContent = modulusDensity;
+        });
+        
+        document.getElementById('phase-density').addEventListener('input', function() {
+            phaseDensity = parseInt(this.value);
+            document.getElementById('phase-density-value').textContent = phaseDensity;
+        });
+        
+        document.getElementById('color-intensity').addEventListener('input', function() {
+            colorIntensity = parseFloat(this.value);
+            document.getElementById('color-intensity-value').textContent = colorIntensity.toFixed(1);
+        });
+        
+        // Сброс представления
+        document.getElementById('reset-view-btn').addEventListener('click', function() {
+            zoomLevel = 1;
+            centerX = 0;
+            centerY = 0;
+            
+            document.getElementById('zoom-range').value = zoomLevel;
+            document.getElementById('zoom-value').textContent = zoomLevel.toFixed(1);
+            document.getElementById('center-x').value = centerX;
+            document.getElementById('center-y').value = centerY;
+            
+            // Сразу обновляем визуализацию с новыми параметрами
+            if (currentFunction) {
+                visualizeFunction();
+            }
+        });
+        
+        // Применение выбранного шаблона
+        function applyTemplate() {
+            const selectElement = document.getElementById('function-templates');
+            const functionInput = document.getElementById('function-input');
+            
+            if (selectElement.value) {
+                functionInput.value = selectElement.value;
+                
+                // Если выбран шаблон, сразу визуализируем его
+                currentFunction = selectElement.value;
+                visualizeFunction();
+            }
+        }
+        
+        // Выбор метода визуализации
+        const tabs = document.querySelectorAll('.visualization-tab');
+        let currentMethod = 'domain-coloring';
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentMethod = this.getAttribute('data-method');
+                
+                // Показываем/скрываем контроли специфичные для методов
+                updateMethodControls(currentMethod);
+                
+                // Обновляем описание метода
+                updateMethodInfo(currentMethod);
+                
+                // Если функция уже введена, визуализируем ее с новым методом
+                if (currentFunction) {
+                    visualizeFunction();
+                }
+            });
+        });
+        
+        // Обновление контролей специфичных для методов
+        function updateMethodControls(method) {
+            const methodControls = document.querySelectorAll('.method-controls');
+            methodControls.forEach(control => control.classList.remove('active'));
+            
+            if (method === 'conformal-mapping') {
+                document.getElementById('conformal-controls').classList.add('active');
+            } else if (method === 'vector-field') {
+                document.getElementById('vector-controls').classList.add('active');
+            } else if (method === 'real-imag') {
+                document.getElementById('real-imag-controls').classList.add('active');
+            } else if (method === 'domain-coloring') {
+                document.getElementById('domain-coloring-controls').classList.add('active');
+            }
+        }
+        
+        // Обновление информации о методе
+        function updateMethodInfo(method) {
+            const methodInfoElement = document.getElementById('method-info');
+            let content = '';
+            
+            switch (method) {
+                case 'domain-coloring':
+                    content = `
+                        <h4>Domain Coloring</h4>
+                        <p>
+                            Метод Domain Coloring использует цвет для представления значений комплексной функции f(z).
+                            Оттенок (hue) представляет аргумент числа (угол в полярной форме), а яркость представляет модуль.
+                            Раскраска происходит на комплексной плоскости, где оси X и Y соответствуют действительной и мнимой частям переменной z.
+                        </p>
+                    `;
+                    break;
+                case 'conformal-mapping':
+                    content = `
+                        <h4>Конформные отображения</h4>
+                        <p>
+                            Визуализация конформных отображений показывает, как функция трансформирует регулярную сетку на исходной плоскости.
+                            Это помогает увидеть, как функция искажает пространство, сохраняя при этом углы между пересекающимися кривыми.
+                            Каждая линия сетки отображается в новую кривую на плоскости значений функции.
+                        </p>
+                    `;
+                    break;
+                case 'vector-field':
+                    content = `
+                        <h4>Векторные поля</h4>
+                        <p>
+                            Представление комплексной функции как векторного поля, где каждая точка комплексной плоскости 
+                            порождает вектор, соответствующий значению функции в этой точке. Направление вектора соответствует
+                            аргументу, а длина - модулю комплексного числа.
+                        </p>
+                    `;
+                    break;
+                case 'real-imag':
+                    content = `
+                        <h4>Действительная и мнимая части</h4>
+                        <p>
+                            Раздельное отображение действительной (Re) и мнимой (Im) частей комплексной функции f(z).
+                            Красный цвет показывает положительные значения действительной части, синий - отрицательные.
+                            Зеленый цвет показывает положительные значения мнимой части, желтый - отрицательные.
+                            Интенсивность цвета соответствует абсолютному значению компонента.
+                        </p>
+                    `;
+                    break;
+            }
+            
+            methodInfoElement.innerHTML = content;
+        }
+        
+        // Обработка нажатия на кнопку визуализации
+        document.getElementById('visualize-btn').addEventListener('click', function() {
+            const functionExpression = document.getElementById('function-input').value.trim();
+            if (!functionExpression) {
+                alert('Пожалуйста, введите функцию комплексного переменного.');
+                return;
+            }
+            
+            try {
+                // Тестовый парсинг для проверки корректности
+                const testExpr = functionExpression.replace(/z/g, '(1+1i)');
+                math.evaluate(testExpr);
+                
+                // Если дошли до этой точки без ошибок, значит функция корректна
+                currentFunction = functionExpression;
+                visualizeFunction();
+            }
+            catch (e) {
+                alert('Ошибка в выражении функции: ' + e.message);
+            }
+        });
+        
+        // Функция визуализации
+        function visualizeFunction() {
+            if (!currentFunction) return;
+            
+            const infoElement = document.getElementById('visualization-info');
+            infoElement.textContent = `Визуализация функции f(z) = ${currentFunction} методом: ${currentMethod}`;
+            
+            // Показываем индикатор загрузки
+            loadingIndicator.style.display = 'block';
+            
+            // Используем setTimeout, чтобы дать браузеру время отобразить индикатор загрузки
+            setTimeout(() => {
+                try {
+                    // Обновляем параметры области отображения
+                    updateViewParameters();
+                    
+                    switch (currentMethod) {
+                        case 'domain-coloring':
+                            visualizeDomainColoring(currentFunction);
+                            break;
+                        case 'conformal-mapping':
+                            visualizeConformalMapping(currentFunction);
+                            break;
+                        case 'vector-field':
+                            visualizeVectorField(currentFunction);
+                            break;
+                        case 'real-imag':
+                            visualizeRealImag(currentFunction);
+                            break;
+                    }
+                }
+                catch (e) {
+                    alert('Ошибка при визуализации: ' + e.message);
+                    console.error(e);
+                }
+                finally {
+                    // Скрываем индикатор загрузки
+                    loadingIndicator.style.display = 'none';
+                }
+            }, 50);
+        }
+        
+        // Обновление параметров области отображения
+        function updateViewParameters() {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Параметры области отображения
+            const aspectRatio = width / height;
+            const rangeY = 4 / zoomLevel;
+            const rangeX = rangeY * aspectRatio;
+            
+            // Масштабирование и центрирование
+            minX = centerX - rangeX / 2;
+            maxX = centerX + rangeX / 2;
+            minY = centerY - rangeY / 2;
+            maxY = centerY + rangeY / 2;
+        }
+        
+        // Парсинг и вычисление комплексной функции
+        function evaluateComplexFunction(funcExpr, z) {
+            try {
+                // Заменяем переменную z на комплексное число
+                const expr = funcExpr.replace(/z/g, `(${z.re}+${z.im}i)`);
+                return math.evaluate(expr);
+            }
+            catch (e) {
+                console.error('Ошибка вычисления функции:', e);
+                return math.complex(0, 0);
+            }
+        }
+        
+        // Функция для преобразования HSL в RGB
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l; // оттенок серого
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+        
+        // Визуализация методом Domain Coloring
+        function visualizeDomainColoring(funcExpr) {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Создаем буфер для данных изображения
+            const imageData = ctx.createImageData(width, height);
+            const data = imageData.data;
+            
+            // Шаг между пикселями в координатах комплексной плоскости
+            const stepX = (maxX - minX) / width;
+            const stepY = (maxY - minY) / height;
+            
+            // Заполняем данные изображения
+            for (let y = 0; y < height; y++) {
+                const imag = maxY - y * stepY; // инвертируем Y для правильной ориентации
+                
+                for (let x = 0; x < width; x++) {
+                    const real = minX + x * stepX;
+                    
+                    // Создаем комплексное число z = x + yi
+                    const z = math.complex(real, imag);
+                    
+                    // Вычисляем значение функции f(z)
+                    const result = evaluateComplexFunction(funcExpr, z);
+                    
+                    // Получаем аргумент (угол) и модуль
+                    const arg = Math.atan2(result.im, result.re);
+                    const magnitude = Math.sqrt(result.re * result.re + result.im * result.im);
+                    
+                    // Нормализуем аргумент для HSL (0-1 вместо -PI до PI)
+                    const hue = (arg + Math.PI) / (2 * Math.PI);
+                    
+                    // Преобразуем модуль для насыщенности и яркости
+                    // Используем логарифмическую шкалу для лучшего отображения
+                    const logMagnitude = Math.log(1 + magnitude) / Math.log(100);
+                    const scaledMagnitude = Math.min(logMagnitude, 1);
+                    
+                    // Яркость зависит от модуля
+                    let lightness = 0.5 * colorIntensity;
+                    
+                    // Добавляем кольца по модулю для лучшей визуализации, если включено
+                    if (showModulusRings) {
+                        const rings = 0.1 * Math.sin(Math.PI * modulusDensity * magnitude) * colorIntensity;
+                        lightness += rings;
+                    }
+                    
+                    // Добавляем линии по фазе, если включено
+                    if (showPhaseLines) {
+                        // Масштабируем аргумент в диапазоне 0-2π для линий фазы
+                        const scaledArg = (arg + Math.PI) / (2 * Math.PI / phaseDensity);
+                        // Создаем линии путем выделения областей, где аргумент близок к целому числу
+                        const phaseLines = 0.1 * (1 - Math.min(Math.abs(scaledArg - Math.round(scaledArg)), 0.2) * 5) * colorIntensity;
+                        lightness += phaseLines;
+                    }
+                    
+                    // Конвертируем HSL в RGB
+                    const [r, g, b] = hslToRgb(hue, 1.0, lightness);
+                    
+                    // Индекс для текущего пикселя в буфере данных (4 байта на пиксель: R,G,B,A)
+                    const index = (y * width + x) * 4;
+                    
+                    // Заполняем данные цвета
+                    data[index] = r;     // R
+                    data[index + 1] = g; // G
+                    data[index + 2] = b; // B
+                    data[index + 3] = 255; // A (полная непрозрачность)
+                }
+            }
+            
+            // Отображаем результат
+            ctx.putImageData(imageData, 0, 0);
+            
+            // Добавляем оси координат
+            drawAxes(minX, maxX, minY, maxY);
+        }
+        
+        // Визуализация методом Конформных отображений
+        function visualizeConformalMapping(funcExpr) {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Очищаем холст
+            ctx.clearRect(0, 0, width, height);
+            
+            // Рисуем черный фон
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Количество линий сетки
+            const numLines = gridDensity;
+            
+            // Шаг между линиями сетки
+            const gridStepX = (maxX - minX) / numLines;
+            const gridStepY = (maxY - minY) / numLines;
+            
+            // Количество точек для рисования каждой линии
+            const numPoints = 200;
+            
+            // Рисуем сетку вертикальных линий (постоянные x)
+            for (let i = 0; i <= numLines; i++) {
+                const x = minX + i * gridStepX;
+                
+                // Выбираем цвет в зависимости от настроек
+                const colorHue = getGridColor(i / numLines);
+                
+                ctx.beginPath();
+                ctx.strokeStyle = colorHue;
+                ctx.lineWidth = 1;
+                
+                // Рисуем линию по точкам
+                for (let j = 0; j <= numPoints; j++) {
+                    const y = minY + j * (maxY - minY) / numPoints;
+                    
+                    // Вычисляем значение функции в точке (x, y)
+                    const z = math.complex(x, y);
+                    const result = evaluateComplexFunction(funcExpr, z);
+                    
+                    // Преобразуем результат в координаты на холсте
+                    const canvasX = ((result.re - minX) / (maxX - minX)) * width;
+                    const canvasY = height - ((result.im - minY) / (maxY - minY)) * height;
+                    
+                    if (j === 0) {
+                        ctx.moveTo(canvasX, canvasY);
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+                
+                ctx.stroke();
+            }
+            
+            // Рисуем сетку горизонтальных линий (постоянные y)
+            for (let i = 0; i <= numLines; i++) {
+                const y = minY + i * gridStepY;
+                
+                // Выбираем цвет в зависимости от настроек
+                const colorHue = getGridColor(i / numLines + 0.5); // Сдвигаем оттенок для различия
+                
+                ctx.beginPath();
+                ctx.strokeStyle = colorHue;
+                ctx.lineWidth = 1;
+                
+                // Рисуем линию по точкам
+                for (let j = 0; j <= numPoints; j++) {
+                    const x = minX + j * (maxX - minX) / numPoints;
+                    
+                    // Вычисляем значение функции в точке (x, y)
+                    const z = math.complex(x, y);
+                    const result = evaluateComplexFunction(funcExpr, z);
+                    
+                    // Преобразуем результат в координаты на холсте
+                    const canvasX = ((result.re - minX) / (maxX - minX)) * width;
+                    const canvasY = height - ((result.im - minY) / (maxY - minY)) * height;
+                    
+                    if (j === 0) {
+                        ctx.moveTo(canvasX, canvasY);
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+                
+                ctx.stroke();
+            }
+            
+            // Добавляем оси координат
+            drawAxes(minX, maxX, minY, maxY);
+        }
+        
+        // Визуализация методом Векторных полей
+        function visualizeVectorField(funcExpr) {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Очищаем холст
+            ctx.clearRect(0, 0, width, height);
+            
+            // Рисуем черный фон
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Количество векторов по осям
+            const numVectorsX = vectorDensity;
+            const numVectorsY = Math.floor(numVectorsX * height / width);
+            
+            // Шаг между векторами
+            const stepX = (maxX - minX) / numVectorsX;
+            const stepY = (maxY - minY) / numVectorsY;
+            
+            // Коэффициент масштабирования векторов
+            const vectorScaleFactor = Math.min(width, height) / (numVectorsX * 2) * vectorScale;
+            
+            // Максимальная длина вектора для нормализации
+            let maxMagnitude = 0;
+            
+            // Сначала проходим по сетке, чтобы найти максимальный модуль
+            for (let i = 0; i < numVectorsY; i++) {
+                const y = maxY - i * stepY;
+                
+                for (let j = 0; j < numVectorsX; j++) {
+                    const x = minX + j * stepX;
+                    
+                    // Создаем комплексное число z = x + yi
+                    const z = math.complex(x, y);
+                    
+                    // Вычисляем значение функции f(z)
+                    const result = evaluateComplexFunction(funcExpr, z);
+                    
+                    // Вычисляем модуль
+                    const magnitude = Math.sqrt(result.re * result.re + result.im * result.im);
+                    
+                    if (magnitude > maxMagnitude) {
+                        maxMagnitude = magnitude;
+                    }
+                }
+            }
+            
+            // Нормализуем максимальный модуль
+            maxMagnitude = Math.max(maxMagnitude, 1);
+            
+            // Теперь рисуем векторы
+            for (let i = 0; i < numVectorsY; i++) {
+                const y = maxY - i * stepY;
+                
+                for (let j = 0; j < numVectorsX; j++) {
+                    const x = minX + j * stepX;
+                    
+                    // Создаем комплексное число z = x + yi
+                    const z = math.complex(x, y);
+                    
+                    // Вычисляем значение функции f(z)
+                    const result = evaluateComplexFunction(funcExpr, z);
+                    
+                    // Получаем действительную и мнимую части результата
+                    const resultRe = result.re;
+                    const resultIm = result.im;
+                    
+                    // Вычисляем модуль и аргумент
+                    const magnitude = Math.sqrt(resultRe * resultRe + resultIm * resultIm);
+                    const angle = Math.atan2(resultIm, resultRe);
+                    
+                    // Нормализованный модуль для масштабирования
+                    const normalizedMagnitude = Math.min(magnitude / maxMagnitude, 1);
+                    
+                    // Координаты начальной точки вектора на холсте
+                    const startX = (x - minX) / (maxX - minX) * width;
+                    const startY = height - (y - minY) / (maxY - minY) * height;
+                    
+                    // Длина вектора с учетом масштабирования
+                    const vectorLength = normalizedMagnitude * vectorScaleFactor;
+                    
+                    // Координаты конечной точки вектора
+                    const endX = startX + vectorLength * Math.cos(angle);
+                    const endY = startY - vectorLength * Math.sin(angle);
+                    
+                    // Цвет вектора в зависимости от настроек
+                    let vectorStrokeStyle;
+                    
+                    if (vectorColor === 'hue') {
+                        // Цвет в зависимости от направления (аргумента)
+                        const hue = (angle + Math.PI) / (2 * Math.PI);
+                        const [r, g, b] = hslToRgb(hue, 1.0, 0.5);
+                        vectorStrokeStyle = `rgb(${r}, ${g}, ${b})`;
+                    } else if (vectorColor === 'magnitude') {
+                        // Цвет в зависимости от модуля
+                        const brightness = 0.2 + 0.8 * normalizedMagnitude;
+                        vectorStrokeStyle = `rgb(${255 * brightness}, ${100 * brightness}, ${50 * brightness})`;
+                    } else {
+                        // Простой белый цвет
+                        vectorStrokeStyle = 'white';
+                    }
+                    
+                    // Рисуем вектор
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.strokeStyle = vectorStrokeStyle;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    
+                    // Рисуем стрелку на конце вектора
+                    const arrowSize = 3;
+                    const arrowAngle = Math.PI / 8; // Угол наконечника стрелки
+                    
+                    // Направления для стрелки
+                    const arrowAngle1 = angle + Math.PI - arrowAngle;
+                    const arrowAngle2 = angle + Math.PI + arrowAngle;
+                    
+                    // Координаты для стрелки
+                    const arrowX1 = endX + arrowSize * Math.cos(arrowAngle1);
+                    const arrowY1 = endY - arrowSize * Math.sin(arrowAngle1);
+                    const arrowX2 = endX + arrowSize * Math.cos(arrowAngle2);
+                    const arrowY2 = endY - arrowSize * Math.sin(arrowAngle2);
+                    
+                    // Рисуем стрелку
+                    ctx.beginPath();
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(arrowX1, arrowY1);
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(arrowX2, arrowY2);
+                    ctx.stroke();
+                }
+            }
+            
+            // Добавляем оси координат
+            drawAxes(minX, maxX, minY, maxY);
+        }
+        
+        // Визуализация методом отображения действительной и мнимой части
+        function visualizeRealImag(funcExpr) {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Создаем буфер для данных изображения
+            const imageData = ctx.createImageData(width, height);
+            const data = imageData.data;
+            
+            // Шаг между пикселями в координатах комплексной плоскости
+            const stepX = (maxX - minX) / width;
+            const stepY = (maxY - minY) / height;
+            
+            // Максимальные значения для нормализации
+            let maxRe = 0;
+            let maxIm = 0;
+            
+            // Сначала проходим по всей области для определения максимальных значений
+            for (let y = 0; y < height; y++) {
+                const imag = maxY - y * stepY; // инвертируем Y для правильной ориентации
+                
+                for (let x = 0; x < width; x++) {
+                    const real = minX + x * stepX;
+                    
+                    // Создаем комплексное число z = x + yi
+                    const z = math.complex(real, imag);
+                    
+                    // Вычисляем значение функции f(z)
+                    const result = evaluateComplexFunction(funcExpr, z);
+                    
+                    // Обновляем максимальные значения
+                    const absRe = Math.abs(result.re);
+                    const absIm = Math.abs(result.im);
+                    
+                    if (absRe > maxRe) maxRe = absRe;
+                    if (absIm > maxIm) maxIm = absIm;
+                }
+            }
+            
+            // Минимальное значение для максимумов, чтобы избежать деления на ноль
+            maxRe = Math.max(maxRe, 1);
+            maxIm = Math.max(maxIm, 1);
+            
+            // Теперь рисуем изображение
+            for (let y = 0; y < height; y++) {
+                const imag = maxY - y * stepY; // инвертируем Y для правильной ориентации
+                
+                for (let x = 0; x < width; x++) {
+                    const real = minX + x * stepX;
+                    
+                    // Создаем комплексное число z = x + yi
+                    const z = math.complex(real, imag);
+                    
+                    // Вычисляем значение функции f(z)
+                    const result = evaluateComplexFunction(funcExpr, z);
+                    
+                    // Нормализуем значения
+                    const normalizedRe = Math.min(Math.abs(result.re) / maxRe, 1);
+                    const normalizedIm = Math.min(Math.abs(result.im) / maxIm, 1);
+                    
+                    // Определяем цвета в зависимости от выбранного режима
+                    let r = 0, g = 0, b = 0;
+                    
+                    if (realImagMode === 'both' || realImagMode === 'real') {
+                        // Для действительной части: красный (положительный) или синий (отрицательный)
+                        if (result.re >= 0) {
+                            r += normalizedRe * 255;
+                        } else {
+                            b += normalizedRe * 255;
+                        }
+                    }
+                    
+                    if (realImagMode === 'both' || realImagMode === 'imag') {
+                        // Для мнимой части: зеленый (положительный) или желтый (отрицательный)
+                        if (result.im >= 0) {
+                            g += normalizedIm * 255;
+                        } else {
+                            r += normalizedIm * 127;
+                            g += normalizedIm * 127;
+                        }
+                    }
+                    
+                    // Индекс для текущего пикселя в буфере данных (4 байта на пиксель: R,G,B,A)
+                    const index = (y * width + x) * 4;
+                    
+                    // Заполняем данные цвета
+                    data[index] = Math.min(r, 255);       // R
+                    data[index + 1] = Math.min(g, 255);   // G
+                    data[index + 2] = Math.min(b, 255);   // B
+                    data[index + 3] = 255;                // A (полная непрозрачность)
+                }
+            }
+            
+            // Отображаем результат
+            ctx.putImageData(imageData, 0, 0);
+            
+            // Добавляем оси координат
+            drawAxes(minX, maxX, minY, maxY);
+        }
+        
+        // Получение цвета для сетки в зависимости от настроек
+        function getGridColor(position) {
+            switch (gridColor) {
+                case 'rainbow':
+                    // Используем HSL, где позиция влияет на цветовой оттенок
+                    const hue = position * 360;
+                    return `hsl(${hue}, 100%, 70%)`;
+                case 'blue':
+                    return `rgba(0, 100, 255, 0.8)`;
+                case 'red':
+                    return `rgba(255, 50, 50, 0.8)`;
+                case 'black':
+                    return `rgba(200, 200, 200, 0.8)`;
+                default:
+                    return `rgba(255, 255, 255, 0.8)`;
+            }
+        }
+        
+        // Функция для отображения осей координат
+        function drawAxes(minX, maxX, minY, maxY) {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Находим положение осей
+            const xAxisY = height - (0 - minY) * height / (maxY - minY);
+            const yAxisX = (0 - minX) * width / (maxX - minX);
+            
+            ctx.save();
+            
+            // Рисуем оси
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 1;
+            
+            // Ось X
+            if (xAxisY >= 0 && xAxisY <= height) {
+                ctx.beginPath();
+                ctx.moveTo(0, xAxisY);
+                ctx.lineTo(width, xAxisY);
+                ctx.stroke();
+            }
+            
+            // Ось Y
+            if (yAxisX >= 0 && yAxisX <= width) {
+                ctx.beginPath();
+                ctx.moveTo(yAxisX, 0);
+                ctx.lineTo(yAxisX, height);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+        
+        // Обработка событий мыши для взаимодействия с холстом
+        
+        // Масштабирование с помощью колеса мыши
+        canvas.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            
+            // Определяем направление прокрутки
+            const delta = Math.sign(e.deltaY);
+            
+            // Коэффициент изменения масштаба
+            const zoomFactor = 0.1;
+            
+            // Изменяем масштаб
+            if (delta > 0) {
+                // Уменьшаем масштаб
+                zoomLevel = Math.max(0.5, zoomLevel - zoomFactor);
+            } else {
+                // Увеличиваем масштаб
+                zoomLevel = Math.min(5, zoomLevel + zoomFactor);
+            }
+            
+            // Обновляем поле и текст с масштабом
+            document.getElementById('zoom-range').value = zoomLevel;
+            document.getElementById('zoom-value').textContent = zoomLevel.toFixed(1);
+        });
+        
+        // Начало перетаскивания
+        canvas.addEventListener('mousedown', function(e) {
+            if (e.button === 0) { // Левая кнопка мыши
+                isDragging = true;
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                lastCenterX = centerX;
+                lastCenterY = centerY;
+                canvas.style.cursor = 'grabbing';
+            }
+        });
+        
+        // Перемещение при перетаскивании
+        canvas.addEventListener('mousemove', function(e) {
+            // Отображение информации о точке под курсором
+            if (currentFunction) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Преобразуем координаты холста в комплексную плоскость
+                const real = minX + x / canvas.width * (maxX - minX);
+                const imag = maxY - y / canvas.height * (maxY - minY);
+                
+                // Создаем комплексное число z
+                const z = math.complex(real, imag);
+                
+                // Вычисляем значение функции
+                const result = evaluateComplexFunction(currentFunction, z);
+                
+                // Модуль и аргумент результата
+                const magnitude = Math.sqrt(result.re * result.re + result.im * result.im);
+                const argument = Math.atan2(result.im, result.re) * 180 / Math.PI; // в градусах
+                
+                // Отображаем информацию
+                pointInfo.innerHTML = `
+                    z = ${real.toFixed(3)} + ${imag.toFixed(3)}i<br>
+                    f(z) = ${result.re.toFixed(3)} + ${result.im.toFixed(3)}i<br>
+                    |f(z)| = ${magnitude.toFixed(3)}, arg(f(z)) = ${argument.toFixed(1)}°
+                `;
+                
+                pointInfo.style.display = 'block';
+            }
+            
+            // Перетаскивание для перемещения вида
+            if (isDragging) {
+                const dx = e.clientX - dragStartX;
+                const dy = e.clientY - dragStartY;
+                
+                // Преобразуем смещение в пикселях в смещение в координатах комплексной плоскости
+                const deltaX = dx / canvas.width * (maxX - minX);
+                const deltaY = dy / canvas.height * (maxY - minY);
+                
+                // Обновляем центр (обратите внимание на инверсию оси Y)
+                centerX = lastCenterX - deltaX;
+                centerY = lastCenterY + deltaY;
+                
+                // Обновляем поля ввода
+                document.getElementById('center-x').value = centerX.toFixed(2);
+                document.getElementById('center-y').value = centerY.toFixed(2);
+            }
+        });
+        
+        // Завершение перетаскивания
+        window.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                canvas.style.cursor = 'default';
+            }
+        });
+        
+        // Выход курсора за пределы холста скрывает информацию о точке
+        canvas.addEventListener('mouseout', function() {
+            pointInfo.style.display = 'none';
+        });
+        
+        // Сохранение изображения
+        document.getElementById('save-image-btn').addEventListener('click', function() {
+            if (!currentFunction) {
+                alert('Сначала необходимо визуализировать функцию.');
+                return;
+            }
+            
+            // Создаем временный холст с текущим изображением и дополнительной информацией
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height + 40; // Дополнительное место для подписи
+            
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Заполняем фон
+            tempCtx.fillStyle = 'black';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // Копируем изображение с основного холста
+            tempCtx.drawImage(canvas, 0, 0);
+            
+            // Добавляем подпись с информацией о функции
+            tempCtx.fillStyle = 'white';
+            tempCtx.font = '14px Arial';
+            tempCtx.textAlign = 'center';
+            tempCtx.fillText(`f(z) = ${currentFunction}, метод: ${currentMethod}`, tempCanvas.width / 2, canvas.height + 25);
+            
+            // Преобразуем холст в URL изображения
+            const dataURL = tempCanvas.toDataURL('image/png');
+            
+            // Создаем ссылку для скачивания
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = `complex_function_${currentFunction.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+            
+            // Эмулируем клик по ссылке для запуска скачивания
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+        
+        // Обработка модального окна помощи
+        const helpModal = document.getElementById('help-modal');
+        const helpBtn = document.getElementById('help-btn');
+        const helpModalClose = document.getElementById('help-modal-close');
+        
+        // Открытие модального окна
+        helpBtn.addEventListener('click', function() {
+            helpModal.style.display = 'flex';
+        });
+        
+        // Закрытие модального окна по кнопке закрытия
+        helpModalClose.addEventListener('click', function() {
+            helpModal.style.display = 'none';
+        });
+        
+        // Закрытие модального окна по клику вне его содержимого
+        window.addEventListener('click', function(e) {
+            if (e.target === helpModal) {
+                helpModal.style.display = 'none';
+            }
+        });
+        
+        // Инициализация интерфейса
+        updateMethodInfo(currentMethod);
+        updateMethodControls(currentMethod);
+    </script>
+</body>
+</html>

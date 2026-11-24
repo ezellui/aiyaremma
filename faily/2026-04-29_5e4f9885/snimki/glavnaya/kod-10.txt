@@ -1,0 +1,21 @@
+- Weapon: a crystalline astrolabe staff
++ Weapon: a large golden architectural compass (like a draftsman's compass),
+  held open as if measuring distance between two concept-nodes
+
+- Background: vast cosmic void filled with an enormous luminous graph
++ The character's long dark cape spreads wide and IS the graph —
+  the fabric itself shows a detailed node-and-edge network of philosophical
+  concepts, color-coded edges, philosopher names as glowing labels on the nodes
+
++ Right side of the image: a vertical analytics dashboard panel showing:
+  top-10 concepts by degree centrality with colored bar chart,
+  cluster list (Ontology, Epistemology, Ethics, Aesthetics...) with node counts,
+  graph metrics (avg path length, diameter, density),
+  degree distribution histogram
+
++ Background: interior of a grand neoclassical library with marble columns,
+  ancient philosopher busts on pedestals, stacks of books labeled with
+  philosophical tradition names (Онтология, Гносеология, Этика...)
+
++ Small detail: in one hand, a magnifying glass showing two concept nodes
+  with a similarity percentage between them

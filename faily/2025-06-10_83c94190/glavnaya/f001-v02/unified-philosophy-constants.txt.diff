@@ -1,0 +1,230 @@
+--- предыдущая/unified-philosophy-constants.txt
++++ текущая/unified-philosophy-constants.txt
+@@ -4,9 +4,6 @@
+  * Этот файл содержит константы, используемые в различных компонентах системы
+  * для обеспечения единообразия в работе с философскими концепциями, категориями,
+  * традициями и другими философскими сущностями.
+- * 
+- * Philosophy-specific constants for the Philosophy Service
+- * Defines valid values for philosophical categories, types, and relationships
+  */
+ 
+ /**
+@@ -482,6 +479,7 @@
+ 
+ /**
+  * Методы синтеза (упрощенная версия для обратной совместимости)
++ * Используется в некоторых UI компонентах для простого выбора
+  * @type {Object.<string, string>}
+  */
+ const SYNTHESIS_METHODS = Object.freeze({
+@@ -615,7 +613,6 @@
+ 
+ /**
+  * Основной объект констант для философского сервиса
+- * Philosophy-specific constants for the Philosophy Service
+  */
+ const PHILOSOPHY_CONSTANTS = Object.freeze({
+   // Типы тезисов
+@@ -689,64 +686,58 @@
+ });
+ 
+ /**
+- * Helper functions - Вспомогательные функции
+- */
+-
+-/**
+- * Check if a thesis type is valid
++ * Вспомогательные функции
++ */
++
++/**
+  * Проверка валидности типа тезиса
+- * @param {string} type - The thesis type to check
+- * @returns {boolean} - Whether the type is valid
++ * @param {string} type - Тип тезиса для проверки
++ * @returns {boolean} - Является ли тип валидным
+  */
+ function isValidThesisType(type) {
+   return Object.values(THESIS_TYPES).includes(type);
+ }
+ 
+ /**
+- * Check if a thesis style is valid
+  * Проверка валидности стиля тезиса
+- * @param {string} style - The thesis style to check
+- * @returns {boolean} - Whether the style is valid
++ * @param {string} style - Стиль тезиса для проверки
++ * @returns {boolean} - Является ли стиль валидным
+  */
+ function isValidThesisStyle(style) {
+   return Object.values(THESIS_STYLES).includes(style);
+ }
+ 
+ /**
+- * Check if a category type is valid
+  * Проверка валидности типа категории
+- * @param {string} type - The category type to check
+- * @returns {boolean} - Whether the type is valid
++ * @param {string} type - Тип категории для проверки
++ * @returns {boolean} - Является ли тип валидным
+  */
+ function isValidCategoryType(type) {
+   return Object.values(CATEGORY_TYPES).includes(type);
+ }
+ 
+ /**
+- * Check if a relationship type is valid
+  * Проверка валидности типа связи
+- * @param {string} type - The relationship type to check
+- * @returns {boolean} - Whether the type is valid
++ * @param {string} type - Тип связи для проверки
++ * @returns {boolean} - Является ли тип валидным
+  */
+ function isValidRelationshipType(type) {
+   return Object.values(RELATIONSHIP_TYPES).includes(type);
+ }
+ 
+ /**
+- * Check if a relationship direction is valid
+  * Проверка валидности направления связи
+- * @param {string} direction - The relationship direction to check
+- * @returns {boolean} - Whether the direction is valid
++ * @param {string} direction - Направление связи для проверки
++ * @returns {boolean} - Является ли направление валидным
+  */
+ function isValidRelationshipDirection(direction) {
+   return Object.values(RELATIONSHIP_DIRECTIONS).includes(direction);
+ }
+ 
+ /**
+- * Check if an innovation degree is valid
+  * Проверка валидности степени инновационности
+- * @param {number} degree - The innovation degree to check
+- * @returns {boolean} - Whether the degree is valid
++ * @param {number} degree - Степень инновационности для проверки
++ * @returns {boolean} - Является ли степень валидной
+  */
+ function isValidInnovationDegree(degree) {
+   return degree >= INNOVATION_LEVELS.TRADITIONAL && 
+@@ -755,10 +746,9 @@
+ }
+ 
+ /**
+- * Check if a characteristic value is in valid range
+  * Проверка валидности значения характеристики
+- * @param {number} value - The characteristic value to check
+- * @returns {boolean} - Whether the value is valid
++ * @param {number} value - Значение характеристики для проверки
++ * @returns {boolean} - Является ли значение валидным
+  */
+ function isValidCharacteristicValue(value) {
+   return value >= CHARACTERISTIC_RANGES.MIN && 
+@@ -766,19 +756,17 @@
+ }
+ 
+ /**
+- * Get all philosophical traditions as a flat array
+  * Получение всех философских традиций в виде плоского массива
+- * @returns {string[]} - Array of all tradition values
++ * @returns {string[]} - Массив всех значений традиций
+  */
+ function getAllTraditions() {
+   return Object.values(PHILOSOPHICAL_TRADITIONS);
+ }
+ 
+ /**
+- * Get tradition category for a specific tradition
+  * Получение категории традиции для конкретной традиции
+- * @param {string} tradition - The tradition to check
+- * @returns {string|null} - The category name or null if not found
++ * @param {string} tradition - Традиция для проверки
++ * @returns {string|null} - Название категории или null, если не найдена
+  */
+ function getTraditionCategory(tradition) {
+   // Проверяем каждую традицию
+@@ -830,57 +818,52 @@
+ }
+ 
+ /**
+- * Get description for innovation degree
+  * Получение описания для степени инновационности
+- * @param {number} degree - The innovation degree
+- * @returns {string} - Description of the degree
++ * @param {number} degree - Степень инновационности
++ * @returns {string} - Описание степени
+  */
+ function getInnovationDegreeDescription(degree) {
+   const descriptions = {
+-    1: 'Traditional understanding - follows established interpretations / Традиционное понимание - следует установленным интерпретациям',
+-    2: 'Reinterpreted understanding - offers new perspective on existing ideas / Переосмысленное понимание - предлагает новый взгляд на существующие идеи',
+-    3: 'Extended understanding - expands beyond traditional boundaries / Расширенное понимание - выходит за традиционные границы',
+-    4: 'Novel understanding - introduces significantly new concepts / Новое понимание - вводит существенно новые концепции',
+-    5: 'Revolutionary understanding - fundamentally challenges existing paradigms / Революционное понимание - фундаментально бросает вызов существующим парадигмам'
++    1: 'Традиционное понимание - следует установленным интерпретациям',
++    2: 'Переосмысленное понимание - предлагает новый взгляд на существующие идеи',
++    3: 'Расширенное понимание - выходит за традиционные границы',
++    4: 'Новое понимание - вводит существенно новые концепции',
++    5: 'Революционное понимание - фундаментально бросает вызов существующим парадигмам'
+   };
+-  return descriptions[degree] || 'Unknown innovation degree / Неизвестная степень инновационности';
+-}
+-
+-/**
+- * Check if a practical domain is valid
++  return descriptions[degree] || 'Неизвестная степень инновационности';
++}
++
++/**
+  * Проверка валидности области практического применения
+- * @param {string} domain - The practical domain to check
+- * @returns {boolean} - Whether the domain is valid
++ * @param {string} domain - Область практического применения для проверки
++ * @returns {boolean} - Является ли область валидной
+  */
+ function isValidPracticalDomain(domain) {
+   return Object.values(PRACTICAL_DOMAINS).includes(domain);
+ }
+ 
+ /**
+- * Check if an analysis type is valid
+  * Проверка валидности типа анализа
+- * @param {string} type - The analysis type to check
+- * @returns {boolean} - Whether the type is valid
++ * @param {string} type - Тип анализа для проверки
++ * @returns {boolean} - Является ли тип валидным
+  */
+ function isValidAnalysisType(type) {
+   return Object.values(ANALYSIS_TYPES).includes(type);
+ }
+ 
+ /**
+- * Check if an evolution direction is valid
+  * Проверка валидности направления эволюции
+- * @param {string} direction - The evolution direction to check
+- * @returns {boolean} - Whether the direction is valid
++ * @param {string} direction - Направление эволюции для проверки
++ * @returns {boolean} - Является ли направление валидным
+  */
+ function isValidEvolutionDirection(direction) {
+   return Object.values(EVOLUTION_DIRECTIONS).includes(direction);
+ }
+ 
+ /**
+- * Get historical period by year
+  * Получение исторического периода по году
+- * @param {number} year - The year to check
+- * @returns {Object|null} - The historical period or null if not found
++ * @param {number} year - Год для проверки
++ * @returns {Object|null} - Исторический период или null, если не найден
+  */
+ function getHistoricalPeriodByYear(year) {
+   for (const period of Object.values(HISTORICAL_PERIODS)) {
+@@ -899,7 +882,6 @@
+ 
+ /**
+  * Экспорт всех констант и функций для использования в других модулях
+- * Export all constants and functions for use in other modules
+  */
+ module.exports = {
+   // Основные константы

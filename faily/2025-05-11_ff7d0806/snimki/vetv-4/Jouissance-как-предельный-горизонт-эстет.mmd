@@ -1,0 +1,61 @@
+flowchart TD
+    A[Jouissance] --> B[По ту сторону\nпринципа удовольствия]
+    A --> C[Наслаждение\nв страдании]
+    A --> D[Избыток\nжизни/смерти]
+    
+    subgraph "Формы jouissance"
+        E[Фаллическое\njouissance] --> E1[Символически\nрегулируемое]
+        F[Jouissance Другого] --> F1[Мистическое\nнаслаждение]
+        G[Plus-de-jouir] --> G1[Прибавочное\nнаслаждение]
+        H[Jouissance смысла] --> H1[Наслаждение\nозначающим]
+        
+        E & F & G & H --> I[Экономика\njouissance]
+    end
+    
+    subgraph "Эстетические модусы"
+        J[Прекрасное] --> K[Барьер перед\njouissance]
+        K --> L[Возвышенное]
+        L --> M[Приближение к\nВещи]
+        M --> N[Трагическое]
+        N --> O[Антигона:\nчистое желание]
+        O --> P[Комическое]
+        P --> Q[Фаллическая\nкомедия]
+        Q -.-> J
+    end
+    
+    subgraph "Сублимация"
+        R[Возвышение объекта\nдо достоинства Вещи] --> S[Создание\nиз ничего]
+        S --> T[Искусство как\nорганизация пустоты]
+        T --> U[Поэзия как\nсоздание бытия]
+        U --> V[Творение\nex nihilo]
+        V -.-> R
+    end
+    
+    A --> I
+    B -.-> M
+    C -.-> N
+    D -.-> O
+    
+    J -.-> R
+    L -.-> S
+    N -.-> T
+    P -.-> U
+    
+    W[Лакановская\nэстетика] --> X[Этика\nпсихоанализа]
+    X --> Y[Не уступать\nв своём желании]
+    Y --> Z[Трагическое как\nпарадигма]
+    
+    W --> A
+    Z --> O
+    
+    AA[Anamorphosis] --> AB[Искажённый\nвзгляд]
+    AB --> AC[Объект а\nв искусстве]
+    AC --> A
+    
+    style A fill:#f9d5e5,stroke:#333,stroke-width:3px
+    style E fill:#99ccff,stroke:#333,stroke-width:2px
+    style F fill:#ff9999,stroke:#333,stroke-width:2px
+    style J fill:#99ff99,stroke:#333,stroke-width:2px
+    style R fill:#ffcc99,stroke:#333,stroke-width:2px
+    style W fill:#cc99ff,stroke:#333,stroke-width:2px
+    style AA fill:#ccffcc,stroke:#333,stroke-width:2px

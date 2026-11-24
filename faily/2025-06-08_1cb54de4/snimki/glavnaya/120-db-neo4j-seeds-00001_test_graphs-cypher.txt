@@ -1,0 +1,420 @@
+// Neo4j Seed Data: Test Graphs
+// Тестовые графы философских концепций для разработки и демонстрации
+
+// Очистка существующих тестовых данных (опционально)
+// MATCH (n) WHERE n.concept_id IN ['990e8400-e29b-41d4-a716-446655440001', '990e8400-e29b-41d4-a716-446655440002', '990e8400-e29b-41d4-a716-446655440003'] DETACH DELETE n;
+
+// ========================================
+// Граф 1: Диалектический материализм
+// ========================================
+
+// Создание узла концепции
+MERGE (c1:Concept {concept_id: '990e8400-e29b-41d4-a716-446655440001'})
+SET c1.name = 'Диалектический материализм';
+
+// Создание категорий
+MERGE (c1_cat1:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440001'})
+SET c1_cat1.concept_id = '990e8400-e29b-41d4-a716-446655440001',
+    c1_cat1.name = 'Материя',
+    c1_cat1.type = 'ontological',
+    c1_cat1.definition = 'Объективная реальность, существующая независимо от сознания',
+    c1_cat1.centrality = 0.95,
+    c1_cat1.certainty = 0.9,
+    c1_cat1.historical_significance = 0.85,
+    c1_cat1.innovation_degree = 3,
+    c1_cat1.clarity = 0.8,
+    c1_cat1.breadth = 0.9,
+    c1_cat1.depth = 0.85,
+    c1_cat1.applicability = 0.8,
+    c1_cat1.traditions = ['marxism', 'materialism'],
+    c1_cat1.philosophers = ['Карл Маркс', 'Фридрих Энгельс', 'Владимир Ленин'];
+
+MERGE (c1_cat2:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440002'})
+SET c1_cat2.concept_id = '990e8400-e29b-41d4-a716-446655440001',
+    c1_cat2.name = 'Сознание',
+    c1_cat2.type = 'epistemological',
+    c1_cat2.definition = 'Высшая форма отражения объективной действительности',
+    c1_cat2.centrality = 0.8,
+    c1_cat2.certainty = 0.85,
+    c1_cat2.historical_significance = 0.8,
+    c1_cat2.innovation_degree = 3,
+    c1_cat2.clarity = 0.75,
+    c1_cat2.breadth = 0.7,
+    c1_cat2.depth = 0.8,
+    c1_cat2.applicability = 0.75,
+    c1_cat2.traditions = ['marxism', 'materialism'],
+    c1_cat2.philosophers = ['Карл Маркс', 'Фридрих Энгельс'];
+
+MERGE (c1_cat3:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440003'})
+SET c1_cat3.concept_id = '990e8400-e29b-41d4-a716-446655440001',
+    c1_cat3.name = 'Диалектика',
+    c1_cat3.type = 'logical',
+    c1_cat3.definition = 'Учение о всеобщих законах развития природы, общества и мышления',
+    c1_cat3.centrality = 0.9,
+    c1_cat3.certainty = 0.9,
+    c1_cat3.historical_significance = 0.9,
+    c1_cat3.innovation_degree = 4,
+    c1_cat3.clarity = 0.8,
+    c1_cat3.breadth = 0.85,
+    c1_cat3.depth = 0.9,
+    c1_cat3.applicability = 0.85,
+    c1_cat3.traditions = ['marxism', 'hegelianism', 'dialectics'],
+    c1_cat3.philosophers = ['Георг Гегель', 'Карл Маркс'];
+
+MERGE (c1_cat4:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440004'})
+SET c1_cat4.concept_id = '990e8400-e29b-41d4-a716-446655440001',
+    c1_cat4.name = 'Практика',
+    c1_cat4.type = 'practical',
+    c1_cat4.definition = 'Целенаправленная деятельность людей по преобразованию мира',
+    c1_cat4.centrality = 0.85,
+    c1_cat4.certainty = 0.9,
+    c1_cat4.historical_significance = 0.85,
+    c1_cat4.innovation_degree = 4,
+    c1_cat4.clarity = 0.85,
+    c1_cat4.breadth = 0.8,
+    c1_cat4.depth = 0.8,
+    c1_cat4.applicability = 0.95,
+    c1_cat4.traditions = ['marxism', 'pragmatism'],
+    c1_cat4.philosophers = ['Карл Маркс', 'Антонио Грамши'];
+
+// Создание связей между категориями
+MERGE (c1_cat1)-[r1:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440001'}]->(c1_cat2)
+SET r1.type = 'dialectical',
+    r1.direction = 'bidirectional',
+    r1.strength = 0.9,
+    r1.certainty = 0.9,
+    r1.innovation_degree = 3,
+    r1.historical_support = 0.8,
+    r1.logical_necessity = 0.85,
+    r1.context_dependence = 0.3,
+    r1.source = 'marxist_theory',
+    r1.traditions = ['marxism'],
+    r1.philosophers = ['Карл Маркс', 'Фридрих Энгельс'];
+
+MERGE (c1_cat3)-[r2:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440002'}]->(c1_cat1)
+SET r2.type = 'foundational',
+    r2.direction = 'bidirectional',
+    r2.strength = 0.85,
+    r2.certainty = 0.9,
+    r2.innovation_degree = 3,
+    r2.historical_support = 0.85,
+    r2.logical_necessity = 0.8,
+    r2.context_dependence = 0.2,
+    r2.source = 'marxist_theory',
+    r2.traditions = ['marxism', 'dialectics'],
+    r2.philosophers = ['Карл Маркс'];
+
+MERGE (c1_cat3)-[r3:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440003'}]->(c1_cat2)
+SET r3.type = 'foundational',
+    r3.direction = 'bidirectional',
+    r3.strength = 0.8,
+    r3.certainty = 0.85,
+    r3.innovation_degree = 3,
+    r3.historical_support = 0.8,
+    r3.logical_necessity = 0.75,
+    r3.context_dependence = 0.3,
+    r3.source = 'marxist_theory',
+    r3.traditions = ['marxism', 'dialectics'],
+    r3.philosophers = ['Карл Маркс'];
+
+MERGE (c1_cat4)-[r4:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440004'}]->(c1_cat1)
+SET r4.type = 'manifestation',
+    r4.direction = 'unidirectional',
+    r4.strength = 0.85,
+    r4.certainty = 0.9,
+    r4.innovation_degree = 4,
+    r4.historical_support = 0.8,
+    r4.logical_necessity = 0.8,
+    r4.context_dependence = 0.4,
+    r4.source = 'marxist_theory',
+    r4.traditions = ['marxism', 'pragmatism'],
+    r4.philosophers = ['Карл Маркс'];
+
+MERGE (c1_cat4)-[r5:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440005'}]->(c1_cat2)
+SET r5.type = 'causal',
+    r5.direction = 'bidirectional',
+    r5.strength = 0.8,
+    r5.certainty = 0.85,
+    r5.innovation_degree = 4,
+    r5.historical_support = 0.75,
+    r5.logical_necessity = 0.7,
+    r5.context_dependence = 0.5,
+    r5.source = 'marxist_epistemology',
+    r5.traditions = ['marxism'],
+    r5.philosophers = ['Карл Маркс', 'Владимир Ленин'];
+
+// Связи от концепции к категориям
+MERGE (c1)-[:INCLUDES]->(c1_cat1);
+MERGE (c1)-[:INCLUDES]->(c1_cat2);
+MERGE (c1)-[:INCLUDES]->(c1_cat3);
+MERGE (c1)-[:INCLUDES]->(c1_cat4);
+
+// ========================================
+// Граф 2: Экзистенциальная феноменология
+// ========================================
+
+// Создание узла концепции
+MERGE (c2:Concept {concept_id: '990e8400-e29b-41d4-a716-446655440002'})
+SET c2.name = 'Экзистенциальная феноменология';
+
+// Создание категорий
+MERGE (c2_cat1:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440005'})
+SET c2_cat1.concept_id = '990e8400-e29b-41d4-a716-446655440002',
+    c2_cat1.name = 'Интенциональность',
+    c2_cat1.type = 'phenomenological',
+    c2_cat1.definition = 'Направленность сознания на предмет',
+    c2_cat1.centrality = 0.9,
+    c2_cat1.certainty = 0.9,
+    c2_cat1.historical_significance = 0.85,
+    c2_cat1.innovation_degree = 4,
+    c2_cat1.clarity = 0.8,
+    c2_cat1.breadth = 0.75,
+    c2_cat1.depth = 0.9,
+    c2_cat1.applicability = 0.7,
+    c2_cat1.traditions = ['phenomenology'],
+    c2_cat1.philosophers = ['Эдмунд Гуссерль', 'Франц Брентано'];
+
+MERGE (c2_cat2:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440006'})
+SET c2_cat2.concept_id = '990e8400-e29b-41d4-a716-446655440002',
+    c2_cat2.name = 'Бытие-в-мире',
+    c2_cat2.type = 'existential',
+    c2_cat2.definition = 'Фундаментальный способ существования человека',
+    c2_cat2.centrality = 0.95,
+    c2_cat2.certainty = 0.85,
+    c2_cat2.historical_significance = 0.9,
+    c2_cat2.innovation_degree = 5,
+    c2_cat2.clarity = 0.7,
+    c2_cat2.breadth = 0.85,
+    c2_cat2.depth = 0.95,
+    c2_cat2.applicability = 0.8,
+    c2_cat2.traditions = ['existentialism', 'phenomenology'],
+    c2_cat2.philosophers = ['Мартин Хайдеггер', 'Морис Мерло-Понти'];
+
+MERGE (c2_cat3:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440007'})
+SET c2_cat3.concept_id = '990e8400-e29b-41d4-a716-446655440002',
+    c2_cat3.name = 'Свобода',
+    c2_cat3.type = 'existential',
+    c2_cat3.definition = 'Фундаментальная характеристика человеческого существования',
+    c2_cat3.centrality = 0.85,
+    c2_cat3.certainty = 0.8,
+    c2_cat3.historical_significance = 0.85,
+    c2_cat3.innovation_degree = 3,
+    c2_cat3.clarity = 0.75,
+    c2_cat3.breadth = 0.8,
+    c2_cat3.depth = 0.85,
+    c2_cat3.applicability = 0.85,
+    c2_cat3.traditions = ['existentialism'],
+    c2_cat3.philosophers = ['Жан-Поль Сартр', 'Симона де Бовуар'];
+
+MERGE (c2_cat4:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440008'})
+SET c2_cat4.concept_id = '990e8400-e29b-41d4-a716-446655440002',
+    c2_cat4.name = 'Временность',
+    c2_cat4.type = 'phenomenological',
+    c2_cat4.definition = 'Темпоральная структура сознания и существования',
+    c2_cat4.centrality = 0.8,
+    c2_cat4.certainty = 0.85,
+    c2_cat4.historical_significance = 0.8,
+    c2_cat4.innovation_degree = 4,
+    c2_cat4.clarity = 0.7,
+    c2_cat4.breadth = 0.75,
+    c2_cat4.depth = 0.9,
+    c2_cat4.applicability = 0.75,
+    c2_cat4.traditions = ['phenomenology', 'existentialism'],
+    c2_cat4.philosophers = ['Эдмунд Гуссерль', 'Мартин Хайдеггер'];
+
+// Создание связей между категориями
+MERGE (c2_cat1)-[r6:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440006'}]->(c2_cat2)
+SET r6.type = 'foundational',
+    r6.direction = 'unidirectional',
+    r6.strength = 0.85,
+    r6.certainty = 0.9,
+    r6.innovation_degree = 4,
+    r6.historical_support = 0.8,
+    r6.logical_necessity = 0.85,
+    r6.context_dependence = 0.3,
+    r6.source = 'phenomenological_analysis',
+    r6.traditions = ['phenomenology'],
+    r6.philosophers = ['Эдмунд Гуссерль', 'Мартин Хайдеггер'];
+
+MERGE (c2_cat2)-[r7:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440007'}]->(c2_cat3)
+SET r7.type = 'emergence',
+    r7.direction = 'unidirectional',
+    r7.strength = 0.9,
+    r7.certainty = 0.85,
+    r7.innovation_degree = 4,
+    r7.historical_support = 0.85,
+    r7.logical_necessity = 0.8,
+    r7.context_dependence = 0.4,
+    r7.source = 'existential_analysis',
+    r7.traditions = ['existentialism'],
+    r7.philosophers = ['Жан-Поль Сартр'];
+
+MERGE (c2_cat2)-[r8:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440008'}]->(c2_cat4)
+SET r8.type = 'constitutive',
+    r8.direction = 'bidirectional',
+    r8.strength = 0.9,
+    r8.certainty = 0.9,
+    r8.innovation_degree = 5,
+    r8.historical_support = 0.85,
+    r8.logical_necessity = 0.9,
+    r8.context_dependence = 0.2,
+    r8.source = 'temporal_analysis',
+    r8.traditions = ['phenomenology', 'existentialism'],
+    r8.philosophers = ['Мартин Хайдеггер'];
+
+MERGE (c2_cat3)-[r9:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440009'}]->(c2_cat4)
+SET r9.type = 'manifestation',
+    r9.direction = 'unidirectional',
+    r9.strength = 0.8,
+    r9.certainty = 0.8,
+    r9.innovation_degree = 3,
+    r9.historical_support = 0.75,
+    r9.logical_necessity = 0.7,
+    r9.context_dependence = 0.5,
+    r9.source = 'existential_phenomenology',
+    r9.traditions = ['existentialism'],
+    r9.philosophers = ['Жан-Поль Сартр', 'Морис Мерло-Понти'];
+
+// Связи от концепции к категориям
+MERGE (c2)-[:INCLUDES]->(c2_cat1);
+MERGE (c2)-[:INCLUDES]->(c2_cat2);
+MERGE (c2)-[:INCLUDES]->(c2_cat3);
+MERGE (c2)-[:INCLUDES]->(c2_cat4);
+
+// ========================================
+// Граф 3: Трансцендентальный идеализм Канта
+// ========================================
+
+// Создание узла концепции
+MERGE (c3:Concept {concept_id: '990e8400-e29b-41d4-a716-446655440003'})
+SET c3.name = 'Трансцендентальный идеализм Канта';
+
+// Создание категорий
+MERGE (c3_cat1:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440009'})
+SET c3_cat1.concept_id = '990e8400-e29b-41d4-a716-446655440003',
+    c3_cat1.name = 'Явление (феномен)',
+    c3_cat1.type = 'epistemological',
+    c3_cat1.definition = 'Вещь как она является нам в опыте',
+    c3_cat1.centrality = 0.9,
+    c3_cat1.certainty = 0.95,
+    c3_cat1.historical_significance = 0.9,
+    c3_cat1.innovation_degree = 5,
+    c3_cat1.clarity = 0.85,
+    c3_cat1.breadth = 0.8,
+    c3_cat1.depth = 0.85,
+    c3_cat1.applicability = 0.8,
+    c3_cat1.traditions = ['critical_philosophy', 'german_idealism'],
+    c3_cat1.philosophers = ['Иммануил Кант'];
+
+MERGE (c3_cat2:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440010'})
+SET c3_cat2.concept_id = '990e8400-e29b-41d4-a716-446655440003',
+    c3_cat2.name = 'Вещь в себе (ноумен)',
+    c3_cat2.type = 'metaphysical',
+    c3_cat2.definition = 'Вещь как она существует независимо от нашего познания',
+    c3_cat2.centrality = 0.85,
+    c3_cat2.certainty = 0.7,
+    c3_cat2.historical_significance = 0.95,
+    c3_cat2.innovation_degree = 5,
+    c3_cat2.clarity = 0.6,
+    c3_cat2.breadth = 0.7,
+    c3_cat2.depth = 0.9,
+    c3_cat2.applicability = 0.5,
+    c3_cat2.traditions = ['critical_philosophy'],
+    c3_cat2.philosophers = ['Иммануил Кант'];
+
+MERGE (c3_cat3:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440011'})
+SET c3_cat3.concept_id = '990e8400-e29b-41d4-a716-446655440003',
+    c3_cat3.name = 'Априорные формы',
+    c3_cat3.type = 'epistemological',
+    c3_cat3.definition = 'Доопытные условия возможности познания',
+    c3_cat3.centrality = 0.95,
+    c3_cat3.certainty = 0.9,
+    c3_cat3.historical_significance = 0.95,
+    c3_cat3.innovation_degree = 5,
+    c3_cat3.clarity = 0.75,
+    c3_cat3.breadth = 0.85,
+    c3_cat3.depth = 0.95,
+    c3_cat3.applicability = 0.7,
+    c3_cat3.traditions = ['critical_philosophy', 'transcendentalism'],
+    c3_cat3.philosophers = ['Иммануил Кант'];
+
+MERGE (c3_cat4:Category {category_id: 'cc0e8400-e29b-41d4-a716-446655440012'})
+SET c3_cat4.concept_id = '990e8400-e29b-41d4-a716-446655440003',
+    c3_cat4.name = 'Трансцендентальное единство апперцепции',
+    c3_cat4.type = 'epistemological',
+    c3_cat4.definition = 'Единство самосознания как условие возможности опыта',
+    c3_cat4.centrality = 0.8,
+    c3_cat4.certainty = 0.85,
+    c3_cat4.historical_significance = 0.85,
+    c3_cat4.innovation_degree = 5,
+    c3_cat4.clarity = 0.65,
+    c3_cat4.breadth = 0.7,
+    c3_cat4.depth = 0.95,
+    c3_cat4.applicability = 0.6,
+    c3_cat4.traditions = ['critical_philosophy'],
+    c3_cat4.philosophers = ['Иммануил Кант'];
+
+// Создание связей между категориями
+MERGE (c3_cat1)-[r10:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440010'}]->(c3_cat2)
+SET r10.type = 'disjunctive',
+    r10.direction = 'bidirectional',
+    r10.strength = 0.95,
+    r10.certainty = 0.95,
+    r10.innovation_degree = 5,
+    r10.historical_support = 0.9,
+    r10.logical_necessity = 0.95,
+    r10.context_dependence = 0.1,
+    r10.source = 'critical_philosophy',
+    r10.traditions = ['critical_philosophy'],
+    r10.philosophers = ['Иммануил Кант'];
+
+MERGE (c3_cat3)-[r11:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440011'}]->(c3_cat1)
+SET r11.type = 'constitutive',
+    r11.direction = 'unidirectional',
+    r11.strength = 0.95,
+    r11.certainty = 0.95,
+    r11.innovation_degree = 5,
+    r11.historical_support = 0.9,
+    r11.logical_necessity = 0.95,
+    r11.context_dependence = 0.05,
+    r11.source = 'transcendental_deduction',
+    r11.traditions = ['critical_philosophy'],
+    r11.philosophers = ['Иммануил Кант'];
+
+MERGE (c3_cat4)-[r12:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440012'}]->(c3_cat3)
+SET r12.type = 'necessary_condition',
+    r12.direction = 'unidirectional',
+    r12.strength = 0.9,
+    r12.certainty = 0.9,
+    r12.innovation_degree = 5,
+    r12.historical_support = 0.85,
+    r12.logical_necessity = 0.9,
+    r12.context_dependence = 0.1,
+    r12.source = 'transcendental_deduction',
+    r12.traditions = ['critical_philosophy'],
+    r12.philosophers = ['Иммануил Кант'];
+
+MERGE (c3_cat4)-[r13:RELATED_TO {relationship_id: 'dd0e8400-e29b-41d4-a716-446655440013'}]->(c3_cat1)
+SET r13.type = 'foundational',
+    r13.direction = 'unidirectional',
+    r13.strength = 0.85,
+    r13.certainty = 0.9,
+    r13.innovation_degree = 5,
+    r13.historical_support = 0.85,
+    r13.logical_necessity = 0.85,
+    r13.context_dependence = 0.15,
+    r13.source = 'critical_philosophy',
+    r13.traditions = ['critical_philosophy'],
+    r13.philosophers = ['Иммануил Кант'];
+
+// Связи от концепции к категориям
+MERGE (c3)-[:INCLUDES]->(c3_cat1);
+MERGE (c3)-[:INCLUDES]->(c3_cat2);
+MERGE (c3)-[:INCLUDES]->(c3_cat3);
+MERGE (c3)-[:INCLUDES]->(c3_cat4);
+
+// Создание индексов для оптимизации запросов
+CREATE INDEX IF NOT EXISTS FOR (c:Concept) ON (c.concept_id);
+CREATE INDEX IF NOT EXISTS FOR (cat:Category) ON (cat.category_id);
+CREATE INDEX IF NOT EXISTS FOR (cat:Category) ON (cat.concept_id);
+CREATE INDEX IF NOT EXISTS FOR ()-[r:RELATED_TO]-() ON (r.relationship_id);

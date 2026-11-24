@@ -1,0 +1,25 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Копируем shared модуль
+COPY shared /app/shared
+WORKDIR /app/shared
+RUN npm ci --only=production
+
+# Копируем API Gateway
+WORKDIR /app/api-gateway
+COPY api-gateway/package*.json ./
+RUN npm ci --only=production
+
+COPY api-gateway/src ./src
+
+# Создаем пользователя без привилегий
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+USER nodejs
+
+EXPOSE 4000
+
+CMD ["node", "src/index.js"]

@@ -1,0 +1,38 @@
+Create a photorealistic archival photograph of a fictional historical artifact: a propaganda leaflet called "The Urga Manifesto", from an invented alternate history. Portrait format, 2:3.
+
+WORLD CONTEXT (needed to get the details right):
+This is an alternate world where, after 1921, Russia became the R.S.F.G.R. — the "Russian Socialist Federative Fungal Republic", a state merged with Lovecraftian mythology. Its citizens voluntarily dissolve into the "Great Mycelium", a planet-wide fungal network that is the state itself; instead of a dead citizen the family receives "one spore". The capital is the city of R'lyeh on the Arctic coast of the Kara Sea, where the "Sleeper" (Cthulhu, merged with Lenin) lies dreaming. The official emblem is a red five-pointed star with a spiral inside; the official fungus is a grey mushroom whose cap is covered with eyes. All official documents use pre-1918 Russian spelling (with the letters ѣ, і, ѳ and a hard sign ъ at the end of words). Neighbouring lands are "grafted" onto the Mycelium as vassal states; Mongolia is the "Gobi Vassalate", with its capital at Urga.
+In the early 1950s the Gobi Vassalate broke away in a schism: it rejected the earthly Mycelium of R'lyeh and accepted the alien fungus of the Mi-Go — pinkish, crustacean-like fungoid beings with membranous wings, many jointed limbs, and a convoluted ellipsoid head covered in short antennae, who come from the planet Yuggoth and preserve human minds in sealed metal cylinders instead of dissolving them. The heresy teaches: do not dissolve into the sleeping Mycelium; keep your mind in a cylinder and grow toward the stars. The heretics deliberately spell Yuggoth with the old Greek letter Ѳ ("Юггоѳъ") as a sign of their creed. This leaflet is their founding manifesto, printed in Urga in 1953, later confiscated by the R'lyeh authorities and filed in their archive.
+
+THE OBJECT:
+A single sheet of cheap, coarse, handmade greyish-beige paper with visible fibres and fine white thread-like mycelial filaments embedded in the pulp. It is printed in only two inks: black, and a faded pink-magenta, as if with a woodblock or crude letterpress — uneven ink density, slight misregistration between the two colours, small ink blots. The sheet has been folded in four (visible fold creases), has a torn lower corner, slight foxing and water staining, and two filing punch-holes on the left edge.
+
+LAYOUT (top to bottom):
+1. Headline in large bold condensed Cyrillic capitals, black ink:
+   УРГИНСКІЙ МАНИФЕСТЪ
+2. Subtitle, smaller, black:
+   Къ спороносцамъ Гобійскаго вассалата и всѣхъ грибницъ
+3. Central woodcut illustration in pink-magenta and black: a Mi-Go hovering with spread membranous wings above the Gobi desert dunes; below it, held upright on the sand, a tall sealed metal cylinder (like a canister for a preserved brain), with a small five-pointed star above it radiating thin lines upward to a night sky with stars. Thin fungal threads rise from the dunes toward the cylinder. The style is crude, bold, propaganda woodcut, not cute, slightly unsettling.
+4. Three short lines of body text, black, a classic printed serif typeface:
+   Грибница Р'льеха спитъ вмѣстѣ со Спящимъ.
+   Наша грибница пришла со звѣздъ и не спитъ.
+   Не растворяйтесь во снѣ — прорастайте къ Юггоѳу!
+5. A slogan in bold capitals, pink-magenta, across the full width:
+   КТУЛХУ СПИТЪ — МИ-ГО БОДРСТВУЕТЪ!
+6. A small imprint line at the very bottom, black:
+   Урга. Споролѣтіе XXXIII. Отпечатано на грибной бумагѣ.
+7. Along the left margin, one or two narrow vertical columns of traditional Mongolian script (top to bottom), printed in black, as a parallel Mongolian version of the text.
+8. In the lower right corner, a square red Mongolian-style seal stamp containing a stylised cylinder.
+
+ARCHIVAL MARKS ADDED LATER BY THE R'LYEH AUTHORITIES:
+- A round violet rubber stamp, slightly smudged and tilted, with a stylised octopus in the centre and the Cyrillic text around the rim: НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ
+- A rectangular violet stamp, tilted, partly over the illustration: ИЗЪЯТО
+- Handwritten in grey pencil in the top margin, in pre-revolutionary Russian handwriting: Ересь. Дѣло № 2207-Г
+
+PHOTOGRAPHY:
+The sheet lies flat on a dark grey archival table, photographed straight down under soft, even, slightly warm daylight, sharp focus, natural paper texture and shadows at the curled edges, like a museum or archive catalogue photograph. A rusty steel paperclip lies near one corner.
+
+STRICT TEXT RULES:
+- Reproduce every Cyrillic inscription exactly as given above, letter by letter, including ѣ, і, ѳ and the final ъ. Do not modernise the spelling, do not replace ѣ with е, do not use the letter ё, do not add, drop or translate words.
+- No English text anywhere on the sheet. No other inscriptions beyond those listed.
+- No modern objects, no modern typography, no watermarks or signatures of the image creator.

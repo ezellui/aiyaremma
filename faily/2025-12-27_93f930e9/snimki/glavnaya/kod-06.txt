@@ -1,0 +1,22 @@
+thesis-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   └── mongo-connection.js
+│   ├── models/
+│   │   ├── Thesis.js
+│   │   ├── CategoryDescription.js
+│   │   └── RelationshipDescription.js
+│   ├── controllers/
+│   │   └── thesis.controller.js
+│   ├── services/
+│   │   ├── thesis.service.js
+│   │   └── description.service.js
+│   └── routes/
+│       └── thesis.routes.js
+└── tests/

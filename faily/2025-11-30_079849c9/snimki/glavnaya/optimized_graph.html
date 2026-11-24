@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оптимизированный граф философских концепций</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #graph {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ОПТИМИЗАЦИЯ: Упрощенные стили без сложных фильтров */
+        .node {
+            cursor: pointer;
+        }
+
+        .node circle {
+            stroke-width: 2px;
+        }
+
+        .node.highlighted circle {
+            stroke-width: 4px;
+        }
+
+        .node text {
+            font-size: 10px;
+            font-weight: 600;
+            pointer-events: none;
+            text-shadow: 0 0 3px black;
+            fill: #fff;
+        }
+
+        /* ОПТИМИЗАЦИЯ: Используем line вместо path для связей */
+        .link {
+            stroke-width: 2px;
+            opacity: 0.4;
+            stroke-linecap: round;
+        }
+
+        .link:hover {
+            opacity: 0.9;
+            stroke-width: 4px;
+        }
+
+        .link.highlighted {
+            opacity: 1;
+            stroke-width: 3px;
+        }
+
+        /* Индикатор производительности */
+        #perf-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+
+        #controls button {
+            margin: 5px 0;
+            padding: 8px 15px;
+            background: #4a4a4a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #controls button:hover {
+            background: #5a5a5a;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <svg id="graph"></svg>
+        <div class="tooltip" id="tooltip"></div>
+        
+        <div id="perf-indicator">
+            FPS: <span id="fps">0</span><br>
+            Nodes: <span id="node-count">0</span><br>
+            Links: <span id="link-count">0</span><br>
+            Visible: <span id="visible-count">0</span>
+        </div>
+
+        <div id="controls">
+            <h3 style="margin-top:0">Управление</h3>
+            <button onclick="resetSimulation()">Перезапустить</button><br>
+            <button onclick="saveLayout()">Сохранить позиции</button><br>
+            <button onclick="loadLayout()">Загрузить позиции</button><br>
+            <label>
+                <input type="checkbox" id="lod-toggle" checked> 
+                Уровни детализации
+            </label>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ТЕСТОВЫЕ ДАННЫЕ (замените на ваши)
+        // ============================================
+        
+        const philosophers = [
+            { id: "kant", name: "Кант", color: "#E74C3C" },
+            { id: "hegel", name: "Гегель", color: "#3498DB" },
+            { id: "nietzsche", name: "Ницше", color: "#E67E22" },
+            // ... добавьте остальных
+        ];
+
+        const concepts = [];
+        const relations = [];
+
+        // Генерация тестовых данных для демонстрации
+        // ЗАМЕНИТЕ это на загрузку ваших реальных данных
+        for (let i = 0; i < 500; i++) {
+            const phil = philosophers[i % philosophers.length];
+            concepts.push({
+                id: `concept_${i}`,
+                label: `Концепция ${i}`,
+                description: `Описание концепции ${i}`,
+                concept: phil.name,
+                philosopherId: phil.id
+            });
+        }
+
+        for (let i = 0; i < 1000; i++) {
+            const source = Math.floor(Math.random() * concepts.length);
+            let target = Math.floor(Math.random() * concepts.length);
+            while (target === source) {
+                target = Math.floor(Math.random() * concepts.length);
+            }
+            relations.push({
+                source: `concept_${source}`,
+                target: `concept_${target}`,
+                type: 'influence'
+            });
+        }
+
+        // ============================================
+        // ОПТИМИЗИРОВАННАЯ ИНИЦИАЛИЗАЦИЯ
+        // ============================================
+
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const svg = d3.select("#graph")
+            .attr("width", width)
+            .attr("height", height);
+
+        const g = svg.append("g");
+
+        // ОПТИМИЗАЦИЯ: Упрощенный zoom без лишних пересчетов
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on("zoom", zoomed);
+
+        svg.call(zoom);
+
+        // Подготовка данных
+        const nodes = concepts.map(c => ({
+            ...c,
+            x: width / 2 + (Math.random() - 0.5) * 200,
+            y: height / 2 + (Math.random() - 0.5) * 200
+        }));
+
+        const links = relations.map(r => ({
+            source: r.source,
+            target: r.target,
+            type: r.type
+        }));
+
+        const philosopherColors = {};
+        philosophers.forEach(p => philosopherColors[p.id] = p.color);
+
+        // ============================================
+        // ОПТИМИЗАЦИЯ 1: Упрощенная симуляция
+        // ============================================
+
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(80))
+            .force("charge", d3.forceManyBody().strength(-150))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .alphaDecay(0.05) // Быстрая стабилизация
+            .velocityDecay(0.6); // Быстрое затухание
+
+        // ============================================
+        // ОПТИМИЗАЦИЯ 2: Line вместо Path для связей
+        // ============================================
+
+        const linkGroup = g.append("g").attr("class", "links");
+        const link = linkGroup.selectAll("line")
+            .data(links)
+            .enter()
+            .append("line")
+            .attr("class", "link")
+            .attr("stroke", "#999");
+
+        // ============================================
+        // Узлы
+        // ============================================
+
+        const nodeGroup = g.append("g").attr("class", "nodes");
+        const node = nodeGroup.selectAll("g")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        node.append("circle")
+            .attr("r", 5) // Начинаем с маленьких кругов
+            .attr("fill", d => philosopherColors[d.philosopherId] || "#999")
+            .attr("stroke", "#fff");
+
+        node.append("text")
+            .attr("dy", -8)
+            .attr("text-anchor", "middle")
+            .text(d => d.label)
+            .style("display", "none"); // Скрываем текст по умолчанию
+
+        // ============================================
+        // ОПТИМИЗАЦИЯ 3: Ограничение частоты обновлений
+        // ============================================
+
+        let lastTickTime = 0;
+        let tickCount = 0;
+        const TICK_INTERVAL = 30; // Обновление каждые 30ms (~33 FPS)
+        const MAX_TICKS = 200; // Остановка после 200 тиков
+
+        simulation.on("tick", () => {
+            const now = performance.now();
+            
+            // Пропускаем тики, если прошло мало времени
+            if (now - lastTickTime < TICK_INTERVAL) {
+                return;
+            }
+            lastTickTime = now;
+            tickCount++;
+
+            // ОПТИМИЗАЦИЯ: Обновляем только видимые элементы
+            link
+                .filter(function() { return this.style.display !== "none"; })
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node
+                .filter(function() { return this.style.display !== "none"; })
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+
+            // Останавливаем симуляцию после стабилизации
+            if (tickCount >= MAX_TICKS || simulation.alpha() < 0.01) {
+                simulation.stop();
+                console.log("Симуляция остановлена после", tickCount, "тиков");
+            }
+
+            updatePerformance();
+        });
+
+        // ============================================
+        // ОПТИМИЗАЦИЯ 4: Виртуализация viewport
+        // ============================================
+
+        let currentTransform = d3.zoomIdentity;
+        let viewportBounds = {
+            minX: -500, maxX: width + 500,
+            minY: -500, maxY: height + 500
+        };
+
+        function zoomed(event) {
+            currentTransform = event.transform;
+            g.attr("transform", currentTransform);
+
+            // Вычисляем границы видимой области с запасом
+            const margin = 200;
+            viewportBounds = {
+                minX: (-currentTransform.x - margin) / currentTransform.k,
+                maxX: (width - currentTransform.x + margin) / currentTransform.k,
+                minY: (-currentTransform.y - margin) / currentTransform.k,
+                maxY: (height - currentTransform.y + margin) / currentTransform.k
+            };
+
+            updateVisibility();
+            updateLOD(currentTransform.k);
+        }
+
+        function updateVisibility() {
+            // Скрываем узлы вне видимости
+            node.style("display", d => {
+                if (d.x < viewportBounds.minX || d.x > viewportBounds.maxX ||
+                    d.y < viewportBounds.minY || d.y > viewportBounds.maxY) {
+                    return "none";
+                }
+                return "block";
+            });
+
+            // Скрываем связи, если оба конца невидимы
+            link.style("display", d => {
+                const sourceVisible = 
+                    d.source.x >= viewportBounds.minX && d.source.x <= viewportBounds.maxX &&
+                    d.source.y >= viewportBounds.minY && d.source.y <= viewportBounds.maxY;
+                const targetVisible = 
+                    d.target.x >= viewportBounds.minX && d.target.x <= viewportBounds.maxX &&
+                    d.target.y >= viewportBounds.minY && d.target.y <= viewportBounds.maxY;
+                
+                return (sourceVisible || targetVisible) ? "block" : "none";
+            });
+
+            updatePerformance();
+        }
+
+        // ============================================
+        // ОПТИМИЗАЦИЯ 5: Уровни детализации (LOD)
+        // ============================================
+
+        function updateLOD(scale) {
+            if (!document.getElementById('lod-toggle').checked) return;
+
+            if (scale < 0.5) {
+                // Дальний зум - минимальные детали
+                node.select("text").style("display", "none");
+                node.select("circle").attr("r", 2);
+                link.style("stroke-width", 1).style("opacity", 0.2);
+            } else if (scale < 1.2) {
+                // Средний зум
+                node.select("text").style("display", "none");
+                node.select("circle").attr("r", 5);
+                link.style("stroke-width", 1.5).style("opacity", 0.4);
+            } else {
+                // Ближний зум - все детали
+                node.select("text").style("display", "block");
+                node.select("circle").attr("r", 8);
+                link.style("stroke-width", 2).style("opacity", 0.6);
+            }
+        }
+
+        // ============================================
+        // ОПТИМИЗАЦИЯ 6: Кэширование позиций
+        // ============================================
+
+        function saveLayout() {
+            const layout = nodes.map(n => ({ 
+                id: n.id, 
+                x: n.x, 
+                y: n.y 
+            }));
+            localStorage.setItem('philosophy-graph-layout', JSON.stringify(layout));
+            alert('Позиции сохранены!');
+        }
+
+        function loadLayout() {
+            const saved = localStorage.getItem('philosophy-graph-layout');
+            if (!saved) {
+                alert('Нет сохраненных позиций');
+                return;
+            }
+
+            const layout = JSON.parse(saved);
+            nodes.forEach(n => {
+                const pos = layout.find(s => s.id === n.id);
+                if (pos) {
+                    n.x = pos.x;
+                    n.y = pos.y;
+                    n.fx = pos.x;
+                    n.fy = pos.y;
+                }
+            });
+
+            // Принудительно обновляем позиции
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+
+            simulation.alpha(0); // Не запускаем симуляцию
+            alert('Позиции загружены!');
+        }
+
+        // ============================================
+        // Интерактивность
+        // ============================================
+
+        const tooltip = d3.select("#tooltip");
+        
+        node.on("mouseover", function(event, d) {
+            tooltip
+                .style("opacity", 1)
+                .html(`<strong>${d.label}</strong><br/>${d.description}`)
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY - 15) + "px");
+        })
+        .on("mouseout", function() {
+            tooltip.style("opacity", 0);
+        });
+
+        node.on("click", function(event, d) {
+            // Выделение связанных узлов
+            const connectedIds = new Set();
+            connectedIds.add(d.id);
+            
+            links.forEach(l => {
+                if (l.source.id === d.id) connectedIds.add(l.target.id);
+                if (l.target.id === d.id) connectedIds.add(l.source.id);
+            });
+
+            node.classed("highlighted", n => connectedIds.has(n.id));
+            link.classed("highlighted", l => 
+                l.source.id === d.id || l.target.id === d.id
+            );
+        });
+
+        svg.on("click", function(event) {
+            if (event.target === this) {
+                node.classed("highlighted", false);
+                link.classed("highlighted", false);
+            }
+        });
+
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        function resetSimulation() {
+            nodes.forEach(n => {
+                n.fx = null;
+                n.fy = null;
+            });
+            tickCount = 0;
+            simulation.alpha(1).restart();
+        }
+
+        // ============================================
+        // Мониторинг производительности
+        // ============================================
+
+        let frameCount = 0;
+        let lastFpsUpdate = performance.now();
+
+        function updatePerformance() {
+            frameCount++;
+            const now = performance.now();
+            
+            if (now - lastFpsUpdate >= 1000) {
+                const fps = Math.round(frameCount * 1000 / (now - lastFpsUpdate));
+                document.getElementById('fps').textContent = fps;
+                document.getElementById('node-count').textContent = nodes.length;
+                document.getElementById('link-count').textContent = links.length;
+                
+                const visibleNodes = node.filter(function() { 
+                    return this.style.display !== "none"; 
+                }).size();
+                document.getElementById('visible-count').textContent = visibleNodes;
+                
+                frameCount = 0;
+                lastFpsUpdate = now;
+            }
+        }
+
+        // Начальная инициализация видимости
+        updateVisibility();
+        updateLOD(1);
+
+        console.log("Граф инициализирован с оптимизациями");
+        console.log("- Узлов:", nodes.length);
+        console.log("- Связей:", links.length);
+        console.log("- Используется Line вместо Path");
+        console.log("- Виртуализация viewport включена");
+        console.log("- LOD (уровни детализации) включены");
+        console.log("- Частота обновлений: ~33 FPS");
+    </script>
+</body>
+</html>

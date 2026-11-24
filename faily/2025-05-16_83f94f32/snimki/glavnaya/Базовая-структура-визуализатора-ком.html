@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Исследование функций комплексного переменного</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .template-section {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .visualization-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .visualization-tab {
+            flex-grow: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #eee;
+            border: 1px solid #ddd;
+        }
+        
+        .visualization-tab.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #canvas-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+        }
+        
+        .info-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Исследование функций комплексного переменного</h1>
+        
+        <div class="input-section">
+            <h2>Ввод функции</h2>
+            <div>
+                <input type="text" id="function-input" placeholder="Введите функцию комплексного переменного z, например: z^2, sin(z), e^z...">
+                <button id="visualize-btn">Визуализировать</button>
+            </div>
+            
+            <div class="template-section">
+                <h3>Шаблоны функций</h3>
+                <select id="function-templates" onchange="applyTemplate()">
+                    <option value="">Выберите шаблон...</option>
+                    <option value="z^2">z^2 (квадратичная функция)</option>
+                    <option value="z^3">z^3 (кубическая функция)</option>
+                    <option value="1/z">1/z (обратная функция)</option>
+                    <option value="e^z">e^z (экспонента)</option>
+                    <option value="sin(z)">sin(z) (синус)</option>
+                    <option value="cos(z)">cos(z) (косинус)</option>
+                    <option value="z^2 - 1">z^2 - 1</option>
+                    <option value="1/(z^2 + 1)">1/(z^2 + 1)</option>
+                    <option value="log(z)">log(z) (натуральный логарифм)</option>
+                    <option value="sqrt(z)">sqrt(z) (квадратный корень)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="visualization-controls">
+            <div class="visualization-tab active" data-method="domain-coloring">Domain Coloring</div>
+            <div class="visualization-tab" data-method="conformal-mapping">Конформные отображения</div>
+            <div class="visualization-tab" data-method="vector-field">Векторные поля</div>
+            <div class="visualization-tab" data-method="real-imag">Действительная и мнимая части</div>
+        </div>
+        
+        <div id="canvas-container">
+            <canvas id="visualization-canvas"></canvas>
+        </div>
+        
+        <div class="info-panel">
+            <h3>Информация о текущей визуализации</h3>
+            <p id="visualization-info">
+                Выберите функцию и метод визуализации чтобы увидеть результат.
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.0.0/math.min.js"></script>
+    <script>
+        // Устанавливаем размер холста по размеру контейнера
+        const canvas = document.getElementById('visualization-canvas');
+        const container = document.getElementById('canvas-container');
+        
+        function resizeCanvas() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // Применение выбранного шаблона
+        function applyTemplate() {
+            const selectElement = document.getElementById('function-templates');
+            const functionInput = document.getElementById('function-input');
+            
+            if (selectElement.value) {
+                functionInput.value = selectElement.value;
+            }
+        }
+        
+        // Выбор метода визуализации
+        const tabs = document.querySelectorAll('.visualization-tab');
+        let currentMethod = 'domain-coloring';
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentMethod = this.getAttribute('data-method');
+                
+                // Если функция уже введена, перерисовываем с новым методом
+                const functionInput = document.getElementById('function-input');
+                if (functionInput.value.trim() !== '') {
+                    visualizeFunction();
+                }
+            });
+        });
+        
+        // Обработка нажатия на кнопку визуализации
+        document.getElementById('visualize-btn').addEventListener('click', visualizeFunction);
+        
+        // Функция визуализации (пока заглушка)
+        function visualizeFunction() {
+            const functionExpression = document.getElementById('function-input').value.trim();
+            const infoElement = document.getElementById('visualization-info');
+            
+            if (!functionExpression) {
+                alert('Пожалуйста, введите функцию комплексного переменного.');
+                return;
+            }
+            
+            infoElement.textContent = `Визуализация функции f(z) = ${functionExpression} методом: ${currentMethod}`;
+            
+            // Здесь будет логика визуализации в зависимости от выбранного метода
+            // На данном этапе просто отображаем заглушку
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '20px Arial';
+            ctx.fillStyle = '#333';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Визуализация функции f(z) = ${functionExpression}`, canvas.width / 2, canvas.height / 2 - 20);
+            ctx.fillText(`Метод: ${currentMethod}`, canvas.width / 2, canvas.height / 2 + 20);
+        }
+    </script>
+</body>
+</html>

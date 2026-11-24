@@ -1,0 +1,277 @@
+--- предыдущая/ubuntu-on-usb-via-vm.md
++++ текущая/ubuntu-on-usb-via-vm.md
+@@ -3,6 +3,8 @@
+ Инструкция рассчитана на конкретную конфигурацию: хост — Windows 7 64-bit на i7-4770 / 8 ГБ, гостевая виртуалка — Ubuntu Server 24.04 без графики, 4 ядра, 5 ГБ RAM, доступ по SSH (PuTTY, WinSCP). Цель — собрать на отдельной USB-флешке полноценную Ubuntu, которая будет грузиться на другой машине (не на хосте). Схема «вытащил флешку из хоста — вставил в целевую машину — загрузился».
+ 
+ Внутри виртуалки работа идёт в терминале (PuTTY). Хост нужен только для проброса USB.
++
++**Главный путь — через готовый скрипт `mkubuntu-usb.sh`.** Он прилагается и делает всю работу разделов 2–8 целиком, с проверками и ключами. Разделы 2–8 оставлены для справки — если скрипт не подойдёт, или захочется разобраться, что он делает.
+ 
+ ---
+ 
+@@ -13,6 +15,7 @@
+ - Доступ по SSH через PuTTY под пользователем с `sudo`.
+ - Флешка для сборки — минимум **16 ГБ**, желательно **32 ГБ и больше**. Критично: **USB 3.0** и втыкать в **синий порт** на корпусе. На USB 2.0 система потом будет мучительно тормозить.
+ - Целевая машина — предположительно UEFI (все современные). Если это старый BIOS-only компьютер — в конце инструкции про это сказано отдельно.
++- Скрипт `mkubuntu-usb.sh` — переложить в виртуалку (через WinSCP в домашнюю папку).
+ 
+ Всё, что ниже, предполагает, что на флешке **ничего нужного нет**. Разметка затирает её целиком.
+ 
+@@ -44,7 +47,73 @@
+ 
+ ---
+ 
+-## 2. Установка нужных пакетов в виртуалке
++## 2. Запуск скрипта `mkubuntu-usb.sh` (главный путь)
++
++Скрипт выполняет всё, что описано в разделах 3–8, за один заход.
++
++### Переложить и запустить
++
++Через WinSCP положите `mkubuntu-usb.sh` в домашнюю папку виртуалки, затем в PuTTY:
++
++```bash
++chmod +x mkubuntu-usb.sh
++sudo ./mkubuntu-usb.sh --device /dev/sdb
++```
++
++Параметры по умолчанию: пользователь `USER`, hostname `ubuntu-usb`, релиз `noble` (24.04), часовой пояс `Europe/Samara`, рабочее окружение `xubuntu-core`, UEFI.
++
++Перед разметкой скрипт покажет сводку и попросит подтверждение словом `yes`. Пароль нового пользователя задаётся интерактивно (`passwd`) — скрипт попросит ввести его дважды в нужный момент.
++
++### Справка скрипта (вывод `--help`)
++
++```
++Использование: sudo ./mkubuntu-usb.sh [опции]
++
++Обязательное:
++  --device PATH          Целевое блочное устройство, напр. /dev/sdb
++                         ВНИМАНИЕ: будет затёрто полностью!
++
++Опции (все со значениями по умолчанию):
++  --user NAME            Имя пользователя внутри системы (default: USER)
++  --hostname NAME        Hostname системы (default: ubuntu-usb)
++  --suite CODENAME       Релиз Ubuntu (default: noble)
++  --arch ARCH            Архитектура (default: amd64)
++  --mirror URL           Зеркало apt (default: archive.ubuntu.com)
++  --timezone TZ          Часовой пояс (default: Europe/Samara)
++  --locales "LOC LOC"    Локали через пробел (default: en_US.UTF-8 ru_RU.UTF-8)
++  --default-locale LOC   Основная локаль (default: ru_RU.UTF-8)
++  --desktop WHICH        Рабочее окружение:
++                           ubuntu-desktop-minimal | xubuntu-core |
++                           lubuntu-desktop | none
++                         (default: xubuntu-core)
++  --firmware MODE        uefi | bios (default: uefi)
++  --mount-point PATH     Куда монтировать флешку (default: /mnt/target)
++  -y, --yes              Не спрашивать подтверждения перед разметкой
++  -h, --help             Показать эту справку
++
++Примеры:
++  sudo ./mkubuntu-usb.sh --device /dev/sdb
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --user alice --desktop lubuntu-desktop
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios --desktop none -y
++```
++
++### Что скрипт умеет сверх сырых команд
++
++- **Защита от своего диска.** Если `--device` совпадает с текущим корневым диском виртуалки, скрипт отказывается работать.
++- **Проверка, что это USB.** Если устройство не USB (TRAN != usb) — предупреждение, но продолжить можно (бывают нестандартные пробросы).
++- **Автоподнятие пакетов.** Если `debootstrap`, `arch-chroot`, `parted` отсутствуют — ставит сам.
++- **Обход старой версии debootstrap.** Если шаблона `noble` нет — создаёт симлинк на `gutsy`.
++- **Корректная работа с `/dev/sdbN` vs `/dev/nvme0n1pN`.** Правильно определяет префикс раздела.
++- **Trap на очистку.** Если упал посередине — отмонтирует всё, что успел смонтировать.
++- **Пароль задаётся интерактивно** через `passwd`, не оказывается в логах или истории.
++
++### После успешного завершения скрипта — переходите к разделу 9.
++
++Если что-то пошло не так на полпути или хочется поменять шаг, которого в скрипте нет (другая разметка, свой набор пакетов), — делайте вручную по разделам 3–8 ниже.
++
++---
++
++## 3. [Вручную] Установка нужных пакетов в виртуалке
+ 
+ ```bash
+ sudo apt update
+@@ -55,7 +124,7 @@
+ 
+ ---
+ 
+-## 3. Разметка флешки под UEFI
++## 4. [Вручную] Разметка флешки под UEFI
+ 
+ Схема: GPT, два раздела — EFI System Partition 512 МБ (FAT32) и корень на всё остальное (ext4).
+ 
+@@ -84,7 +153,7 @@
+ 
+ ---
+ 
+-## 4. Монтирование и debootstrap
++## 5. [Вручную] Монтирование и debootstrap
+ 
+ ```bash
+ sudo mkdir -p /mnt/target
+@@ -105,7 +174,7 @@
+ 
+ ---
+ 
+-## 5. Подготовка fstab и chroot
++## 6. [Вручную] Подготовка fstab и chroot
+ 
+ Сначала запишем fstab по UUID (универсальнее, чем по именам устройств):
+ 
+@@ -132,7 +201,7 @@
+ 
+ ---
+ 
+-## 6. Настройка системы внутри chroot
++## 7. [Вручную] Настройка системы внутри chroot
+ 
+ ### Hostname, hosts, локаль, часовой пояс
+ 
+@@ -228,7 +297,7 @@
+ 
+ ---
+ 
+-## 7. Установка GRUB на флешку
++## 8. [Вручную] Установка GRUB на флешку
+ 
+ Ключевой момент — **флаг `--removable`**. Он кладёт загрузчик в `/EFI/BOOT/BOOTX64.EFI` на ESP, откуда его подхватит любой UEFI без записи в NVRAM целевой машины. Без него флешка будет грузиться только на том компьютере, где её «прописали» в NVRAM.
+ 
+@@ -251,7 +320,6 @@
+ sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT=0/' /etc/default/grub
+ sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
+ sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|' /etc/default/grub
+-# Убедиться, что GRUB не прячет меню
+ sed -i 's/^GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=menu/' /etc/default/grub || \
+   echo "GRUB_TIMEOUT_STYLE=menu" >> /etc/default/grub
+ 
+@@ -267,9 +335,7 @@
+ 
+ Должны быть `BOOTX64.EFI` (и, если ставили shim, `grubx64.efi`), а в `/boot` — `vmlinuz-*` и `initrd.img-*`.
+ 
+----
+-
+-## 8. Выход из chroot и отмонтирование
++### Выход из chroot и отмонтирование
+ 
+ ```bash
+ exit  # выходим из chroot
+@@ -293,7 +359,7 @@
+ 3. На хосте — «Безопасно извлечь», физически вынуть.
+ 4. Воткнуть в целевой компьютер.
+ 5. Включить компьютер, вызвать boot menu (обычно F12, F9, F11, Esc — зависит от материнки), выбрать флешку.
+-6. Если в BIOS включён только Secure Boot и в списке загрузки есть «UEFI: <имя флешки>» — выбирайте UEFI-вариант.
++6. Если в BIOS есть вариант «UEFI: <имя флешки>» — выбирайте UEFI-вариант.
+ 
+ ---
+ 
+@@ -314,9 +380,17 @@
+ 
+ ## 11. Если целевая машина с чистым BIOS (не UEFI)
+ 
+-Схема разметки другая. Вместо шагов 3 и 7:
+-
+-**Разметка** — MBR, один раздел ext4 с флагом boot:
++**Через скрипт** — просто добавить ключ:
++
++```bash
++sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios
++```
++
++Остальное скрипт сделает сам: MBR вместо GPT, один раздел ext4 с флагом boot, `grub-pc` вместо EFI-пакетов, `grub-install --target=i386-pc`.
++
++**Вручную** — заменить шаги 4 и 8 на следующее:
++
++Разметка:
+ 
+ ```bash
+ sudo wipefs -a /dev/sdb
+@@ -358,7 +432,7 @@
+ 
+ ---
+ 
+-## 12. Chroot вручную (если arch-chroot недоступен)
++## 12. Chroot вручную (если `arch-chroot` недоступен)
+ 
+ Вместо `sudo arch-chroot /mnt/target /bin/bash`:
+ 
+@@ -380,77 +454,10 @@
+ ## 13. Типичные грабли
+ 
+ - **Виртуалка не видит флешку.** Extension Pack не той версии / не установлен; USB-контроллер в настройках виртуалки отключён; фильтр не добавлен; Win7 держит флешку занятой (откройте «Безопасное извлечение» на хосте).
+-- **`sdb` на самом деле не флешка.** Если в виртуалке подключены ещё диски (shared disk, snapshot), флешка может оказаться `sdc`. Всегда проверяйте `lsblk` перед разметкой.
+-- **`debootstrap: noble not found`.** Пакет debootstrap в виртуалке старее кодового имени 24.04 → обновить, или сделать симлинк (см. шаг 4).
++- **`sdb` на самом деле не флешка.** Если в виртуалке подключены ещё диски (shared disk, snapshot), флешка может оказаться `sdc`. Всегда проверяйте `lsblk` перед разметкой. Скрипт откажется работать, если указать корневой диск, но на другие доп. диски не проверяет — внимание всё равно нужно.
++- **`debootstrap: noble not found`.** Пакет debootstrap в виртуалке старее кодового имени 24.04 → обновить, или сделать симлинк (см. шаг 5). Скрипт обходит это сам.
+ - **`grub-install` ругается на efi-directory.** Не смонтирован `/boot/efi` внутри chroot. Проверьте `mount | grep efi` — если пусто, выйдите, перемонтируйте, зайдите снова.
+ - **На целевой машине флешки нет в boot menu.** Включите в BIOS загрузку с USB и Legacy/UEFI в соответствии со схемой разметки. Для UEFI убедитесь, что флешка в режиме UEFI (не Legacy) в boot menu.
+ - **GRUB появился, но ядро не стартует.** Обычно `fstab` с неправильным UUID или не установлен `linux-generic`. Можно загрузиться с live-флешки, chroot в флешку, `apt install --reinstall linux-generic`, `update-grub`.
+ - **Чёрный экран после GRUB.** Чаще всего — отсутствует проприетарный драйвер NVIDIA (если на целевой машине NVIDIA). При первой загрузке попробуйте добавить `nomodeset` в параметры ядра через меню GRUB (клавиша `e`, допишите в строку `linux ...`). После входа — поставить `nvidia-driver-535` или свежее.
+ - **Медленно.** Флешка USB 2.0 или дешёвая USB 3.0 без SLC-кэша. Решение одно — лучшая флешка (Samsung FIT Plus, SanDisk Extreme). Для корректного сравнения — `sudo hdparm -t /dev/sdb` на холодную.
+-
+----
+-
+-## 14. Итоговый сжатый порядок (без пояснений — для памяти)
+-
+-```bash
+-# В виртуалке:
+-sudo apt install -y debootstrap parted dosfstools arch-install-scripts
+-
+-# Разметка (UEFI):
+-sudo wipefs -a /dev/sdb
+-sudo parted /dev/sdb --script mklabel gpt
+-sudo parted /dev/sdb --script mkpart ESP fat32 1MiB 513MiB
+-sudo parted /dev/sdb --script set 1 esp on
+-sudo parted /dev/sdb --script mkpart primary ext4 513MiB 100%
+-sudo mkfs.vfat -F32 -n ESP /dev/sdb1
+-sudo mkfs.ext4 -L ubuntu-usb /dev/sdb2
+-
+-# Монтирование + debootstrap:
+-sudo mkdir -p /mnt/target
+-sudo mount /dev/sdb2 /mnt/target
+-sudo mkdir -p /mnt/target/boot/efi
+-sudo mount /dev/sdb1 /mnt/target/boot/efi
+-sudo debootstrap --arch=amd64 noble /mnt/target http://archive.ubuntu.com/ubuntu/
+-
+-# fstab:
+-BOOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb1)
+-ROOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb2)
+-sudo tee /mnt/target/etc/fstab > /dev/null <<EOF
+-UUID=$ROOT_UUID / ext4 defaults,noatime,errors=remount-ro 0 1
+-UUID=$BOOT_UUID /boot/efi vfat defaults,umask=0077 0 2
+-tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
+-EOF
+-
+-# Chroot:
+-sudo arch-chroot /mnt/target /bin/bash
+-
+-# Внутри chroot:
+-echo ubuntu-usb > /etc/hostname
+-ln -sf /usr/share/zoneinfo/Europe/Samara /etc/localtime
+-cat > /etc/apt/sources.list <<EOF
+-deb http://archive.ubuntu.com/ubuntu noble main restricted universe multiverse
+-deb http://archive.ubuntu.com/ubuntu noble-updates main restricted universe multiverse
+-deb http://archive.ubuntu.com/ubuntu noble-security main restricted universe multiverse
+-deb http://archive.ubuntu.com/ubuntu noble-backports main restricted universe multiverse
+-EOF
+-apt update
+-apt install -y locales
+-locale-gen en_US.UTF-8 ru_RU.UTF-8
+-update-locale LANG=ru_RU.UTF-8
+-apt install -y linux-generic grub-efi-amd64 grub-efi-amd64-signed shim-signed efibootmgr \
+-                network-manager sudo nano curl wget ca-certificates openssh-server \
+-                xubuntu-core
+-adduser USER
+-usermod -aG sudo,audio,video,plugdev,netdev USER
+-passwd root
+-systemctl enable NetworkManager ssh
+-grub-install --target=x86_64-efi --efi-directory=/boot/efi --removable --no-nvram --recheck
+-update-grub
+-exit
+-
+-# Отмонтирование:
+-sudo umount -R /mnt/target
+-sync
+-```
+-
+-Готово. Отсоедините флешку от виртуалки (Devices → USB → снять галочку), вытащите на хосте «безопасно», несите на целевую машину.

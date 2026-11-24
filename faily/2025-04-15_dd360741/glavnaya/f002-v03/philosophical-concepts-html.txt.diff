@@ -1,0 +1,77 @@
+--- предыдущая/philosophical-concepts-html.txt
++++ текущая/philosophical-concepts-html.txt
+@@ -319,66 +319,6 @@
+             { id: 10, label: "Разум", color: categoryColors.epistemological }
+         ]);
+         
+-        createNetwork("pragmatismNetwork", pragmatismNodes, pragmatismEdges);
+-
+-        // Аналитическая философия
+-        const analyticNodes = new vis.DataSet([
+-            { id: 1, label: "Язык", color: categoryColors.anthropological },
+-            { id: 2, label: "Знание", color: categoryColors.epistemological },
+-            { id: 3, label: "Смысл (Интерпретация)", color: categoryColors.anthropological },
+-            { id: 4, label: "Истина", color: categoryColors.epistemological },
+-            { id: 5, label: "Логика (Рационализм)", color: categoryColors.epistemological },
+-            { id: 6, label: "Необходимость", color: categoryColors.logical },
+-            { id: 7, label: "Возможность", color: categoryColors.logical },
+-            { id: 8, label: "Обоснование", color: categoryColors.epistemological },
+-            { id: 9, label: "Верификация (Обоснование)", color: categoryColors.epistemological }
+-        ]);
+-        
+-        const analyticEdges = new vis.DataSet([
+-            { from: 1, to: 2, label: "Основание" },
+-            { from: 1, to: 3, label: "Основание" },
+-            { from: 1, to: 4, label: "Основание" },
+-            { from: 5, to: 1, label: "Основание" },
+-            { from: 5, to: 6, label: "Понятийная связь" },
+-            { from: 5, to: 7, label: "Понятийная связь" },
+-            { from: 4, to: 8, label: "Понятийная связь" },
+-            { from: 8, to: 2, label: "Понятийная связь" },
+-            { from: 3, to: 9, label: "Понятийная связь" },
+-            { from: 9, to: 4, label: "Понятийная связь" }
+-        ]);
+-        
+-        createNetwork("analyticNetwork", analyticNodes, analyticEdges);
+-
+-        // Постмодернизм
+-        const postmodernNodes = new vis.DataSet([
+-            { id: 1, label: "Язык", color: categoryColors.anthropological },
+-            { id: 2, label: "Власть", color: categoryColors.anthropological },
+-            { id: 3, label: "Дискурс (Интерпретация)", color: categoryColors.anthropological },
+-            { id: 4, label: "Знание", color: categoryColors.epistemological },
+-            { id: 5, label: "Плюрализм", color: categoryColors.logical },
+-            { id: 6, label: "Всеобщность", color: categoryColors.logical },
+-            { id: 7, label: "Идентичность", color: categoryColors.anthropological },
+-            { id: 8, label: "Деконструкция (Диалектика)", color: categoryColors.logical }
+-        ]);
+-        
+-        const postmodernEdges = new vis.DataSet([
+-            { from: 1, to: 2, label: "Основание" },
+-            { from: 1, to: 3, label: "Основание" },
+-            { from: 3, to: 2, label: "Понятийная связь" },
+-            { from: 2, to: 4, label: "Причинность" },
+-            { from: 4, to: 2, label: "Причинность" },
+-            { from: 5, to: 6, label: "Противоположность" },
+-            { from: 5, to: 3, label: "Основание" },
+-            { from: 7, to: 3, label: "Понятийная связь" },
+-            { from: 1, to: 8, label: "Основание" },
+-            { from: 8, to: 5, label: "Причинность" }
+-        ]);
+-        
+-        createNetwork("postmodernNetwork", postmodernNodes, postmodernEdges);
+-    </script>
+-</body>
+-</html>
+-        
+         const platoEdges = new vis.DataSet([
+             { from: 1, to: 2, label: "Основание" },
+             { from: 1, to: 3, label: "Иерархия" },
+@@ -544,4 +484,6 @@
+             { from: 6, to: 1, label: "Причинность" },
+             { from: 6, to: 3, label: "Причинность" },
+             { from: 3, to: 7, label: "Понятийная связь" }
+-        ]);
++        ]);
++        
++        createNetwork("pragmatismNetwork", prag

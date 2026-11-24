@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор философских графов и интерпретаций</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.20/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f7fa;
+        }
+        .max-h-screen {
+            max-height: 80vh;
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #6b46c1 0%, #2c3e50 100%);
+            color: white;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            border-radius: 0.5rem;
+        }
+        .category-panel {
+            transition: all 0.3s ease;
+        }
+        .category-panel:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .paradigm-button {
+            transition: all 0.2s ease;
+        }
+        .paradigm-button:hover {
+            transform: translateY(-2px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .conclusion-item {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+        .quote {
+            border-left: 4px solid #6b46c1;
+            padding-left: 1rem;
+            font-style: italic;
+            margin: 1rem 0;
+        }
+        
+        /* Graph styles */
+        .node {
+            cursor: pointer;
+        }
+        .node circle {
+            stroke-width: 2px;
+        }
+        .node text {
+            font-size: 12px;
+            font-family: 'Arial', sans-serif;
+        }
+        .link {
+            stroke-opacity: 0.8;
+            stroke-width: 2px;
+        }
+        .link-label {
+            font-size: 10px;
+            fill: #666;
+            font-weight: bold;
+        }
+        .node.selected circle {
+            stroke: #ff5722;
+            stroke-width: 3px;
+        }
+        .connection-menu {
+            border-radius: 0.375rem;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem;
+            max-width: 200px;
+        }
+        .connection-type {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .connection-type:hover {
+            background-color: #f3f4f6;
+        }
+        
+        /* Legend styles */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .legend-line {
+            width: 20px;
+            height: 2px;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <div class="header-bg">
+            <h1 class="text-3xl font-bold text-center">Конструктор философских графов и интерпретаций</h1>
+            <p class="text-center mt-2 text-gray-200">Исследуйте взаимосвязи между философскими категориями и формируйте сложные философские системы</p>
+        </div>
+        
+        <div id="root"></div>
+        
+        <div class="footer">
+            <p>© 2025 Конструктор философских графов</p>
+            <p class="text-sm mt-1">Разработано для изучения взаимосвязей философских категорий и формирования концепций</p>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const PhilosophyGraphExplorer = () => {
+          // Состояние для названия концепции
+          const [conceptName, setConceptName] = React.useState("Ваша философская концепция");
+          
+          // Состояние для выбранных категорий (теперь узлы графа)
+          const [nodes, setNodes] = React.useState([]);
+          
+          // Состояние для связей между категориями
+          const [links, setLinks] = React.useState([]);
+          
+          // Состояние для выбранного узла (для создания связей)
+          const [selectedNode, setSelectedNode] = React.useState(null);
+          
+          // Состояние для временной связи (при создании связи)
+          const [temporaryLink, setTemporaryLink] = React.useState(null);
+          
+          // Состояние для меню выбора типа связи
+          const [connectionMenu, setConnectionMenu] = React.useState({
+            visible: false,
+            x: 0,
+            y: 0,
+            sourceNode: null,
+            targetNode: null
+          });
+          
+          // Доступные категории, сгруппированные по направлениям
+          const categoryGroups = [
+            {
+              title: "Онтологические категории",
+              categories: [
+                { id: "existence", name: "Бытие", description: "Фундаментальная категория, указывающая на реальность и существование как таковое.", color: "#8b5cf6" },
+                { id: "substance", name: "Субстанция", description: "То, что существует само по себе и не нуждается для своего существования ни в чем другом.", color: "#8b5cf6" },
+                { id: "essence", name: "Сущность", description: "То, что делает вещь именно тем, чем она является, её неотъемлемое качество.", color: "#8b5cf6" },
+                { id: "matter", name: "Материя", description: "Физическая субстанция, из которой состоят предметы материального мира.", color: "#8b5cf6" },
+                { id: "form", name: "Форма", description: "Структура или организующий принцип, придающий материи конкретные свойства.", color: "#8b5cf6" },
+                { id: "potentiality", name: "Потенциальность", description: "Состояние возможности, непроявленные возможности объекта.", color: "#8b5cf6" },
+                { id: "actuality", name: "Актуальность", description: "Реализация потенциала, состояние осуществлённости.", color: "#8b5cf6" },
+                { id: "nature", name: "Природа", description: "Совокупность естественного мира, его процессов и закономерностей.", color: "#8b5cf6" }
+              ]
+            },
+            {
+              title: "Эпистемологические категории",
+              categories: [
+                { id: "knowledge", name: "Знание", description: "Обоснованное истинное мнение, понимание, основанное на опыте или образовании.", color: "#3b82f6" },
+                { id: "belief", name: "Вера", description: "Принятие чего-либо за истину без непосредственного эмпирического или рационального доказательства.", color: "#3b82f6" },
+                { id: "reason", name: "Разум", description: "Способность логического мышления, познавательная способность человека.", color: "#3b82f6" },
+                { id: "empiricism", name: "Эмпиризм", description: "Направление, утверждающее, что знание основано преимущественно на опыте и чувственном восприятии.", color: "#3b82f6" },
+                { id: "rationalism", name: "Рационализм", description: "Направление, утверждающее, что истинное знание достижимо через разум и логическое мышление.", color: "#3b82f6" },
+                { id: "truth", name: "Истина", description: "Соответствие знания действительности, адекватное отражение реальности.", color: "#3b82f6" },
+                { id: "justification", name: "Обоснование", description: "Процесс или методы подтверждения истинности знания.", color: "#3b82f6" },
+                { id: "understanding", name: "Понимание", description: "Постижение смысла и значения явлений.", color: "#3b82f6" }
+              ]
+            },
+            {
+              title: "Аксиологические категории",
+              categories: [
+                { id: "value", name: "Ценность", description: "Значимость объекта для субъекта, то, что имеет важность и смысл.", color: "#ec4899" },
+                { id: "ethics", name: "Этика", description: "Учение о нравственности, о принципах правильного поведения.", color: "#ec4899" },
+                { id: "aesthetics", name: "Эстетика", description: "Учение о прекрасном, о законах красоты и художественного творчества.", color: "#ec4899" },
+                { id: "good", name: "Благо", description: "То, что является положительным, полезным, желательным с моральной точки зрения.", color: "#ec4899" },
+                { id: "beauty", name: "Красота", description: "Свойство объекта вызывать эстетическое удовлетворение.", color: "#ec4899" },
+                { id: "virtue", name: "Добродетель", description: "Положительное нравственное качество, моральное совершенство.", color: "#ec4899" }
+              ]
+            },
+            {
+              title: "Логические категории",
+              categories: [
+                { id: "necessity", name: "Необходимость", description: "То, что не может не быть, что с неизбежностью присуще объекту.", color: "#f59e0b" },
+                { id: "possibility", name: "Возможность", description: "То, что может существовать или произойти при определённых условиях.", color: "#f59e0b" },
+                { id: "universality", name: "Всеобщность", description: "Свойство относиться ко всем объектам определённого класса без исключения.", color: "#f59e0b" },
+                { id: "particularity", name: "Частность", description: "Свойство относиться только к некоторым объектам определённого класса.", color: "#f59e0b" },
+                { id: "causality", name: "Причинность", description: "Отношение причины и следствия, где одно явление порождает другое.", color: "#f59e0b" },
+                { id: "teleology", name: "Телеология", description: "Учение о целесообразности, о целевых причинах явлений.", color: "#f59e0b" },
+                { id: "dialectics", name: "Диалектика", description: "Учение о единстве и борьбе противоположностей как источнике развития.", color: "#f59e0b" },
+                { id: "pluralism", name: "Плюрализм", description: "Признание множественности независимых начал бытия или оснований познания.", color: "#f59e0b" }
+              ]
+            },
+            {
+              title: "Антропологические категории",
+              categories: [
+                { id: "consciousness", name: "Сознание", description: "Высшая форма психического отражения действительности, свойственная человеку.", color: "#10b981" },
+                { id: "freedom", name: "Свобода", description: "Способность действовать в соответствии со своими интересами и целями, без внешнего принуждения.", color: "#10b981" },
+                { id: "will", name: "Воля", description: "Способность человека к выбору цели деятельности и внутренним усилиям для её достижения.", color: "#10b981" },
+                { id: "identity", name: "Идентичность", description: "Сохранение самотождественности, осознание себя как уникальной личности.", color: "#10b981" },
+                { id: "person", name: "Личность", description: "Человек как субъект социальных отношений и сознательной деятельности.", color: "#10b981" },
+                { id: "society", name: "Общество", description: "Совокупность людей, объединённых общими интересами, традициями, нормами поведения.", color: "#10b981" },
+                { id: "history", name: "История", description: "Процесс развития человечества во времени, последовательность событий.", color: "#10b981" },
+                { id: "language", name: "Язык", description: "Система знаков, служащая для коммуникации, выражения мыслей и формирования понятий.", color: "#10b981" },
+                { id: "power", name: "Власть", description: "Способность и возможность осуществлять свою волю, влиять на деятельность и поведение других людей.", color: "#10b981" },
+                { id: "interpretation", name: "Интерпретация", description: "Процесс выявления и приписывания смысла объектам, текстам, действиям.", color: "#10b981" }
+              ]
+            }
+          ];
+          
+          // Типы связей для философских категорий
+          const connectionTypes = [
+            { id: "foundation", name: "Основание", description: "Одна категория служит основанием или фундаментом для другой", color: "#2563eb", lineStyle: "solid" },
+            { id: "opposition", name: "Противоположность", description: "Категории находятся в состоянии противоположности или противоречия", color: "#dc2626", lineStyle: "dashed" },
+            { id: "dialectic", name: "Диалектическое единство", description: "Категории образуют диалектическое единство противоположностей", color: "#7c3aed", lineStyle: "solid" },
+            { id: "causation", name: "Причинность", description: "Одна категория является причиной другой", color: "#059669", lineStyle: "solid" },
+            { id: "conceptual", name: "Понятийная связь", description: "Категории связаны на уровне понятий", color: "#0284c7", lineStyle: "dotted" },
+            { id: "hierarchical", name: "Иерархия", description: "Одна категория является вышестоящей по отношению к другой", color: "#9333ea", lineStyle: "solid" },
+            { id: "complementary", name: "Дополнительность", description: "Категории дополняют друг друга", color: "#4f46e5", lineStyle: "dotted" },
+            { id: "emergence", name: "Эмерджентность", description: "Одна категория возникает из другой как эмерджентное свойство", color: "#16a34a", lineStyle: "solid" },
+            { id: "identity", name: "Тождественность", description: "Категории тождественны в определенном контексте", color: "#9ca3af", lineStyle: "solid" },
+            { id: "reduction", name: "Редукция", description: "Одна категория сводится к другой", color: "#f97316", lineStyle: "dashed" }
+          ];
+          
+          // Философские парадигмы
+          const philosophicalParadigms = [
+            {
+              name: "Материализм",
+              nodes: ["matter", "existence"],
+              links: [{ source: "matter", target: "existence", type: "foundation" }],
+              description: "Философское направление, признающее материю первичной и единственной субстанцией, а сознание — вторичным, производным от материи."
+            },
+            {
+              name: "Идеализм",
+              nodes: ["consciousness", "form", "essence"],
+              links: [
+                { source: "consciousness", target: "form", type: "foundation" },
+                { source: "form", target: "essence", type: "conceptual" }
+              ],
+              description: "Философское направление, признающее идеальное (сознание, мышление, дух) первичным и определяющим по отношению к материальному миру."
+            },
+            {
+              name: "Дуализм",
+              nodes: ["matter", "consciousness"],
+              links: [{ source: "matter", target: "consciousness", type: "opposition" }],
+              description: "Философское учение, признающее равноправное существование двух начал — материального и духовного."
+            },
+            {
+              name: "Эмпиризм",
+              nodes: ["empiricism", "knowledge"],
+              links: [{ source: "empiricism", target: "knowledge", type: "foundation" }],
+              description: "Философское направление, признающее опыт и чувственное восприятие единственным источником знания."
+            },
+            {
+              name: "Рационализм",
+              nodes: ["rationalism", "reason", "knowledge"],
+              links: [
+                { source: "rationalism", target: "reason", type: "foundation" },
+                { source: "reason", target: "knowledge", type: "causation" }
+              ],
+              description: "Философское направление, признающее разум основой познания и деятельности людей."
+            },
+            {
+              name: "Феноменология",
+              nodes: ["consciousness", "essence"],
+              links: [{ source: "consciousness", target: "essence", type: "emergence" }],
+              description: "Философское направление, изучающее структуры сознания и явления, которые даны сознанию непосредственно."
+            },
+            {
+              name: "Экзистенциализм",
+              nodes: ["existence", "freedom", "identity"],
+              links: [
+                { source: "existence", target: "freedom", type: "foundation" },
+                { source: "freedom", target: "identity", type: "emergence" }
+              ],
+              description: "Философское направление, постулирующее уникальность бытия человека и подчёркивающее свободу и ответственность личности."
+            },
+            {
+              name: "Диалектический материализм",
+              nodes: ["matter", "dialectics", "causality", "history"],
+              links: [
+                { source: "matter", target: "dialectics", type: "foundation" },
+                { source: "dialectics", target: "causality", type: "conceptual" },
+                { source: "causality", target: "history", type: "causation" }
+              ],
+              description: "Философское направление, рассматривающее развитие природы, общества и мышления через диалектические законы и материалистическое понимание истории."
+            }
+          ];
+          
+          // Философские школы
+          const philosophicalSchools = [
+            {
+              name: "Античная философия",
+              compatibleNodes: ["substance", "form", "essence", "virtue", "good", "beauty"],
+              incompatibleNodes: ["empiricism", "rationalism"],
+              description: "Философия Древней Греции и Древнего Рима, заложившая основы западной философской традиции.",
+              representatives: [
+                "Сократ: «Знаю, что ничего не знаю»",
+                "Платон: «Идеи существуют вне материального мира и являются истинной реальностью»",
+                "Аристотель: «Форма есть актуализация материи»"
+              ]
+            },
+            {
+              name: "Средневековая философия",
+              compatibleNodes: ["belief", "essence", "virtue", "substance"],
+              incompatibleNodes: ["empiricism", "matter"],
+              description: "Философия, развивавшаяся в Европе и на Ближнем Востоке в период Средневековья, тесно связанная с религиозным мировоззрением.",
+              representatives: [
+                "Августин Блаженный: «Верую, чтобы понимать»",
+                "Фома Аквинский: «Бытие и сущность в Боге тождественны»",
+                "Ансельм Кентерберийский: «Вера, ищущая понимания»"
+              ]
+            },
+            {
+              name: "Философия Нового времени",
+              compatibleNodes: ["knowledge", "reason", "empiricism", "rationalism", "causality"],
+              incompatibleNodes: [],
+              description: "Философия 17-18 веков, характеризующаяся развитием научного метода и разработкой гносеологической проблематики.",
+              representatives: [
+                "Рене Декарт: «Мыслю, следовательно, существую»",
+                "Джон Локк: «В разуме нет ничего, чего прежде не было бы в чувствах»",
+                "Иммануил Кант: «Две вещи наполняют душу удивлением и благоговением: звёздное небо надо мной и моральный закон во мне»"
+              ]
+            },
+            {
+              name: "Немецкая классическая философия",
+              compatibleNodes: ["consciousness", "freedom", "reason", "universality", "history"],
+              incompatibleNodes: ["empiricism"],
+              description: "Философское направление конца 18 - начала 19 века в Германии, представленное работами Канта, Фихте, Шеллинга, Гегеля и Фейербаха.",
+              representatives: [
+                "Иммануил Кант: «Поступай так, чтобы максима твоей воли могла стать принципом всеобщего законодательства»",
+                "Георг Вильгельм Фридрих Гегель: «Всё действительное разумно, всё разумное действительно»",
+                "Людвиг Фейербах: «Человек человеку — Бог»"
+              ]
+            }
+          ];
+          
+          // Философские дилеммы
+          const philosophicalDilemmas = [
+            {
+              name: "Проблема универсалий",
+              relatedNodes: ["universality", "particularity", "substance", "essence"],
+              description: "Вопрос о природе и онтологическом статусе общих понятий: существуют ли они независимо от конкретных вещей или являются лишь именами?",
+              positions: [
+                "Реализм: универсалии существуют реально и независимо от вещей и сознания",
+                "Концептуализм: универсалии существуют как концепты в уме",
+                "Номинализм: универсалии — лишь имена, не имеющие самостоятельного существования"
+              ]
+            },
+            {
+              name: "Проблема свободы воли",
+              relatedNodes: ["freedom", "will", "necessity", "causality"],
+              description: "Вопрос о том, обладает ли человек свободой выбора или все его действия предопределены внешними причинами.",
+              positions: [
+                "Детерминизм: все события, включая человеческие поступки, предопределены предшествующими причинами",
+                "Либертарианство: человек обладает подлинной свободой воли, независимой от причинно-следственных связей",
+                "Компатибилизм: свобода воли совместима с детерминизмом, если понимать свободу как отсутствие внешнего принуждения"
+              ]
+            },
+            {
+              name: "Проблема сознания и тела",
+              relatedNodes: ["consciousness", "matter", "substance", "identity"],
+              description: "Вопрос о взаимоотношении сознания (психического) и тела (физического), а также о природе сознания как такового.",
+              positions: [
+                "Дуализм: сознание и тело — две различные субстанции",
+                "Физикализм: сознание сводимо к физическим процессам в мозге",
+                "Функционализм: ментальные состояния определяются их функциональной ролью, а не физической природой"
+              ]
+            }
+          ];
+          
+          // Справочник всех категорий для быстрого доступа по id
+          const categoryDict = {};
+          categoryGroups.forEach(group => {
+            group.categories.forEach(category => {
+              categoryDict[category.id] = category;
+            });
+          });
+          
+          // Справочник типов связей для быстрого доступа по id
+          const connectionTypeDict = {};
+          connectionTypes.forEach(type => {
+            connectionTypeDict[type.id] = type;
+          });
+          
+          // Ссылка на SVG для графа
+          const svgRef = React.useRef(null);
+          // Ссылка на контейнер для графа
+          const graphContainerRef = React.useRef(null);
+          
+          // Эффект для инициализации графа
+          React.useEffect(() => {
+            if (nodes.length > 0) {
+              renderGraph();
+            }
+          }, [nodes, links]);
+          
+          // Функция для отрисовки графа с помощью D3.js
+          const renderGraph = () => {
+            if (!svgRef.current || nodes.length === 0) return;
+            
+            // Очищаем предыдущий граф
+            d3.select(svgRef.current).selectAll("*").remove();
+            
+            const containerWidth = graphContainerRef.current.clientWidth;
+            const containerHeight = 500;
+            
+            // Создаем SVG
+            const svg = d3.select(svgRef.current)
+              .attr("width", containerWidth)
+              .attr("height", containerHeight);
+            
+            // Создаем симуляцию сил для графа
+            const simulation = d3.forceSimulation(nodes)
+              .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+              .force("charge", d3.forceManyBody().strength(-200))
+              .force("center", d3.forceCenter(containerWidth / 2, containerHeight / 2))
+              .force("collision", d3.forceCollide().radius(60));
+            
+            // Создаем группу для ссылок
+            const link = svg.append("g")
+              .selectAll("line")
+              .data(links)
+              .join("line")
+              .attr("class", "link")
+              .attr("stroke", d => connectionTypeDict[d.type].color)
+              .style("stroke-dasharray", d => {
+                const style = connectionTypeDict[d.type].lineStyle;
+                return style === "dashed" ? "5,5" : style === "dotted" ? "2,2" : "none";
+              });
+            
+            // Создаем метки для ссылок (типов связей)
+            const linkLabels = svg.append("g")
+              .selectAll("text")
+              .data(links)
+              .join("text")
+              .attr("class", "link-label")
+              .text(d => connectionTypeDict[d.type].name.substring(0, 12) + (connectionTypeDict[d.type].name.length > 12 ? "..." : ""))
+              .attr("text-anchor", "middle")
+              .attr("dy", -5);
+            
+            // Создаем группу для узлов
+            const node = svg.append("g")
+              .selectAll(".node")
+              .data(nodes)
+              .join("g")
+              .attr("class", d => "node" + (d.id === (selectedNode && selectedNode.id) ? " selected" : ""))
+              .on("click", handleNodeClick)
+              .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+            
+            // Добавляем круги для узлов
+            node.append("circle")
+              .attr("r", 25)
+              .attr("fill", d => categoryDict[d.i

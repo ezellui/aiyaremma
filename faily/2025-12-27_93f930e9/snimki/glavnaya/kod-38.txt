@@ -1,0 +1,32 @@
+# Service Configuration
+NODE_ENV=development
+PORT=3000
+SERVICE_NAME=service-template
+
+# Database Configuration (выберите нужный)
+# PostgreSQL
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=philos_concepts
+POSTGRES_USER=philos
+POSTGRES_PASSWORD=password
+
+# MongoDB
+MONGO_URL=mongodb://philos:password@localhost:27017/philos_concepts
+
+# Neo4j
+NEO4J_URL=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=password
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# Logging
+LOG_LEVEL=debug
+
+# External Services
+CONCEPT_SERVICE_URL=http://localhost:4002
+GRAPH_SERVICE_URL=http://localhost:4003
+THESIS_SERVICE_URL=http://localhost:4004
+CLAUDE_SERVICE_URL=http://localhost:4006

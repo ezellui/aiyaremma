@@ -1,0 +1,26 @@
+<!-- В HTML файле, в секцию visualization-modes -->
+<div class="visualization-modes">
+    <button id="biomorphicMode" class="active" onclick="switchMode('biomorphic')">Биоморфный</button>
+    <button id="domainMode" onclick="switchMode('domain')">Доменная карта</button>
+    <button id="riemannMode" onclick="switchMode('riemann')">Риманов</button>
+    <button id="fieldMode" onclick="switchMode('field')">Векторное поле</button>
+    <button id="adaptiveMode" onclick="switchMode('adaptive')">Адаптивный</button>
+    <button id="mandelbrotMode" onclick="switchMode('mandelbrot')">Мандельброт</button>
+    <button id="juliaMode" onclick="switchMode('julia')">Жюлиа</button>
+    <button id="newtonMode" onclick="switchMode('newton')">Ньютон</button>
+</div>
+
+<!-- Добавьте раздел настроек для Жюлиа -->
+<div id="julia-settings" style="display: none;">
+    <div class="parameter-slider">
+        <label for="juliaRe">Параметр c (действительная часть):</label>
+        <input type="range" id="juliaRe" min="-2" max="2" value="-0.7" step="0.01">
+        <span id="juliaReValue" class="parameter-value">-0.7</span>
+    </div>
+    <div class="parameter-slider">
+        <label for="juliaIm">Параметр c (мнимая часть):</label>
+        <input type="range" id="juliaIm" min="-2" max="2" value="0.27" step="0.01">
+        <span id="juliaImValue" class="parameter-value">0.27</span>
+    </div>
+    <button onclick="updateJuliaSet()">Обновить</button>
+</div>

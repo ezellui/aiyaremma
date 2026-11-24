@@ -1,0 +1,39 @@
+--- предыдущая/Модифицированный-код-word-page-xq.txt
++++ текущая/Модифицированный-код-word-page-xq.txt
+@@ -1,4 +1,35 @@
+-if ($inflectimport module namespace c = "common.xq" at "common.xq";
++if ($inflect-refs) then (
++    <p><u>Грамматические формы</u></p>,
++    <table> {
++    let $has-glosses := $inflect-refs/@gloss
++    let $has-variants := $inflect-refs/inflect/@variant
++    let $inflect-sigs := distinct-values($inflect-refs/local:ref-sig(., 'inflect'))
++    for $inflect-sig in $inflect-sigs
++    let $refs := $inflect-refs[local:ref-sig(., 'inflect') = $inflect-sig]
++    let $ref := $refs[1]
++    let $form := $ref/inflect/@form/string()
++    let $print-word := if ($ref/@l) then <print-word show-lang="y"/> else <print-word/>
++    order by $form, $ref/@v
++    return
++        <tr>{ (
++            <td><i>{c:print-word($ref, $print-word)}</i></td>,
++            <td>{ (
++                local:print-inflections($word, $form),
++                if (not($ref/inflect/@variant)) then () else
++                ('; ', local:print-inflections($word, string($ref/inflect/@variant)))
++            ) }</td>,
++            (: if (not($has-variants)) then () else
++            <td>{ local:print-inflections($word, string($ref/inflect/@variant)) }</td>, :)
++            if (not($has-glosses)) then () else
++            <td>{if ($ref/@gloss) then c:print-gloss($ref) else '&#160;'}</td>,
++            <td>{ (
++                local:print-ref-set($refs, <ref-set short-mode="{$pubmode}"/>),
++                if ($ref/inflect/text() != '') then (': ', xdb:html($ref/inflect/text()))
++                else ()
++            ) }</td>
++        )}</tr>
++    } </table>
++) else (),import module namespace c = "common.xq" at "common.xq";
+ 
+ declare function local:print-deriv($deriv as node()?) as element() {
+     <span>

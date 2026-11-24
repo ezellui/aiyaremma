@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE AMERICAN EXPOSER — Crocs Surveillance</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Oswald:wght@400;700;900&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a0f00;
+    --paper: #f5f0e1;
+    --red: #c0170e;
+    --yellow: #f7c948;
+    --muted: #6b5c47;
+    --rule: #2a1a0a;
+    --teal: #0a7a7a;
+    --teal-light: #0faaaa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #d4c9a8;
+    font-family: 'PT Serif', Georgia, serif;
+    color: var(--ink);
+    background-image: repeating-linear-gradient(
+      0deg, transparent, transparent 28px,
+      rgba(0,0,0,0.03) 28px, rgba(0,0,0,0.03) 29px
+    );
+  }
+
+  .newspaper {
+    max-width: 960px;
+    margin: 0 auto;
+    background: var(--paper);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    padding: 0;
+    box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    position: relative;
+  }
+
+  .masthead {
+    border-bottom: 5px double var(--rule);
+    padding: 12px 20px 8px;
+    text-align: center;
+    background: var(--paper);
+  }
+
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 5px;
+    margin-bottom: 8px;
+  }
+
+  .paper-name {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 72px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -2px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  }
+  .paper-name span { color: var(--red); }
+
+  .tagline {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .issue-info {
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-top: 6px;
+    border-top: 1px solid var(--rule);
+    padding-top: 5px;
+  }
+
+  .breaking-banner {
+    background: var(--teal);
+    color: white;
+    text-align: center;
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.3em;
+    padding: 6px;
+    animation: pulse-banner 2s ease-in-out infinite;
+  }
+  @keyframes pulse-banner { 0%,100%{opacity:1} 50%{opacity:0.85} }
+
+  .content { padding: 20px 24px; }
+
+  .main-headline {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 900;
+    font-size: 60px;
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-align: center;
+    border-bottom: 3px solid var(--rule);
+    padding-bottom: 12px;
+    margin-bottom: 10px;
+  }
+  .main-headline .red-word  { color: var(--red);  display: block; font-size: 76px; }
+  .main-headline .teal-word { color: var(--teal); display: block; font-size: 66px; }
+
+  .sub-headline {
+    font-family: 'PT Serif', serif;
+    font-style: italic;
+    font-size: 17px;
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .byline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-top: 1px solid var(--muted);
+    border-bottom: 1px solid var(--muted);
+    padding: 5px 0;
+    margin-bottom: 16px;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .col { padding: 0 14px; border-right: 1px solid var(--muted); }
+  .col:first-child { padding-left: 0; }
+  .col:last-child  { padding-right: 0; border-right: none; }
+
+  .col p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    text-align: justify;
+    margin-bottom: 10px;
+    hyphens: auto;
+  }
+
+  .col p:first-of-type::first-letter {
+    float: left;
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 52px;
+    line-height: 0.8;
+    margin-right: 6px;
+    margin-top: 4px;
+    color: var(--teal);
+  }
+
+  .pullquote {
+    border-top: 3px solid var(--rule);
+    border-bottom: 3px solid var(--rule);
+    margin: 14px 0;
+    padding: 10px 6px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+  }
+  .pullquote em  { color: var(--red);  font-style: normal; }
+  .pullquote .tl { color: var(--teal); font-style: normal; }
+
+  .stats-box {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px;
+    margin: 16px 0;
+    grid-column: 1 / -1;
+  }
+  .stats-box h3 {
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.2em;
+    color: var(--yellow);
+    border-bottom: 1px solid var(--yellow);
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    text-align: center;
+  }
+  .stat-item {
+    padding: 8px 4px;
+    border: 1px solid rgba(247,201,72,0.3);
+  }
+  .stat-year {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--yellow);
+    display: block;
+  }
+  .stat-bar-wrap {
+    height: 60px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin: 6px 0;
+  }
+  .stat-bar { width: 28px; background: var(--teal); }
+  .stat-bar.crash { background: var(--red); }
+  .stat-bar.alarm { background: #ff4400; box-shadow: 0 0 14px #ff8800; }
+  .stat-bar.zero  { background: #333; height: 3px !important; }
+  .stat-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    color: #ccc;
+    display: block;
+  }
+
+  .full-width-section {
+    grid-column: 1 / -1;
+    border-top: 3px double var(--rule);
+    border-bottom: 3px double var(--rule);
+    padding: 12px 0;
+    margin: 16px 0;
+  }
+  .section-label {
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .correlations {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 10px;
+  }
+  .corr-item {
+    background: rgba(10,122,122,0.06);
+    border-left: 3px solid var(--teal);
+    padding: 8px 10px;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .corr-item strong {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .footer-rule {
+    border-top: 5px double var(--rule);
+    padding: 10px 20px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  .ad-box {
+    border: 2px solid var(--ink);
+    padding: 8px;
+    margin: 12px 0;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+  }
+  .ad-box .ad-title { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .ad-box .ad-sub   { font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .ad-box .ad-phone { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--teal); letter-spacing: 0.1em; margin-top: 4px; }
+
+  .witness-box {
+    border: 1px solid var(--muted);
+    padding: 10px;
+    margin: 12px 0;
+    background: rgba(247,201,72,0.12);
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .witness-box cite {
+    display: block;
+    font-style: normal;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .photo-box { border: 1px solid var(--muted); margin: 12px 0; overflow: hidden; }
+  .photo-caption {
+    font-family: 'PT Serif', serif;
+    font-style: italic;
+    font-size: 10.5px;
+    color: var(--muted);
+    padding: 5px 8px;
+    border-top: 1px solid var(--muted);
+    text-align: left;
+  }
+
+  .expert-badge {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--ink);
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 5px;
+    margin-right: 4px;
+  }
+
+  /* FIBONACCI TABLE */
+  .fib-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    margin: 10px 0;
+  }
+  .fib-table th {
+    background: var(--teal);
+    color: white;
+    padding: 4px 6px;
+    text-align: center;
+    letter-spacing: 0.08em;
+    font-size: 9px;
+  }
+  .fib-table td {
+    border: 1px solid rgba(10,122,122,0.25);
+    padding: 3px 6px;
+    text-align: center;
+    font-size: 10px;
+  }
+  .fib-table tr:nth-child(odd) td { background: rgba(10,122,122,0.05); }
+  .fib-table .match { color: var(--red); font-weight: 700; }
+
+  @media (max-width: 700px) {
+    .paper-name { font-size: 42px; }
+    .main-headline { font-size: 36px; }
+    .main-headline .red-word  { font-size: 50px; }
+    .main-headline .teal-word { font-size: 44px; }
+    .columns { grid-template-columns: 1fr; }
+    .col { border-right: none; border-bottom: 1px solid var(--muted); padding: 10px 0; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    .correlations { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="newspaper">
+
+  <div class="masthead">
+    <div class="masthead-top">
+      <span>★ FOUNDED 1987 ★ CARSON CITY, NV ★</span>
+      <span>THURSDAY, APRIL 3, 2025</span>
+      <span>VOL. XXXVIII, NO. 14 &nbsp;·&nbsp; $2.99</span>
+    </div>
+    <div class="paper-name">The <span>American</span> Exposer</div>
+    <div class="tagline">«WE PRINT WHAT THEY HIDE» &nbsp;·&nbsp; AMERICA'S #1 SOURCE FOR HIDDEN TRUTH SINCE 1987</div>
+    <div class="issue-info">
+      ТАКЖЕ ВНУТРИ: ГУСИ: НОВЫЕ ДАННЫЕ ПО ОКРУГУ КОЛУМБИЯ (СТР. 3) &nbsp;·&nbsp; РЫЖИЕ ПРИШЕЛЬЦЫ ЗАМЕЧЕНЫ У ДВУХ HOME DEPOT ОДНОВРЕМЕННО (СТР. 2) &nbsp;·&nbsp; SQUIRRELS: ВТОРОЙ ЭШЕЛОН — НАЧАЛО РАССЛЕДОВАНИЯ (СТР. 7)
+    </div>
+  </div>
+
+  <div class="breaking-banner">
+    👟 &nbsp; СПЕЦИАЛЬНОЕ РАССЛЕДОВАНИЕ: ОНИ НА ВАШИХ НОГАХ. ОНИ СЛУШАЮТ. У НИХ 13 ОТВЕРСТИЙ. &nbsp; 👟
+  </div>
+
+  <div class="content">
+
+    <div class="main-headline">
+      CROCS — ЭТО
+      <span class="red-word">НЕ ОБУВЬ</span>
+      <span class="teal-word">ЭТО ПРОТОКОЛ</span>
+    </div>
+
+    <div class="sub-headline">
+      Банкротство 2008 года, чудесное воскрешение, 13 отверстий по спирали Фибоначчи и три самые доверенные профессии Америки —<br>
+      всё, что компания Crocs Inc. не хочет, чтобы вы сложили вместе
+    </div>
+
+    <div class="byline-row">
+      <span>BY: CHAD WILLOUGHBY JR., STAFF INVESTIGATOR &amp; CONSUMER PRODUCTS CORRESPONDENT</span>
+      <span>CONTRIBUTING: DR. RAYMOND T. HOOKMEYER, PH.D* (*HONORARY, UNIVERSITY OF AMERICAN SCIENCES, RENO)</span>
+    </div>
+
+    <!-- STATS BOX -->
+    <div class="stats-box">
+      <h3>📊 АКЦИИ CROCS INC. (CROX) И КЛЮЧЕВЫЕ СОБЫТИЯ — NASDAQ, ДАННЫЕ В ОТКРЫТОМ ДОСТУПЕ</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-year">2006</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="height:28px;"></div></div>
+          <span class="stat-num">IPO: $21/акция<br><em style="font-size:9px;color:#aaa;">(«народная обувь»)</em></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-year">2007</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="height:44px;"></div></div>
+          <span class="stat-num">пик $75/акция<br><em style="font-size:9px;color:#aaa;">(Phase I завершена?)</em></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-year">2008–09</span>
+          <div class="stat-bar-wrap"><div class="stat-bar crash" style="height:4px;"></div></div>
+          <span class="stat-num">$0.79/акция<br><em style="font-size:9px;color:#f88;">(−99%: УХОД В ТЕНЬ)</em></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-year">2013</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="height:18px;"></div></div>
+          <span class="stat-num">восстановление<br><em style="font-size:9px;color:#aaa;">(PRISM: тот же год)</em></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-year">2020–21</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="height:48px;"></div></div>
+          <span class="stat-num">+800% за 18 мес.<br><em style="font-size:9px;color:#aaa;">(пандемия, все дома)</em></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-year">2022 ↑</span>
+          <div class="stat-bar-wrap"><div class="stat-bar alarm" style="height:60px;"></div></div>
+          <span class="stat-num">$182/акция<br><em style="font-size:9px;color:#ff9977;">⚠ $3,9 МЛРД ВЫРУЧКИ</em></span>
+        </div>
+      </div>
+      <div style="text-align:center; font-family:'Oswald',sans-serif; font-size:10px; color:#aaa; margin-top:10px; letter-spacing:0.1em;">
+        КОМПАНИЯ ПОТЕРЯЛА 99% СТОИМОСТИ — И НЕ ТОЛЬКО ВЫЖИЛА, НО И СТАЛА ОДНИМ ИЗ САМЫХ БЫСТРОРАСТУЩИХ БРЕНДОВ ДЕСЯТИЛЕТИЯ. ЖДЁМ ОБЪЯСНЕНИЙ.
+      </div>
+    </div>
+
+    <div class="columns">
+
+      <!-- COLUMN 1 -->
+      <div class="col">
+        <p>
+          В 2002 году трое приятелей с яхты — Скотт Симс, Лингл Марк и Джордж Бодекер — представили миру сабо из пенистого материала собственной разработки на выставке Fort Lauderdale Boat Show. Они продали все 200 пар за один день. К 2007 году компания стоила больше миллиарда. К 2008-му акция стоила семьдесят девять центов. Компания была на грани ликвидации. И тут — исчезла на пять лет. Не закрылась. Не ликвидировалась. Просто притихла. А потом вернулась. С новыми цветами, новыми партнёрами и новой аудиторией — именно теми людьми, которым вы доверяете свою жизнь.
+        </p>
+        <p>
+          Медсёстры. Хирурги. Повара. Садовники школьных двориков. В 2010 году Crocs запустила программу «Heroes» — специальные скидки для работников здравоохранения и общественного питания. Официальное объяснение: «забота о людях, которые стоят на ногах весь день». Наш вопрос: почему именно <em>эти</em> профессии? Хирург имеет доступ к вашему открытому телу. Повар — к вашей еде. Садовник школьного двора — к вашим детям. Если бы вам понадобилось инфильтровать максимально доверенные точки контакта с американским населением, с чего бы вы начали?
+        </p>
+
+        <div class="witness-box">
+          «Я медсестра уже двадцать два года. В 2011-м наш заведующий вдруг сказал, что отделение переходит на Crocs — якобы из-за "антистатической подошвы". Никто не возражал. Через полгода в Crocs ходили все. Однажды я забыла их дома и пришла в кроссовках. Пациент в четвёртой палате спросил меня, всё ли у меня в порядке. Откуда он знал, что что-то изменилось?»
+          <cite>— Линда Р. Кавано, 54 года, г. Колумбус, OH, февраль 2025 г.</cite>
+        </div>
+
+        <p>
+          Дон Прингл из Кирни, Небраска, который параллельно ведёт реестры MUFON-R, GWR и теперь CROC-Watch Registry (CWR), посчитал: из 340 опрошенных медицинских работников, которые ежедневно носят Crocs, 97% не могут точно назвать год, когда начали это делать. «Они не помнят решения, — говорит Прингл. — Это не выбор. Это переход».
+        </p>
+
+        <!-- FIBONACCI TABLE -->
+        <div style="margin: 12px 0;">
+          <div style="font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--teal); margin-bottom:6px; text-align:center;">ОТВЕРСТИЯ CLASSIC CLOG vs ПОСЛЕДОВАТЕЛЬНОСТЬ ФИБОНАЧЧИ</div>
+          <table class="fib-table">
+            <tr>
+              <th>Ряд</th>
+              <th>Отв. в ряду</th>
+              <th>Число Фиб.</th>
+              <th>Совпадение</th>
+            </tr>
+            <tr><td>1 (носок)</td><td>1</td><td>1</td><td class="match">✓</td></tr>
+            <tr><td>2</td><td>1</td><td>1</td><td class="match">✓</td></tr>
+            <tr><td>3</td><td>2</td><td>2</td><td class="match">✓</td></tr>
+            <tr><td>4</td><td>3</td><td>3</td><td class="match">✓</td></tr>
+            <tr><td>5</td><td>5</td><td>5</td><td class="match">✓</td></tr>
+            <tr><td>Итого</td><td><strong>13 (классик)</strong></td><td><strong>13</strong></td><td class="match">✓ (Фиб.)</td></tr>
+          </table>
+          <div style="font-family:'PT Serif',serif; font-style:italic; font-size:9.5px; color:var(--muted); margin-top:4px; text-align:center;">Источник: CWR, собственные измерения. Погрешность: 0.</div>
+        </div>
+
+        <p>
+          Отдельного внимания заслуживает модель «Classic Clog» в сравнении с моделью «Bistro», разработанной специально для поваров. У Bistro отверстий нет вообще — ни одного. Официальное объяснение: «защита от попадания жидкостей на производстве». Но если убрать все отверстия — исчезает и сигнальный канал. Bistro носят повара, которые работают в открытых кухнях — то есть на виду. Classic Clog с тринадцатью отверстиями носят те, кто работает в закрытых помещениях: операционные блоки, школьные коридоры, серверные комнаты. Прингл называет это «дифференцированным развёртыванием по зонам доступа». Мы называем это вопросом, на который Crocs Inc. не ответила.
+        </p>
+      </div>
+
+      <!-- COLUMN 2 — main illustration -->
+      <div class="col">
+
+        <div class="photo-box">
+          <div style="width:100%; height:330px; background:#0c1818; overflow:hidden; position:relative;">
+            <svg width="100%" height="100%" viewBox="0 0 280 330" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <!-- Background -->
+                <radialGradient id="bgCroc" cx="50%" cy="55%" r="60%">
+                  <stop offset="0%" stop-color="#0a2020"/>
+                  <stop offset="100%" stop-color="#040c0c"/>
+                </radialGradient>
+                <!-- Croc body — classic teal -->
+                <linearGradient id="crocBody" x1="0%" y1="0%" x2="60%" y2="100%">
+                  <stop offset="0%" stop-color="#1eb8b8"/>
+                  <stop offset="40%" stop-color="#0d8a8a"/>
+                  <stop offset="100%" stop-color="#065050"/>
+                </linearGradient>
+                <!-- Sole gradient -->
+                <linearGradient id="solGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#0a6060"/>
+                  <stop offset="100%" stop-color="#042a2a"/>
+                </linearGradient>
+                <!-- Strap -->
+                <linearGradient id="strapGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#0d8a8a"/>
+                  <stop offset="50%" stop-color="#1eb8b8"/>
+                  <stop offset="100%" stop-color="#0d8a8a"/>
+                </linearGradient>
+                <!-- Hole inner -->
+                <radialGradient id="holeGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#020a0a"/>
+                  <stop offset="60%" stop-color="#041212"/>
+                  <stop offset="100%" stop-color="#0a2020"/>
+                </radialGradient>
+                <!-- Soft sketch -->
+                <filter id="sk">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="9" result="n"/>
+                  <feDisplacementMap in="SourceGraphic" in2="n" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
+                </filter>
+                <!-- Fibonacci spiral glow -->
+                <filter id="fibGlow">
+                  <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <!-- Vignette -->
+                <radialGradient id="vig" cx="50%" cy="55%" r="55%">
+                  <stop offset="50%" stop-color="transparent"/>
+                  <stop offset="100%" stop-color="#040c0c" stop-opacity="0.88"/>
+                </radialGradient>
+                <!-- Hidden signal glow -->
+                <radialGradient id="sigGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#00ffcc" stop-opacity="0.7"/>
+                  <stop offset="100%" stop-color="#00ffcc" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+
+              <!-- Background -->
+              <rect width="280" height="330" fill="url(#bgCroc)"/>
+              <!-- Tech grid -->
+              <g opacity="0.04" stroke="#00ffcc" stroke-width="0.4">
+                <line x1="0" y1="55" x2="280" y2="55"/>
+                <line x1="0" y1="110" x2="280" y2="110"/>
+                <line x1="0" y1="165" x2="280" y2="165"/>
+                <line x1="0" y1="220" x2="280" y2="220"/>
+                <line x1="0" y1="275" x2="280" y2="275"/>
+                <line x1="56" y1="0" x2="56" y2="330"/>
+                <line x1="112" y1="0" x2="112" y2="330"/>
+                <line x1="168" y1="0" x2="168" y2="330"/>
+                <line x1="224" y1="0" x2="224" y2="330"/>
+              </g>
+
+              <!-- ===== SOLE ===== -->
+              <path d="M42,248 C40,252 40,262 48,270 C56,278 72,282 100,284 C128,286 162,286 190,283 C215,280 234,272 240,262 C244,255 242,248 238,244 L48,244 Z"
+                fill="url(#solGrad)" filter="url(#sk)"/>
+              <!-- Sole tread lines -->
+              <g stroke="#065050" stroke-width="1.5" opacity="0.5">
+                <line x1="70" y1="270" x2="210" y2="270"/>
+                <line x1="65" y1="276" x2="215" y2="276"/>
+                <path d="M56,264 C80,266 200,266 228,262"/>
+              </g>
+
+              <!-- ===== MAIN BODY (upper) ===== -->
+              <!-- Side walls -->
+              <path d="M44,150 C42,170 41,200 42,230 C43,240 45,246 50,248 L238,248 C242,246 243,240 243,230 C244,205 243,175 240,155 L44,150 Z"
+                fill="url(#crocBody)" filter="url(#sk)" opacity="0.95"/>
+
+              <!-- Top deck of clog (the upper surface you step on) -->
+              <path d="M52,90 C48,100 44,120 44,148 L240,150 C240,124 236,104 230,92 C218,72 190,62 170,58 C150,55 110,55 90,60 C72,65 58,76 52,90 Z"
+                fill="url(#crocBody)" filter="url(#sk)"/>
+
+              <!-- Toe bumper -->
+              <path d="M52,92 C50,86 52,78 60,72 C70,65 86,60 106,58 L92,62 C75,67 62,76 56,88 Z"
+                fill="#1ec8c8" opacity="0.4"/>
+
+              <!-- Inner footbed shadow -->
+              <path d="M68,100 C64,112 62,130 63,150 L218,152 C219,134 218,116 214,103 C204,84 185,76 168,73 C150,70 112,70 96,74 C82,78 72,88 68,100 Z"
+                fill="#065a5a" opacity="0.55"/>
+
+              <!-- ===== STRAP ===== -->
+              <path d="M90,58 C88,42 92,32 104,26 C116,20 145,20 164,26 C176,32 182,42 180,58 L174,62 C172,48 168,40 158,36 C146,30 118,30 106,36 C98,40 94,48 92,62 Z"
+                fill="url(#strapGrad)" filter="url(#sk)"/>
+              <!-- Strap highlight -->
+              <path d="M104,28 C116,23 148,23 160,28" stroke="#2ad8d8" stroke-width="1.5" fill="none" opacity="0.5"/>
+              <!-- Strap adjustment pivot -->
+              <circle cx="86" cy="60" r="6" fill="#065050" stroke="#1eb8b8" stroke-width="1"/>
+              <circle cx="86" cy="60" r="3" fill="#0d8a8a"/>
+              <circle cx="194" cy="60" r="6" fill="#065050" stroke="#1eb8b8" stroke-width="1"/>
+              <circle cx="194" cy="60" r="3" fill="#0d8a8a"/>
+              <!-- HIDDEN: antenna wire in strap -->
+              <path d="M92,40 C110,38 145,38 168,40" stroke="#00ffcc" stroke-width="0.6" fill="none" opacity="0.35" stroke-dasharray="2,3"/>
+              <!-- Blinking LED in strap buckle -->
+              <circle cx="140" cy="22" r="2.5" fill="#00ffcc" opacity="0.0">
+                <animate attributeName="opacity" values="0;0.9;0;0;0;0.8;0" dur="4.2s" repeatCount="indefinite"/>
+              </circle>
+
+              <!-- ===== JIBBITZ PORT RIVET (back strap) ===== -->
+              <circle cx="140" cy="40" r="5" fill="#0a5050" stroke="#0d8a8a" stroke-width="1"/>
+              <circle cx="140" cy="40" r="2.5" fill="#1eb8b8" opacity="0.7"/>
+
+              <!-- ===== VENTILATION HOLES (13 total, Fibonacci layout) ===== -->
+              <!-- Row 1: 1 hole (nose, Fib=1) -->
+              <circle cx="140" cy="118" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <!-- Row 2: 1 hole (Fib=1) -->
+              <circle cx="140" cy="136" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <!-- Row 3: 2 holes (Fib=2) -->
+              <circle cx="122" cy="154" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <circle cx="158" cy="154" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <!-- Row 4: 3 holes (Fib=3) -->
+              <circle cx="108" cy="172" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <circle cx="140" cy="172" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <circle cx="172" cy="172" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <!-- Row 5: 5 holes (Fib=5) -->
+              <circle cx="88"  cy="192" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <circle cx="112" cy="192" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <circle cx="140" cy="192" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <circle cx="168" cy="192" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <circle cx="192" cy="192" r="7" fill="url(#holeGrad)" stroke="#0a6060" stroke-width="0.8"/>
+              <!-- Subtle signal glow through central hole -->
+              <circle cx="140" cy="172" r="16" fill="url(#sigGlow)" opacity="0.0">
+                <animate attributeName="opacity" values="0;0.6;0;0;0;0.4;0" dur="5s" repeatCount="indefinite"/>
+              </circle>
+
+              <!-- ===== FIBONACCI SPIRAL OVERLAY ===== -->
+              <g filter="url(#fibGlow)" opacity="0.55">
+                <!-- Spiral approximation through hole centers -->
+                <path d="M140,118 C155,118 165,126 165,136 C165,150 155,160 140,162 C122,164 108,155 106,140 C104,122 115,108 133,104 C152,100 172,108 178,126 C185,148 172,172 152,180 C128,190 98,184 82,168 C66,150 68,122 82,108"
+                  stroke="#f7c948" stroke-width="1.2" fill="none" stroke-dasharray="4,3" opacity="0.8"/>
+                <!-- Golden ratio markers -->
+                <circle cx="140" cy="118" r="2.5" fill="#f7c948" opacity="0.9"/>
+                <circle cx="140" cy="136" r="2.5" fill="#f7c948" opacity="0.9"/>
+                <circle cx="140" cy="162" r="2.5" fill="#f7c948" opacity="0.9"/>
+                <circle cx="100" cy="140" r="2.5" fill="#f7c948" opacity="0.7"/>
+              </g>
+
+              <!-- ===== CROSLITE MATERIAL MICRO-ANNOTATION ===== -->
+              <!-- Tiny molecular structure hint on the body surface -->
+              <g opacity="0.12" stroke="#00ffcc" stroke-width="0.5" transform="translate(58,160)">
+                <circle cx="0"  cy="0"  r="3"/>
+                <circle cx="12" cy="-5" r="3"/>
+                <circle cx="18" cy="6"  r="3"/>
+                <circle cx="8"  cy="14" r="3"/>
+                <line x1="0" y1="0" x2="12" y2="-5"/>
+                <line x1="12" y1="-5" x2="18" y2="6"/>
+                <line x1="18" y1="6" x2="8" y2="14"/>
+                <line x1="8" y1="14" x2="0" y2="0"/>
+              </g>
+
+              <!-- ===== ANNOTATION LINES ===== -->
+              <g opacity="0.6" font-family="Courier New, monospace" font-size="6.5" fill="#00ffcc">
+                <!-- Strap / antenna -->
+                <line x1="140" y1="22" x2="140" y2="8" stroke="#00ffcc" stroke-width="0.7"/>
+                <line x1="140" y1="8" x2="52" y2="8" stroke="#00ffcc" stroke-width="0.7"/>
+                <text x="4"  y="6"  fill="#00ffcc">STRAP: RF ANTENNA HOUSING</text>
+                <text x="14" y="13" fill="#00ffcc">FREQ: UNREGISTERED</text>
+                <!-- Jibbitz port -->
+                <line x1="148" y1="40" x2="200" y2="32" stroke="#00ffcc" stroke-width="0.7"/>
+                <text x="202" y="30" fill="#00ffcc">JIBBITZ™ PORT</text>
+                <text x="208" y="37" fill="#00ffcc">DATA NODE ×13</text>
+                <!-- Central hole signal -->
+                <line x1="148" y1="172" x2="248" y2="150" stroke="#00ffcc" stroke-width="0.7"/>
+                <text x="214" y="148" fill="#00ffcc">UPLINK APERTURE</text>
+                <text x="220" y="155" fill="#00ffcc">(primary)</text>
+                <!-- Croslite -->
+                <line x1="58" y1="200" x2="28" y2="230" stroke="#00ffcc" stroke-width="0.7"/>
+                <line x1="28" y1="230" x2="4"  y2="230" stroke="#00ffcc" stroke-width="0.7"/>
+                <text x="4"  y="228" fill="#00ffcc">CROSLITE™ FOAM</text>
+                <text x="4"  y="235" fill="#00ffcc">FORMULA CLASSIFIED</text>
+                <!-- Sole -->
+                <line x1="140" y1="268" x2="140" y2="290" stroke="#00ffcc" stroke-width="0.7"/>
+                <line x1="140" y1="290" x2="200" y2="290" stroke="#00ffcc" stroke-width="0.7"/>
+                <text x="202" y="288" fill="#00ffcc">PASSIVE GAIT LOGGER</text>
+                <text x="210" y="295" fill="#00ffcc">(pressure matrix)</text>
+                <!-- Fibonacci label -->
+                <line x1="82" y1="108" x2="28" y2="92" stroke="#f7c948" stroke-width="0.7"/>
+                <text x="4"  y="90" fill="#f7c948">φ SPIRAL OVERLAY</text>
+                <text x="6"  y="97" fill="#f7c948">13 NODES (FIB.)</text>
+              </g>
+
+              <!-- Vignette -->
+              <rect width="280" height="330" fill="url(#vig)"/>
+
+              <!-- Classification label -->
+              <text x="140" y="322" text-anchor="middle" font-family="Courier New, monospace" font-size="7" fill="#00ffcc" opacity="0.6" letter-spacing="1.5">UNIT: CLASSIC CLOG // SURVEILLANCE CLASS: CONSUMER-GRADE // NODES: 13</text>
+            </svg>
+          </div>
+          <div class="photo-caption">
+            Техническая схема Crocs Classic Clog с наложенной спиралью Фибоначчи (золотой контур). Расположение 13 вентиляционных отверстий воспроизводит числа последовательности (1–1–2–3–5) с нулевой погрешностью. Jibbitz™ — декоративные вставки, продаваемые отдельно, — точно совпадают по диаметру (25 мм) со стандартным военным разъёмом AN/PRC-152. Иллюстрация: Б. Ламберти, лицензия Невада, сертификат № 4471-Б.
+          </div>
+        </div>
+
+        <p>
+          <span class="expert-badge">ЭКСПЕРТ</span> Доктор Хукмейер потратил четыре месяца на анализ состава Croslite — фирменного материала, из которого сделаны Crocs. «Официально это "закрытополимерная смола на основе этиленвинилацетата". На практике — это значит, что точная формула не раскрывается никому. Ни поставщикам. Ни дистрибьюторам. Ни, по имеющимся сведениям, большинству собственных сотрудников. Я работал на объектах Министерства энергетики. Там было больше прозрачности».
+        </p>
+
+        <div class="pullquote">
+          «Формулу <em>не знают</em><br>даже их сотрудники.<br>Я работал на объектах<br><span class="tl">Минэнерго.</span><br>Там было открытее.»
+        </div>
+
+        <p>
+          Примечательно, что Crocs никогда не рекламировались на Super Bowl. За двадцать три года — ни разу. Бренды с выручкой под четыре миллиарда долларов покупают время на Super Bowl. Это индустриальная норма. Nike, Adidas, New Balance — все там были. Crocs — нет. Хукмейер объясняет это просто: «Им не нужна реклама. Их носят те, кому сказано носить». Мы связались с маркетинговым отделом Crocs с просьбой прокомментировать отсутствие на Super Bowl. Нам ответили, что компания «сосредоточена на цифровых каналах». Super Bowl 2025 смотрели 127 миллионов человек. Это не цифровой канал. Это весь охват сразу. Они отказались. Намеренно.
+        </p>
+
+        <p>
+          Наконец — цвет «Navy». Он появился в каталоге в сентябре 2001 года. Именно тогда. Редакция не делает из этого вывода. Редакция лишь фиксирует дату и напоминает читателю, что военно-морской флот США называется Navy. После чего редакция замолкает и даёт читателю подумать самостоятельно.
+        </p>
+      </div>
+
+      <!-- COLUMN 3 -->
+      <div class="col">
+        <p>
+          В 2006 году, на пике первоначального успеха, Crocs Inc. приобрела небольшую компанию Jibbitz из Боулдера, Колорадо, за $10 миллионов. Jibbitz производила маленькие декоративные вставки для вентиляционных отверстий сабо. Официальное объяснение: «расширение линейки аксессуаров». Наш вопрос: зачем тратить $10 миллионов на компанию с четырьмя сотрудниками, которая делает пластиковые значки в форме единорогов? Ответ Прингла прост: «Они покупали не вставки. Они покупали разъём. Потому что через пять лет им понадобилось, чтобы в каждой паре был физический порт — стандартизированный, взаимозаменяемый, диаметр 25 миллиметров». Диаметр 25 миллиметров — это стандарт NATO STANAG 4695 для малогабаритных полевых разъёмов. Это просто факт. Мы не говорим, что он что-то значит. Мы говорим, что он есть.
+        </p>
+
+        <div class="witness-box">
+          «Я шеф-повар в ресторане, Crocs ношу с 2014 года. В прошлом году у меня появилось ощущение, что я слышу слабый звуковой сигнал — что-то вроде высокочастотного писка — когда долго стою на месте. Пошёл к врачу. Сказал, что это тиннитус. Я снял Crocs на две недели. Писк прошёл. Снова надел — вернулся на третий день. Я не параноик. Просто наблюдательный».
+          <cite>— Эндрю К. Брэдшоу, 38 лет, г. Нэшвилл, TN, январь 2025 г.</cite>
+        </div>
+
+        <p>
+          Параллельное восстановление бренда в 2013 году совпало с публикацией в Guardian первых документов Сноудена о программе PRISM — массовой слежке АНБ за интернет-трафиком. Именно в 2013 году Crocs запустила новую маркетинговую кампанию «Find Your Fun» с бюджетом, вдвое превышающим все предыдущие. Именно в 2013 году продажи впервые за пять лет показали устойчивый рост. Одна из гипотез Прингла: PRISM охватывала цифровую среду. Требовалась параллельная физическая сеть. Crocs носят 300 миллионов человек в 90 странах. Ни одно приложение не даст такого охвата.
+        </p>
+
+        <div class="ad-box">
+          <div class="ad-title">🛡️ CROCBLOCK™ FARADAY INSOLE</div>
+          <div class="ad-sub">Сменная стелька с электромагнитным экранированием. Помещается в любую пару Crocs, блокирует сигнал в диапазоне 400–2400 МГц. Одобрено д-ром Хукмейером. Модель «Pro» — с глушением Jibbitz-портов.</div>
+          <div class="ad-phone">1-800-NO-CROCS</div>
+          <div class="ad-sub" style="margin-top:4px;font-size:8px;">* Стелька не устраняет уже собранные данные о походке. Для этого нужна модель «Deep Clean», $149.</div>
+        </div>
+
+        <p>
+          Что касается цвета «Bone» — официально он появился в каталоге в 2008 году, в разгар кризиса. Когда всё рушилось, они нашли время назвать расцветку в честь человеческой кости. Мы спросили пресс-службу Crocs, почему именно «Bone». Они ответили: «Это цвет, вдохновлённый природными оттенками». Это слово — «вдохновлённый» — в пресс-релизе компании, которая делает пластиковую обувь.
+        </p>
+
+        <p>
+          Нашему корреспонденту Чаду Уиллоуби-мл. было отказано в пресс-аккредитации на ежегодную конференцию Crocs Inc. в Брумфилде, Колорадо — второй год подряд. Официальная причина в этом году: «мероприятие носит внутренний характер». В прошлом году причина была другой: «технические неполадки с формой аккредитации». Форма на сайте работала. Мы проверили.
+        </p>
+      </div>
+
+      <!-- CORRELATIONS -->
+      <div class="full-width-section">
+        <div class="section-label">⚡ ХРОНОЛОГИЯ, КОТОРУЮ ОНИ НЕ ХОТЯТ, ЧТОБЫ ВЫ ВИДЕЛИ КАК ЕДИНОЕ ЦЕЛОЕ ⚡</div>
+        <div class="correlations">
+          <div class="corr-item">
+            <strong>2013: Сноуден и «Find Your Fun»</strong>
+            5 июня 2013 года The Guardian опубликовала первые документы PRISM. 19 июня 2013 года Crocs Inc. объявила о запуске новой маркетинговой кампании с бюджетом $120 млн. Совпадение? Наш источник в Лэнгли (другой, назовём его «Боб из Лэнгли») предположил: когда цифровая сеть скомпрометирована, активируется физическая. Двадцать шесть дней — это время, достаточное для активации сети такого масштаба. Это просто хронология. Проверьте сами.
+          </div>
+          <div class="corr-item">
+            <strong>Post Malone, Bad Bunny и протокол знаменитостей</strong>
+            В 2018 году Crocs заключила коллаборацию с Post Malone, в 2021-м — с Bad Bunny, затем с Balenciaga. Официальное объяснение: «ирония и streetwear». Наше объяснение: Celebrity Endorsement Protocol. Когда продукт нужно нормализовать в молодёжной среде — задействуют носителей культуры. Post Malone носит Crocs. Post Malone слышит сигналы, которые не слышат другие. Мы не утверждаем, что это связано. Мы отмечаем, что он об этом не говорит.
+          </div>
+          <div class="corr-item">
+            <strong>Пандемия и «рост из дома»</strong>
+            В 2020 году, когда Америка закрылась дома, Crocs показала рост продаж +63%. Официальное объяснение: «домашний комфорт». Вопрос Прингла: если люди сидят дома и никуда не идут — зачем им вообще обувь? Ответ: они её носят. В гостиных. На кухнях. Дома — там, где их нет на улице с гусями, где нет камер DMV, где не работают другие протоколы. Домашняя сеть в пандемию была единственной доступной точкой входа. Продажи выросли именно тогда.
+          </div>
+          <div class="corr-item">
+            <strong>«Bone» и три доверенные профессии</strong>
+            Программа «Heroes» охватывает медицину, общественное питание и образование (программа для учителей добавлена в 2020-м). Это — три профессии с наибольшим уровнем физического контакта с максимально широким кругом населения. Хирург — тело. Повар — пища. Учитель — дети с 5 до 18 лет. Если бы вам нужна была пассивная сеть сбора биометрических данных через давление стопы и акустический канал — вы бы начали именно с этих трёх. Это не теория. Это логистика.
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM COLUMNS -->
+      <div class="col" style="grid-column: 1 / 3; border-right: 1px solid var(--muted);">
+        <p>
+          Мы не утверждаем, что Crocs — это обувь-шпион. Мы лишь перечисляем факты, которые существуют вне зависимости от нашего мнения о них. Факт первый: компания потеряла 99% стоимости и не только выжила, но стала крупнейшим обувным брендом планеты по темпам роста. Факт второй: 13 отверстий в точном соответствии с последовательностью Фибоначчи. Факт третий: формула материала засекречена от собственных сотрудников. Факт четвёртый: программа лояльности намеренно таргетирует три профессии с наибольшим физическим охватом населения. Факт пятый: Jibbitz-порт стандарта 25 мм приобретён за $10 миллионов у компании с четырьмя сотрудниками.
+        </p>
+        <p>
+          Теперь — последнее. Дон Прингл, который ведёт реестры MUFON-R, GWR и CWR, сообщил нам следующее: в 2022 году, анализируя данные GWR, он заметил, что 78% подтверждённых контактов с меченым ошейниковым гусем у федеральных зданий происходили в присутствии хотя бы одного человека в Crocs. Затем он поднял данные MUFON-R и проверил описания свидетелей контактов с Руфусами за 2015–2019 год. Из тех, кто указал детали одежды, 61% упомянули, что поблизости находился человек в Crocs. Три секунды. Руфусы смотрят ровно три секунды. Гуси смотрят ровно три секунды. Crocs носят именно тогда, когда происходят эти контакты. Мы не складываем два и два. Мы просто кладём перед вами числа. Сложить — ваша работа.
+        </p>
+        <p style="font-size:11px; color: var(--muted);">
+          <em>The American Exposer выражает благодарность Дону Принглу (реестры MUFON-R, GWR, CWR), Линде Кавано (Колумбус, OH), Эндрю Брэдшоу (Нэшвилл, TN), а также всем, кто снял Crocs ради правды. «Боб из Лэнгли» цитируется с его разрешения при условии, что его имя не является Бобом. Ни одна пара Crocs не пострадала в процессе подготовки материала, однако редакционные Crocs были помещены в экранирующий пакет на время вёрстки. Canada Goose (бренд одежды), Crocs (бренд обувь) и Канада (страна) являются различными юридическими лицами, насколько нам известно. Редакция не несёт ответственности за выводы, к которым читатель придёт самостоятельно, но гордится ими. © 2025 Exposer Media LLC.</em>
+        </p>
+      </div>
+
+      <div class="col" style="grid-column: 3;">
+        <div style="border: 2px double var(--rule); padding: 10px; text-align: center; margin-bottom: 12px;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.15em; color:var(--teal); margin-bottom:6px;">ВЫ НОСИТЕ CROCS?</div>
+          <p style="font-size:11.5px; text-align:left; margin-bottom:8px;">Если вы или кто-то из ваших близких являетесь медработником, поваром, учителем или садовником, носящим Crocs, и замечаете: высокочастотный писк при длительном стоянии, необъяснимое знание о чужих передвижениях, или просто невозможность вспомнить, когда вы их надели впервые — звоните немедленно. $100 наличными или подарочная карта Bass Pro Shops.</p>
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--teal); letter-spacing:0.1em;">1-888-CROC-SPY</div>
+          <div style="font-size:9px; color:var(--muted); margin-top:4px;">Пн–пт, 9:00–17:00 MST.<br>Просим: не звоните в Crocs.<br><strong>МЫ ПРОВЕРЯЛИ. ОНИ НЕ ОТВЕЧАЮТ.</strong></div>
+        </div>
+
+        <div style="border:1px solid var(--muted); padding:8px; background:rgba(10,122,122,0.06);">
+          <div style="font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--teal); margin-bottom:5px;">Следующий номер — цикл завершается:</div>
+          <p style="font-size:11.5px; line-height:1.5; font-style:italic; color:var(--muted); margin-bottom:6px;">«РУФУС В CROCS У BASS PRO SHOPS РЯДОМ С ГУСЁМ: ПЕРВЫЙ ЗАДОКУМЕНТИРОВАННЫЙ СЛУЧАЙ ТРОЙНОГО КОНТАКТА» — эксклюзив. Дон Прингл присутствовал лично. Хукмейер госпитализирован, состояние стабильное.</p>
+          <div style="font-family:'Oswald',sans-serif; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--red);">⚠ Прингл просит нас уточнить: он госпитализирован не из-за гусей.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-rule">
+    The American Exposer · P.O. Box 1947 · Carson City, NV 89701 · theamericanexposer.net (сайт временно заблокирован по решению суда, предположительно не связанному с данной статьёй) · Тираж: 14 200 экз. (из которых 9 800 — собственный склад редакции, все в экранирующей упаковке) · Настоящий материал является третьей частью цикла «Инфраструктура контроля» после расследований о рыжеволосых пришельцах и канадских гусях · Crocs Inc., Jibbitz LLC и Canada Goose Inc. не ответили на запросы редакции · STANAG 4695 является открытым стандартом НАТО и не требует специального допуска для ознакомления, мы проверили · Слово «кость» по-английски — Bone · Это просто факт · © 2025 Exposer Media LLC · Печатается в типографии QuikPrint Plus, Спаркс, Невада · Главный редактор всё ещё не берёт трубку · Его Crocs исчезли с вешалки
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+ModalContext {
+    currentEntity: 'philosopher' | 'concept' | 'connection'
+    currentMode: 'view' | 'edit'
+    currentData: объект с данными
+}
+
+↓ генераторы контента
+
+generatePhilosopherViewContent()    // просмотр философа
+generatePhilosopherEditContent()    // редактирование философа
+generateConceptViewContent()        // просмотр концепции
+generateConceptEditContent()        // редактирование концепции
+... и т.д.

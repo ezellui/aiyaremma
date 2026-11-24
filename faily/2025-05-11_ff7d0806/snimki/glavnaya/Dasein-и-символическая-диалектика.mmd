@@ -1,0 +1,54 @@
+graph TB
+    A[Dasein] --> B[Бытие-в-мире\nIn-der-Welt-sein]
+    A --> C[Экзистенциальная\nструктура]
+    A --> D[Личностный центр\nдиалектики]
+    
+    subgraph "Экзистенциалы Dasein"
+        E[Понимание\nVerstehen] --> F[Расположенность\nBefindlichkeit]
+        F --> G[Речь\nRede]
+        G --> H[Падение\nVerfallen]
+        H --> I[Забота\nSorge]
+        I -.-> E
+    end
+    
+    subgraph "Символическая структура экзистенции"
+        J[Брошенность\nGeworfenheit] -->|Фактичность| K[Проект\nEntwurf]
+        K -->|Возможности| L[Падение в\nповседневность]
+        L -->|Das Man| M[Зов совести\nRuf des Gewissens]
+        M -->|Подлинность| N[Решимость\nEntschlossenheit]
+        N -.-> J
+    end
+    
+    subgraph "Диалектика личности в языке"
+        O[Единичное Я] -->|Самоотрицание| P[Всеобщее Мы]
+        P -->|Возвращение к себе| Q[Конкретная\nличность]
+        Q -->|Символическое единство| R[Личность как\nсобытие языка]
+        R -.-> O
+    end
+    
+    B -.-> E
+    C -.-> I
+    D -.-> Q
+    D -.-> R
+    
+    S[Языковая игра] --> T[Экзистенциальное\nоснование]
+    T --> U[Бытие-с-другими\nMitsein]
+    U --> V[Совместный мир\nMitwelt]
+    V -.-> S
+    
+    S -.-> G
+    T -.-> B
+    U -.-> P
+    V -.-> L
+    
+    W[Подлинность vs\nНеподлинность] --> X[Eigentlichkeit vs\nUneigentlichkeit]
+    X --> Y[Символическая\nцелостность]
+    Y --> Z[Личность как\nхранитель языка]
+    Z -.-> W
+    
+    style A fill:#f9d5e5,stroke:#333,stroke-width:3px
+    style E fill:#d5e5f9,stroke:#333,stroke-width:2px
+    style J fill:#e5f9d5,stroke:#333,stroke-width:2px
+    style O fill:#f9e5d5,stroke:#333,stroke-width:2px
+    style S fill:#e5d5f9,stroke:#333,stroke-width:2px
+    style W fill:#d5f9e5,stroke:#333,stroke-width:2px

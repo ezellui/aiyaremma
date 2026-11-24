@@ -1,0 +1,24 @@
+# Service Configuration
+NODE_ENV=development
+PORT=4002
+SERVICE_NAME=concept-service
+
+# Database Configuration
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=philos_concepts
+POSTGRES_USER=philos
+POSTGRES_PASSWORD=password
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# External Services
+GRAPH_SERVICE_URL=http://localhost:4003
+THESIS_SERVICE_URL=http://localhost:4004
+
+# Logging
+LOG_LEVEL=debug
+
+# CORS
+CORS_ORIGIN=*

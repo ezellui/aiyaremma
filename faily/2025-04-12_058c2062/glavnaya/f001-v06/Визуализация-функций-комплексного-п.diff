@@ -1,0 +1,112 @@
+--- предыдущая/Визуализация-функций-комплексного-переменного.html
++++ текущая/Визуализация-функций-комплексного-переменного.html
+@@ -213,15 +213,15 @@
+             try {
+                 // Предобработка для исправления распространенных ошибок ввода
+                 let processedFunctionStr = functionStr
+-                    // Добавляем префикс math. к математическим функциям
+-                    .replace(/sin\(/g, "math.sin(")
+-                    .replace(/cos\(/g, "math.cos(")  
+-                    .replace(/tan\(/g, "math.tan(")
+-                    .replace(/exp\(/g, "math.exp(")
+-                    .replace(/log\(/g, "math.log(")
+-                    .replace(/sqrt\(/g, "math.sqrt(")
+-                    .replace(/abs\(/g, "math.abs(")
+-                    .replace(/conj\(/g, "math.conj(")
++                    // Добавляем префикс math. к математическим функциям, если его еще нет
++                    .replace(/(?<!math\.)sin\(/g, "math.sin(")
++                    .replace(/(?<!math\.)cos\(/g, "math.cos(")  
++                    .replace(/(?<!math\.)tan\(/g, "math.tan(")
++                    .replace(/(?<!math\.)exp\(/g, "math.exp(")
++                    .replace(/(?<!math\.)log\(/g, "math.log(")
++                    .replace(/(?<!math\.)sqrt\(/g, "math.sqrt(")
++                    .replace(/(?<!math\.)abs\(/g, "math.abs(")
++                    .replace(/(?<!math\.)conj\(/g, "math.conj(")
+                     // Затем применяем остальные преобразования
+                     .replace(/\^/g, "**")                     // заменяем ^ на **
+                     .replace(/([0-9])z/gi, "$1*z")            // заменяем 2z на 2*z
+@@ -239,7 +239,8 @@
+                 // Парсинг функции с помощью math.js
+                 complexFunction = math.compile(processedFunctionStr);
+             } catch (error) {
+-                alert("Ошибка в функции: " + error.message + "\nПопробуйте использовать префикс math. перед функциями, например: math.sin(z)");
++                alert("Ошибка в функции: " + error.message + 
++                      "\nПопробуйте использовать префикс math. перед функциями, например: math.sin(z)");
+                 return;
+             }
+             
+@@ -258,6 +259,11 @@
+                     let fValue;
+                     try {
+                         fValue = complexFunction.evaluate({ z: math.complex(zReal, zImag) });
++                        
++                        // Быстрая проверка результата
++                        if (fValue === undefined || fValue === null) {
++                            throw new Error("Функция вернула undefined или null");
++                        }
+                     } catch (error) {
+                         // Если произошла ошибка, устанавливаем пиксель в темно-красный цвет (для диагностики)
+                         const i = (y * width + x) * 4;
+@@ -269,27 +275,44 @@
+                     }
+                     
+                     // Получение модуля и аргумента результата
+-                    let modulus, phase;
+-                    
+-                    try {
+-                        // Для комплексных чисел используем math.abs и math.arg
+-                        modulus = math.abs(fValue);
+-                        phase = math.arg(fValue);
+-                    } catch (error) {
+-                        // Если функция вернула обычное число, а не комплексное
+-                        if (typeof fValue === 'number') {
+-                            modulus = Math.abs(fValue);
+-                            phase = fValue >= 0 ? 0 : Math.PI;
++                let modulus, phase;
++                let isValid = true;
++                
++                try {
++                    // Для обычных чисел
++                    if (typeof fValue === 'number') {
++                        modulus = Math.abs(fValue);
++                        phase = fValue >= 0 ? 0 : Math.PI;
++                    }
++                    // Для объектов с полями re и im (комплексные числа)
++                    else if (fValue && typeof fValue === 'object' && 're' in fValue && 'im' in fValue) {
++                        const re = fValue.re;
++                        const im = fValue.im;
++                        
++                        // Проверка на NaN и Infinity
++                        if (isNaN(re) || isNaN(im) || !isFinite(re) || !isFinite(im)) {
++                            isValid = false;
+                         } else {
+-                            // Если возникла другая ошибка, пропускаем пиксель
+-                            const i = (y * width + x) * 4;
+-                            data[i] = 0;
+-                            data[i + 1] = 0;
+-                            data[i + 2] = 80; // Темно-синий для диагностики
+-                            data[i + 3] = 255;
+-                            continue;
++                            modulus = Math.sqrt(re * re + im * im);
++                            phase = Math.atan2(im, re);
+                         }
+                     }
++                    else {
++                        isValid = false;
++                    }
++                } catch (error) {
++                    isValid = false;
++                }
++                
++                // Если результат недопустимый, пропускаем пиксель
++                if (!isValid || isNaN(modulus) || isNaN(phase) || !isFinite(modulus) || !isFinite(phase)) {
++                    const i = (y * width + x) * 4;
++                    data[i] = 100;      // R - тёмно-красный для ошибок
++                    data[i + 1] = 0;     // G
++                    data[i + 2] = 0;     // B
++                    data[i + 3] = 255;   // A
++                    continue;
++                }
+                     
+                     // Нормализация модуля для визуализации (используем формулу, которая лучше работает с большими значениями)
+                     const modulusColor = Math.atan(modulus) * 2 / Math.PI;

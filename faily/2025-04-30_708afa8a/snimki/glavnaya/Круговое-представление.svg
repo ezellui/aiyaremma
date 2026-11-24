@@ -1,0 +1,141 @@
+
+<svg viewBox="0 0 800 650" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background and Title -->
+  <rect width="800" height="650" fill="#f9f9f9"/>
+  <text x="400" y="40" font-size="24" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Круговое представление музыкальной структуры</text>
+  <text x="400" y="70" font-size="16" text-anchor="middle" font-family="Arial, sans-serif">Движение по квартам между строками и целым тонам внутри строк</text>
+
+  <!-- Circle of Fourths -->
+  <g transform="translate(400, 330)">
+    <!-- Main Circle -->
+    <circle cx="0" cy="0" r="200" fill="none" stroke="#333" stroke-width="1"/>
+    
+    <!-- 12 Points on the Circle (Root Notes) -->
+    <g>
+      <!-- B -->
+      <circle cx="0" cy="-200" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="0" y="-195" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">B</text>
+      
+      <!-- E -->
+      <circle cx="104" cy="-170" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="104" y="-165" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">E</text>
+      
+      <!-- A -->
+      <circle cx="174" cy="-100" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="174" y="-95" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">A</text>
+      
+      <!-- D -->
+      <circle cx="200" cy="0" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="200" y="5" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">D</text>
+      
+      <!-- G -->
+      <circle cx="174" cy="100" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="174" y="105" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">G</text>
+      
+      <!-- C -->
+      <circle cx="104" cy="170" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="104" y="175" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">C</text>
+      
+      <!-- F -->
+      <circle cx="0" cy="200" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="0" y="205" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">F</text>
+      
+      <!-- Bb -->
+      <circle cx="-104" cy="170" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="-104" y="175" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Bb</text>
+      
+      <!-- Eb -->
+      <circle cx="-174" cy="100" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="-174" y="105" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Eb</text>
+      
+      <!-- Ab -->
+      <circle cx="-200" cy="0" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="-200" y="5" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Ab</text>
+      
+      <!-- Db -->
+      <circle cx="-174" cy="-100" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="-174" y="-95" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Db</text>
+      
+      <!-- Gb -->
+      <circle cx="-104" cy="-170" r="25" fill="#e6f2ff" stroke="#333"/>
+      <text x="-104" y="-165" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Gb</text>
+    </g>
+    
+    <!-- Arrows between main notes (Circle of Fourths) -->
+    <g stroke="#5b9bd5" stroke-width="2" fill="none">
+      <path d="M 0,-175 L 85,-155" marker-end="url(#arrowhead)"/>
+      <path d="M 129,-155 L 159,-100" marker-end="url(#arrowhead)"/>
+      <path d="M 174,-75 L 175,-25" marker-end="url(#arrowhead)"/>
+      <path d="M 175,25 L 160,75" marker-end="url(#arrowhead)"/>
+      <path d="M 149,110 L 129,145" marker-end="url(#arrowhead)"/>
+      <path d="M 85,155 L 25,175" marker-end="url(#arrowhead)"/>
+      <path d="M -25,175 L -85,155" marker-end="url(#arrowhead)"/>
+      <path d="M -129,145 L -149,110" marker-end="url(#arrowhead)"/>
+      <path d="M -160,75 L -175,25" marker-end="url(#arrowhead)"/>
+      <path d="M -175,-25 L -174,-75" marker-end="url(#arrowhead)"/>
+      <path d="M -159,-100 L -129,-145" marker-end="url(#arrowhead)"/>
+      <path d="M -85,-155 L -25,-175" marker-end="url(#arrowhead)"/>
+    </g>
+    
+    <!-- Whole Tone Structures (from each root note) -->
+    <g>
+      <!-- From B -->
+      <line x1="0" y1="-200" x2="40" y2="-240" stroke="#ff9999" stroke-width="2"/>
+      <circle cx="40" cy="-240" r="18" fill="#ffe6e6" stroke="#ff6666"/>
+      <text x="40" y="-235" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">Db</text>
+      
+      <line x1="40" y1="-240" x2="80" y2="-280" stroke="#ff9999" stroke-width="2"/>
+      <circle cx="80" cy="-280" r="18" fill="#ffe6e6" stroke="#ff6666"/>
+      <text x="80" y="-275" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">Eb</text>
+      
+      <!-- From E -->
+      <line x1="104" y1="-170" x2="140" y2="-200" stroke="#ff9999" stroke-width="2"/>
+      <circle cx="140" cy="-200" r="18" fill="#ffe6e6" stroke="#ff6666"/>
+      <text x="140" y="-195" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">Gb</text>
+      
+      <line x1="140" y1="-200" x2="176" y2="-230" stroke="#ff9999" stroke-width="2"/>
+      <circle cx="176" cy="-230" r="18" fill="#ffe6e6" stroke="#ff6666"/>
+      <text x="176" y="-225" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">Ab</text>
+      
+      <!-- Similar pattern for other root notes - abbreviated for clarity -->
+      
+      <!-- From A -->
+      <line x1="174" y1="-100" x2="210" y2="-120" stroke="#ff9999" stroke-width="2"/>
+      <circle cx="210" cy="-120" r="18" fill="#ffe6e6" stroke="#ff6666"/>
+      <text x="210" y="-115" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">B</text>
+      
+      <line x1="210" y1="-120" x2="246" y2="-140" stroke="#ff9999" stroke-width="2"/>
+      <circle cx="246" cy="-140" r="18" fill="#ffe6e6" stroke="#ff6666"/>
+      <text x="246" y="-135" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">Db</text>
+      
+      <!-- From D -->
+      <line x1="200" y1="0" x2="240" y2="0" stroke="#ff9999" stroke-width="2"/>
+      <circle cx="240" cy="0" r="18" fill="#ffe6e6" stroke="#ff6666"/>
+      <text x="240" y="5" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">E</text>
+      
+      <line x1="240" y1="0" x2="280" y2="0" stroke="#ff9999" stroke-width="2"/>
+      <circle cx="280" cy="0" r="18" fill="#ffe6e6" stroke="#ff6666"/>
+      <text x="280" y="5" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">Gb</text>
+    </g>
+  </g>
+  
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#5b9bd5"/>
+    </marker>
+  </defs>
+  
+  <!-- Legend -->
+  <g transform="translate(400, 600)">
+    <rect x="-360" y="-30" width="720" height="80" rx="5" fill="#f0f0f0" stroke="#333" stroke-width="1"/>
+    
+    <line x1="-330" y1="0" x2="-270" y2="0" stroke="#5b9bd5" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="-260" y="5" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Движение по чистым квартам (5 полутонов)</text>
+    
+    <line x1="-30" y1="0" x2="30" y2="0" stroke="#ff9999" stroke-width="2"/>
+    <text x="40" y="5" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Движение по целым тонам (2 полутона)</text>
+    
+    <text x="-330" y="30" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Круг показывает круговое движение по квартам между строками, с целотоновыми рядами от каждой опорной ноты</text>
+  </g>
+</svg>

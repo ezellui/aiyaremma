@@ -1,0 +1,17 @@
+turing_report_src/
+├── turing_report.tex        исходник (XeLaTeX)
+├── turing_report.pdf        готовый отчёт (10 страниц)
+├── README.txt               состав, сборка, требования, формат данных
+├── map_fk.png               ┐
+├── gallery.png              │
+├── map_diff2d.png           │ шесть рисунков (нужны для сборки,
+├── hysteresis.png           │ лежат рядом с .tex)
+├── coexistence.png          │
+├── switch.png               ┘
+└── data/                    приложения — сырые данные
+    ├── results.jsonl        карта (f,k), 55 точек
+    ├── diff2.jsonl          плоскость диффузии, 25 точек
+    ├── nucleation.jsonl     порог нуклеации, 36 прогонов
+    ├── robust.jsonl         робастность, 24 прогона
+    ├── hysteresis.jsonl     гистерезис f=0.030/0.040, 108 точек
+    └── hyst2.jsonl          гистерезис по ряду f, 443 точки

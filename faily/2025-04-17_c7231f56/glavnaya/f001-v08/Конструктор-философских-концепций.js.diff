@@ -1,0 +1,97 @@
+--- предыдущая/Конструктор-философских-концепций.jsx
++++ текущая/Конструктор-философских-концепций.jsx
+@@ -508,13 +508,27 @@
+   const addToHistory = useCallback((nodesCurrent, edgesCurrent) => {
+     if (ignoreHistoryUpdate) return;
+     
++    // Создаем полные глубокие копии для предотвращения проблем ссылок
++    const nodesDeepCopy = JSON.parse(JSON.stringify(nodesCurrent));
++    const edgesDeepCopy = JSON.parse(JSON.stringify(edgesCurrent));
++    
+     // Обрезаем историю если мы находимся не в конце (случай Undo и нового действия)
+     const newHistory = history.slice(0, historyIndex + 1);
+     
+     // Добавляем новое состояние
+     newHistory.push({
+-      nodes: JSON.parse(JSON.stringify(nodesCurrent)),
+-      edges: JSON.parse(JSON.stringify(edgesCurrent))
++      nodes: nodesDeepCopy,
++      edges: edgesDeepCopy
++    });
++    
++    // Если история слишком длинная, удаляем старые записи
++    if (newHistory.length > 30) {
++      newHistory.shift();
++    }
++    
++    setHistory(newHistory);
++    setHistoryIndex(newHistory.length - 1);
++  }, [history, historyIndex, ignoreHistoryUpdate]);stringify(edgesCurrent))
+     });
+     
+     // Если история слишком длинная, удаляем старые записи
+@@ -552,10 +566,15 @@
+ 
+   // Отслеживаем изменения nodes и edges для истории
+   useEffect(() => {
+-    if (!ignoreHistoryUpdate && (nodes.length > 0 || edges.length > 0)) {
+-      addToHistory(nodes, edges);
+-    }
+-  }, [nodes, edges, addToHistory]);
++    // Задержка для предотвращения конфликтов между одновременными обновлениями
++    const timeoutId = setTimeout(() => {
++      if (!ignoreHistoryUpdate && (nodes.length > 0 || edges.length > 0)) {
++        addToHistory(nodes, edges);
++      }
++    }, 100);
++    
++    return () => clearTimeout(timeoutId);
++  }, [nodes, edges, addToHistory, ignoreHistoryUpdate]);
+ 
+   // Инициализация истории
+   useEffect(() => {
+@@ -1459,16 +1478,41 @@
+   const handleAutoLayout = () => {
+     if (nodes.length === 0) return;
+     
+-    // Простой алгоритм размещения - круговое расположение
++    // Используем более продвинутый алгоритм размещения
++    // Простой круговой алгоритм с учетом связей между узлами
+     const centerX = containerRef.current ? containerRef.current.clientWidth / 2 / scale : 400;
+     const centerY = containerRef.current ? containerRef.current.clientHeight / 2 / scale : 300;
+     const radius = Math.min(centerX, centerY) * 0.7;
+     
++    // Создаем копию узлов
+     const newNodes = [...nodes];
++    
++    // Определяем важность узлов по количеству связей
++    const nodeImportance = {};
++    newNodes.forEach(node => {
++      nodeImportance[node.id] = 0;
++    });
++    
++    // Подсчитываем количество связей для каждого узла
++    edges.forEach(edge => {
++      if (nodeImportance[edge.source] !== undefined) {
++        nodeImportance[edge.source]++;
++      }
++      if (nodeImportance[edge.target] !== undefined) {
++        nodeImportance[edge.target]++;
++      }
++    });
++    
++    // Сортируем узлы по важности (количеству связей)
++    newNodes.sort((a, b) => nodeImportance[b.id] - nodeImportance[a.id]);
++    
++    // Размещаем узлы по кругу, начиная с наиболее важных
+     newNodes.forEach((node, index) => {
+       const angle = (2 * Math.PI * index) / nodes.length;
+-      node.x = centerX + radius * Math.cos(angle);
+-      node.y = centerY + radius * Math.sin(angle);
++      // Важные узлы ближе к центру
++      const nodeRadius = radius * (0.5 + 0.5 * (index / nodes.length));
++      node.x = centerX + nodeRadius * Math.cos(angle);
++      node.y = centerY + nodeRadius * Math.sin(angle);
+     });
+     
+     setNodes(newNodes);

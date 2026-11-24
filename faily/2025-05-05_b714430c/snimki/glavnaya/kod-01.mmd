@@ -1,0 +1,164 @@
+graph TD
+
+%% Заголовок и подзаголовок
+subgraph title [Ризоматический граф философии Делёза]
+    title_node[" "]
+end
+
+subgraph subtitle [(временная карта-не-калька)]
+    subtitle_node[" "]
+end
+
+%% Узлы графа (основные концепты)
+R((Ризома))
+RZ((Различие))
+M((Множественность))
+D((Детерриториализация))
+LF((Линия бегства))
+BwO((Тело без органов))
+MC((Карта vs Калька))
+A((Ассамбляж))
+B((Становление))
+RP((Повторение))
+
+%% Вспомогательные концепты (меньшего размера)
+DS[Различие в себе]
+RP2[Репрезентация]
+DM[Желающее]
+I[Интенсивность]
+
+%% Открытые соединения (красные точки)
+O1((●))
+O2((●))
+O3((●))
+O4((●))
+O5((●))
+
+%% Связи множественности (фиолетово-синие) - использую жирные линии
+M === RZ
+M === A
+RZ === DS
+M === LF
+
+%% Связи линий бегства (голубые) - использую стрелки
+LF --> D
+LF --> BwO
+LF --> RP
+D --> A
+D --> BwO
+D --> B
+
+%% Связи разрывов/становления (розовые) - использую пунктир с точкой
+BwO -.- B
+BwO -.- MC
+
+%% Ризоматические связи (зелёные пунктирные) - использую пунктир
+R -..- A
+R -..- RZ
+R -..- MC
+R -..- D
+
+%% Обычные связи (серые)
+MC --- B
+MC --- RP
+A --- DM
+RZ --- DS
+B --- I
+RP --- RP2
+
+%% Потенциальные связи (тонкие пунктирные)
+R -.- O1
+A -.- O2
+MC -.- O3
+LF -.- O4
+B -.- O5
+
+%% Цитата
+subgraph quote [Цитата Делёза и Гваттари]
+    quote_text[Ризома не поддаётся структурным моделям, она чужда самой идее глубинной структуры]
+end
+
+%% Легенда
+subgraph legend [Типы связей]
+    legend_title[" "]
+    
+    L1[" "]
+    L1D[Множественность]
+    L1 === L1D
+    
+    L2[" "]
+    L2D[Линии бегства]
+    L2 --> L2D
+    
+    L3[" "]
+    L3D[Разрывы/становление]
+    L3 -.- L3D
+    
+    L4[" "]
+    L4D[Ризоматические связи]
+    L4 -..- L4D
+    
+    L5[" "]
+    L5D[Потенциальные связи]
+    L5 -.- L5D
+end
+
+%% Примечания
+subgraph notes [Примечания]
+    notes_title[" "]
+    
+    N1[Граф не имеет центра]
+    N2[Любая точка может быть входом или выходом]
+    N3[Красные точки - открытые соединения для новых линий]
+    N4[Граф открыт для изменений и дополнений]
+    
+    %% Расположение элементов по вертикали
+    notes_title --- N1
+    N1 --- N2
+    N2 --- N3
+    N3 --- N4
+end
+
+%% Стили для узлов и связей
+classDef main fill:#274c77,stroke:#fff,color:#fff,stroke-width:2px
+classDef secondary fill:#274c77,stroke:#fff,color:#fff,stroke-width:1.5px,opacity:0.7
+classDef redPoint fill:#f72585,stroke:none,color:#f72585
+classDef legendBox fill:#f9f9f9,stroke:#ddd,stroke-width:1px
+
+%% Стили для заголовков и подграфов
+style title fill:#f9f9f9,stroke:none,font-weight:bold,font-size:16px
+style subtitle fill:#f9f9f9,stroke:none,font-style:italic
+style quote fill:#f9f9f9,stroke:none
+style quote_text fill:none,stroke:none,font-style:italic
+style legend fill:#f9f9f9,stroke:#ddd,stroke-width:1px
+style notes fill:#f9f9f9,stroke:#ddd,stroke-width:1px
+
+%% Скрытие вспомогательных элементов
+style title_node fill:none,stroke:none
+style subtitle_node fill:none,stroke:none
+style legend_title fill:none,stroke:none
+style notes_title fill:none,stroke:none
+style L1 fill:none,stroke:none
+style L2 fill:none,stroke:none
+style L3 fill:none,stroke:none
+style L4 fill:none,stroke:none
+style L5 fill:none,stroke:none
+
+%% Скрытие линий в примечаниях
+linkStyle 26 stroke:none
+linkStyle 27 stroke:none
+linkStyle 28 stroke:none
+linkStyle 29 stroke:none
+
+%% Стили для потенциальных связей
+linkStyle 20 stroke:#555,stroke-width:1px,stroke-dasharray:1
+linkStyle 21 stroke:#555,stroke-width:1px,stroke-dasharray:1
+linkStyle 22 stroke:#555,stroke-width:1px,stroke-dasharray:1
+linkStyle 23 stroke:#555,stroke-width:1px,stroke-dasharray:1
+linkStyle 24 stroke:#555,stroke-width:1px,stroke-dasharray:1
+linkStyle 35 stroke:#555,stroke-width:1px,stroke-dasharray:1
+
+%% Применение стилей к узлам
+class R,RZ,M,D,LF,BwO,MC,A,B,RP main
+class DS,RP2,DM,I secondary
+class O1,O2,O3,O4,O5 redPoint

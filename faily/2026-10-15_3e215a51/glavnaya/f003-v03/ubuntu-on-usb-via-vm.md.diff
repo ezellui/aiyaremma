@@ -1,0 +1,402 @@
+--- предыдущая/ubuntu-on-usb-via-vm.md
++++ текущая/ubuntu-on-usb-via-vm.md
+@@ -60,9 +60,31 @@
+ sudo ./mkubuntu-usb.sh --device /dev/sdb
+ ```
+ 
+-Параметры по умолчанию: пользователь `USER`, hostname `ubuntu-usb`, релиз `noble` (24.04), часовой пояс `Europe/Samara`, рабочее окружение `xubuntu-core`, UEFI.
++Параметры по умолчанию: пользователь `USER`, hostname `ubuntu-usb`, релиз `noble` (24.04), часовой пояс `Europe/Samara`, рабочее окружение `xubuntu-core`, UEFI, без обменного раздела.
+ 
+ Перед разметкой скрипт покажет сводку и попросит подтверждение словом `yes`. Пароль нового пользователя задаётся интерактивно (`passwd`) — скрипт попросит ввести его дважды в нужный момент.
++
++### Для флешки 64 ГБ с обменным разделом 32 ГБ
++
++```bash
++sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB
++```
++
++Это даст такую разметку:
++
++| Раздел  | Размер    | Файловая система | Назначение                                                 |
++|---------|-----------|------------------|------------------------------------------------------------|
++| `sdb1`  | 32 ГБ     | exFAT (`SHARED`) | Обменный, виден из Windows/Android/macOS                   |
++| `sdb2`  | ~512 МБ   | FAT32 (`ESP`)    | ESP — загрузчик UEFI (стандарт UEFI, иначе нельзя)         |
++| `sdb3`  | ~31,5 ГБ  | ext4 (`ubuntu-usb`) | Корень Ubuntu                                           |
++
++Обменный раздел идёт первым — так его видят даже старые Android, которые на съёмном носителе читают только первый раздел. Внутри Ubuntu он автоматически монтируется в `/media/shared` (это пишется в `/etc/fstab` с `uid=1000`, чтобы пользователь мог туда писать без sudo).
++
++Если целевой Android/прошивка не умеет exFAT — используйте FAT32 (но тогда файлы > 4 ГБ не поддерживаются):
++
++```bash
++sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB --data-fs fat32
++```
+ 
+ ### Справка скрипта (вывод `--help`)
+ 
+@@ -87,13 +109,42 @@
+                            lubuntu-desktop | none
+                          (default: xubuntu-core)
+   --firmware MODE        uefi | bios (default: uefi)
+-  --mount-point PATH     Куда монтировать флешку (default: /mnt/target)
++  --mount-point PATH     Куда монтировать флешку при сборке
++                         (default: /mnt/target)
++
++Обменный раздел (видимый из Windows/Android/macOS):
++  --data-size SIZE       Размер обменного раздела, напр. 32GiB, 16GiB, 50%.
++                         Если не задан или 0 — обменного раздела не будет.
++                         Раздел создаётся ПЕРВЫМ на флешке, для совместимости
++                         со старыми Android.
++  --data-fs FS           Файловая система обменного раздела:
++                           exfat (default) — без лимита 4 ГБ на файл,
++                                             нужен Android 7+/Win10/macOS 10.6+
++                           fat32           — максимальная совместимость,
++                                             но файлы > 4 ГБ не поддерживаются
++  --data-label NAME      Метка обменного раздела (default: SHARED)
++  --data-mount PATH      Точка монтирования внутри Ubuntu
++                         (default: /media/shared)
++
++Прочее:
+   -y, --yes              Не спрашивать подтверждения перед разметкой
+   -h, --help             Показать эту справку
+ 
+ Примеры:
++  # Простая сборка без обменного раздела
+   sudo ./mkubuntu-usb.sh --device /dev/sdb
+-  sudo ./mkubuntu-usb.sh --device /dev/sdb --user alice --desktop lubuntu-desktop
++
++  # 64 ГБ флешка: 32 ГБ exFAT (обмен) + ESP + остаток под Ubuntu
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB
++
++  # Своё имя пользователя и легковесный desktop
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --user alice \
++                         --desktop lubuntu-desktop --data-size 16GiB
++
++  # Для старого Android, который не умеет exFAT
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 20GiB --data-fs fat32
++
++  # BIOS-only целевая машина, без desktop, без подтверждения
+   sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios --desktop none -y
+ ```
+ 
+@@ -101,7 +152,7 @@
+ 
+ - **Защита от своего диска.** Если `--device` совпадает с текущим корневым диском виртуалки, скрипт отказывается работать.
+ - **Проверка, что это USB.** Если устройство не USB (TRAN != usb) — предупреждение, но продолжить можно (бывают нестандартные пробросы).
+-- **Автоподнятие пакетов.** Если `debootstrap`, `arch-chroot`, `parted` отсутствуют — ставит сам.
++- **Автоподнятие пакетов.** Если `debootstrap`, `arch-chroot`, `parted`, `mkfs.exfat` отсутствуют — ставит сам (включая `exfatprogs`, если включён exFAT).
+ - **Обход старой версии debootstrap.** Если шаблона `noble` нет — создаёт симлинк на `gutsy`.
+ - **Корректная работа с `/dev/sdbN` vs `/dev/nvme0n1pN`.** Правильно определяет префикс раздела.
+ - **Trap на очистку.** Если упал посередине — отмонтирует всё, что успел смонтировать.
+@@ -113,58 +164,97 @@
+ 
+ ---
+ 
++## Про разные FAT и exFAT — почему всё по-разному
++
++На одной и той же флешке в разных местах нужны **разные** FS, и это не ошибка:
++
++- **ESP (EFI System Partition), 512 МБ** — обязан быть **FAT32**. Это требование стандарта UEFI; никакая другая FS сюда не подходит, прошивка не прочитает загрузчик. Размер маленький именно потому, что это служебный раздел для `grubx64.efi` и `shimx64.efi`.
++- **Корень Ubuntu** — **ext4**. Нативная Linux FS с журналом, правами, симлинками. Ни FAT, ни NTFS сюда не подходят.
++- **Обменный раздел** — **exFAT** (или FAT32, если нужна совместимость со старьём). Это то, что я советовал раньше — он большой, видимый из всех систем, и предназначен именно для обмена.
++
++Эти три раздела живут независимо. Обменный никак не связан с ESP — у них разные роли.
++
++---
++
+ ## 3. [Вручную] Установка нужных пакетов в виртуалке
+ 
+ ```bash
+ sudo apt update
+-sudo apt install -y debootstrap parted dosfstools arch-install-scripts
+-```
+-
+-`arch-install-scripts` даёт удобный `arch-chroot`, который сам монтирует `/dev`, `/proc`, `/sys` и чистит после себя. С ним chroot проще и надёжнее, чем вручную bind-монтировать.
+-
+----
+-
+-## 4. [Вручную] Разметка флешки под UEFI
+-
+-Схема: GPT, два раздела — EFI System Partition 512 МБ (FAT32) и корень на всё остальное (ext4).
++sudo apt install -y debootstrap parted dosfstools arch-install-scripts exfatprogs
++```
++
++`arch-install-scripts` даёт удобный `arch-chroot`, который сам монтирует `/dev`, `/proc`, `/sys` и чистит после себя. С ним chroot проще и надёжнее, чем вручную bind-монтировать. `exfatprogs` нужен для `mkfs.exfat` (если будет обменный раздел).
++
++---
++
++## 4. [Вручную] Разметка флешки под UEFI с обменным разделом
++
++Схема: GPT, три раздела.
+ 
+ ```bash
+ # ВНИМАНИЕ: три раза проверьте, что sdb — это флешка, а не внутренний диск!
+ lsblk /dev/sdb
+ 
++sudo wipefs -a /dev/sdb
++sudo parted /dev/sdb --script mklabel gpt
++
++# 1. Обменный раздел — первым, 32 ГБ
++sudo parted /dev/sdb --script mkpart SHARED 1MiB 32GiB
++
++# 2. ESP — 513 МБ сразу после обменного (с 32GiB до 32769MiB)
++sudo parted /dev/sdb --script mkpart ESP fat32 32GiB 32769MiB
++sudo parted /dev/sdb --script set 2 esp on
++
++# 3. Корень — всё остальное
++sudo parted /dev/sdb --script mkpart primary ext4 32769MiB 100%
++
++# Форматирование
++sudo mkfs.exfat -L SHARED /dev/sdb1
++sudo mkfs.vfat -F32 -n ESP /dev/sdb2
++sudo mkfs.ext4 -L ubuntu-usb /dev/sdb3
++```
++
++Проверка:
++
++```bash
++sudo parted /dev/sdb --script print
++lsblk -f /dev/sdb
++```
++
++### Без обменного раздела (простая разметка)
++
++Если обменный не нужен — только ESP + корень:
++
++```bash
+ sudo wipefs -a /dev/sdb
+ sudo parted /dev/sdb --script mklabel gpt
+ sudo parted /dev/sdb --script mkpart ESP fat32 1MiB 513MiB
+ sudo parted /dev/sdb --script set 1 esp on
+ sudo parted /dev/sdb --script mkpart primary ext4 513MiB 100%
+-
+ sudo mkfs.vfat -F32 -n ESP /dev/sdb1
+ sudo mkfs.ext4 -L ubuntu-usb /dev/sdb2
+ ```
+ 
+-Проверка:
+-
+-```bash
+-sudo parted /dev/sdb --script print
+-lsblk -f /dev/sdb
+-```
+-
+-Должно быть две файловые системы: vfat на `sdb1`, ext4 на `sdb2`.
++Тогда дальше везде вместо `sdb2`/`sdb3` используется `sdb1`/`sdb2`.
+ 
+ ---
+ 
+ ## 5. [Вручную] Монтирование и debootstrap
+ 
++С обменным разделом монтируем только корень и ESP, обменный не трогаем — он сам смонтируется после загрузки через fstab:
++
+ ```bash
+ sudo mkdir -p /mnt/target
+-sudo mount /dev/sdb2 /mnt/target
++sudo mount /dev/sdb3 /mnt/target
+ sudo mkdir -p /mnt/target/boot/efi
+-sudo mount /dev/sdb1 /mnt/target/boot/efi
++sudo mount /dev/sdb2 /mnt/target/boot/efi
+ 
+ sudo debootstrap --arch=amd64 noble /mnt/target http://archive.ubuntu.com/ubuntu/
+ ```
+ 
+-`debootstrap` скачает и развернёт базовую Ubuntu 24.04 на флешку. На USB 3.0 — 10–20 минут. Если ругнётся «noble not found» — обновите пакет debootstrap (в старой виртуалке мог быть без шаблона для noble):
++(Без обменного раздела — `sdb2` корень, `sdb1` ESP; подставьте.)
++
++`debootstrap` скачает и развернёт базовую Ubuntu 24.04 на флешку. На USB 3.0 — 10–20 минут. Если ругнётся «noble not found» — обновите пакет debootstrap:
+ 
+ ```bash
+ sudo apt install -y --only-upgrade debootstrap
+@@ -176,18 +266,28 @@
+ 
+ ## 6. [Вручную] Подготовка fstab и chroot
+ 
+-Сначала запишем fstab по UUID (универсальнее, чем по именам устройств):
+-
+-```bash
+-BOOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb1)
+-ROOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb2)
++С обменным разделом fstab включает три строки:
++
++```bash
++ROOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb3)
++BOOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb2)
++DATA_UUID=$(sudo blkid -s UUID -o value /dev/sdb1)
+ 
+ sudo tee /mnt/target/etc/fstab > /dev/null <<EOF
+ UUID=$ROOT_UUID / ext4 defaults,noatime,errors=remount-ro 0 1
+ UUID=$BOOT_UUID /boot/efi vfat defaults,umask=0077 0 2
++UUID=$DATA_UUID /media/shared exfat rw,uid=1000,gid=1000,umask=0022,nofail 0 0
+ tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
+ EOF
+-```
++
++sudo mkdir -p /mnt/target/media/shared
++```
++
++Опции обменного раздела:
++
++- `uid=1000,gid=1000` — владелец раздела при монтировании будет первым заведённым пользователем (у Ubuntu `adduser` первый пользователь получает UID 1000). Так вы сможете писать на раздел без sudo.
++- `umask=0022` — права 755/644 на файлы.
++- `nofail` — если раздел не найдётся (флешка повреждена, обменный раздел удалён), система не упадёт в rescue mode.
+ 
+ Входим в chroot:
+ 
+@@ -195,7 +295,7 @@
+ sudo arch-chroot /mnt/target /bin/bash
+ ```
+ 
+-(Если `arch-chroot` не нашёлся — используйте ручной вариант в конце инструкции, раздел «Chroot вручную».)
++(Если `arch-chroot` не нашёлся — см. раздел 12.)
+ 
+ **Все команды ниже — внутри chroot**, пока не выйдем через `exit`.
+ 
+@@ -235,7 +335,7 @@
+ update-locale LANG=ru_RU.UTF-8
+ ```
+ 
+-### Ядро, загрузчик, сеть, базовый инструментарий
++### Ядро, загрузчик, сеть, базовый инструментарий, поддержка exFAT
+ 
+ ```bash
+ apt install -y \
+@@ -244,10 +344,13 @@
+   network-manager \
+   sudo nano vim less curl wget ca-certificates \
+   console-setup keyboard-configuration \
+-  openssh-server
++  openssh-server \
++  exfatprogs    # для автомонтирования обменного раздела
+ ```
+ 
+ `shim-signed` + подписанный GRUB нужны, если целевая машина с включённым Secure Boot — тогда флешка загрузится без отключения SB в BIOS. Если Secure Boot выключен, лишним не будет.
++
++`exfatprogs` — для exFAT (fsck.exfat, mkfs.exfat). Без него ядро exFAT умеет монтировать (с ядра 5.4+ это in-tree), но fsck при загрузке не отработает и nofail не спасёт в некоторых случаях.
+ 
+ ### Рабочее окружение (на выбор)
+ 
+@@ -281,6 +384,8 @@
+ adduser USER
+ usermod -aG sudo,audio,video,plugdev,netdev USER
+ ```
++
++Этот пользователь получит UID 1000 — именно его мы указали в fstab для обменного раздела.
+ 
+ Задать пароль root (на всякий случай, можно потом заблокировать):
+ 
+@@ -314,8 +419,6 @@
+ 
+ ### Настройка grub.cfg под съёмный носитель
+ 
+-Правим `/etc/default/grub`, чтобы GRUB искал корень по UUID (иначе на разных машинах может сбиться нумерация дисков):
+-
+ ```bash
+ sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT=0/' /etc/default/grub
+ sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=3/' /etc/default/grub
+@@ -369,6 +472,7 @@
+ - Загрузка ядра, systemd, экран входа (графический — если ставили desktop).
+ - Вход как `USER` под заданным паролем.
+ - Сеть — через NetworkManager, иконка в трее.
++- Обменный раздел смонтирован в `/media/shared` и доступен для записи.
+ 
+ Что сделать сразу после первого входа:
+ 
+@@ -376,6 +480,13 @@
+ sudo apt update && sudo apt upgrade -y
+ ```
+ 
++Проверка обменного раздела:
++
++```bash
++ls -la /media/shared
++touch /media/shared/проверка.txt
++```
++
+ ---
+ 
+ ## 11. Если целевая машина с чистым BIOS (не UEFI)
+@@ -383,44 +494,54 @@
+ **Через скрипт** — просто добавить ключ:
+ 
+ ```bash
+-sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios
+-```
+-
+-Остальное скрипт сделает сам: MBR вместо GPT, один раздел ext4 с флагом boot, `grub-pc` вместо EFI-пакетов, `grub-install --target=i386-pc`.
+-
+-**Вручную** — заменить шаги 4 и 8 на следующее:
+-
+-Разметка:
++sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios --data-size 32GiB
++```
++
++Разметка в этом случае получится такая:
++
++| Раздел | Размер   | FS                  | Назначение |
++|--------|----------|---------------------|------------|
++| `sdb1` | 32 ГБ    | exFAT (`SHARED`)    | Обмен      |
++| `sdb2` | остаток  | ext4 (`ubuntu-usb`) | Ubuntu, с флагом boot для GRUB |
++
++ESP в MBR-схеме не нужен — GRUB живёт в MBR и в `/boot/grub`.
++
++**Вручную** — разметка:
+ 
+ ```bash
+ sudo wipefs -a /dev/sdb
+ sudo parted /dev/sdb --script mklabel msdos
+-sudo parted /dev/sdb --script mkpart primary ext4 1MiB 100%
+-sudo parted /dev/sdb --script set 1 boot on
+-sudo mkfs.ext4 -L ubuntu-usb /dev/sdb1
+-```
+-
+-Монтировать и debootstrap — только корневой раздел, без `/boot/efi`:
+-
+-```bash
+-sudo mount /dev/sdb1 /mnt/target
++sudo parted /dev/sdb --script mkpart primary 1MiB 32GiB
++sudo parted /dev/sdb --script mkpart primary ext4 32GiB 100%
++sudo parted /dev/sdb --script set 2 boot on
++sudo mkfs.exfat -L SHARED /dev/sdb1
++sudo mkfs.ext4 -L ubuntu-usb /dev/sdb2
++```
++
++Монтировать только корень:
++
++```bash
++sudo mount /dev/sdb2 /mnt/target
+ sudo debootstrap --arch=amd64 noble /mnt/target http://archive.ubuntu.com/ubuntu/
+ ```
+ 
+-В fstab только корень:
+-
+-```bash
+-ROOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb1)
++Fstab с двумя строками (корень + обмен):
++
++```bash
++ROOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb2)
++DATA_UUID=$(sudo blkid -s UUID -o value /dev/sdb1)
+ sudo tee /mnt/target/etc/fstab > /dev/null <<EOF
+ UUID=$ROOT_UUID / ext4 defaults,noatime,errors=remount-ro 0 1
++UUID=$DATA_UUID /media/shared exfat rw,uid=1000,gid=1000,umask=0022,nofail 0 0
+ tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
+ EOF
++sudo mkdir -p /mnt/target/media/shared
+ ```
+ 
+ В chroot вместо EFI-пакетов:
+ 
+ ```bash
+-apt install -y grub-pc
++apt install -y grub-pc exfatprogs
+ ```
+ 
+ GRUB ставить так:
+@@ -460,4 +581,7 @@
+ - **На целевой машине флешки нет в boot menu.** Включите в BIOS загрузку с USB и Legacy/UEFI в соответствии со схемой разметки. Для UEFI убедитесь, что флешка в режиме UEFI (не Legacy) в boot menu.
+ - **GRUB появился, но ядро не стартует.** Обычно `fstab` с неправильным UUID или не установлен `linux-generic`. Можно загрузиться с live-флешки, chroot в флешку, `apt install --reinstall linux-generic`, `update-grub`.
+ - **Чёрный экран после GRUB.** Чаще всего — отсутствует проприетарный драйвер NVIDIA (если на целевой машине NVIDIA). При первой загрузке попробуйте добавить `nomodeset` в параметры ядра через меню GRUB (клавиша `e`, допишите в строку `linux ...`). После входа — поставить `nvidia-driver-535` или свежее.
++- **Обменный раздел не монтируется автоматически.** Проверьте `dmesg | grep -i exfat` и `systemctl status media-shared.mount`. Чаще всего — не поставлен `exfatprogs` в целевой системе. Воткните флешку в другую машину, cmontируйте вручную, доставьте пакет.
++- **Windows предлагает отформатировать обменный раздел.** Не соглашайтесь! Если exFAT-раздел повреждён (небезопасное извлечение) — отмонтируйте, запустите `fsck.exfat /dev/sdbN` в Linux, снова подключите.
++- **Android не видит exFAT.** Старые устройства (до Android 7) не поддерживают exFAT в ядре. Пересоберите с `--data-fs fat32` — но тогда файлы > 4 ГБ класть нельзя.
+ - **Медленно.** Флешка USB 2.0 или дешёвая USB 3.0 без SLC-кэша. Решение одно — лучшая флешка (Samsung FIT Plus, SanDisk Extreme). Для корректного сравнения — `sudo hdparm -t /dev/sdb` на холодную.

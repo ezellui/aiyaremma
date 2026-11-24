@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Изоморфизмы — Аспирантский вестник Петра-Дубравы</title>
+
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+    svg: { fontCache: 'global' },
+    options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-svg.min.js" id="MathJax-script" async></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f4eee1;
+    --paper-deep: #e7ddca;
+    --ink: #211d18;
+    --ink-soft: #3a342b;
+    --ink-faint: #685d4c;
+    --gold: #9a7b3f;
+    --rule: #c6bca6;
+    --measure: 40rem;
+    --accent: #8a6a2e;
+    --accent-deep: #5e4720;
+    --chrome-accent: #8a6a2e;
+  }
+
+  .matter      { --accent:#8a6a2e; --accent-deep:#5e4720; }
+  .art-derrida { --accent:#7a1f1c; --accent-deep:#5e1715; }
+  .art-leibniz { --accent:#243f63; --accent-deep:#16283f; }
+  .art-hegel   { --accent:#4a2b5e; --accent-deep:#2f1a3d; }
+  .art-nietzsche { --accent:#a3461c; --accent-deep:#6b2c10; }
+  .art-levinas { --accent:#14595c; --accent-deep:#0b393b; }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(ellipse at 18% 6%, rgba(154,123,63,0.05), transparent 45%),
+      radial-gradient(ellipse at 82% 96%, rgba(74,43,94,0.04), transparent 50%),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 400; font-size: 1.0625rem; line-height: 1.72;
+    text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content:""; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  }
+
+  /* ---- top chrome ---- */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.7rem 1.2rem;
+    background: rgba(244,238,225,0.84);
+    backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+    border-bottom: 1px solid var(--chrome-accent);
+    transition: border-color 0.5s ease;
+  }
+  .topbar.hidden { display: none; }
+  .topbar .jname {
+    font-family: 'Old Standard TT', serif; font-size: 0.66rem; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--chrome-accent); cursor: pointer;
+    transition: color 0.5s ease; border: none; background: none; padding: 0;
+  }
+  .topbar .seclabel {
+    font-style: italic; font-size: 0.78rem; color: var(--ink-faint);
+    flex: 1; text-align: center; padding: 0 0.6rem;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topbar .toc-btn {
+    font-family: 'Old Standard TT', serif; font-size: 0.66rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--chrome-accent); cursor: pointer;
+    background: none; border: 1px solid var(--chrome-accent); border-radius: 2px;
+    padding: 0.28rem 0.6rem; transition: all 0.5s ease;
+  }
+  .topbar .toc-btn:hover { background: var(--chrome-accent); color: var(--paper); }
+
+  /* ---- views ---- */
+  .view { display: none; }
+  .view.active { display: block; animation: rise 0.7s ease; }
+  .wrap { position: relative; z-index: 1; max-width: var(--measure); margin: 0 auto; padding: 5rem 1.6rem 6rem; }
+  .cover-wrap { padding-top: 4.5rem; }
+
+  /* ---- cover ---- */
+  .cover { text-align: center; padding: 2rem 0 1rem; }
+  .cover .venue { font-family:'Old Standard TT',serif; font-size:0.78rem; letter-spacing:0.36em; text-transform:uppercase; color: var(--accent); margin: 0; }
+  .cover .rule { width: 60px; height: 1px; background: var(--rule); margin: 1.6rem auto; }
+  .cover .issue-tag { font-style: italic; font-size: 0.92rem; color: var(--ink-faint); letter-spacing: 0.04em; margin: 0 0 2.4rem; }
+  .cover h1 {
+    font-family:'Old Standard TT',serif; font-weight:700;
+    font-size: clamp(3rem, 12vw, 5.2rem); line-height: 1; letter-spacing: 0.01em;
+    color: var(--ink); margin: 0 0 1rem;
+  }
+  .cover .csub { font-style: italic; font-weight: 300; font-size: 1.24rem; color: var(--ink-soft); max-width: 26rem; margin: 0 auto 3rem; line-height: 1.5; }
+  .cover .toc-list { list-style: none; padding: 0; margin: 0 auto 3rem; max-width: 30rem; text-align: left; }
+  .cover .toc-list li {
+    display: flex; align-items: baseline; gap: 0.8rem; padding: 0.7rem 0;
+    border-bottom: 1px solid var(--rule); cursor: pointer;
+  }
+  .cover .toc-list li:hover .cl-title { color: var(--accent); }
+  .cover .toc-list .swatch { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; transform: translateY(1px); }
+  .cover .toc-list .cl-title { font-family:'Old Standard TT',serif; font-weight: 700; font-size: 1.02rem; color: var(--ink); transition: color 0.3s; }
+  .cover .toc-list .cl-bridge { font-style: italic; font-size: 0.86rem; color: var(--ink-faint); }
+  .cover .enter {
+    font-family:'Old Standard TT',serif; font-size: 0.78rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--paper); background: var(--accent); border: none; border-radius: 2px;
+    padding: 0.8rem 1.8rem; cursor: pointer; transition: background 0.3s; margin: 0 0.4rem;
+  }
+  .cover .enter:hover { background: var(--accent-deep); }
+  .cover .enter.ghost { background: none; color: var(--accent); border: 1px solid var(--accent); }
+  .cover .enter.ghost:hover { background: var(--accent); color: var(--paper); }
+
+  /* ---- shared editorial / article elements ---- */
+  .sectio { text-align:center; font-family:'Old Standard TT',serif; font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; color: var(--accent); margin: 0 0 1.6rem; }
+
+  .titleblock { text-align: center; margin-bottom: 2.8rem; }
+  h1.title { font-family:'Old Standard TT',serif; font-weight:700; font-size: clamp(2rem, 5.6vw, 2.95rem); line-height: 1.13; color: var(--ink); margin: 0 0 0.85rem; }
+  h1.title em { font-style: italic; color: var(--accent); }
+  .subtitle { font-weight: 300; font-style: italic; font-size: 1.16rem; color: var(--ink-soft); margin: 0 auto; max-width: 31rem; line-height: 1.5; }
+  .byline { margin-top: 1.6rem; font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); }
+
+  .abstract {
+    margin: 0 0 3.4rem; padding: 1.7rem 1.9rem;
+    background: linear-gradient(180deg, rgba(231,221,202,0.55), rgba(231,221,202,0.22));
+    border-left: 2.5px solid var(--accent);
+    font-size: 0.965rem; line-height: 1.66; color: var(--ink-soft);
+  }
+  .abstract .lbl { display:block; font-family:'Old Standard TT',serif; font-size:0.7rem; letter-spacing:0.28em; text-transform:uppercase; color: var(--accent); margin-bottom: 0.7rem; }
+  .abstract .kw { margin-top: 1rem; font-style: italic; font-size: 0.88rem; color: var(--ink-faint); }
+
+  section { margin-bottom: 2.5rem; }
+  h2 { font-family:'Old Standard TT',serif; font-weight:700; font-size: 1.42rem; line-height: 1.25; color: var(--ink); margin: 3rem 0 1.05rem; }
+  h2 .num { color: var(--accent); font-style: italic; margin-right: 0.6rem; }
+
+  p { margin: 0 0 1.12rem; text-align: justify; hyphens: auto; }
+  .lede::first-letter { font-family:'Old Standard TT',serif; float: left; font-size: 4rem; line-height: 0.78; padding: 0.18rem 0.6rem 0 0; color: var(--accent); font-weight: 700; }
+
+  em, i { font-style: italic; }
+  strong, b { font-weight: 600; color: var(--ink); }
+  .fr, .lat, .de { font-style: italic; }
+
+  .pull { margin: 2.1rem 0; padding: 0 1.4rem; border-left: 2px solid var(--gold); font-style: italic; font-size: 1.11rem; line-height: 1.5; color: var(--ink-soft); }
+  mjx-container[display="true"] { margin: 1.35rem 0 !important; }
+  .divider { text-align: center; margin: 2.6rem 0; color: var(--gold); font-size: 1rem; letter-spacing: 0.6em; }
+
+  sup.fn { font-size: 0.7em; color: var(--accent); font-weight: 600; padding-left: 1px; }
+
+  .notes, .biblio { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: 0.86rem; line-height: 1.55; color: var(--ink-soft); }
+  .notes h3, .biblio h3 { font-family:'Old Standard TT',serif; font-weight:700; font-size:0.78rem; letter-spacing:0.26em; text-transform:uppercase; color: var(--accent); margin: 0 0 1.05rem; }
+  .notes ol { margin: 0; padding-left: 1.4rem; }
+  .notes li { margin-bottom: 0.65rem; }
+  .biblio p { text-indent: -1.3rem; padding-left: 1.3rem; text-align: left; margin-bottom: 0.55rem; }
+
+  .colophon { margin-top: 3rem; text-align: center; font-style: italic; font-size: 0.8rem; color: var(--ink-faint); }
+
+  /* contents page */
+  .contents-list { list-style: none; padding: 0; margin: 2rem 0 0; }
+  .contents-list li { padding: 1.1rem 0; border-bottom: 1px solid var(--rule); cursor: pointer; display: flex; gap: 1rem; align-items: baseline; }
+  .contents-list li:hover .ce-title { color: var(--ce-accent); }
+  .contents-list .ce-num { font-family:'Old Standard TT',serif; font-style: italic; font-size: 1.1rem; color: var(--ce-accent); min-width: 1.4rem; }
+  .contents-list .ce-body { flex: 1; }
+  .contents-list .ce-title { font-family:'Old Standard TT',serif; font-weight: 700; font-size: 1.12rem; color: var(--ink); transition: color 0.3s; }
+  .contents-list .ce-bridge { font-style: italic; color: var(--ink-faint); font-size: 0.9rem; }
+  .contents-list .ce-gloss { font-size: 0.92rem; color: var(--ink-soft); margin-top: 0.25rem; }
+
+  /* pager */
+  .pager { display: flex; justify-content: space-between; align-items: center; margin-top: 4rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+  .pager span, .pager button { font-family:'Old Standard TT',serif; font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  .pager button { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0.3rem 0; transition: color 0.3s; }
+  .pager button:hover { color: var(--accent-deep); }
+  .pager button.empty { visibility: hidden; }
+  .pager .mid { color: var(--ink-faint); cursor: pointer; }
+
+  .explicit { margin-top: 2.6rem; text-align: center; font-family:'Old Standard TT',serif; font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 540px) {
+    .wrap { padding: 4.5rem 1.2rem 4.5rem; }
+    body { font-size: 1.01rem; }
+    .lede::first-letter { font-size: 3.3rem; }
+    .topbar .seclabel { display: none; }
+    .cover h1 { font-size: clamp(2.6rem, 16vw, 4rem); }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar hidden" id="topbar">
+  <button class="jname" data-go="cover">Вестник Петра-Дубравы</button>
+  <span class="seclabel" id="seclabel"></span>
+  <button class="toc-btn" data-go="contents">Содержание</button>
+</div>
+
+<!-- ============ COVER ============ -->
+<div class="view matter active" id="view-cover">
+  <div class="wrap cover-wrap">
+    <div class="cover">
+      <p class="venue">Аспирантский вестник Петра-Дубравы</p>
+      <div class="rule"></div>
+      <p class="issue-tag">Тематический выпуск &middot; Тетради по философии математического</p>
+      <h1>Изоморфизмы</h1>
+      <p class="csub">Пять опытов о математической форме философских понятий</p>
+
+      <ul class="toc-list">
+        <li data-go="derrida"><span class="swatch" style="background:#7a1f1c"></span><span><span class="cl-title">Деррида</span> &nbsp;<span class="cl-bridge">↔ опережающее уравнение</span></span></li>
+        <li data-go="leibniz"><span class="swatch" style="background:#243f63"></span><span><span class="cl-title">Лейбниц</span> &nbsp;<span class="cl-bridge">↔ пучок и вариационный принцип</span></span></li>
+        <li data-go="hegel"><span class="swatch" style="background:#4a2b5e"></span><span><span class="cl-title">Гегель</span> &nbsp;<span class="cl-bridge">↔ сопряжённые функторы</span></span></li>
+        <li data-go="nietzsche"><span class="swatch" style="background:#a3461c"></span><span><span class="cl-title">Ницше</span> &nbsp;<span class="cl-bridge">↔ возвращение Пуанкаре</span></span></li>
+        <li data-go="levinas"><span class="swatch" style="background:#14595c"></span><span><span class="cl-title">Левинас</span> &nbsp;<span class="cl-bridge">↔ теорема Кантора</span></span></li>
+      </ul>
+
+      <div>
+        <button class="enter" data-go="preface">Читать выпуск</button>
+        <button class="enter ghost" data-go="contents">Содержание</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PREFACE ============ -->
+<div class="view matter" id="view-preface">
+  <div class="wrap">
+    <p class="sectio">От редакции</p>
+    <div class="titleblock">
+      <h1 class="title">Метод <em>резонанса</em></h1>
+      <p class="subtitle">Предисловие к пяти опытам о математической форме философских понятий</p>
+    </div>
+
+    <p class="lede">Этот выпуск вырос из случайности. Сначала было выдуманное уравнение — опережающее, $f(x+1)=f'(x)$, — и вопрос, не ложится ли его странная структура на философию Деррида. Ответ оказался утвердительным до неловкости: некорректность задачи Коши совпала с критикой присутствия, отсутствие вещественного спектра — со спектральностью, итеративная отсрочка — со следом. Совпадение было слишком точным, чтобы счесть его украшением, и слишком частным, чтобы счесть его методом. Возникло подозрение: быть может, и для других философов сыщется своя математическая структура — не та же, а <em>иная</em>, но столь же впору.</p>
+
+    <p>Так определился метод, которому следуют все пять опытов. Мы ищем <strong>структурный изоморфизм</strong>: для каждого мыслителя — ту математическую структуру, чьи <em>характерные черты</em> (её особенности, патологии, ограничения) перекликаются с его <em>понятийной сигнатурой</em>. Никакой единой мастер-структуры, прикладываемой ко всем подряд: это было бы прокрустовым ложем. Деррида получает опережающее уравнение, Лейбниц — пучок и вариационный принцип, Гегель — сопряжённые функторы, Ницше — теорему Пуанкаре, Левинас — теорему Кантора. Каждому — своя математика, отвечающая именно его мысли.</p>
+
+    <p>Метод знает единственный запрет: <em>никогда не подгонять</em>. Там, где совпадение натянуто, его надлежит назвать натянутым; там, где формализация терпит крах, крах должен быть вписан в опыт, а не скрыт. Оттого в каждой статье есть раздел о пределах — и эти разделы не уступка скепсису, а сердцевина дела.</p>
+
+    <p>Ибо сквозь все пять опытов проходит один урок, и он сильнее любого отдельного совпадения: <strong>всякая формализация и освещает своё, и оказывается превзойдена тем, что формализует</strong>. У Деррида запись рискует вернуть присутствие, которое деконструирует; у Лейбница — вернуть необходимость, которой он сопротивлялся; у Гегеля — умертвить самодвижение, в котором вся жизнь диалектики; у Ницше формализация служит союзником, но <span class="lat">amor fati</span> ей неподвластен; у Левинаса риск тяжелее всех — и сама неспособность теоремы вместить этическое в финале исполняет тезис о бесконечном, переполняющем тотальность. Дуга выпуска ведёт от опасности через службу к краху, который и есть доказательство.</p>
+
+    <p>Это, стало быть, не редукции, а <em>опыты прочтения</em>. Мы формализуем аспекты, а не философов; устанавливаем резонанс, а не тождество. И если резонанс столь часто удаётся, то, быть может, оттого, что у мысли о структуре и у самой структуры — общий малый набор форм, которые перекомбинируются в разных наречиях. Проверить это и есть задача пяти тетрадей, к которым редакция приглашает читателя — с тем единственным предупреждением, что лучшие места в них те, где запись не справляется.</p>
+
+    <div class="pager" data-pager="preface"></div>
+  </div>
+</div>
+
+<!-- ============ CONTENTS ============ -->
+<div class="view matter" id="view-contents">
+  <div class="wrap">
+    <p class="sectio">Содержание</p>
+    <div class="titleblock">
+      <h1 class="title">Содержание выпуска</h1>
+      <p class="subtitle">Пять опытов, предисловие и послесловие</p>
+    </div>
+
+    <ul class="contents-list">
+      <li data-go="preface" style="--ce-accent:#8a6a2e"><span class="ce-num">—</span><span class="ce-body"><span class="ce-title">От редакции. Метод резонанса</span><div class="ce-gloss">О единственном запрете метода и о сквозном уроке выпуска.</div></span></li>
+      <li data-go="derrida" style="--ce-accent:#7a1f1c"><span class="ce-num">I</span><span class="ce-body"><span class="ce-title">Différance как опережение</span> <span class="ce-bridge">— Деррида ↔ опережающее уравнение</span><div class="ce-gloss">Некорректность задачи Коши как критика присутствия; спектр без вещественных корней как хонтология.</div></span></li>
+      <li data-go="leibniz" style="--ce-accent:#243f63"><span class="ce-num">II</span><span class="ce-body"><span class="ce-title">Гармония как склейка, благо как экстремум</span> <span class="ce-bridge">— Лейбниц ↔ пучок и вариация</span><div class="ce-gloss">Монада как стебель, предустановленная гармония как условие склейки, лучший мир как экстремум — форма теории поля.</div></span></li>
+      <li data-go="hegel" style="--ce-accent:#4a2b5e"><span class="ce-num">III</span><span class="ce-body"><span class="ce-title">Сопряжение и снятие</span> <span class="ce-bridge">— Гегель ↔ сопряжённые функторы</span><div class="ce-gloss">Единство противоположностей как сопряжение, снятие как монада, отрицание отрицания как двойное отрицание.</div></span></li>
+      <li data-go="nietzsche" style="--ce-accent:#a3461c"><span class="ce-num">IV</span><span class="ce-body"><span class="ce-title">Кольцо и мера</span> <span class="ce-bridge">— Ницше ↔ возвращение Пуанкаре</span><div class="ce-gloss">Вечное возвращение как теорема; математика как критик, опустошающий космологию ради этики.</div></span></li>
+      <li data-go="levinas" style="--ce-accent:#14595c"><span class="ce-num">V</span><span class="ce-body"><span class="ce-title">Лицо и диагональ</span> <span class="ce-bridge">— Левинас ↔ теорема Кантора</span><div class="ce-gloss">Бесконечное переполняет тотальность; канторов Абсолют как левинасово Иное; крах, исполняющий тезис.</div></span></li>
+      <li data-go="afterword" style="--ce-accent:#8a6a2e"><span class="ce-num">—</span><span class="ce-body"><span class="ce-title">Послесловие. Остаток</span><div class="ce-gloss">Открыты ли изоморфизмы или сконструированы; о неформализуемом остатке и незамкнутости таблицы.</div></span></li>
+    </ul>
+
+    <div class="pager" data-pager="contents"></div>
+  </div>
+</div>
+
+<!-- ============ I. DERRIDA ============ -->
+<div class="view art-derrida" id="view-derrida">
+  <div class="wrap">
+    <p class="sectio">I &middot; sectio temporis</p>
+    <div class="titleblock">
+      <h1 class="title"><em>Différance</em> как опережение</h1>
+      <p class="subtitle">К математической интерпретации деридианской темпоральности через анализ функционально-дифференциального уравнения опережающего типа</p>
+      <p class="byline">Опыт прочтения</p>
+    </div>
+
+    <div class="abstract">
+      <span class="lbl">Аннотация</span>
+      Статья предлагает прочтение центральных понятий философии Жака Деррида — <span class="fr">différance</span>, следа, архи-письма, восполнения и спектральности — через структурный анализ функционально-дифференциального уравнения опережающего типа $f'(t) = f(t+\tau)$. Показывается, что критика «метафизики присутствия» получает соответствие в некорректности задачи Коши; что сама <span class="fr">différance</span> как «различение-отсрочивание» записывается уравнением, в котором параметр $\tau$ исполняет роль <span class="fr">écart</span>; что след отвечает тому, что настоящее через производные несёт информацию о всём горизонте будущего; и что характеристическое уравнение $\lambda = e^{\lambda\tau}$, лишённое вещественных корней, даёт модель спектральности.
+      <div class="kw">Ключевые слова: Деррида, différance, метафизика присутствия, опережающие уравнения, хонтология.</div>
+    </div>
+
+    <section>
+      <h2><span class="num">§ 1.</span>Ставка</h2>
+      <p class="lede">Жак Деррида с устойчивым подозрением относился к формализации. Математическое — записанное, исчислимое, наличное на бумаге как готовый результат — представлялось ему высшей формой той самой <span class="fr">метафизики присутствия</span>, разоблачению которой посвящена его работа. Формула присутствует целиком, сразу, в самотождественности своего знака; она как будто исключает отсрочку, зазор, игру следов. Поэтому затея «формализовать <span class="fr">différance</span>» граничит с противоречием в терминах и должна с самого начала признать себя рискованной.</p>
+      <p>И всё же существует один математический объект, чья структура совпадает с понятием <span class="fr">différance</span> с такой точностью, что мимо совпадения пройти трудно. Это <strong>опережающее уравнение</strong> — простейший его вид:</p>
+      $$ f(x+1) = f'(x), \qquad \text{или}\qquad f'(t) = f(t+\tau). $$
+      <p>Это контролируемый эксперимент. Мы не утверждаем, что <span class="fr">différance</span> «есть» это уравнение. Мы прослеживаем, насколько далеко простирается соответствие, и спрашиваем, что оно проясняет. В отличие от Бадью, для которого математика прямо есть онтология, мы занимаем позицию неустойчивую — между математикой как письмом присутствия и математикой как письмом отсрочки.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 2.</span>Минимальный аппарат</h2>
+      <p>Обыкновенное уравнение связывает значение функции и её производных в одной точке; зная «сейчас», вычисляют ближайшее будущее. Опережающее устроено иначе: скорость изменения в момент $t$ определяется значением в <em>будущем</em> $t+\tau$. Подстановка $f(t)=e^{\lambda t}$ даёт условие</p>
+      $$ \lambda = e^{\lambda \tau}. $$
+      <p>Оно <strong>не имеет вещественных корней</strong> ($e^{\lambda\tau}-\lambda$ всюду положительна) и <strong>бесконечно много</strong> комплексных, $\lambda_k = -W_k(-\tau)/\tau$. Задача Коши <strong>некорректна</strong>: локальные данные не определяют решения. Итерируя, получаем тождество</p>
+      $$ f(t+\tau)=f'(t),\quad f(t+2\tau)=f''(t),\quad\dots,\quad f(t+n\tau)=f^{(n)}(t). $$
+    </section>
+
+    <div class="divider">&#10086;</div>
+
+    <section>
+      <h2><span class="num">§ 3.</span>Метафизика присутствия как корректность задачи Коши</h2>
+      <p>В «Голосе и феномене» (1967) Деррида спорит с гуссерлевским <span class="fr">живым настоящим</span>: «теперь» никогда не дано чисто, оно конституировано ретенцией и протенцией, всегда уже разомкнуто к не-настоящему. Присутствие не самообосновно; в его сердцевине работает <span class="fr">différance</span>.</p>
+      <p><strong>Метафизика присутствия — это вера в корректность задачи Коши.</strong> Идеал: из полного знания «здесь и сейчас» вывести всю траекторию. Для ОДУ теорема Пикара—Линделёфа это гарантирует — точка-настоящее достаточна. Для опережающего уравнения идеал рушится: $f(t_0)$ и даже значения на отрезке <strong>недоопределяют</strong> решение. <span class="fr">La présence ne se suffit pas.</span> Некорректность есть математическое имя размыкания настоящего.</p>
+      <div class="pull">Корректность задачи Коши есть математическая форма мечты о присутствии. Опережающее уравнение — это уравнение, в котором она структурно невозможна.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 4.</span><span class="fr">Différance</span> как уравнение</h2>
+      <p>Французское <span class="fr">différer</span> значит сразу «различаться» и «откладывать». Уравнение удерживает оба смысла:</p>
+      $$ \underbrace{f(t+\tau)}_{\text{отсроченное}} \;=\; \underbrace{f'(t)}_{\text{дифференциальное различие}}. $$
+      <p>Левая часть — отложенное значение (отсрочивание); правая — производная, инфинитезимальное различие (различение). Параметр $\tau$ — это <span class="fr">écart</span>, изначальный зазор: устранить его значило бы вернуться к присутствию. Уравнение не описывает <span class="fr">différance</span> со стороны — оно совершает то же движение.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 5.</span>След и итерабельность</h2>
+      <p>След (<span class="fr">trace</span>): всякий наличный знак несёт отметину отсутствующего. Тождество $f^{(n)}(t)=f(t+n\tau)$ — точная модель: дифференциальный росток в $t$ несёт <strong>след всего будущего горизонта</strong>. Итерабельность из «Подписи, события, контекста»: знак повторяем, потому не самотождествен; сдвиг $\tau$ наращивается до $n\tau$, и каждое повторение откладывает дальше. Замыкания нет — есть бесконечная итерабельная отсрочка.</p>
+    </section>
+
+    <div class="divider">&#10086;</div>
+
+    <section>
+      <h2><span class="num">§ 6.</span>Спектральность, или хонтология уравнения</h2>
+      <p>Уравнение $\lambda=e^{\lambda\tau}$ не имеет вещественных корней. Вещественный корень означал бы монотонную, самотождественную, «присутствующую» моду $e^{\lambda t}$ — её <strong>нет</strong>. Есть лишь комплексные: осциллирующие, не равные себе ни в один миг. Они являются — в словаре, который сам Деррида сделал термином, — <strong>спектрами</strong>.</p>
+      <p>В «Призраках Маркса» (1993) Деррида развивает <span class="fr">hantologie</span>: призрак ни присутствует, ни отсутствует, и всё же определяет порядок вещей. Математический <em>спектр</em> уравнения есть множество <strong>спектров</strong>, населяющих его: они не «присутствуют» как вещественные моды, но полностью определяют решения. Онтология присутствия (вещественный спектр) пуста; её место занимает хонтология.</p>
+      <div class="pull">У опережающего уравнения нет вещественного спектра. Всё, что в нём «есть», — призрачно.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 7.</span>Архи-письмо и пространство функций</h2>
+      <p>Логоцентризм есть фоноцентризм: привилегия речи (голоса, самоприсутствия) над письмом. Деррида переворачивает: <span class="fr">архи-письмо</span> — изначальная разметка, след — есть условие и речи, и письма. Аналог — выбор фазового пространства. Для ОДУ состояние есть <strong>точка</strong> $f(t_0)$ — мгновенное «теперь», аналог голоса. Для опережающего уравнения состояние — <strong>функция на интервале</strong>, элемент бесконечномерного $C([t,t+\tau],\mathbb{R})$: протяжённая, разнесённая надпись. Бесконечномерность есть лицо архи-письма; точка-теперь — иллюзия голоса.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 8.</span><span class="fr">Espacement</span> и логика восполнения</h2>
+      <p>Разнесение (<span class="fr">espacement</span>): становление-пространством времени. Интервал $\tau$ при переходе к функциональному описанию становится «пространственной» осью графика. Восполнение (<span class="fr">supplément</span>): добавка, обнаруживающая исходную нехватку. В нелинейной динамике — каскад: основная мода порождает обертон, который и надстраивается, и вытесняет; описание одной модой не замыкается — «полнота» обнаруживает нехватку, требующую восполнения спектром.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 9.</span>Неразрешимость и пределы</h2>
+      <p>Деридианские <em>неразрешимые</em> (pharmakon, hymen, supplément) сопротивляются бинарному решению. Пространство решений опережающего уравнения радикально неразрешимо: бесконечномерно, без канонического выбора из локальных данных; теория Фредгольма для уравнений смешанного типа измеряет это <em>индексом</em>.</p>
+      <p>И всё же предел честен: записывая $\tau$ как фиксированный параметр, мы <em>опространствливаем</em> зазор, рискуя вернуть присутствие чёрным ходом. Уравнение есть не последнее слово о <span class="fr">différance</span>, а её след — нуждающийся в дальнейшем прочтении. Мы фиксируем не тождество, а <em>резонанс</em>; и самый его успех должен, по-деридиански, вызывать подозрение.</p>
+    </section>
+
+    <div class="notes">
+      <h3>Примечания</h3>
+      <ol>
+        <li>Бадью, «Бытие и событие» (1988): «математика есть онтология» — полярная противоположность деридианскому подозрению к формальному.</li>
+        <li>«Голос и феномен», гл. 5—6: гуссерлевская «точка-источник» уже опосредована ретенцией.</li>
+        <li>Неслышимость различия <span class="fr">différence/différance</span> в речи — для Деррида доказательство первичности письменного следа.</li>
+        <li>Аналитический росток восстанавливает функцию по бесконечному ряду производных — след целого, никогда не данный как конечное присутствие.</li>
+        <li>«Призраки Маркса» (1993): <span class="fr">hantologie</span> от <span class="fr">hanter</span> с отсылкой к <span class="fr">ontologie</span>.</li>
+      </ol>
+    </div>
+    <div class="biblio">
+      <h3>Библиография</h3>
+      <p>Деррида Ж. О грамматологии. — Paris: Minuit, 1967.</p>
+      <p>Деррида Ж. Голос и феномен. — Paris: PUF, 1967.</p>
+      <p>Деррида Ж. Поля философии. — Paris: Minuit, 1972.</p>
+      <p>Деррида Ж. Призраки Маркса. — Paris: Galilée, 1993.</p>
+      <p>Mallet-Paret J. The Fredholm alternative for FDEs of mixed type // J. Dynam. Differ. Equ. — 1999. — Vol. 11. — P. 1—47.</p>
+    </div>
+    <p class="colophon">⁂ Опыт прочтения, в котором уравнение и текст обмениваются следами.</p>
+
+    <div class="pager" data-pager="derrida"></div>
+  </div>
+</div>
+
+<!-- ============ II. LEIBNIZ ============ -->
+<div class="view art-leibniz" id="view-leibniz">
+  <div class="wrap">
+    <p class="sectio">II &middot; sectio harmonica</p>
+    <div class="titleblock">
+      <h1 class="title">Гармония как склейка,<br>благо как <em>экстремум</em></h1>
+      <p class="subtitle">Математическое прочтение лейбницевой метафизики в зеркале теории пучков и вариационного исчисления</p>
+      <p class="byline">Опыт прочтения</p>
+    </div>
+
+    <div class="abstract">
+      <span class="lbl">Аннотация</span>
+      Монадология прочитывается через <strong>теорию пучков</strong>: монада есть стебель, выражение есть морфизм, предустановленная гармония есть условие склейки. Принцип наилучшего — через <strong>вариационный принцип</strong>: совершенство есть функционал, действительный мир — его экстремум. Две формализации сходятся на <span class="lat">компоссибильности</span> (= глобальное когерентное сечение) и вместе воспроизводят форму классической теории поля. Главное напряжение: вариационный детерминизм угрожает вернуть необходимость, которой Лейбниц противопоставлял свободу выбора.
+      <div class="kw">Ключевые слова: Лейбниц, монада, предустановленная гармония, компоссибильность, теория пучков, наименьшее действие.</div>
+    </div>
+
+    <section>
+      <h2><span class="num">§ 1.</span>Ставка</h2>
+      <p class="lede">Система Лейбница держится на двух несущих принципах. Первый: монады «не имеют окон», не сообщаются причинно, и всё же согласованы <span class="lat">предустановленной гармонией</span>. Второй: из бесконечности возможных миров Бог по <span class="lat">достаточному основанию</span> приводит к бытию <em>наилучший</em>. Тезис: эти принципы получают две взаимодополнительные формализации — пучок и вариацию, — соединяющиеся в структуру классической теории поля.</p>
+      <p>В отличие от Деррида, ставка менее парадоксальна: Лейбниц — соизобретатель исчисления, мечтатель о <span class="lat">mathesis universalis</span>, предтеча наименьшего действия. Риск противоположный: не предательство, а <em>чрезмерный успех</em>, грозящий растворить теологию — прежде всего божественную свободу.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 2.</span>Минимальный аппарат</h2>
+      <p><strong>Пучок</strong> $\mathcal{F}$ на $X$ сопоставляет каждой области $U$ совокупность сечений $\mathcal{F}(U)$ с отображениями ограничения; аксиомы — отделимость и склейка. <em>Стебель</em></p>
+      $$ \mathcal{F}_x = \varinjlim_{U \ni x} \mathcal{F}(U) $$
+      <p>есть росток — локальная информация, стянутая в точку. <strong>Вариационный принцип</strong>: функционал $S[\varphi]$ приписывает конфигурации число, действительная есть экстремум $\delta S = 0$.</p>
+    </section>
+
+    <div class="divider">&#10086;</div>
+
+    <section>
+      <h2><span class="num">§ 3.</span>Монада как стебель</h2>
+      <p>Монада — «вечное живое зеркало вселенной» (§ 56), выражает целое со своей точки зрения, отчётливо в малой области. Стебель есть росток с наивысшим разрешением вблизи $x$. Лейбницево <em>выражение</em> («Quid sit idea», 1678) — постоянное закономерное соответствие — есть дословно <strong>гомоморфизм</strong>. За два с половиной века до теории категорий Лейбниц отождествляет репрезентацию с гомоморфизмом. <span class="lat">Petites perceptions</span>: росток несёт всю струю производных, но отчётливо доступна конечная часть.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 4.</span>Безоконность и гармония как условие склейки</h2>
+      <p>«Монады не имеют окон» (§ 7) — нет морфизмов между стеблями. Образ синхронных часов: единое время держится не влиянием (окна), не подстройкой (окказионализм), а изначальным согласным изготовлением — <span class="lat">предустановлением</span>. Это <strong>аксиома склейки</strong>: согласие структурно, закодировано в наперёд заданных ограничениях. Предустановленность — сама пучковая структура; гармония — условие склейки.</p>
+      <div class="pull">Часы Лейбница идут в лад, ибо они — сечения одного пучка.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 5.</span>Пространство как <span class="lat">phenomenon bene fundatum</span></h2>
+      <p>Пространство и время реляционны: порядок сосуществований и последовательностей (переписка с Кларком). Тела и пространство — «хорошо обоснованные феномены», укоренённые в монадах. В теории пучков база восстановима из сечений (локали, конструкция <span class="fr">espace étalé</span>): база производна от ростков, как пространство — от монад. Реляционизм Лейбница предвосхищает бесточечное пространство и топос.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 6.</span>Компоссибильность как глобальное сечение</h2>
+      <p>Возможный мир есть максимальное <span class="lat">компоссибильное</span> множество. Компоссибильность есть <strong>когерентная склейка</strong>: совместные локальные данные собираются в глобальное сечение; несовместимые монады не склеиваются. Пространство возможных миров есть <strong>пространство глобальных сечений</strong>. Здесь — шарнир, соединяющий монадологию с принципом наилучшего.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 7.</span>Лучший мир как экстремум</h2>
+      <p>Бог обозревает все когерентные сечения и приводит к бытию наилучшее: <strong>экстремум функционала совершенства</strong> $\Phi$. Достаточное основание — условие $\delta\Phi=0$. Критерий — максимум разнообразия при минимуме простоты законов:</p>
+      $$ \Phi[\text{мир}] = (\text{богатство феноменов}) - \lambda\,(\text{сложность законов}), $$
+      <p>с близостью к минимальной длине описания. «Tentamen Anagogicum» (1696) с «наиболее определённым» путём в оптике — предок Мопертюи и Эйлера; читать наилучшее как экстремум — читать Лейбница в его наречии.</p>
+    </section>
+
+    <div class="divider">&#10086;</div>
+
+    <section>
+      <h2><span class="num">§ 8.</span>Метафизика как теория поля</h2>
+      <p>Монады-с-гармонией дают <strong>кинематику</strong>: конфигурации суть сечения пучка. Принцип наилучшего даёт <strong>динамику</strong>: экстремум функционала над сечениями. Эта двухъярусная структура <em>есть</em> структура классической теории поля: поля суть сечения расслоения, физическое поле экстремизирует действие. <strong>Метафизика Лейбница обладает логической формой теории поля</strong> на три столетия раньше.</p>
+      <div class="pull">Монада есть стебель; гармония есть склейка; лучший мир есть экстремум. Бог Лейбница занимается теорией поля.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 9.</span>Борьба возможных и пределы формализации</h2>
+      <p>«О радикальном происхождении вещей» (1697): возможные «стремятся» к бытию, осуществляется максимально совершенное (<span class="lat">ut plurimum existat</span>) — прото-оптимизационная динамика, $\propto \exp(\Phi)$.</p>
+      <p>Главное напряжение — <strong>свобода</strong>. Бог избирает наилучшее <em>свободно</em>: морально, не метафизически необходимо. Но вариационный принцип детерминистичен — $\delta\Phi=0$ даёт единственный экстремум, грозя сделать мир метафизически необходимым (спинозизм, с которым Лейбниц воевал). Контингентность переселяется в выбор функционала и в существование иных экстремумов как возможных миров — но это заплата. Лейбниц мечтал, что метафизика станет вычислением: «<span class="lat">calculemus!</span>». Пучок и вариация — это вычисление; а свобода — ровно то, чего вычисление не вмещает.</p>
+    </section>
+
+    <div class="notes">
+      <h3>Примечания</h3>
+      <ol>
+        <li>«Quid sit idea» (1678) и переписка с Арно: выражение как постоянное соответствие отношений — определение гомоморфизма.</li>
+        <li>Образ синхронных часов («Système nouveau», 1695): отвергаются влияние и окказионализм, принимается предустановление.</li>
+        <li>Переписка с Кларком: пространство — порядок сосуществований, время — порядок последовательностей.</li>
+        <li>«Tentamen Anagogicum» (1696); Мопертюи (1746) и Эйлер (1744) в этой генеалогии наименьшего действия.</li>
+        <li>«De rerum originatione radicali» (1697): «ut plurimum existat».</li>
+        <li>Моральная против метафизической необходимости — стержень «Теодицеи» (1710).</li>
+      </ol>
+    </div>
+    <div class="biblio">
+      <h3>Библиография</h3>
+      <p>Лейбниц Г. В. Рассуждение о метафизике. — 1686.</p>
+      <p>Лейбниц Г. В. Tentamen Anagogicum. — 1696.</p>
+      <p>Лейбниц Г. В. О радикальном происхождении вещей. — 1697.</p>
+      <p>Лейбниц Г. В. Монадология. — 1714.</p>
+      <p>Лейбниц Г. В. — Кларк С. Переписка. — 1715—1716.</p>
+      <p>Mac Lane S., Moerdijk I. Sheaves in Geometry and Logic. — Springer, 1992.</p>
+      <p>Arnol'd V. I. Mathematical Methods of Classical Mechanics. — Springer, 1989.</p>
+    </div>
+    <p class="colophon">⁂ Опыт прочтения, в котором монада оказывается ростком, а благо — действием.</p>
+
+    <div class="pager" data-pager="leibniz"></div>
+  </div>
+</div>
+
+<!-- ============ III. HEGEL ============ -->
+<div class="view art-hegel" id="view-hegel">
+  <div class="wrap">
+    <p class="sectio">III &middot; sectio dialectica</p>
+    <div class="titleblock">
+      <h1 class="title">Сопряжение и <em>снятие</em></h1>
+      <p class="subtitle">Математическое прочтение гегелевской диалектики в свете теории сопряжённых функторов</p>
+      <p class="byline">Опыт прочтения</p>
+    </div>
+
+    <div class="abstract">
+      <span class="lbl">Аннотация</span>
+      Развивая программу Ф. У. Ловера: <strong>единство противоположностей</strong> есть <em>сопряжение</em> $F \dashv G$; <strong>снятие</strong> (<span class="de">Aufhebung</span>) есть <em>монада</em> сопряжения, а рефлективная подкатегория — высшая ступень; <strong>отрицание отрицания</strong> есть монада <em>двойного отрицания</em> $\neg\neg$, нетривиальная в небулевом топосе; <strong>истинная бесконечность</strong> есть неподвижная точка эндофунктора, $\Omega \cong T\Omega$. Кванторы как сопряжённые обосновывают «объективную логику». Напряжение: категорная запись задаёт функторы извне, тогда как диалектика должна двигать себя сама.
+      <div class="kw">Ключевые слова: Гегель, снятие, отрицание отрицания, сопряжённые функторы, монада, топос, Ловер.</div>
+    </div>
+
+    <section>
+      <h2><span class="num">§ 1.</span>Ставка</h2>
+      <p class="lede">Гегель — самый трудный случай. Его «Наука логики» слывёт образцом тёмного многословия, а «диалектическая логика», где противоречие движет мыслью, кажется вызовом формальному рассуждению. Но ставка тут радикальнее: не моделирует ли теория категорий Гегеля извне, а не есть ли она <em>и есть</em> та объективная логика, которую он объявил, но не мог записать за отсутствием символики.</p>
+      <p>Тропу проложил Ловер: кванторы как сопряжённые, снятие в иерархии подтопосов, единство противоположностей как сопряжение. Мы продолжаем и доводим до отрицания отрицания и истинной бесконечности.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 2.</span>Минимальный аппарат</h2>
+      <p>Сопряжение $F \dashv G$ есть естественная биекция</p>
+      $$ \operatorname{Hom}_{\mathcal{D}}(Fc, d) \cong \operatorname{Hom}_{\mathcal{C}}(c, Gd), $$
+      <p>задающая единицу $\eta\colon 1 \Rightarrow GF$ и коединицу $\varepsilon\colon FG \Rightarrow 1$. Композиция $T = GF$ есть <em>монада</em>; при идемпотентности её алгебры образуют <em>рефлективную подкатегорию</em> — выделенный уровень. Образец — пара свободный—забывающий, $F \dashv U$.</p>
+    </section>
+
+    <div class="divider">&#10086;</div>
+
+    <section>
+      <h2><span class="num">§ 3.</span>Сопряжение как единство противоположностей</h2>
+      <p><span class="de">Einheit der Gegensätze</span> — не тождество и не соседство, а живое отношение. Сопряжение: функторы противонаправлены (противоположность), связаны биекцией (единство), но <em>не взаимно-обратны</em> ($GF \neq 1$). Будь обратны — эквивалентность, «абстрактное тождество», мёртвая симметрия. Пара свободный—забывающий даёт абстрактное/конкретное в гегелевском, перевёрнутом смысле: $U$ движется к абстрактному, $F$ — к конкретной тотальности.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 4.</span>Единица, опосредование, в-себе и для-себя</h2>
+      <p>Единица $\eta_c\colon c \to GFc$ есть переход непосредственного в опосредованное: $c$ «в себе» отображается в $GFc$ «для себя». Когда $\eta_c$ не изоморфизм, в-себе ещё не достигло для-себя. Опосредование (<span class="de">Vermittlung</span>) есть универсальное свойство — наилучший способ отнестись-обратно; сопряжение, по Ловеру, выражает объективно то, что ставится субъективно.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 5.</span>Снятие как монада</h2>
+      <p><span class="de">Aufhebung</span> удерживает тройной смысл: <span class="lat">tollere</span>, <span class="lat">conservare</span>, <span class="lat">elevare</span>. Монада $T = GF$ несёт эту тройственность: рефлексия в подкатегорию алгебр <em>упраздняет</em> одностороннюю непосредственность, <em>сохраняет</em> содержание (локализация), <em>возвышает</em> на разрешённый уровень. Ловер формализовал снятие как отношение уровней топоса: снятие уровня $n$ есть наименьший уровень $n+1$, где отрицание уровня $n$ тривиально.</p>
+      <div class="pull">Снятие есть монада сопряжения. Высшая ступень есть категория алгебр.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 6.</span>Отрицание отрицания и двойное отрицание</h2>
+      <p>Отрицание Гегеля <em>определённое</em>: отрицание отрицания не возвращает к началу. В классике $\neg\neg A = A$ — холостой возврат. В алгебре Гейтинга</p>
+      $$ A \le \neg\neg A, \qquad \neg\neg A \neq A. $$
+      <p>Двойное отрицание даёт высшее определение $\neg\neg A \ge A$ и есть <strong>монада</strong> (топология Ловера—Тирни $j_{\neg\neg}$); её алгебры — $\neg\neg$-пучки — булева подкатегория. Отрицание отрицания <em>замыкает вверх</em>, нетривиально ровно там, где топос небулев — где логика жива.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 7.</span>Бытие, ничто, становление</h2>
+      <p>Чистое бытие и чистое ничто, оба неопределённые, «одно и то же»; их истина — становление. Категорно: терминальный и начальный объекты, $1$ и $0$, в вырожденной ситуации совпадающие в нулевой объект $0 \cong 1$; становление — движение между ними, в развитой форме копредел. Отождествление самое спорное, приводится ради полноты, не ради силы.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 8.</span>Кванторы как сопряжённые: объективная логика</h2>
+      <p>Открытие Ловера: для $f\colon X \to Y$ функтор подстановки имеет левый и правый сопряжённые,</p>
+      $$ \exists_f \dashv f^{*} \dashv \forall_f. $$
+      <p>Два квантора — противоположные определённости, фланкирующие подстановку. Логические связки суть универсальные конструкции, а не субъективный синтаксис — «объективная логика». Нить когезии $\pi_0 \dashv \mathrm{disc} \dashv \Gamma \dashv \mathrm{codisc}$ разрешает оппозицию непрерывного и дискретного.</p>
+    </section>
+
+    <div class="divider">&#10086;</div>
+
+    <section>
+      <h2><span class="num">§ 9.</span>Дурная и истинная бесконечность</h2>
+      <p>Дурная бесконечность — незавершающаяся итерация $T, T^2, T^3, \dots$. Истинная — неподвижная точка, начальная $T$-алгебра $\Omega$; по лемме Ламбека</p>
+      $$ \Omega \cong T\Omega : $$
+      <p>целое, тождественное результату своего процесса, — абсолютная идея как итог, включивший в себя своё становление.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 10.</span>Пределы формализации</h2>
+      <p>Главное напряжение — <strong>самодвижение</strong>. Диалектика движет себя из имманентного противоречия; категорная же запись задаёт функторы <em>извне</em>. Не теряет ли формализация автокинесис? Возможный ответ: имманентность спасается <em>каноничностью</em> сопряжённых (свободный—забывающий, $\exists\dashv{}^*\dashv\forall$, $\neg\neg$ вынуждены структурой, а не выбраны). Но это заплата. Второе напряжение — противоречие, запрещённое категорной логикой; небулево прочтение смягчает, но гегелевское противоречие как двигатель, возможно, сопротивляется. Мы формализуем аспекты, не сводим Гегеля к теории категорий.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 11.</span>Заключение</h2>
+      <p>Сопряжение есть единство противоположностей; монада — снятие; двойное отрицание — отрицание отрицания; неподвижная точка — истинная бесконечность; кванторы как сопряжённые — объективная логика. Формализация здесь, быть может, и есть то, к чему Гегель тянулся: объективная логика, которой недоставало символики. Цена — автокинесис: запись не движет себя сама. Но запись, ожившая в мыслящем математике, <em>и есть</em> мышление, движущее себя, — и противоположность формального и живого снята в том самом акте, которым положена.</p>
+    </section>
+
+    <div class="notes">
+      <h3>Примечания</h3>
+      <ol>
+        <li>Ловер: «Quantifiers and Sheaves» (1970), «Some Thoughts on the Future of Category Theory» (1991), «Unity and Identity of Opposites» (1996), «Axiomatic Cohesion» (2007); философское значение сопряжений — также Д. Эллерман.</li>
+        <li>Категорная «монада» соименна лейбницевой из выпуска II; имя ввёл Мак Лейн.</li>
+        <li>«Adjoint functors arise everywhere» — рефрен Ловера и Мак Лейна.</li>
+        <li>Снятие как отношение уровней подтопосов; «гегелевский тако» — весёлое имя строгой конструкции.</li>
+        <li>$\neg\neg$ как топология Ловера—Тирни: Mac Lane—Moerdijk, гл. V—VI.</li>
+        <li>$\exists_f \dashv f^{*} \dashv \forall_f$: кванторы как универсальные конструкции.</li>
+        <li>Лемма Ламбека: $T\Omega \cong \Omega$ — наше расширение программы Ловера.</li>
+      </ol>
+    </div>
+    <div class="biblio">
+      <h3>Библиография</h3>
+      <p>Гегель Г. В. Ф. Наука логики. — 1812—1816.</p>
+      <p>Гегель Г. В. Ф. Энциклопедия философских наук. — 1830.</p>
+      <p>Lawvere F. W. Quantifiers and Sheaves // Actes Congrès Int. Math. — 1970.</p>
+      <p>Lawvere F. W. Unity and Identity of Opposites in Calculus and Physics // Theory Appl. Categ. — 1996.</p>
+      <p>Mac Lane S. Categories for the Working Mathematician. — Springer, 1998.</p>
+      <p>Mac Lane S., Moerdijk I. Sheaves in Geometry and Logic. — Springer, 1992.</p>
+      <p>Lambek J., Scott P. J. Introduction to Higher-Order Categorical Logic. — CUP, 1986.</p>
+    </div>
+    <p class="colophon">⁂ Опыт прочтения, в котором противоположности сопряжены, а снятое сбережено.</p>
+
+    <div class="pager" data-pager="hegel"></div>
+  </div>
+</div>
+
+<!-- ============ IV. NIETZSCHE ============ -->
+<div class="view art-nietzsche" id="view-nietzsche">
+  <div class="wrap">
+    <p class="sectio">IV &middot; sectio recurrens</p>
+    <div class="titleblock">
+      <h1 class="title">Кольцо и <em>мера</em></h1>
+      <p class="subtitle">Математическое прочтение вечного возвращения в свете теоремы Пуанкаре о возвращении</p>
+      <p class="byline">Опыт прочтения</p>
+    </div>
+
+    <div class="abstract">
+      <span class="lbl">Аннотация</span>
+      <strong>Вечное возвращение того же самого</strong> сопоставляется с <strong>теоремой Пуанкаре о возвращении</strong> (1890). Космологический аргумент Ницше — конечная сила, бесконечное время, отсюда повторение — есть дискретный набросок теоремы, исторически её <em>предвосхищающий</em>. Гипотезы теоремы отождествляются с тезисами Ницше. Но математика, придя позже, выступает <em>критиком</em>: возвращение лишь <em>приближённо</em> (точное имеет меру нуль) и наступает в немыслимые сроки (лемма Каца) — космологическая претензия опустошается, высвобождая этическое ядро (<span class="lat">amor fati</span>). Единственный случай, где формализация служит философии.
+      <div class="kw">Ключевые слова: Ницше, вечное возвращение, теорема Пуанкаре, эргодичность, amor fati, Делёз.</div>
+    </div>
+
+    <section>
+      <h2><span class="num">§ 1.</span>Ставка</h2>
+      <p class="lede">В трёх предыдущих опытах математика формализовала философию, которая ей предшествовала. Здесь порядок переворачивается. Сильс-Мария 1881 и «Весёлая наука» 1882 <em>опережают</em> теорему Пуанкаре (1890) и спор Больцмана—Цермело (1896). Философия опередила теорему на девять лет.</p>
+      <p>Ницше не заимствовал у математики — он рассуждал внутри той же физики XIX века. Отсюда уникальное положение опыта: математика приходит сюда <em>критиком</em>, вправе судить аргумент Ницше — подтвердить форму, вскрыть изъяны и, вскрыв их, высвободить этическое ядро доктрины.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 2.</span>Теорема</h2>
+      <p>Пусть $(X,\mathcal{B},\mu)$ — пространство <em>конечной</em> меры, $T$ — преобразование, <em>сохраняющее меру</em>. Тогда для любого $A$ с $\mu(A) &gt; 0$ почти всякая точка возвращается в $A$ бесконечно часто. Доказательство: непересекающиеся прообразы невозвращающихся точек дали бы бесконечную суммарную меру. Мост к физике — Лиувилль: гамильтонов поток сохраняет фазовый объём, при ограниченной энергии поверхность компактна. Замкнутая система ограниченной энергии возвращается — это мир Ницше.</p>
+    </section>
+
+    <div class="divider">&#10086;</div>
+
+    <section>
+      <h2><span class="num">§ 3.</span>Доказательство Ницше</h2>
+      <p>«Весёлая наука», § 341: демон шепчет, что эту жизнь придётся прожить ещё раз и бесчисленные разы. В посмертных фрагментах Ницше доказывает космологически: сила конечна, состояний конечное число, время бесконечно — всякое состояние повторяется. «Имей мир цель, она была бы достигнута». Это дискретный набросок Пуанкаре за девять лет до теоремы; Ницше опирался на Босковича (силовые точки) и сохранение энергии.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 4.</span>Гипотезы как тезисы метафизики</h2>
+      <p><strong>Конечность меры</strong> ↔ конечность силы. <strong>Сохранение меры</strong> (Лиувилль) ↔ сохранение силы, мир «вечно сам себя созидающий и разрушающий», воля к власти как постоянный квант. <strong>Бесконечность итерации</strong> ↔ бесконечность времени без цели. <strong>Детерминизм</strong> ↔ необходимость, <span class="lat">fatum</span>. Вывод — возвращение — следует сам: мир-как-воля-к-власти, ограниченный и сохраняющийся, в бесконечном времени обязан возвращаться.</p>
+      <div class="pull">Ницше выписал гипотезы теоремы как тезисы метафизики — и вывод последовал сам, за девять лет до доказательства.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 5.</span>«Того же самого»?</h2>
+      <p>Пуанкаре даёт возвращение <em>сколь угодно близкое</em>, не точное; точное имеет меру нуль. Возвращение есть возвращение <em>почти</em> того же. Это углубление: Делёз («Ницше и философия», 1962) настаивал, что возвращается не тождественное, а различие, тип; «возвращение есть бытие становления». Мера подтверждает: та же точка не возвращается, возвращается форма. Клоссовски: возвращение растворяет тождество «я».</p>
+      <div class="pull">Математика возвращает не то же самое, а почти то же; и в этом «почти» — вся разница между космологией и этикой.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 6.</span>Время возврата</h2>
+      <p>Лемма Каца: среднее время возврата $\langle\tau_A\rangle = \mu(X)/\mu(A)$. Для макросостояния — порядка $e^{N}$, несоизмеримо больше возраста Вселенной (возражение Цермело). Космология испаряется — и тем обнажается этическое ядро: § 341 спрашивал не «случится ли?», а «как ты отнесёшься, если случится?». <span class="lat">Amor fati</span>. Математика, придя критиком, растворяет слабый аргумент и укрепляет сильный.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 7.</span>Кольцо колец и эргодичность</h2>
+      <p>«Кольцо колец» Ницше; эргодическая теория (Биркгоф, 1931): если динамика эргодична, орбита плотно заполняет поверхность энергии, всё возможное возвращается. Но честная оговорка: теория Колмогорова—Арнольда—Мозера показывает сохранение инвариантных торов — генерическую <em>не</em>-эргодичность. Даже сильное кольцо заполняет не всё; круг оказывается семейством вложенных колец.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 8.</span>Против стрелы времени</h2>
+      <p>Спор Больцмана—Цермело — о возвращении против стрелы энтропии. Вечное возвращение есть отрицание глобальной стрелы, цели, истории спасения; мишени — «тени Бога», телеология, и гегелевское восхождение к Абсолюту. Внутрисерийный диалог: круг Гегеля ($\Omega \cong T\Omega$) восходит и завершается как итог; круг Ницше возвращается и не завершается никогда. Одна фигура — триумф цели и её упразднение.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 9.</span>Пределы — в обратном порядке</h2>
+      <p>Здесь — переворот: формализация не угрожает, она служит, выступая критиком. Но предел окончателен: <span class="lat">amor fati</span> — способность <em>волить</em> возвращение — есть то, чего не содержит теорема. Теория меры докажет, что ты вернёшься; она не скажет, сможешь ли ты ответить демону: «ты бог». Наибольшая тяжесть неформализуема, ибо она не факт, а <em>требование</em>. Теорема чертит кольцо. Захотеть его — не теорема, а судьба.</p>
+    </section>
+
+    <div class="notes">
+      <h3>Примечания</h3>
+      <ol>
+        <li>«Die fröhliche Wissenschaft», § 341 (1882); Сильс-Мария, август 1881; «6000 Fuss jenseits von Mensch und Zeit».</li>
+        <li>Космологический аргумент — в Nachlass 1881—1888; мир как «воля к власти — и ничего кроме». Доказательства Ницше не публиковал.</li>
+        <li>Боскович — «По ту сторону добра и зла», § 12; учение о сохранении энергии.</li>
+        <li>Делёз (1962): селективное возвращение различия; Клоссовски (1969): растворение «я»; Лёвит (1935): напряжение космологического и этического.</li>
+        <li>Лемма Каца (1947); возражение Цермело (1896).</li>
+        <li>Биркгоф, фон Нейман (1931—32); теория Колмогорова—Арнольда—Мозера (1954—63).</li>
+      </ol>
+    </div>
+    <div class="biblio">
+      <h3>Библиография</h3>
+      <p>Ницше Ф. Весёлая наука. — 1882.</p>
+      <p>Ницше Ф. Так говорил Заратустра. — 1883—1885.</p>
+      <p>Ницше Ф. Посмертные фрагменты. — 1881—1888.</p>
+      <p>Poincaré H. Sur le problème des trois corps... // Acta Mathematica. — 1890. — Vol. 13.</p>
+      <p>Birkhoff G. D. Proof of the Ergodic Theorem // PNAS. — 1931.</p>
+      <p>Deleuze G. Nietzsche et la philosophie. — PUF, 1962.</p>
+      <p>Löwith K. Nietzsches Philosophie der ewigen Wiederkehr des Gleichen. — 1935.</p>
+    </div>
+    <p class="colophon">⁂ Опыт прочтения, в котором кольцо оказывается орбитой, а наибольшая тяжесть — тем, чего мера не взвесит.</p>
+
+    <div class="pager" data-pager="nietzsche"></div>
+  </div>
+</div>
+
+<!-- ============ V. LEVINAS ============ -->
+<div class="view art-levinas" id="view-levinas">
+  <div class="wrap">
+    <p class="sectio">V &middot; sectio infiniti</p>
+    <div class="titleblock">
+      <h1 class="title">Лицо и <em>диагональ</em></h1>
+      <p class="subtitle">Математическое прочтение левинасовской бесконечности и Иного в свете теоремы Кантора</p>
+      <p class="byline">Опыт прочтения &middot; финал</p>
+    </div>
+
+    <div class="abstract">
+      <span class="lbl">Аннотация</span>
+      Мысль, что Иное и бесконечное <strong>переполняют</strong> всякую тотальность, сопоставляется с <strong>теоремой Кантора</strong>: $|X| &lt; |\mathcal{P}(X)|$, а диагональ есть механизм переполнения. «Бесконечное переполняет тотальность» ↔ строгая неравность; картезианская идея бесконечного ↔ диагональная конструкция; высота Иного ↔ необратимость неравенства; тотальность как насилие, прерываемое лицом, ↔ невозможность универсального множества. Кульминация — историческое совпадение: канторов Абсолют, «который можно лишь признать, но не познать», есть почти дословно левинасово бесконечное. Финал обращает главное возражение в развязку.
+      <div class="kw">Ключевые слова: Левинас, Иное, бесконечное, тотальность, теорема Кантора, Абсолют, лицо.</div>
+    </div>
+
+    <section>
+      <h2><span class="num">§ 1.</span>Ставка</h2>
+      <p class="lede">Это самый опасный из пяти опытов. Левинас построил этику <em>против</em> тотализации, а мы предлагаем формализовать его бесконечное самым тотализирующим из понятий — <em>мощностью</em>. Свести этическую высоту Иного к кардиналу было бы ровно той редукцией, которой он сопротивлялся. Лицо — не множество побольше.</p>
+      <p>И всё же формула «<span class="fr">l'infini déborde la totalité</span>» есть структурно теорема Кантора; а самое поразительное совпадение серии в том, что собственная теология Кантора читается как страница Левинаса. Эта статья — последняя; в ней опасность обращается в метод.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 2.</span>Теорема Кантора</h2>
+      <p>Для всякого $X$ нет сюръекции $X \to \mathcal{P}(X)$; $|X| &lt; |\mathcal{P}(X)|$. Диагональ: для любого $f$ положим</p>
+      $$ D = \{\, x \in X : x \notin f(x) \,\}. $$
+      <p>Будь $D = f(d)$, то $d \in D \iff d \notin D$ — противоречие. $D$ построено <em>средствами</em> $f$ и ей не принадлежит: переполнение порождается самим жестом охвата.</p>
+    </section>
+
+    <div class="divider">&#10086;</div>
+
+    <section>
+      <h2><span class="num">§ 3.</span>Тотальность и бесконечное</h2>
+      <p>«Тотальность и бесконечное» (1961): тотальность — царство Того же самого, онтология, охват, в пределе война; бесконечное переполняет всякую тотальность. Образец — Декарт: идея бесконечного, чьё содержание (<span class="lat">ideatum</span>) превосходит идею, «мыслит больше, чем мыслится». Не «я» полагает бесконечное — бесконечное вторгается, превышая «я».</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 4.</span>Переполнение как диагональ</h2>
+      <p>«Бесконечное переполняет тотальность» есть теорема Кантора. Картезианская структура — «<span class="lat">ideatum</span> превосходит идею» — отображается на диагональ: $D$ определено внутри тотализации и ускользает за её пределы. Избыток не привносится извне — он <em>вырабатывается самим усилием охвата</em>. Какую бы $f$ ни предпринять, диагональ превзойдёт.</p>
+      <div class="pull">«Мыслить больше, чем мыслится» — это и есть диагональный аргумент.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 5.</span>Высота и асимметрия</h2>
+      <p>Отношение к Иному несимметрично: Иное в измерении <em>высоты</em>, я отвечаю прежде взаимности. Мощностное неравенство: есть вложение $X \hookrightarrow \mathcal{P}(X)$, но нет сюръекции обратно. $\mathcal{P}(X)$ стои́т «выше», как Иное — выше меня: есть восхождение, нет покрытия снизу. Асимметрия $&lt;$ есть искривление интерсубъективного пространства.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 6.</span>Тотальность как насилие; диагональ как прерывание</h2>
+      <p>Тотальность есть точка зрения войны; лицо-в-лицо прерывает её. Нет универсального множества: всякая попытка замкнуть тотальность прерывается диагональю и парадоксами. В письме к Дедекинду (1899) Кантор различил консистентные множественности (множества) и <strong>неконсистентные</strong> — абсолютно бесконечные, не собираемые в единство без противоречия. Диагональ есть математическое лицо-в-лицо: она прерывает всякую тотальность изнутри.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 7.</span>Абсолют Кантора и бесконечное Левинаса</h2>
+      <p>Вершина серии. Кантор различал трансфинитное (увеличиваемое) и <em>Абсолют</em> — собственно-бесконечное, не охватываемое множеством, отождествляемое им с Богом. О нём он писал: <span class="de">das Absolute kann nur anerkannt, nie erkannt … werden</span> — «можно лишь признать, но никогда не познать, даже приблизительно».</p>
+      <p>Это почти дословно Левинас: Иное приближаемо, засвидетельствовано в лице, <em>признано</em> — но не познано, не тематизировано. Признание без познания — формула обоих. Математик 1880-х и феноменолог 1960-х независимо пришли к одной фигуре: собственно бесконечное есть то, чего достигает признание, но не достигает знание.</p>
+      <div class="pull">«Признать, но никогда не познать» — это написал теоретик множеств о Боге за восемьдесят лет до того, как феноменолог написал то же о лице Иного.</div>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 8.</span>Сказанное и Сказывание</h2>
+      <p>«Иначе, чем быть» (1974): Сказанное (тематизированное) против Сказывания (обращения, переполняющего всякое Сказанное). Лимитативные теоремы Гёделя (1931) и Тарского — диагональные: система не может тотализовать собственную истину; что она порождает (неразрешимое, предикат истины), она не вмещает. Сказывание есть нетотализуемое, вырабатываемое системой, но не содержимое ею.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">§ 9.</span>Предел — и развязка</h2>
+      <p>Тягчайшее возражение: бесконечное Левинаса <em>этично</em> (лицо повелевает), канторово — кардинал, лишённый этического. Формализовать высоту мощностью — совершить ту редукцию, против которой вся его мысль. Ответ: формализация схватывает <em>структуру</em> (переполнение, асимметрию, самопорождение избытка), но не <em>содержание</em> — что избыток <em>зовёт</em>.</p>
+      <p>И вот развязка всего номера. Сама неспособность формализации вместить этическое <em>исполняет</em> тезис. Теорема (Сказанное) не вмещает призыва (Сказывание); система порождает диагональ, но не повелевает. Статья переполняется этическим остатком — и это переполнение <em>и есть</em> <span class="fr">l'infini débordant la totalité</span>. Предел статьи свидетельствует то, что статья утверждает.</p>
+      <p>Пять мыслителей, пять структур — и урок: каждая формализация и освещает, и превзойдена тем, что формализует. Само наше предприятие есть тотальность, переполняемая этической бесконечностью: философы были не структурами, а лицами. Диагональ ускользает от перечня; лицо — от теоремы; и это ускользание — единственное, что стоило формализовать — тем, что не удалось.</p>
+    </section>
+
+    <div class="notes">
+      <h3>Примечания</h3>
+      <ol>
+        <li>«Тотальность и бесконечное» (1961); Декарт, «Размышления», III: <span class="lat">ideatum</span> превосходит идею; «penser plus qu'on ne pense».</li>
+        <li>Письмо Кантора к Дедекинду (1899): консистентные против неконсистентных множественностей; антиципация разрешения парадоксов.</li>
+        <li>«Grundlagen» (1883), переписка с кардиналом Францелином: «das Absolute kann nur anerkannt, nie erkannt werden»; историю документирует Дж. Даубен.</li>
+        <li>«Иначе, чем быть» (1974): Dire / Dit. Гёдель (1931), Тарский (1936) — диагональные аргументы.</li>
+      </ol>
+    </div>
+    <div class="biblio">
+      <h3>Библиография</h3>
+      <p>Левинас Э. Тотальность и бесконечное. — Paris, 1961.</p>
+      <p>Левинас Э. Иначе, чем быть, или По ту сторону сущности. — Paris, 1974.</p>
+      <p>Cantor G. Grundlagen einer allgemeinen Mannigfaltigkeitslehre. — Leipzig, 1883.</p>
+      <p>Cantor G. Über eine elementare Frage der Mannigfaltigkeitslehre. — 1891.</p>
+      <p>Gödel K. Über formal unentscheidbare Sätze... — 1931.</p>
+      <p>Dauben J. W. Georg Cantor: His Mathematics and Philosophy of the Infinite. — Harvard UP, 1979.</p>
+    </div>
+    <p class="colophon">⁂ Последний опыт прочтения, в котором теорема не вмещает лица — и тем его свидетельствует.</p>
+
+    <div class="pager" data-pager="levinas"></div>
+  </div>
+</div>
+
+<!-- ============ AFTERWORD ============ -->
+<div class="view matter" id="view-afterword">
+  <div class="wrap">
+    <p class="sectio">Послесловие</p>
+    <div class="titleblock">
+      <h1 class="title"><em>Остаток</em></h1>
+      <p class="subtitle">О том, открыты ли изоморфизмы или сконструированы, и о том, что в них не помещается</p>
+    </div>
+
+    <p class="lede">Когда совпадений набирается пять, отступить и спросить становится неизбежно: что вообще значит, что эти изоморфизмы есть? Два ответа борются между собой. Первый, пифагорейско-платонический: мысль и математика делят одну структуру, ибо бытие математично, и наши совпадения суть <em>открытия</em> — мы находим в философских понятиях ту форму, которая в них и была. Второй, дефляционный: всякий достаточно богатый словарь отображается на другой, и изоморфизмы суть <em>артефакты</em> нашего сродства к узорам, резонанс не найден, а наведён.</p>
+
+    <p>Честная позиция — между ними, и сама эта неразрешимость уместна: она есть последний, шестой изоморфизм — на сей раз с диагональю из пятого опыта, ибо вопрос «открыто или построено?» система задать может, но решить из себя не способна. Мы оставляем его открытым не из робости, а потому, что закрыть его значило бы предать метод.</p>
+
+    <p>Но повторяющийся во всех пяти тетрадях предел подсказывает третий ответ, и он, кажется, самый верный. В каждом опыте формализация схватывала <em>скелет</em> и упускала <em>плоть</em>: у Деррида запись грозила вернуть присутствие, у Лейбница — необходимость, у Гегеля упускалось самодвижение, у Ницше — воля к судьбе, у Левинаса — этический зов. То, что философия добавляет к математике, есть именно <strong>неформализуемый остаток</strong>: свобода, жизнь, воля, заповедь, отсроченное живое. Математика даёт форму трансценденции; она не может сказать, что трансцендентное <em>обязывает</em>. И, быть может, ценность изоморфизма не в том, что он удаётся, а в том, где именно он отказывает: контур остатка очерчивается ровно неудачей формы вместить его.</p>
+
+    <p>Стоит вспомнить и начало. Всё это выросло из одного выдуманного уравнения — опережающего, в котором производная настоящего определяется будущим. И сам этот выпуск оказался устроен по-опережающи: смысл первой тетради лежал впереди неё, в тетрадях, ещё не написанных, когда она начиналась; целое было дано прежде частей, как у Лейбница, и возвращалось к себе, как у Гегеля, и переполняло свой замысел, как у Левинаса. Номер прочёл сам себя пятью способами — и в этом, пожалуй, единственное оправдание затеи: она не доказала ни одного тезиса, но показала, как мало у мысли о времени, благе, противоречии, возвращении и бесконечном формальных «генов» — и как охотно они перекомбинируются.</p>
+
+    <p>Таблица соответствий не закрыта. Ждут своих тетрадей Спиноза с эквивалентностью категорий, Кант с результатами о независимости, Платон с универсальными свойствами, Делёз с фазовым пространством. Выпуск кончается, но программа — нет: как у Кантора, нет наибольшего, всегда есть ещё одно. И это незавершение — не недостаток номера, а его форма. Всякая тотальность переполнена тем, что в ней не помещается; и этот выпуск, тотальность пяти опытов, переполнен шестым, которого в нём нет.</p>
+
+    <p class="explicit">Explicit liber &middot; sectiones quinque</p>
+    <div class="pager" data-pager="afterword"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var order = ['cover','preface','contents','derrida','leibniz','hegel','nietzsche','levinas','afterword'];
+  var accents = {
+    cover:'#8a6a2e', preface:'#8a6a2e', contents:'#8a6a2e', afterword:'#8a6a2e',
+    derrida:'#7a1f1c', leibniz:'#243f63', hegel:'#4a2b5e', nietzsche:'#a3461c', levinas:'#14595c'
+  };
+  var labels = {
+    cover:'', preface:'От редакции', contents:'Содержание',
+    derrida:'I · Деррида ↔ опережающее уравнение',
+    leibniz:'II · Лейбниц ↔ пучок и вариация',
+    hegel:'III · Гегель ↔ сопряжённые функторы',
+    nietzsche:'IV · Ницше ↔ возвращение Пуанкаре',
+    levinas:'V · Левинас ↔ теорема Кантора',
+    afterword:'Послесловие'
+  };
+  var pagerTargets = {
+    preface:   ['cover','contents'],
+    contents:  ['preface','derrida'],
+    derrida:   ['contents','leibniz'],
+    leibniz:   ['derrida','hegel'],
+    hegel:     ['leibniz','nietzsche'],
+    nietzsche: ['hegel','levinas'],
+    levinas:   ['nietzsche','afterword'],
+    afterword: ['levinas','cover']
+  };
+
+  var topbar = document.getElementById('topbar');
+  var seclabel = document.getElementById('seclabel');
+
+  function buildPagers() {
+    document.querySelectorAll('[data-pager]').forEach(function (el) {
+      var id = el.getAttribute('data-pager');
+      var t = pagerTargets[id];
+      if (!t) return;
+      var prevLbl = id === 'afterword' ? 'На обложку' : '‹ Назад';
+      el.innerHTML =
+        '<button data-go="' + t[0] + '">' + prevLbl + '</button>' +
+        '<span class="mid" data-go="contents">Содержание</span>' +
+        '<button data-go="' + t[1] + '">' + (id === 'levinas' ? 'Послесловие ›' : (id==='afterword'?'':'Вперёд ›')) + '</button>';
+      if (id === 'afterword') {
+        el.querySelector('button[data-go="cover"]').classList.remove('empty');
+        var nx = el.querySelectorAll('button')[1];
+        if (nx) nx.classList.add('empty');
+      }
+    });
+  }
+
+  function show(id) {
+    if (order.indexOf(id) === -1) id = 'cover';
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+    var view = document.getElementById('view-' + id);
+    if (!view) return;
+    view.classList.add('active');
+    document.documentElement.style.setProperty('--chrome-accent', accents[id] || '#8a6a2e');
+    if (id === 'cover') {
+      topbar.classList.add('hidden');
+    } else {
+      topbar.classList.remove('hidden');
+      seclabel.textContent = labels[id] || '';
+    }
+    window.scrollTo(0, 0);
+    try { history.replaceState(null, '', '#' + id); } catch (e) { try { location.hash = id; } catch (e2) {} }
+  }
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-go]');
+    if (!el) return;
+    e.preventDefault();
+    show(el.getAttribute('data-go'));
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    var cur = document.querySelector('.view.active');
+    if (!cur) return;
+    var id = cur.id.replace('view-', '');
+    var i = order.indexOf(id);
+    if (e.key === 'ArrowRight' && i < order.length - 1) show(order[i + 1]);
+    else if (e.key === 'ArrowLeft' && i > 0) show(order[i - 1]);
+    else if (e.key === 'Escape') show('contents');
+  });
+
+  buildPagers();
+  var start = (location.hash || '').replace('#', '');
+  show(order.indexOf(start) !== -1 ? start : 'cover');
+})();
+</script>
+
+</body>
+</html>

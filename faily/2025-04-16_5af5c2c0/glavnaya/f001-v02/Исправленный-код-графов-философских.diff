@@ -1,0 +1,98 @@
+--- предыдущая/Исправленный-код-графов-философских-концепций.html
++++ текущая/Исправленный-код-графов-философских-концепций.html
+@@ -436,4 +436,94 @@
+ 
+ // Феноменология
+ const phenomenologyNodes = new vis.DataSet([
+-  { id: 1, label: 'Сознание
++  { id: 1, label: 'Сознание', group: 'антропологическая' },
++  { id: 2, label: 'Интенциональность', group: 'эпистемологическая' },
++  { id: 3, label: 'Феномен', group: 'онтологическая' },
++  { id: 4, label: 'Эпохе', group: 'эпистемологическая' },
++  { id: 5, label: 'Жизненный мир', group: 'онтологическая' },
++  { id: 6, label: 'Понимание', group: 'эпистемологическая' },
++  { id: 7, label: 'Язык', group: 'антропологическая' },
++  { id: 8, label: 'Интерсубъективность', group: 'антропологическая' },
++  { id: 9, label: 'Время', group: 'онтологическая' },
++  { id: 10, label: 'Бытие-в-мире', group: 'онтологическая' }
++]);
++
++const phenomenologyEdges = new vis.DataSet([
++  { from: 1, to: 2, label: 'Понятийная связь', arrows: 'to' },
++  { from: 2, to: 3, label: 'Интерпретация', arrows: 'to' },
++  { from: 4, to: 3, label: 'Интерпретация', arrows: 'to' },
++  { from: 1, to: 5, label: 'Эмерджентность', arrows: 'to' },
++  { from: 6, to: 3, label: 'Понятийная связь', arrows: 'to' },
++  { from: 7, to: 6, label: 'Основание', arrows: 'to' },
++  { from: 1, to: 8, label: 'Эмерджентность', arrows: 'to' },
++  { from: 9, to: 1, label: 'Понятийная связь', arrows: 'to' },
++  { from: 10, to: 1, label: 'Основание', arrows: 'to' },
++  { from: 5, to: 10, label: 'Понятийная связь', arrows: 'to' }
++]);
++
++// Инициализация графов при загрузке страницы
++document.addEventListener('DOMContentLoaded', function() {
++  // Применить цвета к узлам
++  function applyNodeColors(nodes) {
++    nodes.forEach(node => {
++      if (categoryColors[node.group]) {
++        node.color = categoryColors[node.group];
++      }
++    });
++    return nodes;
++  }
++
++  // Платонизм
++  applyNodeColors(platonismNodes.get());
++  const platonismContainer = document.getElementById('platonism-graph');
++  networks.platonism = new vis.Network(platonismContainer, {
++    nodes: platonismNodes,
++    edges: platonismEdges
++  }, options);
++
++  // Аристотелизм
++  applyNodeColors(aristotleNodes.get());
++  const aristotleContainer = document.getElementById('aristotle-graph');
++  networks.aristotle = new vis.Network(aristotleContainer, {
++    nodes: aristotleNodes,
++    edges: aristotleEdges
++  }, options);
++
++  // Кантианство
++  applyNodeColors(kantianNodes.get());
++  const kantianContainer = document.getElementById('kantian-graph');
++  networks.kantian = new vis.Network(kantianContainer, {
++    nodes: kantianNodes,
++    edges: kantianEdges
++  }, options);
++
++  // Гегельянство
++  applyNodeColors(hegelianNodes.get());
++  const hegelianContainer = document.getElementById('hegelian-graph');
++  networks.hegelian = new vis.Network(hegelianContainer, {
++    nodes: hegelianNodes,
++    edges: hegelianEdges
++  }, options);
++
++  // Экзистенциализм
++  applyNodeColors(existentialismNodes.get());
++  const existentialismContainer = document.getElementById('existentialism-graph');
++  networks.existentialism = new vis.Network(existentialismContainer, {
++    nodes: existentialismNodes,
++    edges: existentialismEdges
++  }, options);
++
++  // Феноменология
++  applyNodeColors(phenomenologyNodes.get());
++  const phenomenologyContainer = document.getElementById('phenomenology-graph');
++  networks.phenomenology = new vis.Network(phenomenologyContainer, {
++    nodes: phenomenologyNodes,
++    edges: phenomenologyEdges
++  }, options);
++
++  // Установить начальное отображение
++  showConcept('platonism');
++});
++</script>
++</body>
++</html>

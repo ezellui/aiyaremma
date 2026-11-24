@@ -1,0 +1,122 @@
+--- предыдущая/Стратегия-разработки-Фазы-2.md
++++ текущая/Стратегия-разработки-Фазы-2.md
+@@ -27,6 +27,13 @@
+ 
+ #### Зависимости
+ - Независимый сервис, но критически важен для аутентификации всей системы
++
++#### Архитектурный контекст (обязательно для всех компонентов)
++- `architecture/philosophy-service-architecture.md` - общее описание системы
++- `architecture/system-architecture.mmd` - высокоуровневая архитектура
++- `architecture/relational-db-schema.mmd` - схема реляционной БД
++- `architecture/user-flow.mmd` - потоки взаимодействия пользователя
++- `structure/file-structure.md` - структура файлов проекта
+ 
+ #### Последовательность разработки
+ 1. **Конфигурация и основа** (1-2 сессии)
+@@ -65,6 +72,12 @@
+ #### Зависимости
+ - Независимый сервис, используется всеми остальными сервисами
+ 
++#### Архитектурный контекст
++- `architecture/philosophy-service-architecture.md` - раздел 5.6 "Сервис Claude"
++- `architecture/claude-interaction.mmd` - диаграмма взаимодействия с Claude
++- `architecture/deployment-architecture.mmd` - схема развертывания
++- Общие архитектурные документы (как в User Service)
++
+ #### Последовательность разработки
+ 1. **Конфигурация и основа** (1-2 сессии)
+    - `package.json`, `Dockerfile`, `server.js`
+@@ -104,6 +117,12 @@
+ 
+ #### Зависимости
+ - Зависит от Claude Service для валидации и обогащения
++
++#### Архитектурный контекст
++- `architecture/philosophy-service-architecture.md` - раздел 4.3 "Сервис графов"
++- `architecture/graph-db-schema.mmd` - схема графовой БД
++- `architecture/db-schema.mmd` - общая схема данных
++- Общие архитектурные документы (как в User Service)
+ 
+ #### Последовательность разработки
+ 1. **Конфигурация и основа** (1-2 сессии)
+@@ -139,6 +158,12 @@
+ #### Зависимости
+ - Зависит от Graph Service и Claude Service
+ 
++#### Архитектурный контекст
++- `architecture/philosophy-service-architecture.md` - раздел 4.4 "Сервис тезисов"
++- `architecture/document-db-schema.json` - схема документной БД
++- `architecture/db-schema.mmd` - общая схема данных
++- Общие архитектурные документы (как в User Service)
++
+ #### Последовательность разработки
+ 1. **Конфигурация и основа** (1-2 сессии)
+    - `package.json`, `Dockerfile`, `server.js`
+@@ -171,6 +196,12 @@
+ #### Зависимости
+ - Зависит от Graph Service и Thesis Service
+ 
++#### Архитектурный контекст
++- `architecture/philosophy-service-architecture.md` - раздел 4.2 "Сервис концепций"
++- `architecture/relational-db-schema.mmd` - схема реляционной БД
++- `architecture/user-flow.mmd` - потоки работы с концепциями
++- Общие архитектурные документы (как в User Service)
++
+ #### Последовательность разработки
+ 1. **Конфигурация и основа** (1 сессии)
+    - Базовая конфигурация
+@@ -200,6 +231,12 @@
+ #### Зависимости
+ - Зависит от всех основных сервисов
+ 
++#### Архитектурный контекст
++- `architecture/philosophy-service-architecture.md` - описание API Gateway
++- `architecture/system-architecture.mmd` - роль Gateway в системе
++- `architecture/deployment-architecture.mmd` - схема развертывания
++- Общие архитектурные документы (как в User Service)
++
+ #### Последовательность разработки
+ 1. **Конфигурация и основа** (1 сессии)
+    - `package.json`, `Dockerfile`, `server.js`
+@@ -225,6 +262,13 @@
+ 
+ #### Зависимости
+ - Зависит от API Gateway
++
++#### Архитектурный контекст
++- `architecture/philosophy-service-architecture.md` - раздел 6 "Пользовательский интерфейс"
++- `architecture/ui-architecture.mmd` - архитектура UI
++- `architecture/concept-graph-visualization.tsx` - пример компонента визуализации
++- `architecture/claude-interface.tsx` - пример интерфейса Claude
++- Общие архитектурные документы (как в User Service)
+ 
+ #### Последовательность разработки
+ 1. **Проект и конфигурация** (1-2 сессии)
+@@ -275,14 +319,24 @@
+ 4. src/config/index.js - основная конфигурация
+ 5. src/config/db.js - конфигурация PostgreSQL
+ 
+-Используй следующий контекст из Фазы 1:
++Используй следующий контекст:
++
++Архитектурный контекст:
++- architecture/philosophy-service-architecture.md - раздел 4.1 "Сервис пользователей"
++- architecture/system-architecture.mmd - общая архитектура
++- architecture/relational-db-schema.mmd - схема БД с таблицами пользователей
++- structure/file-structure.md - структура файлов проекта
++
++Контекст из Фазы 1:
+ - shared/lib/db/postgres/client.js - клиент PostgreSQL
+ - shared/lib/logging/logger.js - система логирования
+ - shared/lib/errors/AppError.js - базовый класс ошибок
+ 
+ Сервис должен:
++- Соответствовать описанию в архитектурной документации
++- Реализовывать API эндпоинты согласно спецификации
+ - Работать на порту, определенном в переменных окружения
+-- Подключаться к PostgreSQL
++- Подключаться к PostgreSQL согласно схеме БД
+ - Иметь базовую обработку ошибок
+ - Логировать важные события
+ ```

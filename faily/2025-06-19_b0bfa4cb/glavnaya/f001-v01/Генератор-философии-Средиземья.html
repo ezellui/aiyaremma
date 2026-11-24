@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Философия Средиземья</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Philosopher:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            font-family: 'Philosopher', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a8a8a8;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+        
+        .quote-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quote-container::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 100px;
+            color: rgba(255, 215, 0, 0.1);
+            font-family: 'Cinzel', serif;
+        }
+        
+        .quote {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin: 20px 0;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .author {
+            font-size: 1.1rem;
+            color: #ffd700;
+            margin-top: 20px;
+            font-style: normal;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            margin: 20px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.5);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6); }
+        }
+        
+        .ring-decoration {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            border: 3px solid rgba(255, 215, 0, 0.2);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .ring-decoration:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-duration: 25s;
+        }
+        
+        .ring-decoration:nth-child(2) {
+            bottom: 10%;
+            right: 5%;
+            animation-duration: 30s;
+            animation-direction: reverse;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="ring-decoration"></div>
+    <div class="ring-decoration"></div>
+    
+    <div class="container">
+        <h1>Философия Средиземья</h1>
+        <p class="subtitle">Где мудрость Валар встречается с экзистенциализмом</p>
+        
+        <div class="quote-container">
+            <p class="quote" id="quote">Нажмите кнопку для получения мудрости...</p>
+            <p class="author" id="author"></p>
+        </div>
+        
+        <button onclick="generateQuote()">Явить новую истину</button>
+    </div>
+    
+    <script>
+        // Философские концепции и термины
+        const philosophicalConcepts = {
+            subjects: [
+                'бытие', 'небытие', 'сущность', 'экзистенция', 'трансцендентность',
+                'имманентность', 'категорический императив', 'диалектика', 'феноменология',
+                'онтология', 'эпистемология', 'телеология', 'детерминизм', 'солипсизм',
+                'нигилизм', 'абсурд', 'свобода воли', 'субстанция', 'монада', 'ноумен',
+                'априорное знание', 'эмпиризм', 'рационализм', 'прагматизм', 'этика',
+                'эстетика', 'метафизика', 'аксиология', 'герменевтика', 'деконструкция'
+            ],
+            predicates: [
+                'трансцендирует', 'имманентно присуще', 'диалектически снимается',
+                'феноменологически редуцируется', 'онтологически укоренено',
+                'экзистенциально переживается', 'категорически утверждается',
+                'априорно постигается', 'эмпирически верифицируется',
+                'герменевтически истолковывается', 'деконструируется',
+                'субстанциально определяет', 'телеологически направлено'
+            ],
+            attributes: [
+                'трансцендентальный', 'имманентный', 'априорный', 'апостериорный',
+                'категорический', 'гипотетический', 'онтологический', 'феноменологический',
+                'экзистенциальный', 'эссенциальный', 'диалектический', 'метафизический',
+                'эпистемологический', 'аксиологический', 'телеологический', 'каузальный',
+                'субстанциальный', 'акцидентальный', 'ноуменальный', 'феноменальный'
+            ]
+        };
+
+        // Элементы из Легендариума
+        const tolkienElements = {
+            characters: [
+                'Эру Илуватар', 'Манвэ', 'Мелькор', 'Варда', 'Ульмо', 'Ауле', 'Йаванна',
+                'Мандос', 'Вайрэ', 'Эстэ', 'Ниенна', 'Ороме', 'Тулкас', 'Нэсса', 'Вана',
+                'Гэндальф', 'Саруман', 'Радагаст', 'Саурон', 'Элронд', 'Галадриэль',
+                'Фродо', 'Арагорн', 'Леголас', 'Гимли', 'Боромир', 'Фарамир', 'Эовин',
+                'Теоден', 'Денетор', 'Том Бомбадил', 'Голдберри', 'Древобород',
+                'Берен', 'Лютиэн', 'Туор', 'Идриль', 'Эарендил', 'Элвинг',
+                'Феанор', 'Финголфин', 'Фингон', 'Маэдрос', 'Маглор', 'Тингол', 'Мелиан'
+            ],
+            places: [
+                'Валинор', 'Средиземье', 'Амман', 'Танкветиль', 'Мандос', 'Лориэн',
+                'Ривенделл', 'Лотлориэн', 'Изенгард', 'Мордор', 'Гондор', 'Рохан',
+                'Шир', 'Мория', 'Дол Гулдур', 'Барад-дур', 'Минас Тирит', 'Минас Моргул',
+                'Ортханк', 'Хелмова Падь', 'Осгилиат', 'Итилиен', 'Фангорн',
+                'Белерианд', 'Дориат', 'Нарготронд', 'Гондолин', 'Химлад', 'Оссирианд',
+                'Ангбанд', 'Утумно', 'Нуменор', 'Эрегион', 'Арнор', 'Ангмар'
+            ],
+            artifacts: [
+                'Единое Кольцо', 'Сильмарилы', 'палантир', 'Нарсил', 'Андурил',
+                'Гламдринг', 'Оркрист', 'Жало', 'Вилья', 'Нарья', 'Ненья',
+                'Элендилмир', 'Арkenstone', 'Два Древа Валинор', 'фиал Галадриэль',
+                'Рог Боромира', 'эльфийские плащи', 'лембас', 'мифрил',
+                'Ангайнор', 'Грон', 'Белег', 'Англахел', 'Гуртанг', 'Рингил',
+                'Драугдуин', 'Нaugликамень', 'Элессар', 'Корона Мелькора'
+            ],
+            concepts: [
+                'Музыка Айнур', 'Тайная Пламень', 'Тень', 'Свет Амана', 'Морская Тоска',
+                'Дар Людей', 'Бессмертие Эльфов', 'Клятва Феанора', 'Пророчество Мандоса',
+                'Искажение Арды', 'Исцеление Арды', 'Затмение Валинор',
+                'Падение Нуменора', 'Последний Союз', 'Война Кольца', 'Четвертая Эпоха',
+                'Серые Гавани', 'Прямой Путь', 'Изогнутый Мир', 'Бдение Мандоса',
+                'Чертоги Ожидания', 'Кольца Власти', 'Истари', 'Палантири',
+                'Древо Телпериона', 'Древо Лаурелин', 'Безвременные Чертоги'
+            ],
+            races: [
+                'Валар', 'Майар', 'Эльдар', 'Нолдор', 'Синдар', 'Тэлери', 'Ваньяр',
+                'Люди', 'Дунэдайн', 'Рохиррим', 'Гномы', 'Хоббиты', 'Энты', 'Орлы',
+                'Орки', 'Урук-хай', 'Тролли', 'Драконы', 'Балроги', 'Назгул',
+                'Авари', 'Лаиквенди', 'Нандор', 'Эдайн', 'Друэдайн', 'Истерлинги',
+                'Харадрим', 'Вариаги', 'Беорнинги', 'Дунландцы'
+            ]
+        };
+
+        // Шаблоны предложений
+        const templates = [
+            '{attribute} {subject} {character1} {predicate} через {artifact} в {place}.',
+            'Как говорил {character1}, {subject} есть лишь отражение {concept1} в {place}.',
+            '{race1} постигают {subject} иначе, чем {race2}, ибо их {attribute} природа {predicate}.',
+            'В {place} {subject} {predicate} подобно тому, как {artifact} воплощает {concept1}.',
+            '{character1} учил, что {attribute} {subject} {concept1} {predicate} только через {concept2}.',
+            'Когда {artifact} был создан в {place}, {subject} навсегда изменило свою {attribute} сущность.',
+            '{concept1} {race1} {predicate} в {subject}, тогда как {race2} ищут {concept2}.',
+            'Мудрость {character1} гласит: "{subject} и {concept1} — две стороны {artifact}".',
+            'В эпоху {concept1} {character1} познал, что {attribute} {subject} {predicate} в {place}.',
+            '{race1}, в отличие от {race2}, понимают, что {subject} {predicate} через {concept1}.',
+            'Подобно {artifact}, {attribute} {subject} {character1} трансформирует {concept1} в {place}.',
+            'Не {subject} определяет {concept1}, но {concept2} {predicate} через {character1}.',
+            'В чертогах {place} {character1} размышлял о том, как {subject} соотносится с {concept1}.',
+            '{artifact} символизирует {attribute} связь между {subject} и {concept1} у {race1}.',
+            'Парадокс {concept1}: {subject} {predicate}, но {race1} это отрицают в {place}.',
+            '{character1} и {character2} спорили о том, что {subject} {predicate} через {artifact}.',
+            'Философия {race1} утверждает: {attribute} {subject} есть проявление {concept1}.',
+            'В {place} {concept1} и {concept2} сливаются, образуя {attribute} {subject}.',
+            'Как {artifact} хранит силу {character1}, так {subject} содержит в себе {concept1}.',
+            'Древняя мудрость {race1}: "{subject} {predicate} только когда {concept1} достигнуто".'
+        ];
+
+        // Функция для получения случайного элемента из массива
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        // Функция для склонения в родительный падеж (упрощенная)
+        function toGenitive(word) {
+            // Базовые правила для родительного падежа
+            if (word.endsWith('ия')) return word.slice(0, -2) + 'ии';
+            if (word.endsWith('ие')) return word.slice(0, -2) + 'ия';
+            if (word.endsWith('ость')) return word.slice(0, -4) + 'ости';
+            if (word.endsWith('изм')) return word + 'а';
+            if (word.endsWith('а')) return word.slice(0, -1) + 'ы';
+            if (word.endsWith('я')) return word.slice(0, -1) + 'и';
+            if (word.endsWith('ь')) return word.slice(0, -1) + 'и';
+            if (word.endsWith('о')) return word.slice(0, -1) + 'а';
+            if (word.endsWith('е')) return word.slice(0, -1) + 'я';
+            return word + 'а';
+        }
+
+        // Генерация псевдофилософского высказывания
+        function generateQuote() {
+            const template = getRandomElement(templates);
+            
+            const replacements = {
+                '{subject}': getRandomElement(philosophicalConcepts.subjects),
+                '{predicate}': getRandomElement(philosophicalConcepts.predicates),
+                '{attribute}': getRandomElement(philosophicalConcepts.attributes),
+                '{character1}': getRandomElement(tolkienElements.characters),
+                '{character2}': getRandomElement(tolkienElements.characters),
+                '{place}': getRandomElement(tolkienElements.places),
+                '{artifact}': getRandomElement(tolkienElements.artifacts),
+                '{concept1}': getRandomElement(tolkienElements.concepts),
+                '{concept2}': getRandomElement(tolkienElements.concepts),
+                '{race1}': getRandomElement(tolkienElements.races),
+                '{race2}': getRandomElement(tolkienElements.races)
+            };
+            
+            let quote = template;
+            for (const [placeholder, value] of Object.entries(replacements)) {
+                quote = quote.replace(new RegExp(placeholder, 'g'), value);
+            }
+            
+            // Делаем первую букву заглавной
+            quote = quote.charAt(0).toUpperCase() + quote.slice(1);
+            
+            // Генерируем псевдо-автора
+            const authorTemplates = [
+                `— ${getRandomElement(tolkienElements.characters)}, "${getRandomElement(['Трактат', 'Размышления', 'Диалоги', 'Записки', 'Хроники'])} о ${toGenitive(getRandomElement(philosophicalConcepts.subjects))}"`,
+                `— Из "${getRandomElement(['Анналов', 'Летописей', 'Свитков', 'Книги', 'Песни'])} ${toGenitive(getRandomElement(tolkienElements.places))}"`,
+                `— ${getRandomElement(['Древняя мудрость', 'Изречение', 'Пословица', 'Поговорка'])} ${toGenitive(getRandomElement(tolkienElements.races))}`,
+                `— ${getRandomElement(tolkienElements.characters)}, ${getRandomElement(['Первая', 'Вторая', 'Третья', 'Четвертая'])} Эпоха`,
+                `— Надпись на ${getRandomElement(['стенах', 'вратах', 'скрижалях', 'камне'])} ${toGenitive(getRandomElement(tolkienElements.places))}`
+            ];
+            
+            document.getElementById('quote').textContent = quote;
+            document.getElementById('author').textContent = getRandomElement(authorTemplates);
+            
+            // Анимация появления
+            const quoteContainer = document.querySelector('.quote-container');
+            quoteContainer.style.animation = 'none';
+            setTimeout(() => {
+                quoteContainer.style.animation = 'fadeIn 0.5s ease-in';
+            }, 10);
+        }
+        
+        // Добавляем анимацию появления
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0.5; transform: scale(0.98); }
+                to { opacity: 1; transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Генерируем первое высказывание при загрузке
+        window.onload = () => generateQuote();
+    </script>
+</body>
+</html>

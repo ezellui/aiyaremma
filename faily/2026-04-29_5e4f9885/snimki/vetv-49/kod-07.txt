@@ -1,0 +1,101 @@
+Anime character sheet poster, 90s magical girl aesthetic.
+Deep black and sickly green cosmic background, 
+non-Euclidean star patterns, ancient manuscript textures.
+
+LAYOUT — infographic style with decorated panels, Russian text labels,
+borders styled like pages from an ancient grimoire:
+
+TOP CENTER: full-body illustration — pale gaunt magical girl warrior,
+black and phosphorescent green uniform, Elder Sign tiara,
+floating Necronomicon beside her, tentacle bookmarks,
+posture: technically heroic but visibly distressed.
+Title: "СЕЙЛОР КОСМИЦИЗМ"
+Subtitle: "Хранительница Порога Непознаваемого"
+
+TOP RIGHT panel "ПРЕВРАЩЕНИЕ":
+Transformation phrase:
+"Cosmicism Power — хотя это ничего не изменит!"
+Illustration: Elder Sign gem glowing ominously.
+
+LEFT panels (stacked):
+- "ЧЕРТЫ" panel:
+  ★ глубокая эрудиция в мёртвых языках и запрещённых науках
+  ★ искренне убеждена в бессмысленности существования
+  ★ крайне вежлива с теми, кого считает достойными собеседниками
+  ★ панически боится моря, при этом живёт в приморском городе
+  ★ любит кошек — единственных существ, которым доверяет
+  ★ напишет об этом сражении рассказ от третьего лица
+
+- "СИЛА" panel:
+  Владычица Космического Безразличия.
+  Её сила — осознание полного ничтожества
+  всего сущего перед лицом вечной тьмы.
+  Позволяет:
+  ✦ парализовать врагов экзистенциальным ужасом
+  ✦ читать тексты на любом мёртвом языке
+  ✦ чувствовать присутствие Древних (за 3 квартала)
+  ✦ писать письма объёмом до 40 страниц
+
+- "ХАРАКТЕР" panel:
+  Высокомерная и тревожная одновременно.
+  Считает большинство людей недостаточно
+  интеллектуальными для разговора.
+  В бою эффективна, но каждый раз удивлена,
+  что выжила.
+  Ведёт подробный дневник.
+  Кот Нигрет сидит рядом всегда.
+
+CENTER BOTTOM data card:
+ИМЯ: Говард
+ПЛАНЕТА: Юг Азатота (бывш. Провиденс, Род-Айленд)
+КАМЕНЬ: Шугготит — непрозрачный, меняет форму
+ЦВЕТА: чёрный, болезненный зелёный, пергаментный
+ЦВЕТОК: увядшие бессмертники
+ЛЮБИМОЕ: XVIII век, латинская проза,
+  антикварные книги, кошки,
+  ночные прогулки, переписка
+
+RIGHT MIDDLE panel "АТАКА":
+"Космическое Безразличие!"
+Открывает Некрономикон на случайной странице.
+Все присутствующие — враги и союзники —
+внезапно осознают своё космическое ничтожество.
+Бой прекращается сам собой.
+Она тоже расстроена.
+Действие длится 1d6 минут.
+
+RIGHT BOTTOM panel "КОМНАТА":
+Тёмная библиотека в викторианском стиле.
+Стены в книгах — преимущественно запрещённых.
+На столе — незаконченные письма и рукописи.
+Кот на кресле. Окна задёрнуты.
+На море стараемся не смотреть.
+
+BOTTOM ROW "ОБРАЗЫ ВНЕ ПРЕВРАЩЕНИЯ":
+5 образов:
+— "Литератор": твидовый пиджак, взгляд в пространство
+— "Антиквар": рассматривает старинный фолиант
+— "Корреспондент": пишет письмо при свече
+— "Вынужденный горожанин": на улице, явно хочет домой
+— "Ночной наблюдатель": смотрит в телескоп, выражение ужаса
+
+BOTTOM RIGHT "МИССИЯ":
+Охраняет порог между тем,
+что человечество знает,
+и тем, что лежит за ним.
+Её миссия — предупреждать.
+Никто не слушает.
+Она продолжает предупреждать.
+
+Цитата:
+"Величайшее милосердие в мире —
+это неспособность человеческого разума
+связать всё воедино."
+
+Color palette: deep black, sickly phosphorescent green,
+parchment yellow, deep cosmic purple, cold tentacle grey.
+Style: 90s anime cel-shading, Russian text labels,
+borders styled as ancient manuscript pages,
+decorative Elder Signs and tentacle motifs between panels,
+tonal dissonance between cute magical girl format
+and existential horror content — this contrast is the point.

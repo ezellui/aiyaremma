@@ -1,0 +1,339 @@
+{
+  "concepts": [
+    {
+      "id": "concept_plato",
+      "name": "Платоновский идеализм",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "description": "Философская система Платона, основанная на учении об идеях (эйдосах) как истинной реальности",
+      "author": "Платон"
+    },
+    {
+      "id": "concept_kant",
+      "name": "Трансцендентальный идеализм Канта",
+      "createdAt": "2024-01-20T14:30:00.000Z",
+      "description": "Критическая философия Иммануила Канта, исследующая условия возможности познания",
+      "author": "Иммануил Кант"
+    },
+    {
+      "id": "concept_hegel",
+      "name": "Абсолютный идеализм Гегеля",
+      "createdAt": "2024-02-01T09:15:00.000Z",
+      "description": "Диалектическая философская система, представляющая развитие абсолютного духа",
+      "author": "Георг Вильгельм Фридрих Гегель"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat_plato_1",
+      "conceptId": "concept_plato",
+      "name": "Мир идей",
+      "definition": "Умопостигаемый мир вечных и неизменных сущностей (эйдосов), являющийся истинной реальностью",
+      "source": "Диалог 'Государство', Книга VII",
+      "traditions": ["платонизм", "идеализм", "метафизика"],
+      "philosophers": ["Платон", "Плотин", "Августин"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 9,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_plato_2",
+      "conceptId": "concept_plato",
+      "name": "Мир вещей",
+      "definition": "Чувственно воспринимаемый мир изменчивых материальных объектов, являющихся копиями идей",
+      "source": "Диалог 'Тимей'",
+      "traditions": ["платонизм", "дуализм"],
+      "philosophers": ["Платон", "Аристотель"],
+      "metrics": {
+        "centrality": 8,
+        "definition": 8,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_plato_3",
+      "conceptId": "concept_plato",
+      "name": "Душа",
+      "definition": "Бессмертная сущность, способная к познанию идей и состоящая из трех частей: разумной, яростной и вожделеющей",
+      "source": "Диалог 'Федон', 'Государство'",
+      "traditions": ["платонизм", "психология"],
+      "philosophers": ["Платон", "Плотин", "Декарт"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 8,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_plato_4",
+      "conceptId": "concept_plato",
+      "name": "Благо",
+      "definition": "Высшая идея, источник бытия и познания, подобная солнцу в умопостигаемом мире",
+      "source": "Диалог 'Государство', Книга VI",
+      "traditions": ["платонизм", "этика", "метафизика"],
+      "philosophers": ["Платон", "Плотин", "Августин"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 7,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_kant_1",
+      "conceptId": "concept_kant",
+      "name": "Вещь в себе",
+      "definition": "Непознаваемая сущность вещей, существующая независимо от нашего восприятия",
+      "source": "Критика чистого разума",
+      "traditions": ["кантианство", "трансцендентализм", "агностицизм"],
+      "philosophers": ["Кант", "Шопенгауэр", "Фихте"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 8,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_kant_2",
+      "conceptId": "concept_kant",
+      "name": "Явление",
+      "definition": "Вещь как она предстает в нашем опыте, сформированная априорными формами чувственности и рассудка",
+      "source": "Критика чистого разума",
+      "traditions": ["кантианство", "феноменология"],
+      "philosophers": ["Кант", "Гуссерль", "Хайдеггер"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 9,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_kant_3",
+      "conceptId": "concept_kant",
+      "name": "Априорные формы",
+      "definition": "Доопытные условия возможности познания: пространство, время и категории рассудка",
+      "source": "Критика чистого разума",
+      "traditions": ["кантианство", "эпистемология"],
+      "philosophers": ["Кант", "Коген", "Кассирер"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 9,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_kant_4",
+      "conceptId": "concept_kant",
+      "name": "Категорический императив",
+      "definition": "Безусловное нравственное повеление: поступай так, чтобы максима твоей воли могла стать всеобщим законом",
+      "source": "Критика практического разума",
+      "traditions": ["кантианство", "этика", "деонтология"],
+      "philosophers": ["Кант", "Ролз", "Хабермас"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 10,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_hegel_1",
+      "conceptId": "concept_hegel",
+      "name": "Абсолютный дух",
+      "definition": "Высшая реальность, развивающаяся через диалектический процесс самопознания",
+      "source": "Феноменология духа",
+      "traditions": ["гегельянство", "идеализм", "диалектика"],
+      "philosophers": ["Гегель", "Маркс", "Брэдли"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 8,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_hegel_2",
+      "conceptId": "concept_hegel",
+      "name": "Диалектика",
+      "definition": "Метод развития через противоречие: тезис-антитезис-синтез",
+      "source": "Наука логики",
+      "traditions": ["гегельянство", "диалектика", "логика"],
+      "philosophers": ["Гегель", "Маркс", "Энгельс"],
+      "metrics": {
+        "centrality": 10,
+        "definition": 9,
+        "historical": 10
+      }
+    },
+    {
+      "id": "cat_hegel_3",
+      "conceptId": "concept_hegel",
+      "name": "Отчуждение",
+      "definition": "Процесс, в котором дух становится чуждым самому себе в природе и истории",
+      "source": "Феноменология духа",
+      "traditions": ["гегельянство", "экзистенциализм", "марксизм"],
+      "philosophers": ["Гегель", "Маркс", "Сартр"],
+      "metrics": {
+        "centrality": 8,
+        "definition": 8,
+        "historical": 9
+      }
+    },
+    {
+      "id": "cat_hegel_4",
+      "conceptId": "concept_hegel",
+      "name": "Снятие",
+      "definition": "Диалектическое преодоление противоречия с сохранением положительного содержания",
+      "source": "Наука логики",
+      "traditions": ["гегельянство", "диалектика"],
+      "philosophers": ["Гегель", "Маркс", "Адорно"],
+      "metrics": {
+        "centrality": 9,
+        "definition": 7,
+        "historical": 9
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel_plato_1",
+      "from": "cat_plato_1",
+      "to": "cat_plato_2",
+      "type": "hierarchical",
+      "bidirectional": false,
+      "traditions": ["платонизм", "метафизика"],
+      "philosophers": ["Платон"],
+      "strength": 10,
+      "certainty": 9
+    },
+    {
+      "id": "rel_plato_2",
+      "from": "cat_plato_3",
+      "to": "cat_plato_1",
+      "type": "epistemological",
+      "bidirectional": false,
+      "traditions": ["платонизм", "гносеология"],
+      "philosophers": ["Платон"],
+      "strength": 8,
+      "certainty": 8
+    },
+    {
+      "id": "rel_plato_3",
+      "from": "cat_plato_4",
+      "to": "cat_plato_1",
+      "type": "hierarchical",
+      "bidirectional": false,
+      "traditions": ["платонизм", "метафизика"],
+      "philosophers": ["Платон"],
+      "strength": 9,
+      "certainty": 9
+    },
+    {
+      "id": "rel_kant_1",
+      "from": "cat_kant_1",
+      "to": "cat_kant_2",
+      "type": "dialectical",
+      "bidirectional": true,
+      "traditions": ["кантианство", "эпистемология"],
+      "philosophers": ["Кант"],
+      "strength": 10,
+      "certainty": 10
+    },
+    {
+      "id": "rel_kant_2",
+      "from": "cat_kant_3",
+      "to": "cat_kant_2",
+      "type": "functional",
+      "bidirectional": false,
+      "traditions": ["кантианство", "трансцендентализм"],
+      "philosophers": ["Кант"],
+      "strength": 9,
+      "certainty": 9
+    },
+    {
+      "id": "rel_kant_3",
+      "from": "cat_kant_4",
+      "to": "cat_kant_3",
+      "type": "derivative",
+      "bidirectional": false,
+      "traditions": ["кантианство", "этика"],
+      "philosophers": ["Кант"],
+      "strength": 7,
+      "certainty": 8
+    },
+    {
+      "id": "rel_hegel_1",
+      "from": "cat_hegel_1",
+      "to": "cat_hegel_2",
+      "type": "functional",
+      "bidirectional": true,
+      "traditions": ["гегельянство", "диалектика"],
+      "philosophers": ["Гегель"],
+      "strength": 10,
+      "certainty": 10
+    },
+    {
+      "id": "rel_hegel_2",
+      "from": "cat_hegel_1",
+      "to": "cat_hegel_3",
+      "type": "dialectical",
+      "bidirectional": true,
+      "traditions": ["гегельянство"],
+      "philosophers": ["Гегель"],
+      "strength": 9,
+      "certainty": 9
+    },
+    {
+      "id": "rel_hegel_3",
+      "from": "cat_hegel_2",
+      "to": "cat_hegel_4",
+      "type": "functional",
+      "bidirectional": false,
+      "traditions": ["гегельянство", "диалектика"],
+      "philosophers": ["Гегель"],
+      "strength": 9,
+      "certainty": 9
+    },
+    {
+      "id": "rel_hegel_4",
+      "from": "cat_hegel_3",
+      "to": "cat_hegel_4",
+      "type": "dialectical",
+      "bidirectional": false,
+      "traditions": ["гегельянство"],
+      "philosophers": ["Гегель"],
+      "strength": 8,
+      "certainty": 8
+    }
+  ],
+  "relationTypes": [
+    {
+      "id": "hierarchical",
+      "name": "Иерархическая"
+    },
+    {
+      "id": "causal",
+      "name": "Причинно-следственная"
+    },
+    {
+      "id": "dialectical",
+      "name": "Диалектическая"
+    },
+    {
+      "id": "functional",
+      "name": "Функциональная"
+    },
+    {
+      "id": "derivative",
+      "name": "Производная"
+    },
+    {
+      "id": "associative",
+      "name": "Ассоциативная"
+    },
+    {
+      "id": "epistemological",
+      "name": "Эпистемологическая"
+    }
+  ],
+  "apiKey": "",
+  "exportDate": "2024-04-15T12:00:00.000Z"
+}

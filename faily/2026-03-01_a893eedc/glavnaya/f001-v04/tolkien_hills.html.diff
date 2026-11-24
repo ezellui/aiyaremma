@@ -1,0 +1,463 @@
+--- предыдущая/tolkien_hills.html
++++ текущая/tolkien_hills.html
+@@ -1463,6 +1463,460 @@
+     <div class="star-row" style="margin-top:40px;">✦ · ✦ · ✦</div>
+   </div>
+ 
++  <!-- EXCISED PAGES SEPARATOR -->
++  <div style="height:60px; display:flex; align-items:center; justify-content:center; gap:16px;">
++    <div style="flex:1; height:1px; background: linear-gradient(to right, transparent, #8b7355, transparent);"></div>
++    <span style="color:#6b5a3e; font-size:9px; letter-spacing:0.3em; font-family:'Cormorant SC', serif; text-transform:uppercase; opacity:0.6;">вложение</span>
++    <div style="flex:1; height:1px; background: linear-gradient(to right, transparent, #8b7355, transparent);"></div>
++  </div>
++
++  <!-- EXCISED PAGES TRANSMITTAL NOTE -->
++  <style>
++    .excised-wrapper {
++      position: relative;
++    }
++
++    /* Torn top edge effect */
++    .excised-wrapper::before {
++      content: '';
++      display: block;
++      height: 18px;
++      background:
++        radial-gradient(ellipse 14px 18px at 7px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 21px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 35px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 49px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 63px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 77px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 91px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 105px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 119px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 133px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 147px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 161px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 175px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 189px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 203px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 217px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 231px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 245px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 259px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 273px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 287px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 301px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 315px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 329px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 343px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 357px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 371px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 385px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 399px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 413px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 427px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 441px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 455px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 469px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 483px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 497px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 511px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 525px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 539px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 553px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 567px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 581px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 595px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 609px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 623px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 637px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 651px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 665px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 679px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 693px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 707px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 721px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 735px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 749px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 763px 0, transparent 16px, #c8b89a 17px),
++        radial-gradient(ellipse 14px 18px at 777px 0, transparent 16px, #c8b89a 17px);
++      background-color: #2a2015;
++    }
++
++    .transmittal-page {
++      background: #e8e0cc;
++      background-image:
++        repeating-linear-gradient(
++          0deg,
++          transparent,
++          transparent 22px,
++          rgba(180,160,120,0.15) 22px,
++          rgba(180,160,120,0.15) 23px
++        ),
++        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E");
++      padding: 48px 60px 56px 68px;
++      box-shadow: 0 4px 20px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.04);
++      font-family: 'Courier New', 'Courier', monospace;
++      font-size: 11px;
++      line-height: 1.9;
++      color: #2a2010;
++      position: relative;
++    }
++
++    .transmittal-page .typewriter-head {
++      font-family: 'Courier New', monospace;
++      font-size: 10px;
++      letter-spacing: 0.08em;
++      color: #4a3820;
++      border-bottom: 1px solid #b0a080;
++      padding-bottom: 12px;
++      margin-bottom: 20px;
++      line-height: 1.7;
++    }
++
++    .manuscript-page {
++      background: #ddd5bb;
++      background-image:
++        repeating-linear-gradient(
++          0deg,
++          transparent,
++          transparent 21px,
++          rgba(160,140,100,0.18) 21px,
++          rgba(160,140,100,0.18) 22px
++        ),
++        linear-gradient(to right, rgba(0,0,0,0.05) 0%, transparent 5%, transparent 95%, rgba(0,0,0,0.04) 100%),
++        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.09'/%3E%3C/svg%3E");
++      padding: 44px 60px 52px 68px;
++      box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 60px rgba(0,0,0,0.05);
++      font-family: 'Courier New', 'Courier', monospace;
++      font-size: 10.5px;
++      line-height: 1.95;
++      color: #1e1808;
++      position: relative;
++    }
++
++    .ms-page-header {
++      display: flex;
++      justify-content: space-between;
++      align-items: baseline;
++      font-size: 9px;
++      letter-spacing: 0.12em;
++      color: #6a5530;
++      border-bottom: 0.5px solid #a09070;
++      padding-bottom: 6px;
++      margin-bottom: 20px;
++      font-family: 'Courier New', monospace;
++      text-transform: uppercase;
++    }
++
++    .ms-page-num {
++      font-size: 12px;
++      font-weight: bold;
++      color: #3a2810;
++    }
++
++    /* Redaction bars */
++    .redact {
++      background: #1a1208;
++      color: #1a1208;
++      display: inline;
++      padding: 0 2px;
++      border-radius: 1px;
++      user-select: none;
++      cursor: default;
++      letter-spacing: 0.05em;
++    }
++    .redact-wide {
++      display: block;
++      background: #1a1208;
++      height: 14px;
++      margin: 3px 0;
++      border-radius: 1px;
++      width: 85%;
++    }
++    .redact-mid {
++      display: block;
++      background: #1a1208;
++      height: 14px;
++      margin: 3px 0;
++      border-radius: 1px;
++      width: 60%;
++    }
++
++    /* Rubber stamps */
++    .stamp-izjato {
++      position: absolute;
++      font-family: 'Courier New', monospace;
++      font-size: 18px;
++      font-weight: bold;
++      letter-spacing: 0.2em;
++      color: #8b1a1a;
++      border: 3px solid #8b1a1a;
++      padding: 4px 10px;
++      opacity: 0.35;
++      transform: rotate(-22deg);
++      border-radius: 3px;
++      text-transform: uppercase;
++      pointer-events: none;
++    }
++
++    .stamp-soglasovano {
++      position: absolute;
++      font-family: 'Courier New', monospace;
++      font-size: 10px;
++      font-weight: bold;
++      letter-spacing: 0.1em;
++      color: #1a4a8b;
++      border: 2px solid #1a4a8b;
++      padding: 4px 8px;
++      opacity: 0.3;
++      transform: rotate(7deg);
++      border-radius: 2px;
++      text-transform: uppercase;
++      pointer-events: none;
++    }
++
++    /* Handwritten margin notes */
++    .handwritten {
++      font-family: 'Segoe Script', 'Dancing Script', cursive;
++      font-size: 10px;
++      color: #1a3a6a;
++      font-style: italic;
++      opacity: 0.7;
++    }
++    .handwritten-red {
++      font-family: 'Segoe Script', 'Dancing Script', cursive;
++      font-size: 10px;
++      color: #8b1a1a;
++      font-style: italic;
++      opacity: 0.75;
++    }
++
++    /* Paper clip mark */
++    .paperclip-mark {
++      position: absolute;
++      top: 16px;
++      left: 48px;
++      width: 20px;
++      height: 36px;
++      border: 2px solid #8a7a5a;
++      border-radius: 10px;
++      opacity: 0.3;
++    }
++    .paperclip-mark::after {
++      content: '';
++      position: absolute;
++      top: 8px;
++      left: 3px;
++      right: 3px;
++      bottom: -4px;
++      border: 2px solid #8a7a5a;
++      border-radius: 6px;
++    }
++
++    .ms-p {
++      margin-bottom: 0;
++      text-align: justify;
++    }
++    .ms-p + .ms-p {
++      text-indent: 2.5em;
++    }
++    .ms-p.first { text-indent: 0; }
++
++    .ms-footnote-area {
++      margin-top: 28px;
++      padding-top: 10px;
++      border-top: 0.5px solid #a09070;
++    }
++    .ms-footnote {
++      font-size: 9px;
++      color: #4a3820;
++      line-height: 1.6;
++      margin-bottom: 4px;
++      display: flex;
++      gap: 4px;
++    }
++    .ms-fn-mark {
++      color: #6a3010;
++      flex-shrink: 0;
++    }
++
++    .ms-section-head {
++      font-family: 'Courier New', monospace;
++      font-size: 10px;
++      letter-spacing: 0.15em;
++      text-transform: uppercase;
++      color: #3a2810;
++      margin: 20px 0 10px;
++      text-align: center;
++    }
++
++    .quenya-ms {
++      font-style: italic;
++      color: #3a2810;
++    }
++  </style>
++
++  <!-- TRANSMITTAL NOTE -->
++  <div class="excised-wrapper">
++    <div class="transmittal-page">
++      <div class="paperclip-mark"></div>
++
++      <div class="typewriter-head">
++        ОТ:&nbsp;&nbsp;&nbsp;А. Сапковский, редактор<br>
++        КОМУ:&nbsp;Читателю<br>
++        ДАТА:&nbsp;15 октября 2001 г.<br>
++        РЕ:&nbsp;&nbsp;&nbsp;Страницы 217–219 «Справочника по эльфийским холмам»
++      </div>
++
++      <p class="ms-p first">Нижеследующие страницы были изъяты из основного текста книги по требованию юрисконсульта издательства «Просвещение» в ходе согласования рукописи к печати. Официальная причина изъятия сформулирована в протоколе заседания редакционного совета от 3 сентября 2001 года как «несоответствие содержания профилю научно-познавательного издания для широкого круга читателей».</p>
++
++      <p class="ms-p">Я с этой формулировкой не согласен. Содержание соответствует. Именно в этом и состояла проблема.</p>
++
++      <p class="ms-p">Тем не менее изъятие состоялось, и я обязан был с ним смириться — как редактор. Как частное лицо я воспользовался служебным ксероксом. Ксерокопии трёх страниц вложены в конец тиража в количестве, которое я не стану уточнять. Скажу лишь, что тираж составил пятьдесят тысяч экземпляров, а ксерокс работал исправно.</p>
++
++      <p class="ms-p">Ряд мест в нижеследующем тексте дополнительно изъят юрисконсультом непосредственно с гранок — в виде редакционных купюр, обозначенных стандартным образом. Эти купюры я уже восстановить не мог. Сожалею. Они были, судя по контексту, наиболее ценными в научном отношении.</p>
++
++      <p class="ms-p">Перевод выполнен Н. Перумовым. Переводчик, ознакомившись с готовым текстом страниц 217–219 в оригинале, выразил мнение, что «профессор Толкин писал это с абсолютно невозмутимым лицом, и именно в этом заключается его величие». Я согласен с обеими частями этого суждения.</p>
++
++      <p class="ms-p">Читайте внимательно. Академический аппарат полностью сохранён.</p>
++
++      <div style="text-align:right; margin-top:24px; font-family:'Courier New', monospace; font-size:10px; color:#4a3820;">
++        А. Сапковский<br>
++        <span style="font-size:9px; opacity:0.7;">подпись неразборчива, но характерна</span>
++      </div>
++
++      <div style="margin-top:24px; padding:10px 14px; border:1px dashed #a09070; font-size:9.5px; color:#4a3820; background:rgba(0,0,0,0.03);">
++        <em>Примечание переводчика:</em> Я подтверждаю слова редактора относительно лица профессора. Работая над страницами 217–219, я испытал нечто, что затрудняюсь определить однозначно — академическое восхищение или нечто иное. Вероятно, и то, и другое.<br>
++        <span style="font-size:9px; opacity:0.7; display:block; text-align:right; margin-top:4px;">— Н. П.</span>
++      </div>
++    </div>
++  </div>
++
++  <!-- PAGE 217 -->
++  <div class="excised-wrapper">
++    <div class="manuscript-page">
++      <div class="stamp-izjato" style="top:55px; right:80px;">ИЗЪЯТО</div>
++
++      <div class="ms-page-header">
++        <span>Глава VII · Северные склоны</span>
++        <span class="ms-page-num">217</span>
++      </div>
++
++      <p class="ms-p first">§ 1 (продолжение). <em>Общие свойства северного склона, продолж.</em></p>
++
++      <p class="ms-p">Итак, установив в предшествующих разделах параметры формальной классификации, исследователь вправе перейти к тому, что составляет подлинное существо предмета: к непосредственному описанию. Это переход, к которому данный справочник готовил читателя методически и последовательно. Читатель, добравшийся до настоящей страницы через все предшествующие главы, располагает необходимым концептуальным инструментарием. Читатель, перелистнувший прямо сюда, — тоже; инструментарий в данном случае не строго обязателен.</p>
++
++      <p class="ms-p">Северный склон, рассматриваемый в период весеннего цветения, демонстрирует ряд характеристик, которые источники описывают с редким единодушием. Это единодушие само по себе примечательно: эльфийские авторы редко сходятся в оценках, отличаясь выраженной индивидуальностью вкуса. Когда же они сходятся — это свидетельство объективного качества.</p>
++
++      <p class="ms-p">Первая из этих характеристик — <span class="quenya-ms">mírëa nórëa</span>, «драгоценная живость», — обозначает то свойство холма, при котором он производит впечатление не просто рельефного элемента ландшафта, но чего-то, обладающего собственной внутренней динамикой. Источники последовательно описывают это ощущение через глаголы движения, тогда как холм, строго говоря, неподвижен. Данный парадокс разрешается через понятие <span class="quenya-ms">lúmë-nórëa</span> (§ 7 гл. IV): наблюдатель воспринимает не столько сам предмет, сколько то, что предмет производит со временем наблюдателя.</p>
++
++      <p class="ms-p">Берен Камлост в письме, датируемом приблизительно 465 годом Первой Эпохи, описывает это следующим образом:</p>
++
++      <div style="margin: 14px 24px; font-size:10px; color:#3a2810; border-left:2px solid #a09070; padding-left:12px; line-height:1.8;">
++        <span class="quenya-ms">«Cennë Lúthienna ar istanë eket: i lúmë úva tul, pan tul sí nó ilyë lúmë — ar i ambë ná i minya cendë ya istan.»</span><br><br>
++        «Увидел Лютиэнн и понял сразу: время не придёт, ибо пришло уже раньше всякого времени — и холм есть первое, что я знаю.»<br><br>
++        <span style="font-size:9px; opacity:0.7;">— Письмо Берена Лютиэнн, рукопись Менегрота, хранится в Гондорском архиве. Дата: предположительно весна 465 Первой Эпохи.</span>
++      </div>
++
++      <p class="ms-p">Синдаринский поэтический трактат «Ambor a Galadhad» («О холмах и деревьях»), авторство которого принято приписывать Даэрону, содержит детализированное описание весеннего состояния северного склона, занимающее в оригинале три страницы. Воспроизводить его целиком в настоящем справочнике нет необходимости; ключевые наблюдения суммированы ниже.</p>
++
++      <p class="ms-p">Даэрон выделяет три момента весеннего пробуждения северного склона, которые он называет <span class="quenya-ms">i neldë yesta</span> — «три начала».</p>
++
++      <p class="ms-p"><em>Первое начало</em> (<span class="quenya-ms">i minya yesta</span>) — момент, когда склон впервые открывается взгляду после зимнего периода. Даэрон описывает это как <span class="quenya-ms">«nórëa cendë yesta»</span> — «живой первый взгляд» — и настаивает, что этот момент несводим к последующим: он уникален, неповторим и обладает особым качеством, которое исчезает по мере того, как взгляд задерживается. Именно поэтому, по Даэрону, мудрый наблюдатель медлит. <span style="font-size:9px;" class="handwritten">[А. С.: Это совет из практического опыта, а не теоретическое построение.]</span></p>
++
++      <p class="ms-p"><em>Второе начало</em> (<span class="quenya-ms">i attëa yesta</span>) —</p>
++
++      <div class="redact-wide"></div>
++      <div class="redact-wide" style="width:70%;"></div>
++      <div class="redact-mid"></div>
++
++      <p class="ms-p">— что подтверждается данными из шести независимых источников, перечисленных в библиографии.</p>
++
++      <div class="ms-footnote-area">
++        <div class="ms-footnote"><span class="ms-fn-mark">*</span><span>Письмо воспроизводится по единственному сохранившемуся списку; оригинал, по всей видимости, находился при Лютиэнн и разделил её судьбу. Это обстоятельство придаёт тексту дополнительный вес. — <em>Авт.</em></span></div>
++        <div class="ms-footnote"><span class="ms-fn-mark">**</span><span>Три купированных строки описывают «второе начало» с точностью, которую юрисконсульт охарактеризовал как «недопустимую для научного издания». Точность была методологически обоснована. — <em>А. С.</em></span></div>
++      </div>
++    </div>
++  </div>
++
++  <!-- PAGE 218 -->
++  <div class="excised-wrapper">
++    <div class="manuscript-page">
++      <div class="stamp-izjato" style="top:80px; left:72px; transform: rotate(15deg); font-size:15px;">ИЗЪЯТО</div>
++      <div class="stamp-soglasovano" style="bottom:120px; right:68px;">Согл. Юр.отд.<br>03.09.2001</div>
++
++      <div class="ms-page-header">
++        <span>Глава VII · Северные склоны</span>
++        <span class="ms-page-num">218</span>
++      </div>
++
++      <p class="ms-p first"><em>Третье начало</em> (<span class="quenya-ms">i neldëa yesta</span>) Даэрон описывает как наиболее трудно поддающееся вербализации — что само по себе характерно для автора, написавшего рунический алфавит и три тома стихов. Именно эта трудность, по мнению Даэрона, и определяет ценность предмета: если бы он поддавался описанию без остатка, он не был бы тем, чем является. <span class="quenya-ms">«I ambë ya poica quetë ná ambë ya ú-cé ná»</span> — «Холм, который можно полностью описать, — это холм, которого, возможно, и нет».</p>
++
++      <p class="ms-p">Автор настоящего справочника склонен согласиться с Даэроном, хотя полевые наблюдения показали, что описать предмет всё же возможно — просто для этого требуется значительно больше места, чем отведено в рамках одной главы. Именно поэтому данный аспект рассматривается в настоящей главе подробнее, чем любой другой в книге.</p>
++
++      <div class="ms-section-head">— § 2 (нач.). Детализированное описание весеннего состояния —</div>
++
++      <p class="ms-p">Перейдём к непосредственному описанию. Источники, включённые в корпус и датируемые периодом от Первой до Третьей Эпохи, описывают весенний северный склон в рамках устойчивой системы координат, состоящей из четырёх осей: <em>тактильной</em>, <em>визуальной</em>, <em>температурной</em> и <em>кинетической</em>. Четвёртая ось, кинетическая, введена автором настоящего справочника на основании анализа источников: ни один из них прямо её не называет, однако все подразумевают.</p>
++
++      <p class="ms-p"><strong>Тактильная ось.</strong> Весенний покров северного склона — <span class="quenya-ms">étulë-firpë</span> в своей наиболее характерной форме — описывается источниками как <span class="quenya-ms">«milda ar malta»</span>, «мягкий и золотистый». Квэнийский корень <span class="quenya-ms">MIL-</span>, образующий <span class="quenya-ms">milda</span>, несёт семантику нежности, уступчивости, готовности принять форму прикосновения. Это не пассивность — это активная мягкость, и разница принципиальна.</p>
++
++      <div class="redact-wide"></div>
++      <div class="redact-wide" style="width:92%;"></div>
++      <div class="redact-wide" style="width:78%;"></div>
++
++      <p class="ms-p"><strong>Визуальная ось.</strong> Что касается <span class="quenya-ms">fanyarya</span> в весенний период — здесь источники особенно красноречивы. Маглор в строфе IX «Хвалебной песни» (опущенной в Приложении Д в силу её длины) посвящает двадцать две строки описанию того, как меняется восприятие <span class="quenya-ms">fanyarya</span> в зависимости от угла зрения и освещения. Центральное наблюдение, на котором сходятся и Маглор, и четыре независимых автора, не связанных с нолдорской традицией, — это то, что северный склон весной демонстрирует наиболее выраженный контраст между светом и тенью. Это контраст не драматический, но интимный: тень здесь не тьма, но прохлада; свет не слеп, но приглашает.</p>
++
++      <p class="ms-p"><span class="quenya-ms">«Norwa ambë — hísie cendë ar calima cendë nar neldë, nan lúmessë rimbë»</span>, — пишет анонимный белериандский автор («Северный холм — туманный взгляд и светлый взгляд — это не два, но в момент — многое»). Эта формулировка точнее многих развёрнутых описаний: она фиксирует не состояние, но динамику.</p>
++
++      <p class="ms-p"><strong>Температурная ось.</strong> Северный склон весной холоднее южного — на поверхности. Это наблюдение, тривиальное с точки зрения физики, в контексте данного исследования приобретает значение. Источники последовательно описывают сочетание внешней прохлады и</p>
++
++      <div class="redact-wide"></div>
++      <div class="redact-wide" style="width:65%;"></div>
++
++      <p class="ms-p">— что автор может подтвердить из личного наблюдения, не вступая в противоречие с научной этикой.</p>
++
++      <div class="ms-footnote-area">
++        <div class="ms-footnote"><span class="ms-fn-mark">†</span><span>Строфа IX «Хвалебной песни» Маглора, в отличие от строф I, VII и XVI, воспроизведённых в Приложении Д, посвящена именно весеннему состоянию <span class="quenya-ms">fanyarya</span>. Она не включена в Приложение Д ввиду того, что переводчик, завершив работу над ней, позвонил редактору и сказал: «Это надо публиковать отдельно». Редактор ответил: «Я знаю». На этом разговор завершился. — <em>А. С.</em></span></div>
++        <div class="ms-footnote"><span class="ms-fn-mark">‡</span><span>Два купированных абзаца температурной оси содержали наблюдения, которые юрисконсульт охарактеризовал письменно как «выходящие за рамки». Автор настоящего справочника считает, что именно в этом состоит их ценность. — <em>Авт.</em></span></div>
++        <div class="ms-footnote"><span class="ms-fn-mark" style="color:#8b1a1a;">‡‡</span><span style="color:#8b1a1a; font-style:italic;">NB: Личное наблюдение автора, упомянутое в конце страницы, датируется предположительно апрелем 1948 года. Полевой журнал за эту дату содержит три страницы записей и помечен красным карандашом. Карандаш, судя по интенсивности нажима, держали нетвёрдой рукой. — <em>А. С.</em></span></div>
++      </div>
++    </div>
++  </div>
++
++  <!-- PAGE 219 -->
++  <div class="excised-wrapper">
++    <div class="manuscript-page">
++      <div class="stamp-izjato" style="top:160px; right:64px; transform:rotate(-8deg);">ИЗЪЯТО</div>
++
++      <div class="ms-page-header">
++        <span>Глава VII · Северные склоны</span>
++        <span class="ms-page-num">219</span>
++      </div>
++
++      <p class="ms-p first"><strong>Кинетическая ось</strong> — та, которую ни один источник не именует, но все описывают. Суть её в следующем: весенний северный склон воспринимается наблюдателем не как статический объект, но как система, находящаяся в состоянии непрерывного, едва уловимого движения. Это движение не является иллюзией — оно реально, хотя его природа остаётся предметом дискуссии в академической среде.</p>
++
++      <p class="ms-p">Автор объясняет кинетический эффект совокупностью трёх факторов: ветром, проходящим по <span class="quenya-ms">firpë</span>; игрой теней при движении облаков над склоном; и — наиболее трудно поддающимся объяснению — тем, что источники описывают как <span class="quenya-ms">«i ambë nórëa senna»</span>, «холм, движущийся навстречу». Это формула, которую рационалистически настроенный исследователь склонен считать поэтическим преувеличением. Автор, на основании полевых наблюдений, так не считает.</p>
++
++      <div class="redact-wide"></div>
++      <div class="redact-wide" style="width:88%;"></div>
++      <div class="redact-wide" style="width:74%;"></div>
++      <div class="redact-mid" style="width:45%;"></div>
++
++      <p class="ms-p">В заключение данного раздела следует привести суммарное наблюдение, которое автор формулирует как научный вывод, несмотря на его кажущуюся непрезентабельность для академического текста: весенний северный склон является наиболее полным воплощением того, что «Список Румила» (Приложение Г) в пункте XII определяет как <span class="quenya-ms">«i Ambar caima»</span> — «совершенство, которое лежит». Данный перевод пункта XII принадлежит переводчику. Редактор предлагал иной перевод. Редакционный совет выбрал перевод переводчика как менее провокационный.</p>
++
++      <p class="ms-p">Перевод редактора помещён ниже, в сноске, с соответствующей пометой. Читатель, желающий его найти, найдёт.</p>
++
++      <div class="ms-section-head">— конец изъятого раздела —</div>
++
++      <p class="ms-p" style="font-style:italic; font-size:10px; color:#5a4020;">Страницы 220 и далее — в основном тексте книги. Глава VII продолжается параграфом § 2 («Сезонная динамика: весна как исследовательский период»), который следует непосредственно после настоящей страницы в рукописи и который, таким образом, является не продолжением, а смягчённой версией того, о чём шла речь здесь. Смягчение это относится целиком на счёт юридического отдела издательства «Просвещение».</p>
++
++      <div class="ms-footnote-area">
++        <div class="ms-footnote"><span class="ms-fn-mark">§</span><span>Четыре купированных абзаца кинетической оси содержали — согласно краткому описанию, которое юрисконсульт передал редактору в устной форме, не решившись изложить письменно, — «подробности, несовместимые с профилем издания». Редактор попросил уточнить профиль издания. Юрисконсульт сослался на устав. — <em>А. С.</em></span></div>
++        <div class="ms-footnote"><span class="ms-fn-mark" style="color:#8b1a1a;">◆</span><span style="color:#8b1a1a; font-style:italic;">Перевод пункта XII «Списка Румила», предложенный редактором: <span class="quenya-ms">«i Ambar caima»</span> — «лежащее совершенство мира». Редактор настаивал на варианте «лежащее», поскольку причастный оттенок <span class="quenya-ms">caima</span> указывает на активное состояние покоя, а не пассивную неподвижность. Разница, полагаю, принципиальна. Приведённый перевод точнее. — <em>А. С.</em></span></div>
++        <div class="ms-footnote"><span class="ms-fn-mark">✦</span><span>Настоящая страница является последней из изъятых. Далее следуют выходные данные книги. Юрисконсульт, ознакомившись с ксерокопиями, которые обнаружил в переплётном отделе, взял отпуск по состоянию здоровья. Желаю ему скорейшего выздоровления. — <em>А. С.</em></span></div>
++      </div>
++    </div>
++  </div>
++
+ </div>
+ </body>
+ </html>

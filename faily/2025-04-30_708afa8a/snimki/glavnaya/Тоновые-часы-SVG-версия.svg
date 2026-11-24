@@ -1,0 +1,368 @@
+
+<svg viewBox="0 0 1000 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Фон и заголовок -->
+  <rect width="1000" height="1200" fill="#f9f9f9"/>
+  <text x="500" y="50" font-size="24" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Тоновые часы - строго согласованный нисходящий шаблон</text>
+  
+  <!-- Круг кварт - основные ноты -->
+  <g transform="translate(500, 180)">
+    <!-- Круг -->
+    <circle cx="0" cy="0" r="150" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="5,3"/>
+    
+    <!-- 12 основных нот, равномерно распределенных по кругу -->
+    <g id="baseNotes">
+      <!-- B -->
+      <circle cx="0" cy="-150" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="0" y="-145" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">B</text>
+      
+      <!-- E -->
+      <circle cx="75" cy="-130" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="75" y="-125" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">E</text>
+      
+      <!-- A -->
+      <circle cx="130" cy="-75" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="130" y="-70" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">A</text>
+      
+      <!-- D -->
+      <circle cx="150" cy="0" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="150" y="5" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">D</text>
+      
+      <!-- G -->
+      <circle cx="130" cy="75" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="130" y="80" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">G</text>
+      
+      <!-- C -->
+      <circle cx="75" cy="130" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="75" y="135" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">C</text>
+      
+      <!-- F -->
+      <circle cx="0" cy="150" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="0" y="155" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">F</text>
+      
+      <!-- Bb -->
+      <circle cx="-75" cy="130" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="-75" y="135" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Bb</text>
+      
+      <!-- Eb -->
+      <circle cx="-130" cy="75" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="-130" y="80" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Eb</text>
+      
+      <!-- Ab -->
+      <circle cx="-150" cy="0" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="-150" y="5" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Ab</text>
+      
+      <!-- Db -->
+      <circle cx="-130" cy="-75" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="-130" y="-70" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Db</text>
+      
+      <!-- Gb -->
+      <circle cx="-75" cy="-130" r="25" fill="#5b9bd5" stroke="#333" stroke-width="2"/>
+      <text x="-75" y="-125" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Gb</text>
+    </g>
+    
+    <!-- Квартовые связи между основными нотами -->
+    <g id="quartalConnections" stroke="#5b9bd5" stroke-width="1.5" stroke-dasharray="5,3" fill="none">
+      <path d="M 0,-138 Q 37,-134 63,-120" marker-end="url(#arrowhead)"/>
+      <path d="M 87,-120 Q 109,-98 118,-64" marker-end="url(#arrowhead)"/>
+      <path d="M 130,-63 Q 140,-32 138,0" marker-end="url(#arrowhead)"/>
+      <path d="M 138,12 Q 137,44 118,64" marker-end="url(#arrowhead)"/>
+      <path d="M 118,87 Q 97,109 75,120" marker-end="url(#arrowhead)"/>
+      <path d="M 63,130 Q 32,140 0,138" marker-end="url(#arrowhead)"/>
+      <path d="M -12,138 Q -44,137 -63,120" marker-end="url(#arrowhead)"/>
+      <path d="M -87,120 Q -109,97 -118,64" marker-end="url(#arrowhead)"/>
+      <path d="M -130,63 Q -140,32 -138,0" marker-end="url(#arrowhead)"/>
+      <path d="M -138,-12 Q -137,-44 -118,-64" marker-end="url(#arrowhead)"/>
+      <path d="M -118,-87 Q -97,-109 -75,-120" marker-end="url(#arrowhead)"/>
+      <path d="M -63,-130 Q -32,-140 0,-138" marker-end="url(#arrowhead)"/>
+    </g>
+  </g>
+  
+  <!-- Целотоновые ряды, исходящие от основных нот -->
+  <g transform="translate(0, 0)">
+    <!-- Ряд 1: B1-Db2-Eb2 -->
+    <g transform="translate(500, 60)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#e6194B" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#e6194B" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#e6194B" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">B1</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#e6194B" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#e6194B" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#e6194B" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Db2</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#e6194B" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#e6194B" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#e6194B" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Eb2</text>
+    </g>
+    
+    <!-- Ряд 2: E2-Gb2-Ab2 -->
+    <g transform="translate(575, 110)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#3cb44b" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#3cb44b" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#3cb44b" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">E2</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#3cb44b" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#3cb44b" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#3cb44b" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Gb2</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#3cb44b" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#3cb44b" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#3cb44b" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Ab2</text>
+    </g>
+    
+    <!-- Ряд 3: A2-B2-Db3 -->
+    <g transform="translate(630, 165)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#ffe119" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#ffe119" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#ffe119" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">A2</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#ffe119" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#ffe119" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#ffe119" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">B2</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#ffe119" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#ffe119" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#ffe119" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">Db3</text>
+    </g>
+    
+    <!-- Ряд 4: D3-E3-Gb3 -->
+    <g transform="translate(650, 240)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#4363d8" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#4363d8" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#4363d8" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">D3</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#4363d8" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#4363d8" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#4363d8" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">E3</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#4363d8" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#4363d8" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#4363d8" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Gb3</text>
+    </g>
+    
+    <!-- Ряд 5: G3-A3-B3 -->
+    <g transform="translate(630, 315)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#f58231" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#f58231" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#f58231" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">G3</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#f58231" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#f58231" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#f58231" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">A3</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#f58231" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#f58231" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#f58231" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">B3</text>
+    </g>
+    
+    <!-- Ряд 6: C4-D4-E4 -->
+    <g transform="translate(575, 390)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#911eb4" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#911eb4" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#911eb4" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">C4</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#911eb4" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#911eb4" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#911eb4" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">D4</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#911eb4" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#911eb4" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#911eb4" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">E4</text>
+    </g>
+    
+    <!-- Ряд 7: F4-G4-A4 -->
+    <g transform="translate(500, 465)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#42d4f4" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#42d4f4" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#42d4f4" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">F4</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#42d4f4" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#42d4f4" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#42d4f4" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">G4</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#42d4f4" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#42d4f4" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#42d4f4" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">A4</text>
+    </g>
+    
+    <!-- Ряд 8: Bb4-C5-D5 -->
+    <g transform="translate(425, 540)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#f032e6" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#f032e6" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#f032e6" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Bb4</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#f032e6" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#f032e6" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#f032e6" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">C5</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#f032e6" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#f032e6" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#f032e6" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">D5</text>
+    </g>
+    
+    <!-- Ряд 9: Eb5-F5-G5 -->
+    <g transform="translate(370, 615)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#a9a9a9" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#a9a9a9" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#a9a9a9" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Eb5</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#a9a9a9" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#a9a9a9" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#a9a9a9" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">F5</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#a9a9a9" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#a9a9a9" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#a9a9a9" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">G5</text>
+    </g>
+    
+    <!-- Ряд 10: Ab5-Bb5-C6 -->
+    <g transform="translate(350, 690)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#469990" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#469990" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#469990" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Ab5</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#469990" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#469990" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#469990" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Bb5</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#469990" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#469990" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#469990" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">C6</text>
+    </g>
+    
+    <!-- Ряд 11: Db6-Eb6-F6 -->
+    <g transform="translate(370, 765)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#e6beff" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#e6beff" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#e6beff" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">Db6</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#e6beff" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#e6beff" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#e6beff" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">Eb6</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#e6beff" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#e6beff" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#e6beff" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="black" font-weight="bold">F6</text>
+    </g>
+    
+    <!-- Ряд 12: Gb6-Ab6-Bb6 -->
+    <g transform="translate(425, 840)">
+      <line x1="0" y1="0" x2="60" y2="60" stroke="#9A6324" stroke-width="2"/>
+      <text x="30" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#9A6324" font-weight="bold">T</text>
+      
+      <rect x="60" y="60" width="70" height="30" rx="15" fill="#9A6324" stroke="#333"/>
+      <text x="95" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Gb6</text>
+      
+      <line x1="130" y1="75" x2="190" y2="75" stroke="#9A6324" stroke-width="2"/>
+      <text x="160" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#9A6324" font-weight="bold">T</text>
+      
+      <rect x="190" y="60" width="70" height="30" rx="15" fill="#9A6324" stroke="#333"/>
+      <text x="225" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Ab6</text>
+      
+      <line x1="260" y1="75" x2="320" y2="75" stroke="#9A6324" stroke-width="2"/>
+      <text x="290" y="65" font-size="14" text-anchor="middle" font-family="Arial, sans-serif" fill="#9A6324" font-weight="bold">T</text>
+      
+      <rect x="320" y="60" width="70" height="30" rx="15" fill="#9A6324" stroke="#333"/>
+      <text x="355" y="80" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" fill="white" font-weight="bold">Bb6</text>
+    </g>
+    
+    <!-- Квартовые связи между первыми нотами разных рядов -->
+    <g stroke="#555" stroke-width="1.5" stroke-dasharray="5,3" fill="none">
+      <path d="M 595,140 Q 615,160 690,225" marker-end="url(#arrowhead)"/>
+      <path d="M 690,225 Q 705,245 725,300" marker-end="url(#arrowhead)"/>
+      <path d="M 725,300 Q 740,320 690,375" marker-end="url(#arrowhead)"/>
+      <path d="M 690,375 Q 675,395 635,450" marker-end="url(#arrowhead)"/>
+      <path d="M 635,450 Q 620,470 560,525" marker-end="url(#arrowhead)"/>
+      <path d="M 560,525 Q 545,545 485,600" marker-end="url(#arrowhead)"/>
+      <path d="M 485,600 Q 470,620 430,675" marker-end="url(#arrowhead)"/>
+      <path d="M 430,675 Q 415,695 430,750" marker-end="url(#arrowhead)"/>
+      <path d="M 430,750 Q 445,770 485,825" marker-end="url(#arrowhead)"/>
+      <path d="M 485,825 Q 500,845 560,900" marker-end="url(#arrowhead)"/>
+      <path d="M 560,900 L 635,140" marker-end="url(#arrowhead)"/>
+    </g>
+  </g>
+  
+  <!-- Легенда -->
+  <g transform="translate(500, 1050)">
+    <rect x="-150" y="0" width="300" height="100" rx="10" fill="#f0f0f0" stroke="#333"/>
+    <text x="0" y="30" font-size="18" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Легенда:</text>
+    
+    <line x1="-120" y1="50" x2="-70" y2="50" stroke="#000" stroke-width="2"/>
+    <text x="-65" y="55" font-size="16" text-anchor="start" font-family="Arial, sans-serif">T = Целый тон (2 полутона)</text>
+    
+    <line x1="-120" y1="80" x2="-70" y2="80" stroke="#000" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="-65" y="85" font-size="16" text-anchor="start" font-family="Arial, sans-serif">P4 = Чистая кварта (5 полутонов)</text>
+  </g>
+  
+  <!-- Маркер для стрелок -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+  </defs>
+</svg>

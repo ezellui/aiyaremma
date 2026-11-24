@@ -1,0 +1,12 @@
+Концепция: Nerubians могут ТРАНСФОРМИРОВАТЬ юнитов
+
+Механика:
+- Базовый юнит: Spider Warrior (дешёвый, слабый)
+- В Evolution Chamber можно:
+  * Evolve в Crypt Fiend (ranged, poison)
+  * Evolve в Nerubian Burrower (fast, burrow)
+  * Evolve в Spiderlord (heavy, web)
+- Стоимость эволюции: 50-100g + 30 сек
+- Можно "de-evolve" обратно (возврат 50% ресурсов)
+
+Аналог: Zerg tech tree, но для отдельных юнитов

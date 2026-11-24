@@ -1,0 +1,21 @@
+Photorealistic archival photograph of a single aged newspaper front page lying on a dark grey cloth-covered table, shot from above with soft diffuse light, like a museum or archive scan. This is a prop from a fictional alternate-history world; render it as a real, physical 1950s Hungarian broadsheet.
+
+WORLD CONTEXT (for correct details, do not render as text):
+In this alternate 20th century, Russia became the R.S.F.G.R. — the "Russian Socialist Federative Fungal Republic". Its state religion and ideology merge communism with the cult of a sleeping cosmic deity (Cthulhu) and a planet-spanning living fungus called the Great Mycelium. Citizens are "dissolved" into spores; keeping your own private reason is a crime. The state's capital is R'lyeh, on the Arctic coast. Its emblem is a red five-pointed star with a spiral inside it (instead of a hammer and sickle); its official seal shows an octopus inside a circle. Loyal citizens wear clear glass preserving jars over their heads as a sign of surrendering their individual minds. Neighbouring countries were "grafted" onto the Mycelium as vassal states, like a plant graft; Hungary became the "Pannonian Vassalate" in 1930. In spring 1954 the graft on Hungary is REJECTED, like a body rejecting a transplant: the white fungal threads covering the country brown and die, and people take the jars off their heads. This newspaper is the first free issue printed in Budapest the morning after.
+
+THE NEWSPAPER:
+- Tabloid-to-broadsheet size, folded once horizontally, yellowed cheap newsprint, brittle torn edges, a small tear along the fold, faint water stain in one corner.
+- 1950s Hungarian newspaper typography: bold condensed sans-serif and sturdy serif headlines, NOT blackletter.
+- Masthead across the top, large: "JÓZAN HÍRLAP". To the left of the masthead, a small printed emblem of a cracked glass jar.
+- Under the masthead, a thin ruled line with: "Független napilap · Budapest, 1954. május 3. · Ára 20 fillér". Next to it, a short old date line "Spóraév XXXIV" printed but crossed out with a thick printed black bar, as if hastily removed from the printing plate.
+- Main headline, huge, across the full width: "ÉBREN VAGYUNK!"
+- Sub-headline under it: "Kilökődött az oltvány"
+- Large halftone photograph (coarse dot screen, high contrast black and white) occupying the upper middle of the page: a wide city square at early morning, a dense crowd of men and women in 1950s coats and caps lifting clear glass preserving jars off their heads; some jars are smashed on the cobblestones; dead, browned fungal threads hang like old cobweb from lampposts and balconies; in the background, workers with ropes are pulling down a large emblem of a five-pointed star with a spiral inside from a building facade.
+- Photo caption in small italic type under the photo: "Kossuth tér, reggel hét óra: az emberek leveszik fejükről az üvegeket."
+- Below the photo, three columns of small dense body text (Hungarian, mostly too small to read) with two short readable column headlines: "A gombafonalak elhaltak Budapesttől Szegedig" and, in a framed box at the bottom right, "R'LYEH NEM VÁLASZOL".
+
+ARCHIVE TRACES (added later by the R.S.F.G.R. archive that captured the issue):
+- In the upper right corner, a faded violet round rubber-stamp impression with an octopus in the centre and the text around the rim "НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ".
+- In the left margin, a handwritten note in blue pencil, slanted, in old Russian pre-1918 spelling: "Отторженіе. Повторно не прививать."
+
+Style: realistic, tactile, slight paper texture and ink bleed, no modern elements, no colour except the violet stamp, blue pencil and the yellowed paper. All text must be spelled exactly as given, including Hungarian accents (á, é, í, ó, ö, ő, ú, ü) and the old Russian letters (ъ, і).

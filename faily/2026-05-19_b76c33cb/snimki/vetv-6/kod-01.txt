@@ -1,0 +1,46 @@
+Top-down archival photograph of a single sheet of handwritten paper, approximately 30 × 21 cm, lying on a dark surface (black velvet cloth or aged dark wooden table). The shot is straight overhead, evenly lit by diffuse natural light, with no harsh shadows. The composition is documentary in nature, in the style of photographs taken in the Rare Books Department of a Russian state library by an archivist wearing white cotton gloves.
+
+The paper is cream-colored, aged and slightly yellowed, with light foxing spots, a faint horizontal fold-mark across the middle from past folding, and softened wear at the corners. The paper is heavy, slightly textured, and shows minor bleed-through of ink from the reverse side.
+
+The text on the paper is handwritten in violet aniline ink (the characteristic ink of Soviet-era scholarly writers, 1940s–60s), in a flowing scholarly cursive hand, in PRE-REVOLUTIONARY RUSSIAN ORTHOGRAPHY (using the letters ѣ, і, and final hard sign ъ after consonants). The handwriting is rapid and energetic, with many corrections, crossings-out, and marginal additions — clearly a working draft, not a fair copy.
+
+CONTENT TO BE RENDERED ON THE PAGE, in exact positions:
+
+Top-left heading, in slightly larger and more careful cursive script:
+«§ 17. О различеніи нетварной мнимой и тварной дѣйствительной части собственнаго значенія резонансного оператора»
+
+Below the heading, the main body begins with one coherent paragraph in violet ink, reading:
+«Если приписать собственному значенію резонансного оператора λ = a + bi видъ суммы дѣйствительной и мнимой компонентъ, то по подобію паламитскаго различенія можемъ полагать дѣйствительную часть Re λ = a отвѣчающею тварной сущности, а мнимую часть Im λ = b — нетварной энергіи.»
+
+The mathematical expressions "λ = a + bi", "Re λ = a", and "Im λ = b" should appear clearly within the running text in the same violet ink.
+
+Below this paragraph, THREE subsequent paragraphs are CROSSED OUT by the author — struck through with strong diagonal pen-lines and a horizontal cross — the words still partially visible but rendered unreadable. Between the lines above them, in tinier script, the author has attempted small rewrites.
+
+ANNOTATIONS IN OTHER HANDS:
+
+On the RIGHT margin, written vertically in graphite pencil in small neat script (same hand as the main text — by the author himself):
+«Ср. съ доктриною о Фаворскомъ свѣтѣ — К. П.»
+
+On the LEFT margin, written diagonally in bright RED PENCIL in a notably different, bolder, more impatient hand:
+«Это уже не философія, а богословіе. Опасно публиковать»
+
+At the BOTTOM of the page, in graphite pencil in a third, careful, smaller hand (clearly a later archival annotation):
+«Текстъ § 17 не вошёлъ въ окончательную редакцію 1963 года по совѣту Л. А. Ривкинда. Ср. съ выступленіемъ К. А. на семинарѣ 17 марта 1959, гдѣ онъ далъ ту же мысль въ устной формѣ.»
+
+In the lower right corner of the page, the archival reference is written in small pencil: «Ф. 12, оп. 4, д. 1, л. 17 об.»
+
+In one corner of the page itself, a small oval library stamp in faded violet ink reads around its perimeter: «АРХИВЪ ПЕТРА-ДУБРАВСКОЙ ШКОЛЫ».
+
+FRAMING ELEMENTS AROUND THE DOCUMENT:
+
+Along the bottom edge of the photograph (just below the document), a wooden ruler with black millimeter markings is laid horizontally, visible from approximately 0 to 150 mm. The ruler is slightly worn, with darkened wood.
+
+In one corner of the frame, partially entering from the edge, is a WHITE COTTON GLOVE worn by the archivist's hand — only the gloved fingertips and a strip of palm enter the frame; the rest of the hand is out of view.
+
+In an upper corner, a small rectangular cardboard archival tag is attached to the page with a thin metal paper clip; the tag bears two or three lines of pencil notes, partly legible.
+
+STYLE AND ATMOSPHERE:
+
+The overall image should have the authentic documentary feel of rare-book archival photography: high resolution, natural color, neutral white balance, sharp focus on the document, fine paper texture and ink grain visible. No digital artifacts, no filters, no overlay effects. Lighting even but not flat — soft shadows from the slight curl of the paper at one edge.
+
+The mood is sober, scholarly, faintly melancholy: this is a working draft by a mid-twentieth-century Russian philosopher struggling with a deep ontological-theological problem, censored by a cautious colleague, later filed by a careful archivist. The drama of the page is in the layering of three hands — author, critic, archivist — across a single sheet.

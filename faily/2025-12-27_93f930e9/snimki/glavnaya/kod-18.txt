@@ -1,0 +1,28 @@
+deployment/
+├── kubernetes/
+│   ├── namespaces.yaml
+│   ├── configmaps.yaml
+│   ├── secrets.yaml
+│   ├── services/
+│   │   ├── api-gateway.yaml
+│   │   ├── user-service.yaml
+│   │   ├── concept-service.yaml
+│   │   ├── graph-service.yaml
+│   │   ├── thesis-service.yaml
+│   │   ├── synthesis-service.yaml
+│   │   ├── claude-service.yaml
+│   │   ├── name-analysis-service.yaml
+│   │   ├── origin-service.yaml
+│   │   ├── historical-service.yaml
+│   │   ├── practical-service.yaml
+│   │   ├── dialogue-service.yaml
+│   │   └── evolution-service.yaml
+│   ├── databases/
+│   │   ├── postgres.yaml
+│   │   ├── neo4j.yaml
+│   │   ├── mongodb.yaml
+│   │   └── redis.yaml
+│   └── ingress.yaml
+└── scripts/
+    ├── deploy.sh
+    └── rollback.sh

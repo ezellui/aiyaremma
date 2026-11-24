@@ -1,0 +1,28 @@
+Archival museum photograph of a single object from a fictional state archive: a wax phonograph cylinder in its storage tube, photographed in the 1970s for an internal catalogue.
+
+WORLD CONTEXT (for correct details):
+The object belongs to the archive of the "Р.С.Ф.Г.Р." — an alternate-history Soviet-like state founded in 1921, in which the Communist Party has merged with a cult of the sleeping Cthulhu and with a vast collective fungal organism called the Great Mycelium ("Великая Грибница"). Citizens are ceremonially "dissolved" into the Mycelium; individual reason is considered private property and is condemned. Lenin did not die but "sleeps" beneath his mausoleum, like Cthulhu in R'lyeh; the official motto is "Ктулху фхтагнъ — Ленинъ фхтагнъ". The state still uses pre-1918 Russian orthography (letters ѣ, і, final ъ). Its emblem is a red five-pointed star with a spiral instead of hammer and sickle; its offices use violet ink stamps with a stylised octopus in the centre. The relevant bureau is the "Department of Spore-breeding and Translations" of the "People's Commissariat of Healthy Madness". This cylinder holds a 1920 conversation between Lenin and the engineer Krzhizhanovsky about electrification, recorded on wax and deciphered only in 1969.
+
+OBJECT AND COMPOSITION:
+- A brown-black Edison-type wax cylinder (about 10 cm long, 5.5 cm in diameter), half pulled out of its cylindrical cardboard storage tube; the tube lies on its side, the round lid with a cotton wadding lining set beside it.
+- The wax surface shows fine spiral grooves catching the light, small chips at one edge, and one hairline crack from which a few very thin white fungal threads (mycelium) are growing — subtle, almost unnoticeable, as if the archive itself is slowly being overgrown.
+- The tube is covered in faded ochre paper with a small printed label: a red star with a spiral in the centre and the text "Р.С.Ф.Г.Р."
+- Leaning against the tube: a yellowed library catalogue card (index card, about 12.5 × 7.5 cm) with a printed header and entries handwritten in faded violet ink, a punched hole at the bottom centre, softened corners.
+- In the lower right corner of the card, a round violet rubber stamp with a stylised octopus in the centre, partly smudged.
+- Background: dark charcoal-grey felt archive table; soft directional light from upper left; shallow depth of field; slightly warm, faded colour photography of the 1970s; a small paper ruler with centimetre marks along the bottom edge, as in forensic/catalogue photos.
+
+TEXT ON THE IMAGE — render exactly, letter for letter, in Cyrillic, with pre-reform spelling (keep every ѣ, і and final ъ; do not replace ѣ with е; no letter ё):
+Printed header of the card (small capitals, serif):
+"ОТДѢЛЪ СПОРОВОДСТВА И ПЕРЕВОДОВЪ"
+Handwritten lines on the card:
+"Цилиндръ № 7"
+"Бесѣда В. И. съ Г. М. Кржижановскимъ"
+"Записано въ 1920 г."
+"Расшифровано въ 1969 г."
+Text around the edge of the round stamp:
+"НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ"
+Label on the tube:
+"Р.С.Ф.Г.Р."
+
+STYLE CONSTRAINTS:
+Photorealistic, documentary, museum catalogue lighting, no people, no portraits of Lenin, no hammer and sickle, no English or Latin text, no modern objects, no extra captions or watermarks. Vertical composition, 2:3.

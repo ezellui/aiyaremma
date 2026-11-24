@@ -1,0 +1,71 @@
+--- предыдущая/unified_modal_styles_cheatsheet.md
++++ текущая/unified_modal_styles_cheatsheet.md
+@@ -56,12 +56,24 @@
+ ### Концепции философа (view)
+ | Класс | Назначение |
+ |-------|-----------|
+-| `.philosopher-concepts-list` | Контейнер всех концепций |
+-| `.philosopher-concept-item` | Элемент концепции |
+-| `.philosopher-concept-header` | Заголовок с кнопкой |
++| `.philosopher-concepts-section` | Контейнер секции концепций |
++| `.concept-details-item` | Элемент концепции |
++| `.concept-details-header` | Заголовок с кнопкой |
++| `.concept-details-name` | Название концепции |
++| `.concept-short-desc` | Краткое описание |
+ | `.toggle-concept-desc-btn` | Кнопка раскрытия описания |
+ | `.concept-extended-desc` | Развёрнутое описание |
+ | `.concept-extended-desc.show` | Показать описание |
++
++### Взаимодействие философов (view)
++| Класс | Назначение |
++|-------|-----------|
++| `.interaction-section` | Контейнер взаимодействия |
++| `.interaction-type` | Тип взаимодействия (заголовок) |
++| `.interaction-direction` | Направление (влиял/был под влиянием) |
++| `.interaction-direction-label` | Метка направления |
++| `.philosopher-list` | Список философов |
++| `.philosopher-link` | Кликабельная ссылка на философа |
+ 
+ ### Связи (view и edit)
+ | Класс | Назначение |
+@@ -246,6 +258,40 @@
+ </div>
+ ```
+ 
++### Концепция философа (детальная)
++```html
++<div class="concept-details-item" onclick="showDetailModal(concept)">
++    <div class="concept-details-header">
++        <div class="concept-details-name">Трансцендентальная апперцепция</div>
++        <button class="toggle-concept-desc-btn" onclick="toggleDescription()">▼</button>
++    </div>
++    <div class="concept-short-desc">Единство самосознания...</div>
++    <div class="concept-extended-desc" id="desc-id">
++        Подробное описание концепции...
++    </div>
++</div>
++```
++
++### Взаимодействие философов
++```html
++<div class="interaction-section">
++    <div class="interaction-type">Влияние</div>
++    <div class="interaction-direction">
++        <span class="interaction-direction-label">Влиял на:</span>
++        <span class="philosopher-list">
++            <span class="philosopher-link" onclick="openPhilosopherModal('Ницше')">Ницше</span>,
++            <span class="philosopher-link" onclick="openPhilosopherModal('Шопенгауэр')">Шопенгауэр</span>
++        </span>
++    </div>
++    <div class="interaction-direction">
++        <span class="interaction-direction-label">Был под влиянием:</span>
++        <span class="philosopher-list">
++            <span class="philosopher-link" onclick="openPhilosopherModal('Лейбниц')">Лейбниц</span>
++        </span>
++    </div>
++</div>
++```
++
+ ### Связь с описанием
+ ```html
+ <div class="connection-item">

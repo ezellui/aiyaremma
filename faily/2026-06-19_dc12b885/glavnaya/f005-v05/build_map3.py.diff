@@ -1,0 +1,42 @@
+--- предыдущая/build_map3.py
++++ текущая/build_map3.py
+@@ -136,11 +136,13 @@
+ TOTW,TOTH=PADL+W+PADR,PADT+H+PADB
+ import base64
+ FRAK=base64.b64encode(open('maguntia.ttf','rb').read()).decode()
++TANN=base64.b64encode(open('tannenberg.ttf','rb').read()).decode()
+ oc=outline()
+ S=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {TOTW} {TOTH}" font-family="\'Iowan Old Style\',\'Palatino Linotype\',\'Book Antiqua\',Palatino,Georgia,serif">']
+ S.append('<defs>'
+  "<style>"
+- f"@font-face{{font-family:'UnifrakturMaguntia';src:url(data:font/ttf;base64,{FRAK}) format('truetype');font-weight:400;font-style:normal;}}"
++ f"@font-face{{font-family:'Tannenberg';src:url(data:font/ttf;base64,{TANN}) format('truetype');font-weight:400;font-style:normal;}}"
++ f"@font-face{{font-family:'SchwabacherReich';src:url(data:font/ttf;base64,{FRAK}) format('truetype');font-weight:400;font-style:normal;}}"
+  ".coast{stroke:#33424a;stroke-width:.55;stroke-opacity:.4;stroke-linejoin:round}"
+  ".grat{fill:none;stroke:#aebcc2;stroke-width:.6;stroke-opacity:.45}</style>"
+  f'<clipPath id="w"><path d="{oc}"/></clipPath></defs>')
+@@ -166,7 +168,10 @@
+     return ''.join(out)
+ L='#e4e9f2'
+ # великие державы — капитель в разрядку, тон заливки, без обводки
+-S.append(lab(45,53,[('GROSSDEUTSCHES',22,400,'#dde6e8',0.16,False),('REICH',22,400,'#dde6e8',0.16,False)]))
++rx,ry=to_svg(*project(49,55))
++for i,word in enumerate(('Großdeutsches','Reich')):
++    S.append(f'<text x="{rx:.0f}" y="{ry+i*31:.0f}" text-anchor="middle" font-size="31" '
++             f'fill="#dde6e8" font-family="\'SchwabacherReich\',\'UnifrakturMaguntia\',serif">{word}</text>')
+ S.append(lab(96,59,[('SOWJETUNION',22,400,'#4a3410',0.16,False)]))
+ S.append(lab(-93,44,[('PANAMERIKANISCHE',19,400,'#e4e9f2',0.10,False),('UNION',19,400,'#e4e9f2',0.16,False)]))
+ S.append(lab(113,14,[('JAPANISCHE SPHÄRE',18,400,'#4e2018',0.13,False)]))
+@@ -182,9 +187,9 @@
+ 
+ # ---- заголовок ---------------------------------------------------------------
+ cx=TOTW/2
+-S.append(f'<text x="{cx:.0f}" y="64" text-anchor="middle" font-size="46" fill="#26333c" '
+-         f'letter-spacing="3" font-family="\'UnifrakturMaguntia\',\'Fette Fraktur\',serif">Der krumme Sieg</text>')
+-S.append(f'<text x="{cx:.0f}" y="92" text-anchor="middle" font-size="17" font-style="italic" fill="#4a5a62" letter-spacing="1">Die Aufteilung der Welt nach dem Zweiten Weltkrieg · um 1948</text>')
++S.append(f'<text x="{cx:.0f}" y="62" text-anchor="middle" font-size="40" fill="#26333c" '
++         f'letter-spacing="2" font-family="\'Tannenberg\',serif">Der krumme Sieg</text>')
++S.append(f'<text x="{cx:.0f}" y="91" text-anchor="middle" font-size="17" font-style="italic" fill="#4a5a62" letter-spacing="1">Die Aufteilung der Welt nach dem Zweiten Weltkrieg · um 1948</text>')
+ 
+ # ---- легенда -----------------------------------------------------------------
+ ly=PADT+H+42; lx=PADL+30; cw=380

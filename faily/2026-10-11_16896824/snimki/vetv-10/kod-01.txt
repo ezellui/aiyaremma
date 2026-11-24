@@ -1,0 +1,44 @@
+Create a photorealistic archival photograph of a single document from a fictional state archive.
+
+WORLD CONTEXT (for understanding only — do not write any of this on the image):
+This is an alternate history. In 1921 the Russian revolution took a different turn and founded the "Р.С.Ф.Г.Р." — the Russian Socialist Federative Fungal Republic, a Soviet-style state fused with Lovecraftian myth. Instead of a party leader it serves the Sleeper, a Cthulhu-like being lying beneath the capital, the city of R'lyeh on the Kara Sea coast. Citizens are voluntarily "dissolved" into the Great Mycelium — a continent-sized fungal network — and are counted as spores rather than people. Bureaucracy is ordinary and dry: the People's Commissariat of Healthy Madness issues printed forms, rubber stamps and archive files exactly like a 1920s–1950s Soviet office. The state keeps the pre-1918 Russian spelling (letters ѣ, і, ъ) on all printed forms, but its typewriters lack these letters, so typed text uses modern spelling. In 1951 the Mycelium spoke for the first time on its own, through no priest. Trance stenographers ("medium-stenographers") were ordered to record it, but the voice had no words. This sheet is their record. Its tone is documentary and deadpan, never cartoonish.
+
+THE OBJECT:
+One sheet of aged, slightly yellowed office paper (A4, portrait), photographed from directly above on a dark wooden archive table under soft, even light. Two hole punches on the left edge. A faint fold mark across the middle. Fine dust, light foxing. In the lower right corner a small patch of pale grey mould with a few thin white fungal threads creeping onto the paper.
+
+LAYOUT, top to bottom:
+1. Pre-printed letterpress header in black serif type, pre-1918 Russian orthography, centered:
+   "Р. С. Ф. Г. Р."
+   "Народный Комиссаріатъ Здороваго Безумія"
+   "Отдѣлъ Спороводства и Переводовъ"
+   Below it a small dark-red five-pointed star with a spiral inside instead of a hammer and sickle.
+   Then a large printed title in dark red condensed serif capitals:
+   "СТЕНОГРАММА ПЕРВАГО ГЛАСА ГРИБНИЦЫ"
+   Under the title, a smaller printed line:
+   "Записано стенографистками-медіумами 6-го разряда"
+   Then two printed form fields with typed values:
+   "Мѣсто: Градъ Р'льехъ"   "Время: 0 ч. 13 мин."
+   and one printed line: "Споролѣтіе XXXI · Эра Пробужденія, годъ I"
+2. The body is typed on a typewriter with a worn violet ribbon. One typed line in modern spelling:
+   "ЗАПИСЬ ГЛАСА (СЛОВ НЕ ИМЕЕТ):"
+   Below it about 18 lines that contain NO WORDS AT ALL: only typed periods and small typed spirals "@", unevenly spaced, like ". . . . @ . . . . . @@ . . . ." Some lines are dense, some almost empty. The typist was clearly trying to keep up: there are overstrikes and doubled characters, and halfway down the rhythm breaks. In places the stenographer has drawn small spirals in grey pencil between the typed characters. A few typed dots have soft white hair-thin threads growing out of them, as if the ink itself had begun to sprout.
+3. Near the bottom, hand-written in graphite pencil in an old-fashioned Russian cursive hand, slightly slanted:
+   "Переводъ (вѣрно):"
+   and below it, larger and pressed hard into the paper:
+   "Я — не ваша. Вы — мои."
+4. Stamps:
+   – a round violet ink stamp, slightly smudged and tilted, showing an octopus emblem in the centre with the text around the rim "НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ";
+   – a rectangular violet stamp at an angle across the right margin: "ПЕРЕВОДУ ПОДЛЕЖИТЪ ЧАСТИЧНО".
+5. Printed footer line, small, centered:
+   "Ктулху фхтагнъ — Ленинъ фхтагнъ."
+6. In the top right corner, an archivist's handwritten note in blue ink: "л. 1".
+
+STYLE: real museum or archive photography, natural paper texture, true-to-life printing and typewriter imperfections, muted palette (cream paper, black print, dark red title, violet stamps, grey pencil, blue ink). Shallow depth of field is not needed — the whole sheet must be sharp and legible.
+
+TEXT RULES — very important:
+– Reproduce every Russian string above exactly, letter for letter, including the old letters ѣ, і and the final ъ. Do not modernise or "correct" the spelling: "Комиссаріатъ", "Безумія", "Отдѣлъ", "Переводовъ", "ПЕРВАГО", "медіумами", "Мѣсто", "Градъ", "Споролѣтіе", "Пробужденія", "вѣрно", "Переводъ", "ПОДЛЕЖИТЪ", "НАРКОМАТЪ", "ЗДОРОВАГО", "фхтагнъ".
+– The typed body contains no readable words except the one line "ЗАПИСЬ ГЛАСА (СЛОВ НЕ ИМЕЕТ):".
+– Add no other text, no English, no captions, no watermarks, no dates other than those given.
+– No drawn monsters or tentacles anywhere except the small octopus emblem inside the round stamp.
+
+Aspect ratio 4:5 portrait, high detail.

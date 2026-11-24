@@ -1,0 +1,58 @@
+flowchart TD
+    A[Временность\nZeitlichkeit] --> B[Экстатическая\nструктура]
+    A --> C[Горизонт\nпонимания]
+    A --> D[Диалектическое\nдвижение]
+    
+    subgraph "Экстазы временности"
+        E[Прошлое\nGewesenheit] -->|Фактичность| F[Настоящее\nGegenwart]
+        F -->|Падение| G[Будущее\nZukunft]
+        G -->|Проект| H[Единство временения\nZeitigung]
+        H -.->|Круговая структура| E
+    end
+    
+    subgraph "Временность языковой игры"
+        I[Традиция\nправил] --> J[Актуальное\nупотребление]
+        J --> K[Проективная\nинтерпретация]
+        K --> L[Символическое\nединство времени]
+        L -.-> I
+    end
+    
+    subgraph "Диалектика во времени"
+        M[Тезис:\nНепосредственное] -->|Отрицание| N[Антитезис:\nОпосредование]
+        N -->|Снятие| O[Синтез:\nКонкретное единство]
+        O -->|Новый цикл| P[Временящийся\nсимвол]
+        P -.-> M
+    end
+    
+    B -.-> E
+    C -.-> H
+    C -.-> L
+    D -.-> M
+    D -.-> P
+    
+    Q[Миф как способ\nвременения] --> R[Историчность\nDasein]
+    R --> S[Судьба и\nпредназначение]
+    S --> T[Событие как\nисточник истории]
+    T -.-> Q
+    
+    Q -.-> L
+    R -.-> H
+    S -.-> K
+    T -.-> P
+    
+    U[Конечность\nкак основа] --> V[Бытие-к-смерти]
+    V --> W[Подлинная\nвременность]
+    W --> X[Решимость\nEntschlossenheit]
+    X -.-> U
+    
+    U -.-> E
+    V -.-> G
+    W -.-> H
+    X -.-> K
+    
+    style A fill:#f9d5e5,stroke:#333,stroke-width:3px
+    style E fill:#d5e5f9,stroke:#333,stroke-width:2px
+    style I fill:#e5f9d5,stroke:#333,stroke-width:2px
+    style M fill:#f9e5d5,stroke:#333,stroke-width:2px
+    style Q fill:#e5d5f9,stroke:#333,stroke-width:2px
+    style U fill:#d5f9e5,stroke:#333,stroke-width:2px

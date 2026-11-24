@@ -1,0 +1,448 @@
+/**
+ * Template service for managing Claude prompt templates
+ */
+
+const { defaultLogger } = require('../../../shared/lib/logging/logger');
+const { BadRequestError, NotFoundError } = require('../../../shared/lib/errors/HttpErrors');
+const ClaudeTemplate = require('../models/templateModel');
+const TemplateRepository = require('../repositories/templateRepository');
+
+/**
+ * Service for managing prompt templates
+ */
+class TemplateService {
+  /**
+   * Create a new template service
+   * @param {Object} [dependencies={}] - Service dependencies
+   * @param {Object} [logger=defaultLogger] - Logger instance
+   */
+  constructor(dependencies = {}, logger = defaultLogger) {
+    this.logger = logger;
+    this.templateRepository = dependencies.templateRepository || new TemplateRepository();
+    
+    // Cache for frequently used templates
+    this.templateCache = new Map();
+    this.cacheTTL = 300000; // 5 minutes
+  }
+
+  /**
+   * Get all templates with filtering and pagination
+   * @param {Object} options - Query options
+   * @returns {Promise<Object>} Paginated templates
+   */
+  async getAllTemplates(options = {}) {
+    try {
+      const {
+        page = 1,
+        pageSize = 20,
+        sortBy = 'name',
+        sortOrder = 'asc',
+        templateType,
+        category,
+        isActive,
+        tags,
+        search,
+      } = options;
+      
+      const filters = {};
+      
+      if (templateType) filters.templateType = templateType;
+      if (category) filters.category = category;
+      if (isActive !== undefined) filters.isActive = isActive;
+      if (tags) filters.tags = tags;
+      if (search) filters.search = search;
+      
+      const result = await this.templateRepository.findAll(
+        page,
+        pageSize,
+        sortBy,
+        sortOrder,
+        filters
+      );
+      
+      return {
+        templates: result.items.map(this._formatTemplateForResponse),
+        pagination: {
+          page,
+          pageSize,
+          total: result.total,
+          totalPages: Math.ceil(result.total / pageSize),
+        },
+      };
+    } catch (error) {
+      this.logger.error('Error getting templates', {
+        error: error.message,
+        options,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get a template by ID
+   * @param {string} templateId - Template ID
+   * @returns {Promise<ClaudeTemplate>} Template
+   */
+  async getTemplate(templateId) {
+    try {
+      // Check cache first
+      const cached = this._getCachedTemplate(templateId);
+      if (cached) {
+        return cached;
+      }
+      
+      const template = await this.templateRepository.findById(templateId);
+      
+      if (!template) {
+        throw new NotFoundError(`Template not found: ${templateId}`);
+      }
+      
+      // Cache the template
+      this._cacheTemplate(template);
+      
+      return template;
+    } catch (error) {
+      this.logger.error('Error getting template', {
+        error: error.message,
+        templateId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get templates for a specific query type
+   * @param {string} templateType - Template type
+   * @returns {Promise<Array>} Array of templates
+   */
+  async getTemplatesForType(templateType) {
+    try {
+      const templates = await this.templateRepository.findByType(templateType, {
+        isActive: true,
+        sortBy: 'name',
+      });
+      
+      return templates.map(this._formatTemplateForResponse);
+    } catch (error) {
+      this.logger.error('Error getting templates for type', {
+        error: error.message,
+        templateType,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new template
+   * @param {Object} templateData - Template data
+   * @returns {Promise<ClaudeTemplate>} Created template
+   */
+  async createTemplate(templateData) {
+    try {
+      const template = new ClaudeTemplate(templateData);
+      
+      // Validate template
+      template.validate();
+      
+      // Check if name already exists
+      const existing = await this.templateRepository.findByName(template.name);
+      if (existing) {
+        throw new BadRequestError(`Template with name "${template.name}" already exists`);
+      }
+      
+      const created = await this.templateRepository.create(template);
+      
+      this.logger.info('Template created', {
+        templateId: created.templateId,
+        name: created.name,
+      });
+      
+      return created;
+    } catch (error) {
+      this.logger.error('Error creating template', {
+        error: error.message,
+        templateData,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Update a template
+   * @param {string} templateId - Template ID
+   * @param {Object} updates - Update data
+   * @returns {Promise<ClaudeTemplate>} Updated template
+   */
+  async updateTemplate(templateId, updates) {
+    try {
+      // Ensure template exists
+      const existing = await this.getTemplate(templateId);
+      
+      // Don't allow updating certain fields
+      delete updates.templateId;
+      delete updates.createdAt;
+      delete updates.createdBy;
+      
+      // If updating name, check for duplicates
+      if (updates.name && updates.name !== existing.name) {
+        const duplicate = await this.templateRepository.findByName(updates.name);
+        if (duplicate) {
+          throw new BadRequestError(`Template with name "${updates.name}" already exists`);
+        }
+      }
+      
+      const updated = await this.templateRepository.update(templateId, updates);
+      
+      // Invalidate cache
+      this._invalidateCachedTemplate(templateId);
+      
+      this.logger.info('Template updated', {
+        templateId,
+        updates,
+      });
+      
+      return updated;
+    } catch (error) {
+      this.logger.error('Error updating template', {
+        error: error.message,
+        templateId,
+        updates,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a template
+   * @param {string} templateId - Template ID
+   * @returns {Promise<boolean>} Whether template was deleted
+   */
+  async deleteTemplate(templateId) {
+    try {
+      const result = await this.templateRepository.delete(templateId);
+      
+      if (!result) {
+        throw new NotFoundError(`Template not found: ${templateId}`);
+      }
+      
+      // Invalidate cache
+      this._invalidateCachedTemplate(templateId);
+      
+      this.logger.info('Template deleted', { templateId });
+      
+      return true;
+    } catch (error) {
+      this.logger.error('Error deleting template', {
+        error: error.message,
+        templateId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Render a template with data
+   * @param {string} templateId - Template ID
+   * @param {Object} data - Data to render template with
+   * @returns {Promise<string>} Rendered template content
+   */
+  async renderTemplate(templateId, data) {
+    try {
+      const template = await this.getTemplate(templateId);
+      
+      // Validate data against template parameters
+      const validation = template.validateData(data);
+      if (!validation.valid) {
+        throw new BadRequestError(
+          `Template data validation failed: ${validation.errors.join(', ')}`
+        );
+      }
+      
+      // Render the template
+      const rendered = template.render(data);
+      
+      return rendered;
+    } catch (error) {
+      this.logger.error('Error rendering template', {
+        error: error.message,
+        templateId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Clone a template
+   * @param {string} templateId - Template ID to clone
+   * @param {Object} modifications - Modifications to apply
+   * @returns {Promise<ClaudeTemplate>} Cloned template
+   */
+  async cloneTemplate(templateId, modifications = {}) {
+    try {
+      const cloned = await this.templateRepository.clone(templateId, modifications);
+      
+      this.logger.info('Template cloned', {
+        originalId: templateId,
+        clonedId: cloned.templateId,
+      });
+      
+      return cloned;
+    } catch (error) {
+      this.logger.error('Error cloning template', {
+        error: error.message,
+        templateId,
+        modifications,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Activate a template
+   * @param {string} templateId - Template ID
+   * @returns {Promise<ClaudeTemplate>} Activated template
+   */
+  async activateTemplate(templateId) {
+    try {
+      const template = await this.templateRepository.activate(templateId);
+      
+      if (!template) {
+        throw new NotFoundError(`Template not found: ${templateId}`);
+      }
+      
+      // Invalidate cache
+      this._invalidateCachedTemplate(templateId);
+      
+      this.logger.info('Template activated', { templateId });
+      
+      return template;
+    } catch (error) {
+      this.logger.error('Error activating template', {
+        error: error.message,
+        templateId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Deactivate a template
+   * @param {string} templateId - Template ID
+   * @returns {Promise<ClaudeTemplate>} Deactivated template
+   */
+  async deactivateTemplate(templateId) {
+    try {
+      const template = await this.templateRepository.deactivate(templateId);
+      
+      if (!template) {
+        throw new NotFoundError(`Template not found: ${templateId}`);
+      }
+      
+      // Invalidate cache
+      this._invalidateCachedTemplate(templateId);
+      
+      this.logger.info('Template deactivated', { templateId });
+      
+      return template;
+    } catch (error) {
+      this.logger.error('Error deactivating template', {
+        error: error.message,
+        templateId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get template statistics
+   * @returns {Promise<Object>} Template statistics
+   */
+  async getStatistics() {
+    try {
+      const stats = await this.templateRepository.getStatistics();
+      
+      return stats;
+    } catch (error) {
+      this.logger.error('Error getting template statistics', {
+        error: error.message,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Format template for response
+   * @param {ClaudeTemplate} template - Template to format
+   * @returns {Object} Formatted template
+   * @private
+   */
+  _formatTemplateForResponse(template) {
+    return {
+      templateId: template.templateId,
+      name: template.name,
+      templateType: template.templateType,
+      description: template.description,
+      category: template.category,
+      tags: template.tags,
+      isActive: template.isActive,
+      version: template.version,
+      parameters: template.parameters,
+      createdAt: template.createdAt,
+      updatedAt: template.updatedAt,
+    };
+  }
+
+  /**
+   * Get cached template
+   * @param {string} templateId - Template ID
+   * @returns {ClaudeTemplate|null} Cached template or null
+   * @private
+   */
+  _getCachedTemplate(templateId) {
+    const cached = this.templateCache.get(templateId);
+    
+    if (cached && cached.expires > Date.now()) {
+      return cached.template;
+    }
+    
+    if (cached) {
+      this.templateCache.delete(templateId);
+    }
+    
+    return null;
+  }
+
+  /**
+   * Cache a template
+   * @param {ClaudeTemplate} template - Template to cache
+   * @private
+   */
+  _cacheTemplate(template) {
+    this.templateCache.set(template.templateId, {
+      template,
+      expires: Date.now() + this.cacheTTL,
+    });
+  }
+
+  /**
+   * Invalidate cached template
+   * @param {string} templateId - Template ID
+   * @private
+   */
+  _invalidateCachedTemplate(templateId) {
+    this.templateCache.delete(templateId);
+  }
+}
+
+module.exports = TemplateService;

@@ -1,0 +1,21 @@
+dialogue-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── mongo-connection.js
+│   │   └── postgres-connection.js
+│   ├── models/
+│   │   ├── Dialogue.js
+│   │   └── DialogueParticipant.js
+│   ├── controllers/
+│   │   └── dialogue.controller.js
+│   ├── services/
+│   │   └── dialogue.service.js
+│   └── routes/
+│       └── dialogue.routes.js
+└── tests/

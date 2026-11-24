@@ -1,0 +1,252 @@
+/**
+ * Model for Claude prompt templates
+ */
+
+const { v4: uuidv4 } = require('uuid');
+
+/**
+ * Claude template model
+ */
+class ClaudeTemplate {
+  /**
+   * Create a new Claude template
+   * @param {Object} data - Template data
+   * @param {string} [data.templateId] - Unique identifier for the template
+   * @param {string} data.name - Template name
+   * @param {string} data.templateType - Type of template (matching query types)
+   * @param {string} data.content - Template content with placeholders
+   * @param {string} [data.systemPrompt] - System prompt for this template
+   * @param {Object} [data.parameters] - Template parameters and their descriptions
+   * @param {Object} [data.defaultValues] - Default values for parameters
+   * @param {Object} [data.configuration] - Template-specific configuration
+   * @param {string} [data.description] - Template description
+   * @param {string} [data.category] - Template category for organization
+   * @param {Array<string>} [data.tags] - Tags for template discovery
+   * @param {boolean} [data.isActive] - Whether the template is active
+   * @param {string} [data.version] - Template version
+   * @param {string} [data.createdBy] - ID of the user who created the template
+   * @param {Date} [data.createdAt] - Creation timestamp
+   * @param {Date} [data.updatedAt] - Last update timestamp
+   * @param {Object} [data.metadata] - Additional metadata
+   */
+  constructor(data) {
+    this.templateId = data.templateId || uuidv4();
+    this.name = data.name;
+    this.templateType = data.templateType;
+    this.content = data.content;
+    this.systemPrompt = data.systemPrompt || null;
+    this.parameters = data.parameters || {};
+    this.defaultValues = data.defaultValues || {};
+    this.configuration = data.configuration || {};
+    this.description = data.description || '';
+    this.category = data.category || 'general';
+    this.tags = data.tags || [];
+    this.isActive = data.isActive !== false;
+    this.version = data.version || '1.0.0';
+    this.createdBy = data.createdBy || null;
+    this.createdAt = data.createdAt || new Date();
+    this.updatedAt = data.updatedAt || new Date();
+    this.metadata = data.metadata || {};
+  }
+  
+  /**
+   * Convert to database format
+   * @returns {Object} Database representation
+   */
+  toDatabase() {
+    return {
+      template_id: this.templateId,
+      name: this.name,
+      template_type: this.templateType,
+      content: this.content,
+      system_prompt: this.systemPrompt,
+      parameters: this.parameters,
+      default_values: this.defaultValues,
+      configuration: this.configuration,
+      description: this.description,
+      category: this.category,
+      tags: this.tags,
+      is_active: this.isActive,
+      version: this.version,
+      created_by: this.createdBy,
+      created_at: this.createdAt,
+      updated_at: this.updatedAt,
+      metadata: this.metadata,
+    };
+  }
+  
+  /**
+   * Create from database format
+   * @param {Object} dbData - Database data
+   * @returns {ClaudeTemplate} ClaudeTemplate instance
+   */
+  static fromDatabase(dbData) {
+    return new ClaudeTemplate({
+      templateId: dbData.template_id,
+      name: dbData.name,
+      templateType: dbData.template_type,
+      content: dbData.content,
+      systemPrompt: dbData.system_prompt,
+      parameters: dbData.parameters,
+      defaultValues: dbData.default_values,
+      configuration: dbData.configuration,
+      description: dbData.description,
+      category: dbData.category,
+      tags: dbData.tags,
+      isActive: dbData.is_active,
+      version: dbData.version,
+      createdBy: dbData.created_by,
+      createdAt: dbData.created_at,
+      updatedAt: dbData.updated_at,
+      metadata: dbData.metadata,
+    });
+  }
+  
+  /**
+   * Render template with given data
+   * @param {Object} data - Data to fill template placeholders
+   * @returns {string} Rendered template
+   */
+  render(data) {
+    let rendered = this.content;
+    
+    // Apply default values first
+    const mergedData = { ...this.defaultValues, ...data };
+    
+    // Replace placeholders with actual values
+    Object.entries(mergedData).forEach(([key, value]) => {
+      const placeholder = new RegExp(`{${key}}`, 'g');
+      rendered = rendered.replace(placeholder, value);
+    });
+    
+    // Check for missing required parameters
+    const missingParams = this.getMissingParameters(rendered);
+    if (missingParams.length > 0) {
+      throw new Error(`Missing required parameters: ${missingParams.join(', ')}`);
+    }
+    
+    return rendered;
+  }
+  
+  /**
+   * Get list of missing parameters in rendered template
+   * @param {string} rendered - Rendered template content
+   * @returns {Array<string>} Missing parameter names
+   */
+  getMissingParameters(rendered) {
+    const placeholderRegex = /{([^}]+)}/g;
+    const matches = rendered.match(placeholderRegex) || [];
+    return matches.map(match => match.slice(1, -1));
+  }
+  
+  /**
+   * Validate template data against parameters
+   * @param {Object} data - Data to validate
+   * @returns {Object} Validation result { valid: boolean, errors: string[] }
+   */
+  validateData(data) {
+    const errors = [];
+    
+    // Check for required parameters
+    Object.entries(this.parameters).forEach(([param, config]) => {
+      if (config.required && !(param in data) && !(param in this.defaultValues)) {
+        errors.push(`Missing required parameter: ${param}`);
+      }
+      
+      // Type validation if specified
+      if (param in data && config.type) {
+        const value = data[param];
+        const type = typeof value;
+        
+        if (config.type === 'array' && !Array.isArray(value)) {
+          errors.push(`Parameter ${param} must be an array`);
+        } else if (config.type !== 'array' && type !== config.type) {
+          errors.push(`Parameter ${param} must be of type ${config.type}, got ${type}`);
+        }
+      }
+    });
+    
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
+  }
+  
+  /**
+   * Get template category enum values
+   * @returns {Array<string>} Category values
+   */
+  static getCategories() {
+    return [
+      'general',
+      'graph',
+      'thesis',
+      'synthesis',
+      'analysis',
+      'historical',
+      'practical',
+      'dialogue',
+      'evolution',
+    ];
+  }
+  
+  /**
+   * Validate the template
+   * @throws {Error} If validation fails
+   */
+  validate() {
+    if (!this.name) {
+      throw new Error('Template name is required');
+    }
+    
+    if (!this.templateType) {
+      throw new Error('Template type is required');
+    }
+    
+    if (!this.content) {
+      throw new Error('Template content is required');
+    }
+    
+    if (this.category && !ClaudeTemplate.getCategories().includes(this.category)) {
+      throw new Error(`Invalid category: ${this.category}`);
+    }
+    
+    // Validate parameters structure
+    if (this.parameters && typeof this.parameters !== 'object') {
+      throw new Error('Parameters must be an object');
+    }
+    
+    // Validate default values match parameter types
+    if (this.defaultValues && typeof this.defaultValues !== 'object') {
+      throw new Error('Default values must be an object');
+    }
+  }
+  
+  /**
+   * Clone template with modifications
+   * @param {Object} modifications - Properties to modify
+   * @returns {ClaudeTemplate} New template instance
+   */
+  clone(modifications = {}) {
+    const cloneData = {
+      ...this.toDatabase(),
+      ...modifications,
+      template_id: uuidv4(),
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+    
+    return ClaudeTemplate.fromDatabase(cloneData);
+  }
+  
+  /**
+   * Update template
+   * @param {Object} updates - Properties to update
+   */
+  update(updates) {
+    Object.assign(this, updates);
+    this.updatedAt = new Date();
+  }
+}
+
+module.exports = ClaudeTemplate;

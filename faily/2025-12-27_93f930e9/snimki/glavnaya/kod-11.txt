@@ -1,0 +1,20 @@
+historical-context-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── mongo-connection.js
+│   │   └── postgres-connection.js
+│   ├── models/
+│   │   └── HistoricalContext.js
+│   ├── controllers/
+│   │   └── historical.controller.js
+│   ├── services/
+│   │   └── historical.service.js
+│   └── routes/
+│       └── historical.routes.js
+└── tests/

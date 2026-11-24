@@ -1,0 +1,48 @@
+
+diff --git a/word-page.xq b/word-page.xq
+index 12345678..abcdefg 100644
+--- a/word-page.xq
++++ b/word-page.xq
+@@ -47,6 +47,24 @@ declare function local:print-ref-set($refs as element()*, $ref-set as element())
+     return ($item/node(), if ($item/following-sibling::*) then text {'; '} else ())
+ ) };
+ 
++declare function local:get-translated-form-variant($form as xs:string?, $variant as xs:string?) as xs:string {
++    let $combined := string-join(
++        (
++            if ($form) then c:print-inflect-value($form) else (),
++            if ($variant) then c:print-inflect-value($variant) else ()
++        ),
++        ' '
++    )
++    return normalize-space($combined)
++};
++
++declare function local:normalize-and-translate-with-forms($mark as xs:string?, $form as xs:string?, $variant as xs:string?) as xs:string {
++    let $translated-form := if ($form) then c:print-inflect-value($form) else ()
++    let $translated-variant := if ($variant) then c:print-inflect-value($variant) else ()
++    return normalize-space(concat($mark, ' ', $translated-form, ' ', $translated-variant))
++};
++
++
+ declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {
+     <print-word> { (
+         if ($show-lang) then attribute show-lang {'y'} else (),
+@@ -129,7 +147,13 @@ declare function local:print-element-in($word as element()?, $pubmode) as node()
+ declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {
+     let $inflect-list := tokenize($inflections, ' ')
+     let $word := $ref/ancestor-or-self::word[1]
+-    for $inflection at $pos in $inflect-list
++    for $inflection at $pos in $inflect-list
++    let $translated-inflection := c:print-inflect-value($inflection)
++    let $inflect-word := xdb:key($word, 'inflect-table', $inflection)
++        [not(@speech) or @speech=c:get-speech($word)]/
++        ..[c:get-lang(.) = c:get-lang($word)]
++    let $link := if ($inflect-word) then c:to-word-link($inflect-word) else () 
++    return
++    if ($inflect-word)
++    then (<a href="{$link}">{$translated-inflection}</a>, if ($pos = count($inflect-list)) then () else text {' '})
++    else text { ($translated-inflection), if ($pos = count($inflect-list)) then () else ' ' }
++};
++
++declare function local:print-inflections_old($ref as

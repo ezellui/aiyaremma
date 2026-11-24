@@ -1,0 +1,899 @@
+--- предыдущая/number-theory-axiom-explorer.txt
++++ текущая/number-theory-axiom-explorer.txt
+@@ -1,256 +1,366 @@
+ import React, { useState, useEffect } from 'react';
+ 
+-const NumberTheoryAxiomExplorer = () => {
+-  // Состояния для отслеживания выбранных аксиом
++const AbstractNumberTheoryExplorer = () => {
++  // Состояние для выбранных аксиом
+   const [selectedAxioms, setSelectedAxioms] = useState({
+-    peano: true,
+-    closure: false,
+-    commutativity: false,
+-    associativity: false,
+-    distributivity: false,
+-    identity: false,
+-    inverse: false,
+-    wellOrdering: false,
+-    completeness: false,
+-    leastUpperBound: false
++    // Алгебраические аксиомы
++    closure: false,               // Замкнутость
++    commutativity: false,         // Коммутативность
++    associativity: false,         // Ассоциативность
++    distributivity: false,        // Дистрибутивность
++    identity: false,              // Существование нейтральных элементов
++    inverse: false,               // Существование обратных элементов
++    
++    // Аксиомы порядка
++    totality: false,              // Тотальность порядка
++    antisymmetry: false,          // Антисимметричность
++    transitivity: false,          // Транзитивность
++    compatibility: false,         // Совместимость с операциями
++    
++    // Аксиомы полноты и непрерывности
++    archimedean: false,           // Архимедовость
++    leastUpperBound: false,       // Аксиома точной верхней грани
++    
++    // Аксиомы дискретности и индукции
++    discreteness: false,          // Дискретность
++    induction: false,             // Принцип математической индукции
++    
++    // Специальные аксиомы
++    algebraicClosedness: false,   // Алгебраическая замкнутость
++    cardinalProperty: false       // Свойства мощности
+   });
+ 
+-  // Состояние для отслеживания выбранной числовой системы
+-  const [numberSystem, setNumberSystem] = useState('natural');
++  // Группировка аксиом по категориям для удобства отображения
++  const axiomCategories = [
++    {
++      title: "Алгебраические аксиомы",
++      axioms: ["closure", "commutativity", "associativity", "distributivity", "identity", "inverse"]
++    },
++    {
++      title: "Аксиомы порядка",
++      axioms: ["totality", "antisymmetry", "transitivity", "compatibility"]
++    },
++    {
++      title: "Аксиомы полноты и непрерывности",
++      axioms: ["archimedean", "leastUpperBound"]
++    },
++    {
++      title: "Аксиомы дискретности и индукции",
++      axioms: ["discreteness", "induction"]
++    },
++    {
++      title: "Специальные аксиомы",
++      axioms: ["algebraicClosedness", "cardinalProperty"]
++    }
++  ];
+ 
+   // Определения аксиом
+   const axiomDefinitions = {
+-    peano: 'Аксиомы Пеано: 1) 0 — натуральное число; 2) У каждого натурального числа есть единственный последователь; 3) 0 не является последователем никакого натурального числа; 4) Разные натуральные числа имеют разных последователей; 5) Если некоторое множество содержит 0 и содержит последователя любого своего элемента, то это множество содержит все натуральные числа (принцип математической индукции).',
+-    closure: 'Замкнутость: Для любых двух чисел a и b из нашего множества, их сумма и произведение также принадлежат этому множеству.',
+-    commutativity: 'Коммутативность: Для любых чисел a и b: a + b = b + a и a × b = b × a.',
+-    associativity: 'Ассоциативность: Для любых чисел a, b и c: (a + b) + c = a + (b + c) и (a × b) × c = a × (b × c).',
+-    distributivity: 'Дистрибутивность: Для любых чисел a, b и c: a × (b + c) = (a × b) + (a × c).',
+-    identity: 'Существование нейтральных элементов: Существует число 0, такое что a + 0 = a для любого числа a. Существует число 1, такое что a × 1 = a для любого числа a.',
+-    inverse: 'Существование обратных элементов: Для каждого числа a существует число -a такое, что a + (-a) = 0. Для каждого ненулевого числа a существует число 1/a такое, что a × (1/a) = 1.',
+-    wellOrdering: 'Принцип полной индукции: Любое непустое подмножество натуральных чисел имеет наименьший элемент.',
+-    completeness: 'Полнота: Любая непустая ограниченная сверху последовательность имеет точную верхнюю грань.',
+-    leastUpperBound: 'Аксиома наименьшей верхней грани: Всякое непустое подмножество чисел, ограниченное сверху, имеет точную верхнюю грань.'
+-  };
+-
+-  // Числовые системы и их требуемые аксиомы
+-  const numberSystems = {
+-    natural: {
+-      name: 'Натуральные числа (ℕ)',
+-      requiredAxioms: ['peano', 'wellOrdering'],
+-      description: 'Натуральные числа (1, 2, 3, ...) являются базовой числовой системой, построенной на аксиомах Пеано.',
+-      operations: ['сложение', 'умножение'],
++    // Алгебраические аксиомы
++    closure: "Замкнутость: Для любых элементов a и b из множества, результат операции над ними (a+b, a×b) также принадлежит этому множеству.",
++    commutativity: "Коммутативность: Для любых элементов a и b, a+b = b+a и a×b = b×a.",
++    associativity: "Ассоциативность: Для любых элементов a, b и c, (a+b)+c = a+(b+c) и (a×b)×c = a×(b×c).",
++    distributivity: "Дистрибутивность: Для любых элементов a, b и c, a×(b+c) = (a×b)+(a×c).",
++    identity: "Существование нейтральных элементов: Существуют элементы 0 и 1, такие что a+0 = a и a×1 = a для любого элемента a.",
++    inverse: "Существование обратных элементов: Для каждого элемента a существует -a такой, что a+(-a) = 0. Для каждого ненулевого элемента a существует 1/a такой, что a×(1/a) = 1.",
++    
++    // Аксиомы порядка
++    totality: "Тотальность порядка: Для любых двух элементов a и b выполняется ровно одно из трёх: a < b, a = b или a > b.",
++    antisymmetry: "Антисимметричность: Если a ≤ b и b ≤ a, то a = b.",
++    transitivity: "Транзитивность: Если a ≤ b и b ≤ c, то a ≤ c.",
++    compatibility: "Совместимость с операциями: Если a ≤ b, то a+c ≤ b+c и, при c > 0, a×c ≤ b×c.",
++    
++    // Аксиомы полноты и непрерывности
++    archimedean: "Архимедовость: Для любых положительных a и b существует натуральное число n такое, что n×a > b.",
++    leastUpperBound: "Аксиома точной верхней грани: Всякое непустое ограниченное сверху подмножество имеет точную верхнюю грань.",
++    
++    // Аксиомы дискретности и индукции
++    discreteness: "Дискретность: Между любым элементом и его непосредственным последователем нет других элементов множества.",
++    induction: "Принцип математической индукции: Если множество содержит 0 и с каждым элементом n содержит n+1, то оно содержит все натуральные числа.",
++    
++    // Специальные аксиомы
++    algebraicClosedness: "Алгебраическая замкнутость: Любое полиномиальное уравнение с коэффициентами из множества имеет решение в этом множестве.",
++    cardinalProperty: "Свойства мощности: Множество счётно или имеет мощность континуума."
++  };
++
++  // Определение структур и множеств, возникающих при различных наборах аксиом
++  const structures = [
++    {
++      name: "Полугруппа",
++      requiredAxioms: ["closure", "associativity"],
++      description: "Множество с ассоциативной операцией, замкнутой на этом множестве."
++    },
++    {
++      name: "Моноид",
++      requiredAxioms: ["closure", "associativity", "identity"],
++      description: "Полугруппа с нейтральным элементом."
++    },
++    {
++      name: "Группа",
++      requiredAxioms: ["closure", "associativity", "identity", "inverse"],
++      description: "Моноид, в котором каждый элемент имеет обратный."
++    },
++    {
++      name: "Абелева группа",
++      requiredAxioms: ["closure", "associativity", "commutativity", "identity", "inverse"],
++      description: "Группа с коммутативной операцией."
++    },
++    {
++      name: "Кольцо",
++      requiredAxioms: ["closure", "associativity", "commutativity", "distributivity", "identity"],
++      description: "Абелева группа по сложению с дополнительной операцией умножения, обладающей дистрибутивностью."
++    },
++    {
++      name: "Поле",
++      requiredAxioms: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse"],
++      description: "Кольцо, в котором каждый ненулевой элемент имеет обратный по умножению."
++    },
++    {
++      name: "Упорядоченное множество",
++      requiredAxioms: ["antisymmetry", "transitivity"],
++      description: "Множество с отношением порядка, удовлетворяющим условиям антисимметричности и транзитивности."
++    },
++    {
++      name: "Линейно упорядоченное множество",
++      requiredAxioms: ["antisymmetry", "transitivity", "totality"],
++      description: "Упорядоченное множество, в котором любые два элемента сравнимы."
++    },
++    {
++      name: "Упорядоченное поле",
++      requiredAxioms: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse", "antisymmetry", "transitivity", "totality", "compatibility"],
++      description: "Поле с линейным порядком, совместимым с операциями."
++    },
++    {
++      name: "Полное упорядоченное поле",
++      requiredAxioms: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse", "antisymmetry", "transitivity", "totality", "compatibility", "leastUpperBound"],
++      description: "Упорядоченное поле, удовлетворяющее аксиоме точной верхней грани."
++    },
++    {
++      name: "Алгебраически замкнутое поле",
++      requiredAxioms: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse", "algebraicClosedness"],
++      description: "Поле, в котором любое полиномиальное уравнение имеет решение."
++    }
++  ];
++
++  // Определение числовых множеств, которые могут возникать при различных наборах аксиом
++  const numberSystems = [
++    {
++      name: "Натуральные числа (ℕ)",
++      compatibleWith: ["discreteness", "induction"],
++      incompatibleWith: ["inverse", "algebraicClosedness"],
++      description: "Множество {1, 2, 3, ...}, элементарная система счисления.",
+       properties: [
+-        'Замкнутость относительно сложения и умножения',
+-        'Дискретность',
+-        'Принцип математической индукции применим'
++        "Дискретность",
++        "Возможность применения индукции",
++        "Не образуют группу (нет обратных по сложению)",
++        "Не образуют поле (нет обратных по умножению)"
+       ]
+     },
+-    integer: {
+-      name: 'Целые числа (ℤ)',
+-      requiredAxioms: ['peano', 'closure', 'commutativity', 'associativity', 'identity', 'inverse'],
+-      description: 'Целые числа (..., -2, -1, 0, 1, 2, ...) расширяют натуральные числа, добавляя отрицательные числа.',
+-      operations: ['сложение', 'вычитание', 'умножение'],
++    {
++      name: "Целые числа (ℤ)",
++      compatibleWith: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse", "discreteness", "induction", "totality", "antisymmetry", "transitivity", "compatibility"],
++      incompatibleWith: ["leastUpperBound", "algebraicClosedness"],
++      description: "Множество {..., -2, -1, 0, 1, 2, ...}, расширение натуральных чисел, включающее ноль и отрицательные числа.",
+       properties: [
+-        'Замкнутость относительно сложения, вычитания и умножения',
+-        'Не замкнуты относительно деления',
+-        'Образуют кольцо с единицей'
++        "Образуют кольцо с единицей",
++        "Абелева группа по сложению",
++        "Не образуют поле (нет обратных по умножению)",
++        "Дискретное линейно упорядоченное множество"
+       ]
+     },
+-    rational: {
+-      name: 'Рациональные числа (ℚ)',
+-      requiredAxioms: ['closure', 'commutativity', 'associativity', 'distributivity', 'identity', 'inverse'],
+-      description: 'Рациональные числа (дроби вида p/q, где p и q - целые, q≠0) расширяют целые числа, позволяя деление.',
+-      operations: ['сложение', 'вычитание', 'умножение', 'деление'],
++    {
++      name: "Рациональные числа (ℚ)",
++      compatibleWith: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse", "totality", "antisymmetry", "transitivity", "compatibility", "archimedean"],
++      incompatibleWith: ["leastUpperBound", "discreteness", "algebraicClosedness"],
++      description: "Числа, представимые в виде дроби p/q, где p и q - целые числа, q≠0.",
+       properties: [
+-        'Замкнутость относительно четырех арифметических операций (кроме деления на ноль)',
+-        'Плотность: между любыми двумя рациональными числами есть еще одно рациональное число',
+-        'Образуют поле'
++        "Образуют поле",
++        "Плотное множество (между любыми двумя различными рациональными числами существует еще одно рациональное)",
++        "Не являются полными (существуют 'пробелы', такие как √2)"
+       ]
+     },
+-    real: {
+-      name: 'Действительные числа (ℝ)',
+-      requiredAxioms: ['closure', 'commutativity', 'associativity', 'distributivity', 'identity', 'inverse', 'completeness', 'leastUpperBound'],
+-      description: 'Действительные числа включают рациональные и иррациональные числа, заполняя все точки числовой прямой.',
+-      operations: ['сложение', 'вычитание', 'умножение', 'деление', 'пределы', 'интегралы'],
++    {
++      name: "Действительные числа (ℝ)",
++      compatibleWith: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse", "totality", "antisymmetry", "transitivity", "compatibility", "archimedean", "leastUpperBound"],
++      incompatibleWith: ["discreteness", "algebraicClosedness"],
++      description: "Полное расширение рациональных чисел, включающее иррациональные числа.",
+       properties: [
+-        'Полнота: любая ограниченная сверху последовательность имеет супремум',
+-        'Непрерывность числовой прямой',
+-        'Существование иррациональных чисел (π, e, √2, ...)',
+-        'Образуют полное упорядоченное поле'
++        "Образуют полное упорядоченное поле",
++        "Континуальное множество",
++        "Включают алгебраические и трансцендентные числа"
+       ]
+     },
+-    complex: {
+-      name: 'Комплексные числа (ℂ)',
+-      requiredAxioms: ['closure', 'commutativity', 'associativity', 'distributivity', 'identity', 'inverse'],
+-      description: 'Комплексные числа (a + bi, где a и b - действительные числа, i² = -1) расширяют действительные числа, добавляя мнимую единицу i.',
+-      operations: ['сложение', 'вычитание', 'умножение', 'деление', 'возведение в степень'],
++    {
++      name: "Комплексные числа (ℂ)",
++      compatibleWith: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse", "algebraicClosedness"],
++      incompatibleWith: ["totality", "antisymmetry", "transitivity", "compatibility", "archimedean", "leastUpperBound", "discreteness", "induction"],
++      description: "Числа вида a + bi, где a и b - действительные числа, i² = -1.",
+       properties: [
+-        'Алгебраическая замкнутость: любое полиномиальное уравнение имеет решение',
+-        'Нет порядка (не определены "больше" и "меньше")',
+-        'Существование корней из отрицательных чисел',
+-        'Образуют алгебраически замкнутое поле'
++        "Образуют алгебраически замкнутое поле",
++        "Не могут быть упорядочены",
++        "Любое полиномиальное уравнение имеет решение"
+       ]
+-    }
+-  };
+-
+-  // Состояние для отображения текущих выводов
++    },
++    {
++      name: "p-адические числа (ℚp)",
++      compatibleWith: ["closure", "associativity", "commutativity", "distributivity", "identity", "inverse"],
++      incompatibleWith: ["totality", "archimedean", "discreteness"],
++      description: "Пополнение рациональных чисел относительно p-адической нормы.",
++      properties: [
++        "Образуют полное поле с неархимедовой метрикой",
++        "Имеют иерархическую структуру",
++        "Используются в теории чисел и алгебраической геометрии"
++      ]
++    }
++  ];
++
++  // Состояние для отображения выводов
+   const [conclusions, setConclusions] = useState([]);
+-
+-  // Эффект для обновления выводов при изменении выбранных аксиом
++  
++  // Состояние для отображения совместимых структур
++  const [compatibleStructures, setCompatibleStructures] = useState([]);
++  
++  // Состояние для отображения совместимых числовых систем
++  const [compatibleSystems, setCompatibleSystems] = useState([]);
++
++  // Обновление выводов при изменении выбранных аксиом
+   useEffect(() => {
+     updateConclusions();
+-  }, [selectedAxioms, numberSystem]);
+-
+-  // Функция для обновления выводов
++  }, [selectedAxioms]);
++
++  // Функция обновления выводов
+   const updateConclusions = () => {
+-    let newConclusions = [];
+-    
+-    // Проверка совместимости выбранных аксиом
+-    const incompatibilities = checkIncompatibilities();
+-    if (incompatibilities.length > 0) {
+-      setConclusions(incompatibilities);
+-      return;
+-    }
+-    
+-    // Базовые выводы в зависимости от выбранных аксиом
+-    if (selectedAxioms.peano) {
+-      newConclusions.push("Существуют натуральные числа с операцией следования.");
+-      newConclusions.push("Принцип математической индукции применим.");
+-    }
+-    
+-    if (selectedAxioms.closure) {
+-      newConclusions.push("Множество замкнуто относительно операций сложения и умножения.");
+-    }
+-    
+-    if (selectedAxioms.commutativity) {
+-      newConclusions.push("Сложение и умножение коммутативны (порядок операндов не важен).");
+-    }
+-    
+-    if (selectedAxioms.associativity) {
+-      newConclusions.push("Сложение и умножение ассоциативны (порядок группировки не важен).");
+-    }
+-    
+-    if (selectedAxioms.identity) {
+-      newConclusions.push("Существуют нейтральные элементы 0 и 1 для сложения и умножения.");
+-    }
+-    
+-    if (selectedAxioms.distributivity) {
+-      newConclusions.push("Умножение дистрибутивно относительно сложения.");
+-    }
+-    
+-    if (selectedAxioms.inverse) {
+-      newConclusions.push("Для каждого элемента существует обратный по сложению.");
+-      newConclusions.push("Для каждого ненулевого элемента существует обратный по умножению.");
+-    }
+-    
+-    if (selectedAxioms.wellOrdering) {
+-      newConclusions.push("Множество обладает свойством полной индукции.");
+-    }
+-    
+-    if (selectedAxioms.completeness || selectedAxioms.leastUpperBound) {
+-      newConclusions.push("Множество полно - не содержит 'пробелов' на числовой прямой.");
+-    }
+-    
+-    // Определение типа числовой системы на основе выбранных аксиом
+-    let identifiedSystem = determineNumberSystem();
+-    if (identifiedSystem) {
+-      newConclusions.push(`Выбранные аксиомы характеризуют ${identifiedSystem}.`);
+-    }
+-    
+-    // Проверка на теоремы, которые следуют из выбранных аксиом
+-    if (selectedAxioms.peano && selectedAxioms.commutativity && selectedAxioms.associativity) {
+-      newConclusions.push("Теорема: Сложение и умножение натуральных чисел коммутативны и ассоциативны.");
+-    }
+-    
+-    if (selectedAxioms.peano && selectedAxioms.wellOrdering) {
+-      newConclusions.push("Теорема: Любое непустое подмножество натуральных чисел имеет наименьший элемент.");
+-    }
+-    
+-    if (selectedAxioms.closure && selectedAxioms.commutativity && selectedAxioms.associativity && 
++    const newConclusions = [];
++    
++    // Проверка алгебраических свойств
++    if (selectedAxioms.closure && selectedAxioms.associativity) {
++      newConclusions.push("Структура является полугруппой.");
++    }
++    
++    if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.identity) {
++      newConclusions.push("Структура является моноидом.");
++    }
++    
++    if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.identity && selectedAxioms.inverse) {
++      newConclusions.push("Структура является группой.");
++      
++      if (selectedAxioms.commutativity) {
++        newConclusions.push("Структура является абелевой группой.");
++      }
++    }
++    
++    if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.commutativity && 
++        selectedAxioms.distributivity && selectedAxioms.identity) {
++      newConclusions.push("Структура является кольцом.");
++    }
++    
++    if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.commutativity && 
+         selectedAxioms.distributivity && selectedAxioms.identity && selectedAxioms.inverse) {
+-      newConclusions.push("Теорема: Структура является полем.");
+-    }
+-    
+-    if (selectedAxioms.completeness && selectedAxioms.closure && selectedAxioms.commutativity && 
+-        selectedAxioms.associativity && selectedAxioms.distributivity && selectedAxioms.identity && 
+-        selectedAxioms.inverse) {
+-      newConclusions.push("Теорема: Структура является полным полем (таким как действительные числа).");
+-    }
+-    
+-    // Добавление сведений о выбранной числовой системе
+-    addNumberSystemInfo(newConclusions);
++      newConclusions.push("Структура является полем.");
++    }
++    
++    // Проверка свойств порядка
++    if (selectedAxioms.antisymmetry && selectedAxioms.transitivity) {
++      newConclusions.push("Структура является частично упорядоченным множеством.");
++      
++      if (selectedAxioms.totality) {
++        newConclusions.push("Структура является линейно упорядоченным множеством.");
++      }
++    }
++    
++    // Проверка структур с порядком и алгебраическими свойствами
++    if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.commutativity && 
++        selectedAxioms.distributivity && selectedAxioms.identity && selectedAxioms.inverse && 
++        selectedAxioms.antisymmetry && selectedAxioms.transitivity && selectedAxioms.totality && 
++        selectedAxioms.compatibility) {
++      newConclusions.push("Структура является упорядоченным полем.");
++      
++      if (selectedAxioms.leastUpperBound) {
++        newConclusions.push("Структура является полным упорядоченным полем.");
++      }
++    }
++    
++    // Проверка свойств полноты и непрерывности
++    if (selectedAxioms.leastUpperBound) {
++      newConclusions.push("Структура обладает свойством полноты.");
++    }
++    
++    if (selectedAxioms.archimedean) {
++      newConclusions.push("Структура обладает архимедовым свойством.");
++    }
++    
++    // Проверка свойств дискретности и индукции
++    if (selectedAxioms.discreteness) {
++      newConclusions.push("Структура дискретна.");
++    }
++    
++    if (selectedAxioms.induction) {
++      newConclusions.push("В структуре применим принцип математической индукции.");
++    }
++    
++    // Проверка алгебраической замкнутости
++    if (selectedAxioms.algebraicClosedness) {
++      newConclusions.push("Поле алгебраически замкнуто (любое полиномиальное уравнение имеет решение).");
++    }
++    
++    // Проверка несовместимостей
++    if (selectedAxioms.discreteness && selectedAxioms.leastUpperBound) {
++      newConclusions.push("Предупреждение: Дискретность обычно несовместима с аксиомой точной верхней грани в полных структурах.");
++    }
++    
++    if (selectedAxioms.algebraicClosedness && selectedAxioms.totality) {
++      newConclusions.push("Предупреждение: Алгебраически замкнутое поле не может быть упорядочено (комплексные числа не упорядочиваются).");
++    }
++    
++    if (selectedAxioms.inverse && !selectedAxioms.identity) {
++      newConclusions.push("Предупреждение: Существование обратных элементов требует наличия нейтрального элемента.");
++    }
+     
+     setConclusions(newConclusions);
+-  };
+-  
+-  // Функция для проверки несовместимостей аксиом
+-  const checkIncompatibilities = () => {
+-    let issues = [];
+-    
+-    // Пример проверки несовместимости
+-    if (selectedAxioms.completeness && !selectedAxioms.closure) {
+-      issues.push("Предупреждение: Аксиома полноты обычно требует замкнутости для корректного определения.");
+-    }
+-    
+-    if (selectedAxioms.inverse && !selectedAxioms.identity) {
+-      issues.push("Предупреждение: Понятие обратного элемента требует наличия нейтрального элемента.");
+-    }
+-    
+-    return issues;
+-  };
+-  
+-  // Функция для определения числовой системы на основе выбранных аксиом
+-  const determineNumberSystem = () => {
+-    // Проверяем натуральные числа
+-    if (selectedAxioms.peano && selectedAxioms.wellOrdering && 
+-        !selectedAxioms.inverse) {
+-      return "натуральные числа (ℕ)";
+-    }
+-    
+-    // Проверяем целые числа
+-    if (selectedAxioms.peano && selectedAxioms.closure && 
+-        selectedAxioms.commutativity && selectedAxioms.associativity && 
+-        selectedAxioms.identity && selectedAxioms.inverse && 
+-        !selectedAxioms.completeness) {
+-      return "целые числа (ℤ)";
+-    }
+-    
+-    // Проверяем рациональные числа
+-    if (selectedAxioms.closure && selectedAxioms.commutativity && 
+-        selectedAxioms.associativity && selectedAxioms.distributivity && 
+-        selectedAxioms.identity && selectedAxioms.inverse && 
+-        !selectedAxioms.completeness) {
+-      return "рациональные числа (ℚ)";
+-    }
+-    
+-    // Проверяем действительные числа
+-    if (selectedAxioms.closure && selectedAxioms.commutativity && 
+-        selectedAxioms.associativity && selectedAxioms.distributivity && 
+-        selectedAxioms.identity && selectedAxioms.inverse && 
+-        (selectedAxioms.completeness || selectedAxioms.leastUpperBound)) {
+-      return "действительные числа (ℝ)";
+-    }
+-    
+-    // Если не можем точно определить
+-    return null;
+-  };
+-  
+-  // Функция добавления информации о выбранной числовой системе
+-  const addNumberSystemInfo = (conclusions) => {
+-    const system = numberSystems[numberSystem];
+-    
+-    // Проверяем, выбраны ли все необходимые аксиомы
+-    const missingAxioms = system.requiredAxioms.filter(axiom => !selectedAxioms[axiom]);
+-    
+-    if (missingAxioms.length > 0) {
+-      conclusions.push(`Для системы ${system.name} не хватает следующих аксиом: ${missingAxioms.map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(', ')}`);
+-    } else {
+-      conclusions.push(`Выбранная система ${system.name} полностью определена выбранными аксиомами.`);
+-      conclusions.push(`Основные свойства ${system.name}:`);
+-      system.properties.forEach(prop => {
+-        conclusions.push(`- ${prop}`);
+-      });
+-    }
++    
++    // Определение совместимых структур
++    findCompatibleStructures();
++    
++    // Определение совместимых числовых систем
++    findCompatibleSystems();
++  };
++  
++  // Функция определения совместимых структур
++  const findCompatibleStructures = () => {
++    const compatible = [];
++    
++    for (const structure of structures) {
++      // Проверка, все ли требуемые аксиомы выбраны
++      const allRequired = structure.requiredAxioms.every(axiom => selectedAxioms[axiom]);
++      
++      if (allRequired) {
++        compatible.push(structure);
++      }
++    }
++    
++    setCompatibleStructures(compatible);
++  };
++  
++  // Функция определения совместимых числовых систем
++  const findCompatibleSystems = () => {
++    const compatible = [];
++    
++    for (const system of numberSystems) {
++      // Проверка совместимости с выбранными аксиомами
++      const hasIncompatible = system.incompatibleWith.some(axiom => selectedAxioms[axiom]);
++      
++      // Если нет несовместимых аксиом, проверяем, согласуются ли выбранные аксиомы с системой
++      if (!hasIncompatible) {
++        // Считаем систему совместимой, если выбрана хотя бы одна из совместимых с ней аксиом
++        const hasCompatible = system.compatibleWith.some(axiom => selectedAxioms[axiom]);
++        
++        if (hasCompatible || Object.values(selectedAxioms).filter(Boolean).length === 0) {
++          compatible.push(system);
++        }
++      }
++    }
++    
++    setCompatibleSystems(compatible);
+   };
+   
+   // Обработчик изменения аксиомы
+@@ -261,127 +371,157 @@
+     });
+   };
+   
+-  // Обработчик выбора предустановленного набора аксиом
+-  const handlePresetSelect = (preset) => {
+-    // Предустановленные наборы аксиом для разных числовых систем
+-    const presets = {
+-      natural: {
+-        peano: true,
+-        closure: true,
+-        commutativity: true,
+-        associativity: true,
+-        distributivity: true,
+-        identity: true,
+-        inverse: false,
+-        wellOrdering: true,
+-        completeness: false,
+-        leastUpperBound: false
+-      },
+-      integer: {
+-        peano: true,
+-        closure: true,
+-        commutativity: true,
+-        associativity: true,
+-        distributivity: true,
+-        identity: true,
+-        inverse: true,
+-        wellOrdering: true,
+-        completeness: false,
+-        leastUpperBound: false
+-      },
+-      rational: {
+-        peano: false,
+-        closure: true,
+-        commutativity: true,
+-        associativity: true,
+-        distributivity: true,
+-        identity: true,
+-        inverse: true,
+-        wellOrdering: false,
+-        completeness: false,
+-        leastUpperBound: false
+-      },
+-      real: {
+-        peano: false,
+-        closure: true,
+-        commutativity: true,
+-        associativity: true,
+-        distributivity: true,
+-        identity: true,
+-        inverse: true,
+-        wellOrdering: false,
+-        completeness: true,
+-        leastUpperBound: true
+-      },
+-      complex: {
+-        peano: false,
+-        closure: true,
+-        commutativity: true,
+-        associativity: true,
+-        distributivity: true,
+-        identity: true,
+-        inverse: true,
+-        wellOrdering: false,
+-        completeness: false,
+-        leastUpperBound: false
+-      }
+-    };
+-    
+-    setSelectedAxioms(presets[preset]);
+-    setNumberSystem(preset);
++  // Обработчик выбора предустановленного набора аксиом для конкретных структур
++  const selectStructureAxioms = (structureName) => {
++    const structure = structures.find(s => s.name === structureName);
++    
++    if (structure) {
++      const newAxioms = {};
++      
++      // Инициализируем все аксиомы как false
++      Object.keys(selectedAxioms).forEach(axiom => {
++        newAxioms[axiom] = false;
++      });
++      
++      // Устанавливаем требуемые аксиомы как true
++      structure.requiredAxioms.forEach(axiom => {
++        newAxioms[axiom] = true;
++      });
++      
++      setSelectedAxioms(newAxioms);
++    }
++  };
++  
++  // Обработчик выбора предустановленного набора аксиом для конкретных числовых систем
++  const selectNumberSystemAxioms = (systemName) => {
++    const system = numberSystems.find(s => s.name === systemName);
++    
++    if (system) {
++      const newAxioms = {};
++      
++      // Инициализируем все аксиомы как false
++      Object.keys(selectedAxioms).forEach(axiom => {
++        newAxioms[axiom] = false;
++      });
++      
++      // Устанавливаем совместимые аксиомы как true
++      system.compatibleWith.forEach(axiom => {
++        // Устанавливаем только те аксиомы, которые наиболее характерны для данной системы
++        if (system.name === "Натуральные числа (ℕ)" && 
++            (axiom === "discreteness" || axiom === "induction")) {
++          newAxioms[axiom] = true;
++        } else if (system.name === "Целые числа (ℤ)" && 
++                  (axiom === "closure" || axiom === "associativity" || axiom === "commutativity" || 
++                   axiom === "distributivity" || axiom === "identity" || axiom === "discreteness")) {
++          newAxioms[axiom] = true;
++        } else if (system.name === "Рациональные числа (ℚ)" && 
++                  (axiom === "closure" || axiom === "associativity" || axiom === "commutativity" || 
++                   axiom === "distributivity" || axiom === "identity" || axiom === "inverse")) {
++          newAxioms[axiom] = true;
++        } else if (system.name === "Действительные числа (ℝ)" && 
++                  (axiom === "closure" || axiom === "associativity" || axiom === "commutativity" || 
++                   axiom === "distributivity" || axiom === "identity" || axiom === "inverse" || 
++                   axiom === "leastUpperBound")) {
++          newAxioms[axiom] = true;
++        } else if (system.name === "Комплексные числа (ℂ)" && 
++                  (axiom === "closure" || axiom === "associativity" || axiom === "commutativity" || 
++                   axiom === "distributivity" || axiom === "identity" || axiom === "inverse" || 
++                   axiom === "algebraicClosedness")) {
++          newAxioms[axiom] = true;
++        } else if (system.name === "p-адические числа (ℚp)" && 
++                  (axiom === "closure" || axiom === "associativity" || axiom === "commutativity" || 
++                   axiom === "distributivity" || axiom === "identity" || axiom === "inverse")) {
++          newAxioms[axiom] = true;
++        }
++      });
++      
++      setSelectedAxioms(newAxioms);
++    }
++  };
++  
++  // Сброс всех аксиом
++  const resetAxioms = () => {
++    const resetState = {};
++    
++    Object.keys(selectedAxioms).forEach(axiom => {
++      resetState[axiom] = false;
++    });
++    
++    setSelectedAxioms(resetState);
+   };
+ 
+   return (
+     <div className="p-4 max-w-6xl mx-auto bg-gray-50 rounded-lg shadow-md">
+-      <h1 className="text-2xl font-bold text-center mb-6">Исследователь аксиом теории чисел</h1>
++      <h1 className="text-2xl font-bold text-center mb-6">Исследователь абстрактных аксиом теории чисел</h1>
+       
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+-        <div className="col-span-1 bg-white p-4 rounded-lg shadow">
+-          <h2 className="text-xl font-semibold mb-4">Предустановленные числовые системы</h2>
+-          <div className="space-y-2">
+-            {Object.keys(numberSystems).map((system) => (
++        <div className="col-span-1 bg-white p-4 rounded-lg shadow overflow-y-auto max-h-screen">
++          <h2 className="text-xl font-semibold mb-4">Выберите аксиомы</h2>
++          
++          {axiomCategories.map((category) => (
++            <div key={category.title} className="mb-6">
++              <h3 className="text-lg font-medium mb-2">{category.title}</h3>
++              <div className="space-y-3">
++                {category.axioms.map((axiom) => (
++                  <div key={axiom} className="flex items-start">
++                    <input
++                      type="checkbox"
++                      id={axiom}
++                      checked={selectedAxioms[axiom]}
++                      onChange={() => handleAxiomChange(axiom)}
++                      className="mt-1 mr-2"
++                    />
++                    <div>
++                      <label htmlFor={axiom} className="font-medium cursor-pointer">
++                        {axiom.charAt(0).toUpperCase() + axiom.slice(1)}
++                      </label>
++                      <p className="text-sm text-gray-600">{axiomDefinitions[axiom]}</p>
++                    </div>
++                  </div>
++                ))}
++              </div>
++            </div>
++          ))}
++          
++          <h2 className="text-xl font-semibold mt-6 mb-4">Предустановленные структуры</h2>
++          <div className="space-y-2 mb-6">
++            {structures.map((structure) => (
+               <button
+-                key={system}
+-                className={`block w-full text-left px-3 py-2 rounded ${numberSystem === system ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+-                onClick={() => handlePresetSelect(system)}
++                key={structure.name}
++                className="block w-full text-left px-3 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded"
++                onClick={() => selectStructureAxioms(structure.name)}
+               >
+-                {numberSystems[system].name}
++                {structure.name}
+               </button>
+             ))}
+           </div>
+           
+-          <h2 className="text-xl font-semibold mt-6 mb-4">Выберите аксиомы</h2>
+-          <div className="space-y-3">
+-            {Object.keys(axiomDefinitions).map((axiom) => (
+-              <div key={axiom} className="flex items-start">
+-                <input
+-                  type="checkbox"
+-                  id={axiom}
+-                  checked={selectedAxioms[axiom]}
+-                  onChange={() => handleAxiomChange(axiom)}
+-                  className="mt-1 mr-2"
+-                />
+-                <div>
+-                  <label htmlFor={axiom} className="font-medium cursor-pointer">
+-                    {axiom.charAt(0).toUpperCase() + axiom.slice(1)}
+-                  </label>
+-                  <p className="text-sm text-gray-600">{axiomDefinitions[axiom]}</p>
+-                </div>
+-              </div>
++          <h2 className="text-xl font-semibold mt-6 mb-4">Предустановленные числовые системы</h2>
++          <div className="space-y-2 mb-6">
++            {numberSystems.map((system) => (
++              <button
++                key={system.name}
++                className="block w-full text-left px-3 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded"
++                onClick={() => selectNumberSystemAxioms(system.name)}
++              >
++                {system.name}
++              </button>
+             ))}
+           </div>
++          
++          <button
++            className="w-full mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
++            onClick={resetAxioms}
++          >
++            Сбросить все аксиомы
++          </button>
+         </div>
+         
+-        <div className="col-span-1 md:col-span-2 bg-white p-4 rounded-lg shadow">
+-          <h2 className="text-xl font-semibold mb-4">Система: {numberSystems[numberSystem].name}</h2>
+-          <p className="mb-4">{numberSystems[numberSystem].description}</p>
+-          
+-          <h3 className="text-lg font-medium mb-2">Операции:</h3>
+-          <p className="mb-4">{numberSystems[numberSystem].operations.join(', ')}</p>
+-          
+-          <h2 className="text-xl font-semibold mt-6 mb-4">Выводы и свойства</h2>
++        <div className="col-span-1 md:col-span-2 bg-white p-4 rounded-lg shadow overflow-y-auto max-h-screen">
++          <h2 className="text-xl font-semibold mb-4">Выводы из выбранных аксиом</h2>
++          
+           {conclusions.length > 0 ? (
+-            <ul className="list-disc pl-5 space-y-2">
++            <ul className="list-disc pl-5 space-y-2 mb-6">
+               {conclusions.map((conclusion, index) => (
+                 <li key={index} className={conclusion.startsWith('Предупреждение') ? 'text-red-600' : 'text-gray-800'}>
+                   {conclusion}
+@@ -389,24 +529,24 @@
+               ))}
+             </ul>
+           ) : (
+-            <p className="text-gray-500 italic">Выберите аксиомы, чтобы увидеть выводы.</p>
++            <p className="text-gray-500 italic mb-6">Выберите аксиомы, чтобы увидеть выводы.</p>
+           )}
+           
+-          <div className="mt-6 p-4 bg-gray-100 rounded">
+-            <h3 className="text-lg font-medium mb-2">Информация о текущей системе:</h3>
+-            <p><strong>Непрерывность:</strong> {selectedAxioms.completeness || selectedAxioms.leastUpperBound ? 'Да' : 'Нет'}</p>
+-            <p><strong>Дискретность:</strong> {selectedAxioms.peano && !selectedAxioms.completeness ? 'Да' : 'Нет'}</p>
+-            <p><strong>Алгебраическая структура:</strong> {
+-              selectedAxioms.closure && selectedAxioms.commutativity && selectedAxioms.associativity && 
+-              selectedAxioms.distributivity && selectedAxioms.identity && selectedAxioms.inverse ? 
+-              'Поле' : (selectedAxioms.closure && selectedAxioms.commutativity && selectedAxioms.associativity && 
+-                      selectedAxioms.distributivity && selectedAxioms.identity ? 'Кольцо' : 'Не определена')
+-            }</p>
+-          </div>
+-        </div>
+-      </div>
+-    </div>
+-  );
+-};
+-
+-export default NumberTheoryAxiomExplorer;
++          <h2 className="text-xl font-semibold mt-6 mb-4">Совместимые алгебраические структуры</h2>
++          
++          {compatibleStructures.length > 0 ? (
++            <div className="space-y-4 mb-6">
++              {compatibleStructures.map((structure) => (
++                <div key={structure.name} className="p-3 bg-green-50 border border-green-200 rounded">
++                  <h3 className="font-medium text-green-700">{structure.name}</h3>
++                  <p className="text-sm text-gray-700">{structure.description}</p>
++                </div>
++              ))}
++            </div>
++          ) : (
++            <p className="text-gray-500 italic mb-6">Нет совместимых структур для выбранных аксиом.</p>
++          )}
++          
++          <h2 className="text-xl font-semibold mt-6 mb-4">Возможные числовые системы</h2>
++          
++          {compatibleS

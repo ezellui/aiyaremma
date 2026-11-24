@@ -1,0 +1,634 @@
+--- предыдущая/Реализация-API-сервиса.js
++++ текущая/Реализация-API-сервиса.js
+@@ -1,4 +1,362 @@
+-// API сервис (Node.js + Express)
++// Главный алгоритм генерации новой концепции
++async function generateCombinedConcept(requestId) {
++  try {
++    // Создаем контекст для логирования процесса
++    const context = { requestId };
++    logger.info(context, 'Starting concept generation process');
++    
++    // Получаем запрос из базы данных
++    const request = await Request.findOne({ id: requestId });
++    if (!request) {
++      throw new Error('Request not found');
++    }
++    
++    logger.info(context, `Processing request with ${request.selectedConcepts.length} selected concepts`);
++    
++    // Получаем выбранные концепции
++    const conceptIds = request.selectedConcepts;
++    const concepts = await Concept.find({ id: { $in: conceptIds } });
++    
++    if (concepts.length < conceptIds.length) {
++      const missingIds = conceptIds.filter(id => !concepts.some(c => c.id === id));
++      logger.warn(context, `Some concepts were not found: ${missingIds.join(', ')}`);
++      throw new Error(`Some concepts not found: ${missingIds.join(', ')}`);
++    }
++    
++    // Начинаем процесс обработки с извлечения и группировки тезисов
++    logger.info(context, 'Extracting and grouping theses');
++    const startTime = Date.now();
++    
++    const groupedTheses = await extractAndGroupTheses(concepts);
++    
++    logger.info(context, `Extracted theses grouped into ${Object.keys(groupedTheses).length} topics. Processing took ${Date.now() - startTime}ms`);
++    
++    // Находим конфликты между тезисами
++    logger.info(context, 'Detecting conflicts between theses');
++    const conflictDetectionStart = Date.now();
++    
++    const conflicts = await findConflicts(groupedTheses);
++    
++    logger.info(context, `Found ${conflicts.length} conflicts. Detection took ${Date.now() - conflictDetectionStart}ms`);
++    
++    // Анализируем конфликты для формирования более точного промпта
++    const conflictAnalysis = analyzeConflicts(conflicts);
++    logger.info(context, `Conflict analysis: ${JSON.stringify(conflictAnalysis)}`);
++    
++    // Обогащаем параметры генерации на основе анализа конфликтов
++    const enhancedParams = enhanceGenerationParams(request.generationParams, conflictAnalysis);
++    
++    // Формируем запрос к Claude
++    logger.info(context, 'Formatting prompt for Claude');
++    const promptFormattingStart = Date.now();
++    
++    const prompt = await formatPromptForClaude(groupedTheses, conflicts, enhancedParams);
++    
++    logger.info(context, `Prompt formatting completed. Took ${Date.now() - promptFormattingStart}ms. Prompt length: ${prompt.length} characters`);
++    
++    // Проверяем длину промпта и при необходимости сокращаем
++    const maxPromptLength = 100000; // Примерное ограничение для Claude API
++    
++    let finalPrompt = prompt;
++    if (prompt.length > maxPromptLength) {
++      logger.warn(context, `Prompt exceeds maximum length. Trimming from ${prompt.length} to ~${maxPromptLength} characters`);
++      finalPrompt = await trimPrompt(prompt, maxPromptLength);
++    }
++    
++    // Сохраняем копию промпта для отладки и анализа
++    await savePromptForAnalysis(requestId, finalPrompt);
++    
++    // Отправляем запрос к Claude с мониторингом и обработкой ошибок
++    logger.info(context, 'Sending request to Claude API');
++    const claudeRequestStart = Date.now();
++    
++    let claudeResponse;
++    try {
++      // Настраиваем параметры запроса к Claude
++      const claudeRequestParams = {
++        prompt: finalPrompt,
++        max_tokens: 4000,  // Достаточно для хорошего ответа
++        temperature: 0.7   // Баланс между креативностью и согласованностью
++      };
++      
++      // Добавляем пользовательские настройки, если они указаны
++      if (enhancedParams.temperature) {
++        claudeRequestParams.temperature = parseFloat(enhancedParams.temperature);
++      }
++      
++      claudeResponse = await claude.sendMessage(claudeRequestParams);
++      
++      logger.info(context, `Claude response received. Took ${Date.now() - claudeRequestStart}ms. Response length: ${claudeResponse.completion?.length || 0} characters`);
++    } catch (error) {
++      logger.error(context, `Error calling Claude API: ${error.message}`);
++      
++      // Обновляем статус запроса в случае ошибки
++      await Request.updateOne(
++        { id: requestId },
++        { 
++          status: 'error',
++          error: `Error calling Claude API: ${error.message}`
++        }
++      );
++      
++      throw new Error(`Failed to get response from Claude: ${error.message}`);
++    }
++    
++    // Проверяем ответ Claude
++    if (!claudeResponse || !claudeResponse.completion) {
++      const errorMsg = 'Received invalid or empty response from Claude API';
++      logger.error(context, errorMsg);
++      
++      // Обновляем статус запроса
++      await Request.updateOne(
++        { id: requestId },
++        { 
++          status: 'error',
++          error: errorMsg
++        }
++      );
++      
++      throw new Error(errorMsg);
++    }
++    
++    // Обрабатываем ответ и создаем новую концепцию
++    logger.info(context, 'Processing Claude response and creating new concept');
++    const processingStart = Date.now();
++    
++    const newConcept = await processClaudeResponse(claudeResponse, concepts);
++    
++    logger.info(context, `Response processing completed. Took ${Date.now() - processingStart}ms. Created concept "${newConcept.name}" with ${newConcept.theses.length} theses`);
++    
++    // Сохраняем новую концепцию в базу данных
++    logger.info(context, 'Saving new concept to database');
++    const conceptModel = new Concept(newConcept);
++    const savedConcept = await conceptModel.save();
++    
++    // Добавляем ссылки на родительские концепции
++    await createConceptRelations(savedConcept.id, conceptIds);
++    
++    // Обновляем статус запроса
++    await Request.updateOne(
++      { id: requestId },
++      { 
++        status: 'completed',
++        result: savedConcept.id,
++        completionTime: new Date()
++      }
++    );
++    
++    logger.info(context, `Concept generation completed successfully. Total time: ${Date.now() - startTime}ms`);
++    
++    return savedConcept;
++  } catch (error) {
++    logger.error({ requestId }, `Error generating concept: ${error.message}`);
++    logger.error({ requestId, stack: error.stack }, 'Error stack trace');
++    
++    // Обновляем статус запроса в случае ошибки
++    await Request.updateOne(
++      { id: requestId },
++      { 
++        status: 'error',
++        error: error.message
++      }
++    );
++    
++    throw error;
++  }
++}
++
++// Вспомогательная функция для анализа конфликтов
++function analyzeConflicts(conflicts) {
++  // Инициализируем результат анализа
++  const analysis = {
++    totalConflicts: conflicts.length,
++    severeConflicts: 0,
++    topicDistribution: {},
++    dominantConflictTypes: {},
++    keyContradictions: []
++  };
++  
++  // Подсчитываем количество серьезных конфликтов
++  conflicts.forEach(conflict => {
++    // Считаем конфликты по степени серьезности
++    if (conflict.severity === 'high') {
++      analysis.severeConflicts++;
++    }
++    
++    // Распределение по темам
++    const topic = conflict.topic || 'Общая философия';
++    analysis.topicDistribution[topic] = (analysis.topicDistribution[topic] || 0) + 1;
++    
++    // Типы конфликтов
++    const type = conflict.conflictType || 'Неопределенный';
++    analysis.dominantConflictTypes[type] = (analysis.dominantConflictTypes[type] || 0) + 1;
++    
++    // Собираем ключевые противоречия (термины)
++    if (conflict.terms && conflict.terms.length > 0) {
++      analysis.keyContradictions.push(conflict.terms);
++    }
++  });
++  
++  // Преобразуем объекты в отсортированные массивы для более удобного использования
++  analysis.topicDistribution = Object.entries(analysis.topicDistribution)
++    .sort((a, b) => b[1] - a[1]);
++  
++  analysis.dominantConflictTypes = Object.entries(analysis.dominantConflictTypes)
++    .sort((a, b) => b[1] - a[1]);
++  
++  return analysis;
++}
++
++// Функция для обогащения параметров генерации на основе анализа конфликтов
++function enhanceGenerationParams(originalParams, conflictAnalysis) {
++  const enhancedParams = { ...originalParams };
++  
++  // Если не указан подход к синтезу, предлагаем наиболее подходящий
++  if (!enhancedParams.synthesisApproach) {
++    if (conflictAnalysis.severeConflicts > 3) {
++      // Для множества серьезных противоречий хорошо подходит диалектический подход
++      enhancedParams.synthesisApproach = 'dialectical';
++    } else if (conflictAnalysis.keyContradictions.length > 5) {
++      // Для множества разнородных противоречий лучше интегративный подход
++      enhancedParams.synthesisApproach = 'integrative';
++    } else if (conflictAnalysis.topicDistribution.length > 3) {
++      // Для разнообразия тем хорошо подходит прагматический подход
++      enhancedParams.synthesisApproach = 'pragmatic';
++    } else {
++      // В остальных случаях можно предложить более творческий подход
++      enhancedParams.synthesisApproach = 'revolutionary';
++    }
++  }
++  
++  // Предлагаем фокус на определенных темах, если он не указан явно
++  if (!enhancedParams.focusTopics || enhancedParams.focusTopics.length === 0) {
++    // Берем две наиболее конфликтные темы
++    if (conflictAnalysis.topicDistribution.length > 0) {
++      enhancedParams.focusTopics = conflictAnalysis.topicDistribution
++        .slice(0, 2)
++        .map(topic => topic[0]);
++    }
++  }
++  
++  return enhancedParams;
++}
++
++// Функция для сокращения длинного промпта
++async function trimPrompt(prompt, maxLength) {
++  // Разбиваем промпт на секции
++  const sections = prompt.split(/\n##\s+/);
++  const header = sections[0];
++  const remainingSections = sections.slice(1);
++  
++  // Помечаем каждую секцию префиксом
++  const taggedSections = remainingSections.map(section => {
++    const title = section.split('\n')[0];
++    return { title, content: "## " + section, importance: getSectionImportance(title) };
++  });
++  
++  // Сортируем секции по важности (от наиболее важных к наименее важным)
++  taggedSections.sort((a, b) => b.importance - a.importance);
++  
++  // Начинаем с заголовка и добавляем секции, пока не достигнем максимальной длины
++  let trimmedPrompt = header;
++  
++  for (const section of taggedSections) {
++    // Если добавление секции превысит лимит, попробуем сократить ее
++    if (trimmedPrompt.length + section.content.length > maxLength) {
++      // Для секций с тезисами можно сократить количество тезисов
++      if (section.title.includes('тезисы') || section.title.includes('Имеющиеся тезисы')) {
++        const trimmedSection = trimThesesSection(section.content, maxLength - trimmedPrompt.length);
++        trimmedPrompt += '\n' + trimmedSection;
++      } else {
++        // Для других секций просто добавляем, если поместится
++        if (trimmedPrompt.length + section.content.length <= maxLength) {
++          trimmedPrompt += '\n' + section.content;
++        }
++      }
++    } else {
++      trimmedPrompt += '\n' + section.content;
++    }
++    
++    // Если достигли лимита, прекращаем добавление
++    if (trimmedPrompt.length >= maxLength * 0.95) {
++      break;
++    }
++  }
++  
++  // Добавляем примечание о сокращении, если были обрезаны секции
++  if (trimmedPrompt.length < prompt.length) {
++    trimmedPrompt += `\n\n## Примечание\nПромпт был сокращен из-за ограничений длины. Сфокусируйся на наиболее важных аспектах синтеза.`;
++  }
++  
++  return trimmedPrompt;
++}
++
++// Функция для определения важности секции
++function getSectionImportance(sectionTitle) {
++  const importanceRanking = {
++    'Инструкция': 100,
++    'Требуемый формат ответа': 95,
++    'Обнаруженные противоречия': 90,
++    'Имеющиеся тезисы по темам': 85,
++    'Напоминание': 80,
++    'Философская традиция': 75,
++    'Фокус концепции': 70,
++    'Дополнительные требования': 65,
++    'Стилистические предпочтения': 60,
++    'Исторический контекст': 55
++  };
++  
++  // Ищем наиболее подходящий ключ
++  for (const [key, value] of Object.entries(importanceRanking)) {
++    if (sectionTitle.includes(key)) {
++      return value;
++    }
++  }
++  
++  return 50; // средняя важность по умолчанию
++}
++
++// Функция для сокращения секции с тезисами
++function trimThesesSection(section, maxLength) {
++  // Разбиваем секцию на заголовок и темы
++  const lines = section.split('\n');
++  const header = lines[0];
++  
++  // Находим все подзаголовки тем и их позиции
++  const topicIndices = [];
++  for (let i = 1; i < lines.length; i++) {
++    if (lines[i].startsWith('### ')) {
++      topicIndices.push(i);
++    }
++  }
++  
++  // Добавляем индекс конца для последней темы
++  topicIndices.push(lines.length);
++  
++  // Разбиваем на темы с их содержимым
++  const topics = [];
++  for (let i = 0; i < topicIndices.length - 1; i++) {
++    const topicStart = topicIndices[i];
++    const topicEnd = topicIndices[i + 1];
++    topics.push(lines.slice(topicStart, topicEnd).join('\n'));
++  }
++  
++  // Определяем, сколько тезисов можно включить в каждую тему
++  // Предполагаем, что у нас есть N тем и можем включить maxThesesPerTopic тезисов в каждую
++  const approxLengthPerThesis = 100; // примерная длина одного тезиса
++  const maxTotalTheses = Math.floor(maxLength / approxLengthPerThesis);
++  const maxThesesPerTopic = Math.max(2, Math.floor(maxTotalTheses / topics.length));
++  
++  // Обрезаем каждую тему до указанного количества тезисов
++  const trimmedTopics = topics.map(topic => {
++    const topicLines = topic.split('\n');
++    const topicHeader = topicLines[0];
++    
++    // Выбираем только первые maxThesesPerTopic тезисов
++    const theses = topicLines.slice(1).filter(line => /^\d+\./.test(line)).slice(0, maxThesesPerTopic);
++    
++    // Собираем обратно с заголовком
++    return [topicHeader, ...theses, `*Показаны ${theses.length} тезисов из этой темы.*`].// API сервис (Node.js + Express)
+ 
+ const express = require('express');
+ const cors = require('cors');
+@@ -349,7 +707,20 @@
+       }
+     }
+     
+-    // Сортируем конфликты по степени
++    // Сортируем конфликты по степени серьезности
++    conflicts.sort((a, b) => {
++      const severityRank = { 'high': 3, 'medium': 2, 'low': 1 };
++      return severityRank[b.severity] - severityRank[a.severity];
++    });
++    
++    // Ограничиваем количество возвращаемых конфликтов, чтобы не перегружать промпт
++    const maxConflicts = 10;
++    return conflicts.slice(0, maxConflicts);
++  } catch (error) {
++    console.error('Error in conflict detection:', error);
++    return [];
++  }
++}
+ 
+ // Расширенная функция определения противоречий между тезисами
+ async function detectConflicts(thesis1, thesis2) {
+@@ -658,62 +1029,191 @@
+ }
+ 
+ // Функция форматирования запроса к Claude
+-function formatPromptForClaude(groupedTheses, conflicts, params) {
+-  let prompt = `
+-  # Задача: создание новой философской концепции
+-  
+-  ## Имеющиеся тезисы по темам:
+-  `;
+-  
+-  // Форматируем тезисы по темам
+-  Object.keys(groupedTheses).forEach(topic => {
+-    prompt += `\n### ${topic}\n`;
+-    
+-    groupedTheses[topic].forEach((thesis, index) => {
+-      prompt += `${index + 1}. "${thesis.content}" (из концепции "${thesis.conceptName}")\n`;
+-    });
++async function formatPromptForClaude(groupedTheses, conflicts, params) {
++  try {
++    let prompt = `
++# Задача: создание новой философской концепции
++
++## Имеющиеся тезисы по темам:
++`;
++    
++    // Форматируем тезисы по темам
++    // Ограничиваем количество тезисов по каждой теме, чтобы не перегружать промпт
++    const maxThesesPerTopic = 8;
++    
++    for (const [topic, theses] of Object.entries(groupedTheses)) {
++      prompt += `\n### ${topic}\n`;
++      
++      // Если тезисов слишком много, выбираем самые важные
++      const selectedTheses = theses.length > maxThesesPerTopic 
++        ? selectMostImportantTheses(theses, maxThesesPerTopic)
++        : theses;
++      
++      selectedTheses.forEach((thesis, index) => {
++        prompt += `${index + 1}. "${thesis.content}" (из концепции "${thesis.conceptName}")\n`;
++      });
++      
++      // Если были отфильтрованы тезисы, добавляем примечание
++      if (theses.length > maxThesesPerTopic) {
++        prompt += `*Примечание: показаны ${maxThesesPerTopic} из ${theses.length} тезисов по данной теме.*\n`;
++      }
++    }
++    
++    // Добавляем информацию о конфликтах
++    if (conflicts.length > 0) {
++      prompt += `\n## Обнаруженные противоречия:\n`;
++      
++      conflicts.forEach((conflict, index) => {
++        prompt += `
++${index + 1}. ${conflict.conflictType}${conflict.crossTopics ? ` (между темами ${conflict.crossTopics.join(' и ')})` : ` (в теме "${conflict.topic}")`}:
++   - "${conflict.thesis1.content}" (из концепции "${conflict.thesis1.conceptName}")
++   - "${conflict.thesis2.content}" (из концепции "${conflict.thesis2.conceptName}")
++   - Описание противоречия: ${conflict.description}
++`;
++      });
++    }
++    
++    // Добавляем инструкцию по генерации с учетом возможных предпочтений пользователя
++    prompt += `
++## Инструкция:
++Создай новую философскую концепцию, которая:
++1. Синтезирует предоставленные тезисы в единую систему
++2. Разрешает указанные противоречия, предлагая новые подходы или переосмысление терминов
++3. Предлагает новую перспективу, объединяющую элементы исходных концепций
++4. Создает целостное философское видение, которое может стать основой для дальнейшего развития мысли
++`;
++    
++    // Определяем предпочтительный подход к синтезу на основе параметров
++    if (params && params.synthesisApproach) {
++      switch (params.synthesisApproach) {
++        case 'dialectical':
++          prompt += `
++Используй диалектический подход к синтезу (тезис-антитезис-синтез), находя более высокий уровень, на котором противоречия разрешаются.
++`;
++          break;
++        case 'pragmatic':
++          prompt += `
++Используй прагматический подход, оценивая тезисы по их практической применимости и полезности для решения философских проблем.
++`;
++          break;
++        case 'integrative':
++          prompt += `
++Используй интегративный подход, рассматривая разные тезисы как взаимодополняющие аспекты единой реальности или как описания различных уровней одного и того же явления.
++`;
++          break;
++        case 'revolutionary':
++          prompt += `
++Используй революционный подход, предлагая радикально новый взгляд, который выходит за рамки существующих концепций, но при этом объясняет их ограниченную правоту.
++`;
++          break;
++      }
++    }
++    
++    prompt += `
++## Требуемый формат ответа:
++1. Название концепции (краткое и отражающее суть)
++2. Краткое описание (3-5 предложений, поясняющих основную идею)
++3. Список 5-10 ключевых тезисов, четко сформулированных и пронумерованных
++4. Отношение к исходным концепциям (как они были интегрированы, преобразованы или преодолены)
++5. Методологическое обоснование (какие принципы и подходы использовались для создания новой концепции)
++`;
++    
++    // Обработка дополнительных требований пользователя
++    if (params) {
++      // Добавляем предпочтения по философской традиции
++      if (params.philosophicalTradition) {
++        prompt += `\n## Философская традиция:\nРазработай концепцию в русле ${params.philosophicalTradition} традиции.\n`;
++      }
++      
++      // Добавляем предпочтения по историческому периоду
++      if (params.historicalContext) {
++        prompt += `\n## Исторический контекст:\nСоздай концепцию, которая могла бы возникнуть в контексте ${params.historicalContext}.\n`;
++      }
++      
++      // Добавляем акцент на определенных темах
++      if (params.focusTopics && params.focusTopics.length > 0) {
++        prompt += `\n## Фокус концепции:\nУдели особое внимание следующим темам: ${params.focusTopics.join(', ')}.\n`;
++      }
++      
++      // Добавляем дополнительные требования
++      if (params.additionalRequirements) {
++        prompt += `\n## Дополнительные требования:\n${params.additionalRequirements}\n`;
++      }
++      
++      // Добавляем стилистические предпочтения
++      if (params.style) {
++        prompt += `\n## Стилистические предпочтения:\n${params.style}\n`;
++      }
++    }
++    
++    // Добавляем напоминание о задаче и ограничениях
++    prompt += `
++## Напоминание:
++- Обеспечь внутреннюю согласованность концепции
++- Стремись к оригинальности, но сохраняй связь с исходными концепциями
++- Используй точные философские термины, но избегай излишней терминологической сложности
++- Концепция должна предлагать новый взгляд, а не просто обобщать существующие идеи
++- Обрати особое внимание на разрешение выявленных противоречий
++`;
++    
++    return prompt;
++  } catch (error) {
++    console.error('Error formatting prompt for Claude:', error);
++    // Возвращаем базовый промпт в случае ошибки
++    return `
++# Задача: создание новой философской концепции
++
++Синтезируй новую философскую концепцию на основе предоставленных тезисов, 
++разрешая обнаруженные противоречия и предлагая новую перспективу.
++
++Формат ответа:
++1. Название концепции
++2. Краткое описание
++3. 5-7 ключевых тезисов
++4. Отношение к исходным концепциям
++`;
++  }
++}
++
++// Вспомогательная функция для выбора наиболее важных тезисов из большого набора
++function selectMostImportantTheses(theses, maxCount) {
++  // Создаем систему оценки важности тезисов
++  const scoredTheses = theses.map(thesis => {
++    let score = 0;
++    
++    // Длина тезиса (в разумных пределах)
++    const contentLength = thesis.content.length;
++    if (contentLength > 30 && contentLength < 300) {
++      score += contentLength / 100; // Больший вес для тезисов средней длины
++    } else if (contentLength >= 300) {
++      score += 3;
++    } else {
++      score += 0.3;
++    }
++    
++    // Количество ключевых слов
++    score += thesis.keywords.length * 0.5;
++    
++    // Наличие философских терминов (упрощенно)
++    const philosophicalTerms = [
++      'бытие', 'сознание', 'познание', 'истина', 'материя', 'идея',
++      'субстанция', 'метод', 'система', 'диалектика', 'категория'
++    ];
++    
++    for (const term of philosophicalTerms) {
++      if (thesis.content.toLowerCase().includes(term)) {
++        score += 0.7;
++      }
++    }
++    
++    return { thesis, score };
+   });
+   
+-  // Добавляем информацию о конфликтах
+-  if (conflicts.length > 0) {
+-    prompt += `\n## Обнаруженные противоречия:\n`;
+-    
+-    conflicts.forEach((conflict, index) => {
+-      prompt += `
+-      ${index + 1}. По теме "${conflict.topic}":
+-         - "${conflict.thesis1.content}" (из "${conflict.thesis1.conceptName}")
+-         - "${conflict.thesis2.content}" (из "${conflict.thesis2.conceptName}")
+-         - Тип противоречия: ${conflict.conflictType}
+-      `;
+-    });
+-  }
+-  
+-  // Добавляем инструкцию по генерации
+-  prompt += `
+-  ## Инструкция:
+-  Создай новую философскую концепцию, которая:
+-  1. Синтезирует предоставленные тезисы в единую систему
+-  2. Разрешает указанные противоречия
+-  3. Предлагает новую перспективу, объединяющую элементы исходных концепций
+-  
+-  ## Требуемый формат ответа:
+-  1. Название концепции
+-  2. Краткое описание (3-5 предложений)
+-  3. Список 5-10 ключевых тезисов, пронумерованных и четко сформулированных
+-  4. Отношение к исходным концепциям и как они были интегрированы
+-  `;
+-  
+-  // Добавляем дополнительные требования, если есть
+-  if (params && params.additionalRequirements) {
+-    prompt += `\n## Дополнительные требования:\n${params.additionalRequirements}\n`;
+-  }
+-  
+-  // Добавляем стилистические предпочтения, если есть
+-  if (params && params.style) {
+-    prompt += `\n## Стилистические предпочтения:\n${params.style}\n`;
+-  }
+-  
+-  return prompt;
++  // Сортируем по убыванию оценки и берем maxCount тезисов
++  return scoredTheses
++    .sort((a, b) => b.score - a.score)
++    .slice(0, maxCount)
++    .map(item => item.thesis);
+ }
+ 
+ // Функция обработки ответа Claude

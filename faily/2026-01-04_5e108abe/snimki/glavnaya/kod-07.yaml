@@ -1,0 +1,27 @@
+Phase Shift Economy:
+  - Здания могут быть в трёх состояниях:
+    * Material (normal, vulnerable)
+    * Phased (invisible, invulnerable, не функционируют)
+    * Transitioning (5 сек между состояниями)
+  - Можно прятать economy при атаке!
+
+Mana Trade:
+  - Рабочие НЕ собирают gold/lumber напрямую
+  - Вместо: Extract Mana из окружения
+  - Mana можно конвертировать:
+    * Mana → Gold (rate: 100 mana = 75g)
+    * Mana → Lumber (100 mana = 50L)
+    * Mana → Юниты (summon ethereal beings)
+  - Mana = universal ресурс
+
+Void Portals:
+  - Ethereals создают порталы между любыми точками
+  - Мгновенная телепортация (но дорого - 200 mana)
+  - Максимум 3 активных портала
+  - Portal rush стратегия!
+
+Energy Beings:
+  - Все юниты Ethereals имеют "Energy Shield"
+  - Shield регенерирует вне боя (5/сек)
+  - Можно "overcharge" shield (double HP, 10 сек cooldown)
+  - Но уязвимы к magic damage (x1.5 dmg)

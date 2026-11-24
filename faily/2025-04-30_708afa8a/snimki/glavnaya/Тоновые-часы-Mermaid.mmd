@@ -1,0 +1,100 @@
+
+graph TB
+    title[<b>Тоновые часы - квартовый круг с целотоновыми рядами</b>]
+    
+    %% Основные ноты (по кругу кварт)
+    B(("B"))
+    E(("E"))
+    A(("A"))
+    D(("D"))
+    G(("G"))
+    C(("C"))
+    F(("F"))
+    Bb(("Bb"))
+    Eb(("Eb"))
+    Ab(("Ab"))
+    Db(("Db"))
+    Gb(("Gb"))
+    
+    %% Квартовые связи между базовыми нотами
+    B -. "P4" .-> E
+    E -. "P4" .-> A
+    A -. "P4" .-> D
+    D -. "P4" .-> G
+    G -. "P4" .-> C
+    C -. "P4" .-> F
+    F -. "P4" .-> Bb
+    Bb -. "P4" .-> Eb
+    Eb -. "P4" .-> Ab
+    Ab -. "P4" .-> Db
+    Db -. "P4" .-> Gb
+    Gb -. "P4" .-> B
+    
+    %% Целотоновые ряды от каждой базовой ноты
+    B1[/"B1"/]
+    Db2[/"Db2"/]
+    Eb2[/"Eb2"/]
+    
+    E2[/"E2"/]
+    Gb2[/"Gb2"/]
+    Ab2[/"Ab2"/]
+    
+    A2[/"A2"/]
+    B2[/"B2"/]
+    Db3[/"Db3"/]
+    
+    D3[/"D3"/]
+    E3[/"E3"/]
+    Gb3[/"Gb3"/]
+    
+    G3[/"G3"/]
+    A3[/"A3"/]
+    B3[/"B3"/]
+    
+    C4[/"C4"/]
+    D4[/"D4"/]
+    E4[/"E4"/]
+    
+    %% Соединения целотоновых рядов
+    B1 -- "T" --> Db2 -- "T" --> Eb2
+    E2 -- "T" --> Gb2 -- "T" --> Ab2
+    A2 -- "T" --> B2 -- "T" --> Db3
+    D3 -- "T" --> E3 -- "T" --> Gb3
+    G3 -- "T" --> A3 -- "T" --> B3
+    C4 -- "T" --> D4 -- "T" --> E4
+    
+    %% Соединяем базовые ноты с первой нотой каждого ряда
+    B -.-> B1
+    E -.-> E2
+    A -.-> A2
+    D -.-> D3
+    G -.-> G3
+    C -.-> C4
+    
+    %% Легенда
+    legend[Легенда:]
+    t_legend["T = Целый тон (2 полутона)"]
+    p4_legend["P4 = Чистая кварта (5 полутонов)"]
+    
+    legend --- t_legend
+    legend --- p4_legend
+    
+    %% Стили
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px
+    classDef baseNote fill:#5b9bd5,stroke:#333,stroke-width:2px,color:white
+    classDef row1 fill:#e6194B,stroke:#333,color:white
+    classDef row2 fill:#3cb44b,stroke:#333,color:white
+    classDef row3 fill:#ffe119,stroke:#333,color:black
+    classDef row4 fill:#4363d8,stroke:#333,color:white
+    classDef row5 fill:#f58231,stroke:#333,color:white
+    classDef row6 fill:#911eb4,stroke:#333,color:white
+    classDef legendStyle fill:#f0f0f0,stroke:#333,stroke-width:1px
+    
+    class B,E,A,D,G,C,F,Bb,Eb,Ab,Db,Gb baseNote
+    class B1,Db2,Eb2 row1
+    class E2,Gb2,Ab2 row2
+    class A2,B2,Db3 row3
+    class D3,E3,Gb3 row4
+    class G3,A3,B3 row5
+    class C4,D4,E4 row6
+    class legend,t_legend,p4_legend legendStyle

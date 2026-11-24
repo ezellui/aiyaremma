@@ -1,0 +1,15 @@
+--- предыдущая/convert.py
++++ текущая/convert.py
+@@ -232,6 +232,12 @@
+             out.append(render_explicit(c))
+         elif nm == 'ul' and 'contents-list' in cls:
+             out.append(render_contents_list(c))
++        elif nm == 'p' and 'lede' in cls:
++            out.append(render_lede(c))
++        elif nm in ('div', 'p') and 'pull' in cls:
++            out.append('\\begin{pullquoteenv}\\itshape %s\\end{pullquoteenv}\n' % render_children(c).strip())
++        elif nm == 'p':
++            out.append(render_children(c).strip() + '\\par\n')
+         # pager и прочая навигация — пропускаем
+     return ''.join(out)
+ 

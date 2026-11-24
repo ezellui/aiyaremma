@@ -1,0 +1,59 @@
+flowchart TD
+    A[Jouissance] --> B[Наслаждение за пределами\nпринципа удовольствия]
+    A --> C[Избыток символизации]
+    A --> D[Реальное тела]
+    
+    subgraph "Модусы jouissance"
+        E[Фаллическое\njouissance] --> F[Jouissance Другого\nженское наслаждение]
+        F --> G[Мистическое\njouissance]
+        G --> H[Смертельное\njouissance]
+        H -.->|Циклическое возвращение| E
+    end
+    
+    subgraph "Эстетическое самосозерцание языка"
+        I[Прекрасное:\nВоображаемая форма] --> J[Возвышенное:\nВстреча с Реальным]
+        J --> K[Unheimlich:\nЖуткое]
+        K --> L[Das Ding:\nВещь искусства]
+        L --> M[Сублимация]
+        M -.->|Новый цикл творения| I
+    end
+    
+    subgraph "Поэтическая функция"
+        N[Метафора] --> O[Конденсация]
+        O --> P[Симптом]
+        P --> Q[Метонимия]
+        Q --> R[Смещение]
+        R --> S[Желание]
+        S -.-> N
+    end
+    
+    B -.-> E
+    B -.-> H
+    C -.-> J
+    C -.-> L
+    D -.-> F
+    D -.-> G
+    
+    T[Трагическое] --> U[Антигона]
+    U --> V[Чистое желание]
+    V --> W[Этика психоанализа]
+    W --> X[Не уступай своему\nжеланию]
+    X -.-> T
+    
+    J -.-> T
+    J -.-> V
+    G -.-> W
+    
+    Y[Голос как объект] --> Z[Музыка]
+    Z --> AA[Взгляд как объект]
+    AA --> AB[Живопись]
+    AB --> AC[Тело как означающее]
+    AC --> AD[Танец]
+    AD -.-> Y
+    
+    style A fill:#f9d5e5,stroke:#333,stroke-width:3px
+    style E fill:#d5e5f9,stroke:#333,stroke-width:2px
+    style I fill:#e5f9d5,stroke:#333,stroke-width:2px
+    style N fill:#f9e5d5,stroke:#333,stroke-width:2px
+    style T fill:#e5d5f9,stroke:#333,stroke-width:2px
+    style Y fill:#d5f9e5,stroke:#333,stroke-width:2px

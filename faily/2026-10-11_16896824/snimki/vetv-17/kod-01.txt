@@ -1,0 +1,26 @@
+A self-contained brief for one photorealistic image. Read the world context first; it explains every object in the frame.
+
+WORLD CONTEXT (for understanding only — do not illustrate it directly):
+This is an artifact from a fictional alternate history. In 1921 Russia became the R.S.F.G.R. — a state whose ideology is "healthy madness": its citizens are dissolved into a single vast fungal organism, the Great Mycelium, and the god-like entity Cthulhu is said to sleep beneath an Arctic capital called R'lyeh. A citizen who keeps a separate, private mind is a criminal; minds that are not dissolved are stored outside the body in sealed glass jars ("vessels"). The rest of the world — the "Awake" nations — defends itself not with armies but with sanity: salt, fire and mathematics. In 1963, Professor Ephraim Waite of MIT derived field equations that locally force space back to ordinary Euclidean geometry within a radius of about 500 meters — a zone the Mycelium cannot enter and where its shape-shifting agents cannot keep a human form. This photograph was taken covertly by an R.S.F.G.R. intelligence agent and is now a page in the R.S.F.G.R. state archive. Nothing supernatural is visible in the photo: the dread comes only from what the objects imply.
+
+THE IMAGE:
+An archival black-and-white photograph, 1963, shot on 35 mm Kodak Tri-X film: visible grain, slight softness at the edges, mild vignetting, a faint diagonal scratch across the emulsion. Printed on matte photographic paper with a narrow white border, slightly yellowed, one corner bent. Lay the print flat on a dark wooden archive desk and photograph it from straight above, in soft daylight.
+
+Inside the print: an empty MIT lecture room after hours. A large black slate chalkboard with a wooden chalk tray, two sliding panels, a felt eraser and broken chalk stubs in the tray. Late-afternoon light falls from a tall window on the left. Nobody is in the room.
+
+The board is covered in dense but tidy handwritten chalk mathematics. Older derivations are half-erased behind the main text, leaving pale gray smudges. These lines must be clearly legible, exactly as written:
+  - top left, underlined: "WAITE FIELD — rev. 3 — Oct. 1963"
+  - "∇²Ψ − κ²Ψ = −λ ρ_E(x)"
+  - "Ψ(r) = Ψ₀ e^(−κr) / r"
+  - "R_ijkl → 0   for  r < r_s"
+  - "r_s ≈ 500 m   (κ⁻¹ = 0.5 km)"
+  - a chalk triangle with its three angles marked and, next to it, "Σ = 180°  ✓" — the check mark drawn emphatically twice
+  - lower right, boxed in a heavy rectangle: "DO NOT ERASE"
+  - one earlier line crossed out with a single stroke: "rev. 2 — failed (Providence)"
+
+On the window sill beside the board stands an ordinary laboratory glass jar about 25 cm tall with a screw-on metal lid. It is empty, clean and sealed, with a small typed paper label too small to read. It catches the window light. It is the only object in the room that is not about mathematics, and it should feel out of place without being dramatic.
+
+On the white border of the print, below the image, is a small handwritten note in faded blue ink, in old pre-1918 Russian spelling. Reproduce exactly: "МТИ, 1963. Уэйтъ". In the top right corner of the border, in pencil: "л. 41". Near the bottom left corner is one small, faded violet round rubber stamp: a simple stylized octopus inside a ring, with the ring's text too faded to read.
+
+STYLE AND CONSTRAINTS:
+Documentary realism, period-accurate 1963 classroom: no modern objects, no projectors, no whiteboards, no logos. No people, no tentacles, no monsters, no glowing effects, no color except the blue ink and the violet stamp on the white border. The mathematics should look like a real physicist's working board, not decorative symbols. Calm, quiet, slightly cold atmosphere.

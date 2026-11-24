@@ -1,0 +1,418 @@
+/**
+ * Repository for Claude interactions
+ */
+
+const { defaultLogger } = require('../../../shared/lib/logging/logger');
+const { client } = require('../../../shared/lib/db/postgres/client');
+const { 
+  select, 
+  insert, 
+  update 
+} = require('../../../shared/lib/db/postgres/queryBuilder');
+const ClaudeInteraction = require('../models/interactionModel');
+
+/**
+ * Repository for managing Claude interactions in PostgreSQL
+ */
+class InteractionRepository {
+  /**
+   * Create a new InteractionRepository
+   * @param {Object} [options={}] - Repository options
+   * @param {Object} [logger=defaultLogger] - Logger instance
+   */
+  constructor(options = {}, logger = defaultLogger) {
+    this.tableName = 'claude_interactions';
+    this.client = options.client || client;
+    this.logger = logger;
+  }
+
+  /**
+   * Find all interactions with pagination and filtering
+   * @param {number} page - Page number
+   * @param {number} pageSize - Page size
+   * @param {string} [sortBy] - Sort field
+   * @param {string} [sortOrder='desc'] - Sort order ('asc' or 'desc')
+   * @param {Object} [filters={}] - Filter criteria
+   * @returns {Promise<Object>} Promise resolving to { items, total } object
+   */
+  async findAll(page, pageSize, sortBy = 'interaction_date', sortOrder = 'desc', filters = {}) {
+    try {
+      // Build the query
+      const queryBuilder = select(this.tableName)
+        .paginate({ page, pageSize });
+      
+      // Add filters
+      if (filters.userId) {
+        queryBuilder.whereEquals('user_id', filters.userId);
+      }
+      
+      if (filters.conceptId) {
+        queryBuilder.whereEquals('concept_id', filters.conceptId);
+      }
+      
+      if (filters.queryType) {
+        queryBuilder.whereEquals('query_type', filters.queryType);
+      }
+      
+      if (filters.status) {
+        queryBuilder.whereEquals('status', filters.status);
+      }
+      
+      if (filters.dateFrom) {
+        queryBuilder.where('interaction_date', '>=', filters.dateFrom);
+      }
+      
+      if (filters.dateTo) {
+        queryBuilder.where('interaction_date', '<=', filters.dateTo);
+      }
+      
+      // Add sorting
+      queryBuilder.orderBy(sortBy, sortOrder);
+      
+      // Execute the query
+      const query = queryBuilder.build();
+      const result = await this.client.query(query.text, query.params);
+      
+      // Get total count
+      const countQuery = queryBuilder.buildCount();
+      const countResult = await this.client.query(countQuery.text, countQuery.params);
+      const total = parseInt(countResult.rows[0].total, 10);
+      
+      // Convert rows to models
+      const items = result.rows.map(row => ClaudeInteraction.fromDatabase(row));
+      
+      return { items, total };
+    } catch (error) {
+      this.logger.error(`Error finding interactions: ${error.message}`, {
+        page,
+        pageSize,
+        sortBy,
+        sortOrder,
+        filters,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find an interaction by ID
+   * @param {string} interactionId - Interaction ID
+   * @returns {Promise<ClaudeInteraction|null>} Promise resolving to interaction or null if not found
+   */
+  async findById(interactionId) {
+    try {
+      const query = select(this.tableName)
+        .whereEquals('interaction_id', interactionId)
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      if (result.rows.length === 0) {
+        return null;
+      }
+      
+      return ClaudeInteraction.fromDatabase(result.rows[0]);
+    } catch (error) {
+      this.logger.error(`Error finding interaction by ID ${interactionId}: ${error.message}`, {
+        interactionId,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find interactions by concept ID
+   * @param {string} conceptId - Concept ID
+   * @param {Object} [options={}] - Query options
+   * @returns {Promise<Array<ClaudeInteraction>>} Promise resolving to array of interactions
+   */
+  async findByConceptId(conceptId, options = {}) {
+    try {
+      const queryBuilder = select(this.tableName)
+        .whereEquals('concept_id', conceptId)
+        .orderBy('interaction_date', 'desc');
+      
+      if (options.limit) {
+        queryBuilder.limit(options.limit);
+      }
+      
+      if (options.queryType) {
+        queryBuilder.whereEquals('query_type', options.queryType);
+      }
+      
+      const query = queryBuilder.build();
+      const result = await this.client.query(query.text, query.params);
+      
+      return result.rows.map(row => ClaudeInteraction.fromDatabase(row));
+    } catch (error) {
+      this.logger.error(`Error finding interactions by concept ID ${conceptId}: ${error.message}`, {
+        conceptId,
+        options,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find interactions by user ID
+   * @param {string} userId - User ID
+   * @param {Object} [options={}] - Query options
+   * @returns {Promise<Array<ClaudeInteraction>>} Promise resolving to array of interactions
+   */
+  async findByUserId(userId, options = {}) {
+    try {
+      const queryBuilder = select(this.tableName)
+        .whereEquals('user_id', userId)
+        .orderBy('interaction_date', 'desc');
+      
+      if (options.limit) {
+        queryBuilder.limit(options.limit);
+      }
+      
+      if (options.queryType) {
+        queryBuilder.whereEquals('query_type', options.queryType);
+      }
+      
+      const query = queryBuilder.build();
+      const result = await this.client.query(query.text, query.params);
+      
+      return result.rows.map(row => ClaudeInteraction.fromDatabase(row));
+    } catch (error) {
+      this.logger.error(`Error finding interactions by user ID ${userId}: ${error.message}`, {
+        userId,
+        options,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find interaction by task ID
+   * @param {string} taskId - Task ID
+   * @returns {Promise<ClaudeInteraction|null>} Promise resolving to interaction or null if not found
+   */
+  async findByTaskId(taskId) {
+    try {
+      const query = select(this.tableName)
+        .whereEquals('task_id', taskId)
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      if (result.rows.length === 0) {
+        return null;
+      }
+      
+      return ClaudeInteraction.fromDatabase(result.rows[0]);
+    } catch (error) {
+      this.logger.error(`Error finding interaction by task ID ${taskId}: ${error.message}`, {
+        taskId,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new interaction
+   * @param {ClaudeInteraction} interaction - Interaction to create
+   * @returns {Promise<ClaudeInteraction>} Promise resolving to created interaction
+   */
+  async create(interaction) {
+    try {
+      interaction.validate();
+      
+      const query = insert(this.tableName, interaction.toDatabase())
+        .returning('*')
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      return ClaudeInteraction.fromDatabase(result.rows[0]);
+    } catch (error) {
+      this.logger.error(`Error creating interaction: ${error.message}`, {
+        interaction,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Update an interaction
+   * @param {string} interactionId - Interaction ID
+   * @param {Partial<ClaudeInteraction>} updates - Update data
+   * @returns {Promise<ClaudeInteraction>} Promise resolving to updated interaction
+   */
+  async update(interactionId, updates) {
+    try {
+      // Convert updates to database format if needed
+      const dbUpdates = {};
+      
+      if (updates.responseContent !== undefined) {
+        dbUpdates.response_content = updates.responseContent;
+      }
+      
+      if (updates.processingTime !== undefined) {
+        dbUpdates.processing_time = updates.processingTime;
+      }
+      
+      if (updates.status !== undefined) {
+        dbUpdates.status = updates.status;
+      }
+      
+      if (updates.error !== undefined) {
+        dbUpdates.error = updates.error;
+      }
+      
+      if (updates.inputTokens !== undefined) {
+        dbUpdates.input_tokens = updates.inputTokens;
+      }
+      
+      if (updates.outputTokens !== undefined) {
+        dbUpdates.output_tokens = updates.outputTokens;
+      }
+      
+      if (updates.cost !== undefined) {
+        dbUpdates.cost = updates.cost;
+      }
+      
+      if (updates.model !== undefined) {
+        dbUpdates.model = updates.model;
+      }
+      
+      if (updates.metadata !== undefined) {
+        dbUpdates.metadata = updates.metadata;
+      }
+      
+      const query = update(this.tableName, dbUpdates)
+        .whereEquals('interaction_id', interactionId)
+        .returning('*')
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      if (result.rows.length === 0) {
+        return null;
+      }
+      
+      return ClaudeInteraction.fromDatabase(result.rows[0]);
+    } catch (error) {
+      this.logger.error(`Error updating interaction ${interactionId}: ${error.message}`, {
+        interactionId,
+        updates,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get interaction statistics
+   * @param {string} [userId] - Filter by user ID
+   * @param {Date} [startDate] - Start date for statistics
+   * @param {Date} [endDate] - End date for statistics
+   * @returns {Promise<Object>} Promise resolving to statistics
+   */
+  async getStatistics(userId = null, startDate = null, endDate = null) {
+    try {
+      let query = `
+        SELECT 
+          COUNT(*) as total_interactions,
+          COUNT(DISTINCT user_id) as unique_users,
+          COUNT(DISTINCT concept_id) as unique_concepts,
+          COUNT(CASE WHEN status = 'success' THEN 1 END) as successful_interactions,
+          COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_interactions,
+          AVG(processing_time) as avg_processing_time,
+          SUM(input_tokens) as total_input_tokens,
+          SUM(output_tokens) as total_output_tokens,
+          SUM(cost) as total_cost,
+          query_type,
+          model
+        FROM ${this.tableName}
+        WHERE 1=1
+      `;
+      
+      const params = [];
+      let paramIndex = 1;
+      
+      if (userId) {
+        query += ` AND user_id = $${paramIndex++}`;
+        params.push(userId);
+      }
+      
+      if (startDate) {
+        query += ` AND interaction_date >= $${paramIndex++}`;
+        params.push(startDate);
+      }
+      
+      if (endDate) {
+        query += ` AND interaction_date <= $${paramIndex++}`;
+        params.push(endDate);
+      }
+      
+      query += ' GROUP BY query_type, model ORDER BY total_interactions DESC';
+      
+      const result = await this.client.query(query, params);
+      
+      // Calculate totals
+      const totals = result.rows.reduce((acc, row) => ({
+        totalInteractions: acc.totalInteractions + parseInt(row.total_interactions, 10),
+        successfulInteractions: acc.successfulInteractions + parseInt(row.successful_interactions, 10),
+        failedInteractions: acc.failedInteractions + parseInt(row.failed_interactions, 10),
+        totalInputTokens: acc.totalInputTokens + parseInt(row.total_input_tokens || 0, 10),
+        totalOutputTokens: acc.totalOutputTokens + parseInt(row.total_output_tokens || 0, 10),
+        totalCost: acc.totalCost + parseFloat(row.total_cost || 0),
+        uniqueUsers: Math.max(acc.uniqueUsers, parseInt(row.unique_users, 10)),
+        uniqueConcepts: Math.max(acc.uniqueConcepts, parseInt(row.unique_concepts, 10)),
+      }), {
+        totalInteractions: 0,
+        successfulInteractions: 0,
+        failedInteractions: 0,
+        totalInputTokens: 0,
+        totalOutputTokens: 0,
+        totalCost: 0,
+        uniqueUsers: 0,
+        uniqueConcepts: 0,
+      });
+      
+      // Calculate overall averages
+      totals.successRate = totals.totalInteractions > 0 
+        ? (totals.successfulInteractions / totals.totalInteractions) * 100 
+        : 0;
+      
+      totals.avgProcessingTime = result.rows.length > 0
+        ? result.rows.reduce((sum, row) => sum + parseFloat(row.avg_processing_time || 0), 0) / result.rows.length
+        : 0;
+      
+      return {
+        totals,
+        byQueryType: result.rows.map(row => ({
+          queryType: row.query_type,
+          model: row.model,
+          count: parseInt(row.total_interactions, 10),
+          successCount: parseInt(row.successful_interactions, 10),
+          failedCount: parseInt(row.failed_interactions, 10),
+          avgProcessingTime: parseFloat(row.avg_processing_time || 0),
+          totalInputTokens: parseInt(row.total_input_tokens || 0, 10),
+          totalOutputTokens: parseInt(row.total_output_tokens || 0, 10),
+          totalCost: parseFloat(row.total_cost || 0),
+        })),
+      };
+    } catch (error) {
+      this.logger.error(`Error getting interaction statistics: ${error.message}`, {
+        userId,
+        startDate,
+        endDate,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+}
+
+module.exports = InteractionRepository;

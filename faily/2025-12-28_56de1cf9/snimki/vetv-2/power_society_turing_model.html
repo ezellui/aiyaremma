@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модель «Власть-Общество» с паттернами Тьюринга</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            height: fit-content;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+        }
+
+        .control-section h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .param-group {
+            margin-bottom: 15px;
+        }
+
+        .param-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #495057;
+        }
+
+        .param-value {
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #dee2e6;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #1e3c72;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #1e3c72;
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .visualization-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .canvas-container {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .canvas-title {
+            font-weight: 600;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+
+        .info-panel {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .info-panel h3 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .regime-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .regime-slow {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .regime-critical {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .regime-fast {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Модель «Власть-Общество» с паттернами Тьюринга</h1>
+        <div class="subtitle">Интерактивная визуализация пространственно-временной динамики</div>
+
+        <div class="main-grid">
+            <!-- Панель управления -->
+            <div class="controls">
+                <div class="control-section">
+                    <h3>⚙️ Управление симуляцией</h3>
+                    <div class="buttons">
+                        <button class="btn-primary" id="startBtn">Старт</button>
+                        <button class="btn-secondary" id="pauseBtn">Пауза</button>
+                        <button class="btn-danger" id="resetBtn">Сброс</button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>📊 Готовые сценарии</h3>
+                    <div class="preset-buttons">
+                        <button class="btn-secondary" onclick="loadPreset('slow')">α &lt; 1<br>Инерция</button>
+                        <button class="btn-secondary" onclick="loadPreset('critical')">α = 1<br>Критика</button>
+                        <button class="btn-secondary" onclick="loadPreset('fast')">α &gt; 1<br>Реакция</button>
+                        <button class="btn-secondary" onclick="loadPreset('resonance')">Резонанс</button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>🔬 Параметры диффузии</h3>
+                    
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>ε₁² (диффузия власти)</span>
+                            <span class="param-value" id="eps1Val">0.001</span>
+                        </div>
+                        <input type="range" id="eps1" min="0.0001" max="0.01" step="0.0001" value="0.001">
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>ε₂² (диффузия активности)</span>
+                            <span class="param-value" id="eps2Val">0.01</span>
+                        </div>
+                        <input type="range" id="eps2" min="0.001" max="0.1" step="0.001" value="0.01">
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>δ = ε₂²/ε₁² (отношение)</span>
+                            <span class="param-value" id="deltaVal">10.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>⏱️ Временные параметры</h3>
+                    
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>α (скорость настроений)</span>
+                            <span class="param-value" id="alphaVal">0.5</span>
+                        </div>
+                        <input type="range" id="alpha" min="0.1" max="2.0" step="0.1" value="0.5">
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>T (период колебаний)</span>
+                            <span class="param-value" id="periodVal">50</span>
+                        </div>
+                        <input type="range" id="period" min="10" max="200" step="10" value="50">
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>A (амплитуда φ₂)</span>
+                            <span class="param-value" id="amplitudeVal">0.3</span>
+                        </div>
+                        <input type="range" id="amplitude" min="0" max="0.5" step="0.05" value="0.3">
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>🔗 Взаимодействия</h3>
+                    
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>α_ps (подавление власти)</span>
+                            <span class="param-value" id="alphaPsVal">0.5</span>
+                        </div>
+                        <input type="range" id="alphaPs" min="0" max="2" step="0.1" value="0.5">
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>β (активация общества)</span>
+                            <span class="param-value" id="betaVal">1.0</span>
+                        </div>
+                        <input type="range" id="beta" min="0" max="3" step="0.1" value="1.0">
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>μ (затухание активности)</span>
+                            <span class="param-value" id="muVal">0.2</span>
+                        </div>
+                        <input type="range" id="mu" min="0" max="1" step="0.05" value="0.2">
+                    </div>
+
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>k (реакция общества)</span>
+                            <span class="param-value" id="kVal">1.0</span>
+                        </div>
+                        <input type="range" id="k" min="0.1" max="3" step="0.1" value="1.0">
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>🎯 Начальные условия</h3>
+                    
+                    <div class="param-group">
+                        <div class="param-label">
+                            <span>Шум (возмущения)</span>
+                            <span class="param-value" id="noiseVal">0.1</span>
+                        </div>
+                        <input type="range" id="noise" min="0" max="0.5" step="0.05" value="0.1">
+                    </div>
+
+                    <div class="buttons" style="margin-top: 10px;">
+                        <button class="btn-secondary" onclick="addRandomPerturbation()">Возмущение</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Область визуализации -->
+            <div class="visualization-area">
+                <!-- 2D Heat maps -->
+                <div class="canvas-container">
+                    <div class="canvas-title">Пространственно-временная эволюция: Власть p(x,t)</div>
+                    <canvas id="heatmapP" width="1200" height="300"></canvas>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #0d47a1;"></div>
+                            <span>Низкая власть</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffd600;"></div>
+                            <span>Средняя власть</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #d32f2f;"></div>
+                            <span>Высокая власть</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="canvas-container">
+                    <div class="canvas-title">Пространственно-временная эволюция: Активность s(x,t)</div>
+                    <canvas id="heatmapS" width="1200" height="300"></canvas>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #1b5e20;"></div>
+                            <span>Низкая активность</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffeb3b;"></div>
+                            <span>Средняя активность</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff5722;"></div>
+                            <span>Высокая активность</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current state graphs -->
+                <div class="canvas-container">
+                    <div class="canvas-title">Текущее распределение по уровням иерархии (x)</div>
+                    <canvas id="currentState" width="1200" height="300"></canvas>
+                </div>
+
+                <!-- Transition point dynamics -->
+                <div class="canvas-container">
+                    <div class="canvas-title">Динамика точки перехода r(t) и паттерны</div>
+                    <canvas id="transitionPoint" width="1200" height="250"></canvas>
+                </div>
+
+                <!-- Info panel -->
+                <div class="info-panel">
+                    <h3>📈 Информация о режиме</h3>
+                    <div id="regimeInfo"></div>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Время (t)</div>
+                            <div class="stat-value" id="timeVal">0.0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Позиция r(t)</div>
+                            <div class="stat-value" id="rVal">0.50</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Паттернов</div>
+                            <div class="stat-value" id="patternsVal">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Параметры сетки
+        const NX = 200;  // Точек по пространству
+        const NT = 200;  // Точек по времени для истории
+        const DX = 1.0 / (NX - 1);
+        const DT = 0.1;
+
+        // Массивы данных
+        let p = new Array(NX).fill(0);
+        let s = new Array(NX).fill(0);
+        let p_new = new Array(NX).fill(0);
+        let s_new = new Array(NX).fill(0);
+        
+        // История для heatmap
+        let p_history = [];
+        let s_history = [];
+        let r_history = [];
+        let time_history = [];
+        
+        // Текущее время
+        let currentTime = 0;
+        let running = false;
+        let animationId = null;
+
+        // Параметры модели
+        let params = {
+            eps1_sq: 0.001,
+            eps2_sq: 0.01,
+            alpha_exp: 0.5,
+            period: 50,
+            amplitude: 0.3,
+            alpha_ps: 0.5,
+            beta: 1.0,
+            mu: 0.2,
+            k: 1.0,
+            noise: 0.1
+        };
+
+        // Функции распределения власти
+        function phi1(x) {
+            return -0.8 + 0.1 * Math.sin(2 * Math.PI * x);
+        }
+
+        function phi2(x, tau) {
+            const base = 0.0 + 0.1 * Math.sin(Math.PI * x);
+            const oscillation = params.amplitude * Math.sin(2 * Math.PI * tau / params.period);
+            return base + oscillation;
+        }
+
+        function phi3(x) {
+            return 0.8 - 0.1 * Math.sin(2 * Math.PI * x);
+        }
+
+        function k_func(x) {
+            return params.k * (1.0 + 0.2 * Math.sin(4 * Math.PI * x));
+        }
+
+        // Инициализация
+        function initialize() {
+            currentTime = 0;
+            p_history = [];
+            s_history = [];
+            r_history = [];
+            time_history = [];
+
+            // Начальные условия с небольшим шумом
+            for (let i = 0; i < NX; i++) {
+                const x = i * DX;
+                const noise = (Math.random() - 0.5) * params.noise;
+                
+                // Контрастная структура для p
+                if (x < 0.5) {
+                    p[i] = 0.6 + noise;
+                } else {
+                    p[i] = -0.6 + noise;
+                }
+                
+                // Небольшая активность для s
+                s[i] = 0.1 + noise * 0.5;
+            }
+
+            // Сохраняем начальное состояние
+            p_history.push([...p]);
+            s_history.push([...s]);
+            r_history.push(findTransitionPoint());
+            time_history.push(0);
+        }
+
+        // Поиск точки перехода контрастной структуры
+        function findTransitionPoint() {
+            let crossings = [];
+            for (let i = 1; i < NX; i++) {
+                if ((p[i-1] < 0 && p[i] >= 0) || (p[i-1] >= 0 && p[i] < 0)) {
+                    // Линейная интерполяция для точной позиции
+                    const x_cross = (i - 1) * DX + DX * Math.abs(p[i-1]) / (Math.abs(p[i-1]) + Math.abs(p[i]));
+                    crossings.push(x_cross);
+                }
+            }
+            return crossings.length > 0 ? crossings[0] : 0.5;
+        }
+
+        // Численное решение методом конечных разностей
+        function solve_step() {
+            const tau = Math.pow(currentTime, params.alpha_exp);
+            
+            // Граничные условия Неймана: dp/dx = 0 на границах
+            for (let i = 1; i < NX - 1; i++) {
+                const x = i * DX;
+                
+                // Диффузия (трехточечная схема)
+                const d2p_dx2 = (p[i+1] - 2*p[i] + p[i-1]) / (DX * DX);
+                const d2s_dx2 = (s[i+1] - 2*s[i] + s[i-1]) / (DX * DX);
+                
+                // Реакционные члены для p
+                const phi1_val = phi1(x);
+                const phi2_val = phi2(x, tau);
+                const phi3_val = phi3(x);
+                const k_val = k_func(x);
+                
+                const reaction_p = -k_val * (p[i] - phi1_val) * (p[i] - phi2_val) * (p[i] - phi3_val)
+                                   - params.alpha_ps * p[i] * s[i];
+                
+                // Реакционные члены для s
+                const reaction_s = params.beta * Math.pow(p[i] - phi2_val, 2) * s[i] * (1 - s[i])
+                                   - params.mu * s[i];
+                
+                // Полунеявная схема для устойчивости
+                p_new[i] = p[i] + DT * (params.eps1_sq * d2p_dx2 + reaction_p);
+                s_new[i] = s[i] + DT * (params.eps2_sq * d2s_dx2 + reaction_s);
+                
+                // Ограничения
+                p_new[i] = Math.max(-1.5, Math.min(1.5, p_new[i]));
+                s_new[i] = Math.max(0, Math.min(1.2, s_new[i]));
+            }
+            
+            // Граничные условия (нулевой поток)
+            p_new[0] = p_new[1];
+            p_new[NX-1] = p_new[NX-2];
+            s_new[0] = s_new[1];
+            s_new[NX-1] = s_new[NX-2];
+            
+            // Обновление
+            [p, p_new] = [p_new, p];
+            [s, s_new] = [s_new, s];
+            
+            currentTime += DT;
+            
+            // Сохранение истории
+            if (time_history.length < NT) {
+                p_history.push([...p]);
+                s_history.push([...s]);
+                r_history.push(findTransitionPoint());
+                time_history.push(currentTime);
+            } else {
+                p_history.shift();
+                s_history.shift();
+                r_history.shift();
+                time_history.shift();
+                p_history.push([...p]);
+                s_history.push([...s]);
+                r_history.push(findTransitionPoint());
+                time_history.push(currentTime);
+            }
+        }
+
+        // Визуализация heatmap
+        function drawHeatmap(canvasId, history, colorScheme) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (history.length === 0) return;
+            
+            const cellWidth = width / NX;
+            const cellHeight = height / history.length;
+            
+            for (let t = 0; t < history.length; t++) {
+                for (let x = 0; x < NX; x++) {
+                    const value = history[t][x];
+                    const color = getColor(value, colorScheme);
+                    
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x * cellWidth, height - (t + 1) * cellHeight, cellWidth + 1, cellHeight + 1);
+                }
+            }
+            
+            // Сетка времени
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            for (let t = 0; t < history.length; t += 20) {
+                const y = height - t * cellHeight;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+        }
+
+        // Цветовая схема для heatmap
+        function getColor(value, scheme) {
+            // Нормализация
+            let normalized;
+            if (scheme === 'p') {
+                normalized = (value + 1) / 2; // от -1..1 до 0..1
+            } else {
+                normalized = value; // уже 0..1
+            }
+            normalized = Math.max(0, Math.min(1, normalized));
+            
+            if (scheme === 'p') {
+                // Синий -> Желтый -> Красный для власти
+                if (normalized < 0.5) {
+                    const t = normalized * 2;
+                    const r = Math.floor(13 + (255 - 13) * t);
+                    const g = Math.floor(71 + (214 - 71) * t);
+                    const b = Math.floor(161 + (0 - 161) * t);
+                    return `rgb(${r}, ${g}, ${b})`;
+                } else {
+                    const t = (normalized - 0.5) * 2;
+                    const r = Math.floor(255 + (211 - 255) * t);
+                    const g = Math.floor(214 + (47 - 214) * t);
+                    const b = Math.floor(0 + (47 - 0) * t);
+                    return `rgb(${r}, ${g}, ${b})`;
+                }
+            } else {
+                // Зеленый -> Желтый -> Оранжевый для активности
+                if (normalized < 0.5) {
+                    const t = normalized * 2;
+                    const r = Math.floor(27 + (255 - 27) * t);
+                    const g = Math.floor(94 + (235 - 94) * t);
+                    const b = Math.floor(32 + (59 - 32) * t);
+                    return `rgb(${r}, ${g}, ${b})`;
+                } else {
+                    const t = (normalized - 0.5) * 2;
+                    const r = Math.floor(255 + (255 - 255) * t);
+                    const g = Math.floor(235 + (87 - 235) * t);
+                    const b = Math.floor(59 + (34 - 59) * t);
+                    return `rgb(${r}, ${g}, ${b})`;
+                }
+            }
+        }
+
+        // Отрисовка текущего состояния
+        function drawCurrentState() {
+            const canvas = document.getElementById('currentState');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Оси
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, height - 30);
+            ctx.lineTo(width - 20, height - 30);
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, height - 30);
+            ctx.stroke();
+            
+            // Подписи осей
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Уровень иерархии x (0 = верх, 1 = низ)', width / 2, height - 5);
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Величина', 0, 0);
+            ctx.restore();
+            
+            // Масштабирование
+            const scaleX = (width - 70) / NX;
+            const scaleY = (height - 60) / 2.5;
+            const zeroY = height - 30 - scaleY * 0.5;
+            
+            // Нулевая линия
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(50, zeroY);
+            ctx.lineTo(width - 20, zeroY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // График p(x)
+            ctx.strokeStyle = '#d32f2f';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let i = 0; i < NX; i++) {
+                const x = 50 + i * scaleX;
+                const y = zeroY - p[i] * scaleY;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // График s(x)
+            ctx.strokeStyle = '#388e3c';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let i = 0; i < NX; i++) {
+                const x = 50 + i * scaleX;
+                const y = zeroY - s[i] * scaleY;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Точка перехода
+            const r = findTransitionPoint();
+            const rx = 50 + r * (width - 70);
+            ctx.strokeStyle = '#ff9800';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([10, 5]);
+            ctx.beginPath();
+            ctx.moveTo(rx, 20);
+            ctx.lineTo(rx, height - 30);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Легенда
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#d32f2f';
+            ctx.fillText('p(x) - власть', width - 180, 30);
+            ctx.fillStyle = '#388e3c';
+            ctx.fillText('s(x) - активность', width - 180, 50);
+            ctx.fillStyle = '#ff9800';
+            ctx.fillText('r(t) - точка перехода', width - 180, 70);
+        }
+
+        // Отрисовка динамики точки перехода
+        function drawTransitionPoint() {
+            const canvas = document.getElementById('transitionPoint');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (r_history.length < 2) return;
+            
+            // Оси
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, height - 30);
+            ctx.lineTo(width - 20, height - 30);
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, height - 30);
+            ctx.stroke();
+            
+            // Подписи
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Время t', width / 2, height - 5);
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Позиция r(t)', 0, 0);
+            ctx.restore();
+            
+            // Масштабирование
+            const scaleX = (width - 70) / r_history.length;
+            const scaleY = height - 60;
+            
+            // График r(t)
+            ctx.strokeStyle = '#ff9800';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let i = 0; i < r_history.length; i++) {
+                const x = 50 + i * scaleX;
+                const y = height - 30 - r_history[i] * scaleY;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Референсные линии
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            [0.25, 0.5, 0.75].forEach(val => {
+                const y = height - 30 - val * scaleY;
+                ctx.beginPath();
+                ctx.moveTo(50, y);
+                ctx.lineTo(width - 20, y);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#666';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText(val.toFixed(2), 45, y + 4);
+            });
+            ctx.setLineDash([]);
+            
+            // Анализ паттернов (частотный анализ r(t))
+            const patterns = detectPatterns(r_history);
+            if (patterns > 0) {
+                ctx.fillStyle = '#1e3c72';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText(`Обнаружено паттернов: ${patterns}`, width - 30, 30);
+            }
+        }
+
+        // Простое обнаружение паттернов (подсчет локальных экстремумов)
+        function detectPatterns(data) {
+            if (data.length < 3) return 0;
+            
+            let count = 0;
+            for (let i = 1; i < data.length - 1; i++) {
+                if ((data[i] > data[i-1] && data[i] > data[i+1]) ||
+                    (data[i] < data[i-1] && data[i] < data[i+1])) {
+                    count++;
+                }
+            }
+            return Math.floor(count / 2); // Пара макс-мин = один паттерн
+        }
+
+        // Обновление информации о режиме
+        function updateRegimeInfo() {
+            const delta = params.eps2_sq / params.eps1_sq;
+            const alpha = params.alpha_exp;
+            
+            let regime = '';
+            let regimeClass = '';
+            let description = '';
+            
+            if (alpha < 0.9) {
+                regime = 'Инерционное общество (α < 1)';
+                regimeClass = 'regime-slow';
+                description = 'Медленные изменения настроений. Власть успевает адаптироваться. Ожидается вибрация контрастной структуры с малой амплитудой и стационарные пространственные паттерны.';
+            } else if (alpha > 1.1) {
+                regime = 'Реактивное общество (α > 1)';
+                regimeClass = 'regime-fast';
+                description = 'Быстрые изменения настроений. Власть отслеживает изменения с задержкой. Возможны резонансные эффекты и динамическая перестройка паттернов.';
+            } else {
+                regime = 'Критическое состояние (α ≈ 1)';
+                regimeClass = 'regime-critical';
+                description = 'Скорости изменения настроений и диффузии власти сравнимы. Возможна сложная квазипериодическая или хаотическая динамика. Высокая чувствительность к возмущениям.';
+            }
+            
+            const turingCondition = delta > 1 ? 
+                `✓ Условие Тьюринга выполнено (δ = ${delta.toFixed(1)} > 1)` :
+                `✗ Условие Тьюринга не выполнено (δ = ${delta.toFixed(1)} < 1)`;
+            
+            document.getElementById('regimeInfo').innerHTML = `
+                <div class="regime-indicator ${regimeClass}">${regime}</div>
+                <p style="margin-top: 10px; line-height: 1.6;">${description}</p>
+                <p style="margin-top: 10px; font-weight: 600;">${turingCondition}</p>
+                <p style="margin-top: 5px; font-size: 0.9em; color: #666;">
+                    Характерная длина волны паттерна: λ ≈ ${estimateWavelength().toFixed(3)}
+                </p>
+            `;
+        }
+
+        // Оценка длины волны паттерна
+        function estimateWavelength() {
+            const J11 = -params.k * 2; // Упрощенная оценка
+            const J22 = -params.mu;
+            const k_c_sq = (J11 * params.eps2_sq + J22 * params.eps1_sq) / (2 * params.eps1_sq * params.eps2_sq);
+            if (k_c_sq <= 0) return 0;
+            const k_c = Math.sqrt(k_c_sq);
+            return 2 * Math.PI / k_c;
+        }
+
+        // Обновление всех графиков
+        function updateVisualization() {
+            drawHeatmap('heatmapP', p_history, 'p');
+            drawHeatmap('heatmapS', s_history, 's');
+            drawCurrentState();
+            drawTransitionPoint();
+            updateRegimeInfo();
+            
+            // Обновление статистики
+            document.getElementById('timeVal').textContent = currentTime.toFixed(1);
+            document.getElementById('rVal').textContent = findTransitionPoint().toFixed(3);
+            document.getElementById('patternsVal').textContent = detectPatterns(r_history);
+        }
+
+        // Главный цикл анимации
+        function animate() {
+            if (!running) return;
+            
+            solve_step();
+            updateVisualization();
+            
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Управление симуляцией
+        document.getElementById('startBtn').addEventListener('click', () => {
+            if (!running) {
+                running = true;
+                animate();
+            }
+        });
+
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            running = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            running = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            initialize();
+            updateVisualization();
+        });
+
+        // Обработчики слайдеров
+        const sliders = {
+            'eps1': 'eps1_sq',
+            'eps2': 'eps2_sq',
+            'alpha': 'alpha_exp',
+            'period': 'period',
+            'amplitude': 'amplitude',
+            'alphaPs': 'alpha_ps',
+            'beta': 'beta',
+            'mu': 'mu',
+            'k': 'k',
+            'noise': 'noise'
+        };
+
+        Object.keys(sliders).forEach(sliderId => {
+            const slider = document.getElementById(sliderId);
+            const display = document.getElementById(sliderId + 'Val');
+            
+            slider.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                params[sliders[sliderId]] = value;
+                display.textContent = value.toFixed(4);
+                
+                // Обновление δ
+                if (sliderId === 'eps1' || sliderId === 'eps2') {
+                    const delta = params.eps2_sq / params.eps1_sq;
+                    document.getElementById('deltaVal').textContent = delta.toFixed(1);
+                }
+                
+                updateRegimeInfo();
+            });
+        });
+
+        // Готовые сценарии
+        function loadPreset(type) {
+            switch(type) {
+                case 'slow':
+                    params.alpha_exp = 0.5;
+                    params.eps1_sq = 0.001;
+                    params.eps2_sq = 0.01;
+                    params.period = 100;
+                    params.amplitude = 0.3;
+                    params.k = 1.5;
+                    break;
+                case 'critical':
+                    params.alpha_exp = 1.0;
+                    params.eps1_sq = 0.002;
+                    params.eps2_sq = 0.02;
+                    params.period = 50;
+                    params.amplitude = 0.35;
+                    params.k = 1.2;
+                    break;
+                case 'fast':
+                    params.alpha_exp = 1.5;
+                    params.eps1_sq = 0.003;
+                    params.eps2_sq = 0.03;
+                    params.period = 30;
+                    params.amplitude = 0.4;
+                    params.k = 1.0;
+                    break;
+                case 'resonance':
+                    params.alpha_exp = 1.0;
+                    params.eps1_sq = 0.001;
+                    params.eps2_sq = 0.05;
+                    params.period = estimateResonancePeriod();
+                    params.amplitude = 0.4;
+                    params.beta = 1.5;
+                    params.k = 1.0;
+                    break;
+            }
+            
+            // Обновление слайдеров
+            document.getElementById('alpha').value = params.alpha_exp;
+            document.getElementById('alphaVal').textContent = params.alpha_exp.toFixed(1);
+            document.getElementById('eps1').value = params.eps1_sq;
+            document.getElementById('eps1Val').textContent = params.eps1_sq.toFixed(4);
+            document.getElementById('eps2').value = params.eps2_sq;
+            document.getElementById('eps2Val').textContent = params.eps2_sq.toFixed(4);
+            document.getElementById('period').value = params.period;
+            document.getElementById('periodVal').textContent = params.period;
+            document.getElementById('amplitude').value = params.amplitude;
+            document.getElementById('amplitudeVal').textContent = params.amplitude.toFixed(2);
+            document.getElementById('k').value = params.k;
+            document.getElementById('kVal').textContent = params.k.toFixed(1);
+            
+            const delta = params.eps2_sq / params.eps1_sq;
+            document.getElementById('deltaVal').textContent = delta.toFixed(1);
+            
+            initialize();
+            updateVisualization();
+        }
+
+        function estimateResonancePeriod() {
+            // Упрощенная оценка резонансного периода
+            return 40 + Math.random() * 20;
+        }
+
+        // Добавление случайного возмущения
+        function addRandomPerturbation() {
+            const center = 0.3 + Math.random() * 0.4;
+            const width = 0.05 + Math.random() * 0.1;
+            const amplitude = params.noise * 2;
+            
+            for (let i = 0; i < NX; i++) {
+                const x = i * DX;
+                const dist = Math.abs(x - center);
+                if (dist < width) {
+                    const factor = Math.cos(Math.PI * dist / width / 2);
+                    p[i] += amplitude * factor * (Math.random() - 0.5);
+                    s[i] += amplitude * 0.5 * factor * Math.random();
+                }
+            }
+            
+            updateVisualization();
+        }
+
+        // Инициализация при загрузке
+        window.addEventListener('load', () => {
+            initialize();
+            updateVisualization();
+        });
+    </script>
+</body>
+</html>

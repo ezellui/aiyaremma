@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alvearium</title>
+<style>
+  html,body{margin:0;height:100%;background:#070209;overflow:hidden}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #ov{mix-blend-mode:screen;pointer-events:none}
+  #ui{position:fixed;right:14px;bottom:14px;display:flex;gap:8px;align-items:center;opacity:0;transition:opacity .6s;
+    font:15px/1 ui-sans-serif,system-ui,sans-serif;z-index:5}
+  #ui.show{opacity:1}
+  #ui button{background:rgba(20,6,22,.72);color:#e9c9df;border:1px solid rgba(233,160,210,.35);border-radius:14px;
+    font:inherit;padding:6px 12px;cursor:pointer}
+  #ui button:hover{background:rgba(70,20,60,.8)}
+  #ui span{color:rgba(233,201,223,.55)}
+  #err{position:fixed;inset:0;display:none;align-items:center;justify-content:center;color:#e9c9df;font:18px system-ui;padding:2em;text-align:center}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="ov"></canvas>
+<div id="err"></div>
+<div id="ui">
+  <button data-a="prey" title="A">Добыча</button>
+  <button data-a="pal" title="G">Окрас</button>
+  <button data-a="pause" title="P">Пауза</button>
+  <button data-a="fs" title="F">Во весь экран</button>
+  <span>A · G · P · F</span>
+</div>
+<script>
+'use strict';
+/* =====================================================================================
+   Alvearium — бесконечный фон «Разум Улья».
+   Слои: (1) живая ткань — реакция–диффузия Грея–Скотта на GPU, режимы плавно сменяются по
+   областям; (2) синаптическая сеть — растёт «колонизацией пространства», бьётся двойным
+   ударом, ткань нарастает вдоль жил; (3) добыча — чужая правильная решётка, которую сеть
+   обволакивает, разбирает и переваривает; на её месте ткань перенимает шестиугольный строй.
+   Ни одной буквы: у Улья нет письма.
+   ===================================================================================== */
+const TAU = Math.PI * 2;
+const rnd = (a = 1, b) => b === undefined ? Math.random() * a : a + Math.random() * (b - a);
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, f) => a + (b - a) * f;
+const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+
+const PALS = {
+  violet: { dark: [.028, .008, .04], flesh: [.44, .12, .38], bone: [.93, .86, .74], glow: [.96, .46, .78], prey: [.45, .9, 1], vein: '#f3a3d6', veinHot: '#fff0fa' },
+  blood:  { dark: [.03, .006, .008], flesh: [.48, .07, .07], bone: [.92, .83, .62], glow: [1, .42, .22], prey: [.5, .95, .85], vein: '#ff9a6a', veinHot: '#fff3e6' }
+};
+let palKey = 'violet', pal = PALS.violet;
+
+/* ------------------------------------------------------------- WebGL: ткань */
+const glc = document.getElementById('gl'), ov = document.getElementById('ov'), ox = ov.getContext('2d');
+const gl = glc.getContext('webgl2', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true });
+function fail(msg) { const e = document.getElementById('err'); e.style.display = 'flex'; e.textContent = msg; throw new Error(msg); }
+if (!gl) fail('Этому браузеру недоступен WebGL2 — ткань не может расти.');
+const fbExt = gl.getExtension('EXT_color_buffer_float') || gl.getExtension('EXT_color_buffer_half_float');
+if (!fbExt) fail('Браузер не умеет рисовать в текстуры с плавающей точкой (EXT_color_buffer_float).');
+
+const VS = `#version 300 es
+in vec2 p; out vec2 vUv; void main(){ vUv = p * .5 + .5; gl_Position = vec4(p, 0., 1.); }`;
+const COMMON = `
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float noise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3. - 2. * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
+float fbm(vec2 p){ float a = .5, s = 0.; for (int i = 0; i < 4; i++) { s += a * noise(p); p = p * 2.03 + 1.7; a *= .5; } return s; }`;
+const SIM_FS = `#version 300 es
+precision highp float;
+uniform sampler2D S; uniform vec2 px; uniform float uT, aspect, memWrite; uniform vec4 prey;
+uniform vec4 splat[32]; uniform int nSplat;
+in vec2 vUv; out vec4 o;` + COMMON + `
+void main(){
+  vec4 c = texture(S, vUv);
+  vec4 l = -c
+    + .2 * (texture(S, vUv + vec2(px.x, 0.)) + texture(S, vUv - vec2(px.x, 0.)) + texture(S, vUv + vec2(0., px.y)) + texture(S, vUv - vec2(0., px.y)))
+    + .05 * (texture(S, vUv + px) + texture(S, vUv - px) + texture(S, vUv + vec2(px.x, -px.y)) + texture(S, vUv + vec2(-px.x, px.y)));
+  vec2 q = vUv * vec2(aspect, 1.) * 1.25;
+  float n = fbm(q + vec2(uT * .006, -uT * .004));
+  float m = fbm(q * 1.6 + 7.3 - uT * .005);
+  vec2 coral = vec2(.0545, .0620), mitosis = vec2(.0367, .0649), maze = vec2(.0290, .0570), soliton = vec2(.0300, .0620);
+  vec2 fk = mix(coral, mitosis, smoothstep(.38, .62, n));
+  fk = mix(fk, maze, smoothstep(.58, .78, m) * .85);
+  fk = mix(fk, soliton, c.b);                                  // перенятый строй добычи: шестиугольные пятна
+  vec2 dp = (vUv - prey.xy) * vec2(aspect, 1.);
+  float inside = 1. - smoothstep(prey.z * .9, prey.z, length(dp));
+  float k = fk.y + .04 * prey.w * inside;                      // добыча держит ткань на расстоянии
+  float u = c.r, v = c.g, uvv = u * v * v;
+  u += l.r - uvv + fk.x * (1. - u);
+  v += .5 * l.g + uvv - (fk.x + k) * v;
+  for (int i = 0; i < 32; i++) { if (i >= nSplat) break; vec4 s = splat[i];
+    vec2 d = (vUv - s.xy) * vec2(aspect, 1.); float e = exp(-dot(d, d) / (s.z * s.z)); v += s.w * e; u -= s.w * e * .5; }
+  float b = c.b + .12 * l.b; b = max(b, memWrite * inside); b *= .9999985;
+  o = vec4(clamp(u, 0., 1.), clamp(v, 0., 1.), clamp(b, 0., 1.), 1.);
+}`;
+const SHOW_FS = `#version 300 es
+precision highp float;
+uniform sampler2D S; uniform vec2 px; uniform float uT, aspect, shadow, pulse, pulseR;
+uniform vec2 core; uniform vec3 cDark, cFlesh, cBone, cGlow, cPrey;
+in vec2 vUv; out vec4 o;` + COMMON + `
+void main(){
+  vec4 c = texture(S, vUv);
+  float v = c.g;
+  float vx = texture(S, vUv + vec2(px.x, 0.)).g - texture(S, vUv - vec2(px.x, 0.)).g;
+  float vy = texture(S, vUv + vec2(0., px.y)).g - texture(S, vUv - vec2(0., px.y)).g;
+  vec3 nrm = normalize(vec3(-vx * 7., -vy * 7., 1.));
+  vec3 L = normalize(vec3(-.45, .6, .66));
+  float dif = clamp(dot(nrm, L), 0., 1.);
+  float spec = pow(clamp(dot(reflect(-L, nrm), vec3(0., 0., 1.)), 0., 1.), 22.);
+  float tissue = smoothstep(.07, .3, v);
+  float deep = fbm(vUv * vec2(aspect, 1.) * 3. + uT * .01);
+  vec3 col = cDark * (.7 + .6 * deep);
+  col = mix(col, cFlesh * (.3 + .75 * dif), tissue);
+  col = mix(col, cBone * (.45 + .65 * dif), smoothstep(.3, .46, v));       // хитиновые гребни
+  col += spec * .32 * tissue * cBone;
+  float rim = smoothstep(.04, .13, v) * (1. - smoothstep(.13, .28, v));      // свечение в бороздах
+  col += cGlow * rim * .3;
+  col = mix(col, col * .35 + cPrey * (.18 + .55 * tissue) * (.5 + .5 * dif), c.b * .75);  // перенятое
+  vec2 d = (vUv - core) * vec2(aspect, 1.);
+  float r = length(d);
+  col += cGlow * exp(-pow((r - pulseR) / .045, 2.)) * pulse * (.12 + .3 * tissue) * exp(-r * 1.2);
+  col += cGlow * .08 * exp(-r * r * 30.) * (.6 + pulse);
+  float g = hash(vUv * vec2(1931., 1087.) + fract(uT * 7.13));
+  col = mix(col, col * .22 + vec3(.06, .0, .09) * g * 1.6, shadow);       // тень в варпе
+  vec2 w = (vUv - .5) * vec2(1.15, 1.);
+  col *= 1. - .62 * pow(clamp(length(w) * 1.25, 0., 1.), 2.3);
+  o = vec4(pow(col, vec3(.95)), 1.);
+}`;
+function prog(fs) {
+  const mk = (t, s) => { const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) fail('Шейдер: ' + gl.getShaderInfoLog(sh)); return sh; };
+  const p = gl.createProgram(); gl.attachShader(p, mk(gl.VERTEX_SHADER, VS)); gl.attachShader(p, mk(gl.FRAGMENT_SHADER, fs));
+  gl.bindAttribLocation(p, 0, 'p'); gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) fail('Программа: ' + gl.getProgramInfoLog(p));
+  const u = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < n; i++) { const a = gl.getActiveUniform(p, i), nm = a.name.replace(/\[0\]$/, ''); u[nm] = gl.getUniformLocation(p, a.name); }
+  return { p, u };
+}
+const simP = prog(SIM_FS), showP = prog(SHOW_FS);
+const quad = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+let SW = 0, SH = 0, tex = [], fbo = [], cur = 0;
+function makeSim(w, h) {
+  SW = w; SH = h; tex.forEach(t => gl.deleteTexture(t)); fbo.forEach(f => gl.deleteFramebuffer(f)); tex = []; fbo = [];
+  const data = new Float32Array(w * h * 4);
+  for (let i = 0; i < w * h; i++) { data[i * 4] = 1; data[i * 4 + 3] = 1; }
+  for (let s = 0; s < 70; s++) {                                    // зародыши
+    const cx = Math.random() * w, cy = Math.random() * h, r = rnd(2, 5);
+    for (let y = Math.max(0, cy - r | 0); y < Math.min(h, cy + r + 1); y++) for (let x = Math.max(0, cx - r | 0); x < Math.min(w, cx + r + 1); x++)
+      if ((x - cx) ** 2 + (y - cy) ** 2 < r * r) { const j = (y * w + x) * 4; data[j] = .5; data[j + 1] = .25 + rnd(.1); }
+  }
+  for (let i = 0; i < 2; i++) {
+    const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, w, h, 0, gl.RGBA, gl.FLOAT, data);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    const f = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, f);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) fail('Не удалось завести текстуру ткани.');
+    tex.push(t); fbo.push(f);
+  }
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+}
+
+/* ------------------------------------------------------------- размеры */
+let W, H, DPR, CW, CH, k, aspect;
+function resize() {
+  DPR = Math.min(devicePixelRatio || 1, 1.5);
+  CW = innerWidth; CH = innerHeight; W = Math.round(CW * DPR); H = Math.round(CH * DPR);
+  ov.width = W; ov.height = H;
+  const gs = Math.min(1, 1600 / CW);
+  glc.width = Math.round(CW * gs); glc.height = Math.round(CH * gs);
+  aspect = CW / CH; k = Math.min(CW, CH) / 900 * DPR;
+  const sw = Math.min(760, Math.round(CW / 2.6)), sh = Math.round(sw / aspect);
+  makeSim(sw, sh);
+  initNet(); initSpores();
+}
+
+/* ------------------------------------------------------------- брызги в ткань */
+let splats = [];
+const toUv = (x, y) => [x / W, 1 - y / H];
+function addSplat(x, y, rPx, amt) { if (splats.length < 32) { const [u, v] = toUv(x, y); splats.push([u, v, rPx / H, amt]); } }
+
+/* ------------------------------------------------------------- синаптическая сеть */
+let nodes = [], coreN = null, nodeSeq = 0;
+function addNode(x, y, parent) {
+  const n = { id: nodeSeq++, x, y, parent, kids: [], dist: parent ? parent.dist + Math.hypot(x - parent.x, y - parent.y) : 0,
+    born: t, flash: 0, dying: 0, seed: rnd(TAU), dead: false };
+  if (parent) parent.kids.push(n); nodes.push(n); return n;
+}
+function initNet() {
+  nodes = []; coreN = addNode(W * .5, H * .5, null); coreN.born = -10;
+  for (let i = 0; i < 5; i++) { const a = i / 5 * TAU + rnd(-.3, .3); addNode(coreN.x + Math.cos(a) * 46 * k, coreN.y + Math.sin(a) * 46 * k, coreN).born = -10; }
+  for (let i = 0; i < 120; i++) grow(null, -10);
+}
+function nearest(x, y) { let best = null, bd = 1e18; for (const n of nodes) { if (n.dying) continue; const d = (n.x - x) ** 2 + (n.y - y) ** 2; if (d < bd) { bd = d; best = n; } } return [best, Math.sqrt(bd)]; }
+function grow(target, bornAt) {
+  let ax, ay;
+  if (target) { const a = rnd(TAU), rr = target.R * rnd(.85, 1.15); ax = target.x + Math.cos(a) * rr; ay = target.y + Math.sin(a) * rr; }
+  else { ax = rnd(-.05, 1.05) * W; ay = rnd(-.05, 1.05) * H; }
+  const [nb, d] = nearest(ax, ay);
+  if (!nb || d < 30 * k) return;
+  const step = Math.min(d, rnd(26, 44) * k), a = Math.atan2(ay - nb.y, ax - nb.x) + rnd(-.38, .38);
+  const n = addNode(nb.x + Math.cos(a) * step, nb.y + Math.sin(a) * step, nb);
+  if (bornAt !== undefined) n.born = bornAt;
+}
+function wither() {
+  const leaves = nodes.filter(n => !n.kids.length && !n.dying && n.parent && t - n.born > 25 && !(prey.on && Math.hypot(n.x - prey.x, n.y - prey.y) < prey.R * 2.2));
+  if (leaves.length) leaves[Math.random() * leaves.length | 0].dying = t;
+}
+function removeDead() {
+  for (const n of nodes) if (n.dying && t - n.dying > 3) {
+    n.dead = true; if (n.parent) n.parent.kids = n.parent.kids.filter(c => c !== n);
+  }
+  nodes = nodes.filter(n => !n.dead);
+}
+// сердцебиение: двойной удар
+let beats = [], nextBeat = 1.2;
+const BEAT_SPEED = () => 330 * k;
+function updBeats() {
+  if (t >= nextBeat) { beats.push({ t0: t, amp: 1 }); beats.push({ t0: t + .26, amp: .7 }); nextBeat = t + rnd(2.3, 3.1); }
+  const sp = BEAT_SPEED();
+  for (const b of beats) {
+    const f0 = (b.prev ?? 0), f1 = Math.max(0, (t - b.t0) * sp); b.prev = f1;
+    if (f1 <= 0) continue;
+    for (const n of nodes) if (n.dist > f0 && n.dist <= f1) {
+      n.flash = Math.max(n.flash, b.amp);
+      if (Math.random() < .35) addSplat(n.x, n.y, 4.5 * k, .22 * b.amp);
+    }
+  }
+  beats = beats.filter(b => (t - b.t0) * sp < maxDist() + 200 * k);
+}
+let _md = 0, _mdT = -1;
+function maxDist() { if (_mdT !== t) { _md = 0; for (const n of nodes) _md = Math.max(_md, n.dist); _mdT = t; } return _md; }
+
+function curvePts(n) {   // жила от родителя к узлу: квадратичная кривая с колыханием
+  const p = n.parent, mx = (p.x + n.x) / 2, my = (p.y + n.y) / 2, dx = n.x - p.x, dy = n.y - p.y, L = Math.hypot(dx, dy) || 1;
+  const w = Math.sin(t * .6 + n.seed) * .16 * L;
+  return [p.x, p.y, mx - dy / L * w, my + dx / L * w, n.x, n.y];
+}
+function qpt(c, s) { const a = 1 - s; return [a * a * c[0] + 2 * a * s * c[2] + s * s * c[4], a * a * c[1] + 2 * a * s * c[3] + s * s * c[5]]; }
+function drawNet() {
+  const md = maxDist() || 1, sp = BEAT_SPEED();
+  ox.lineCap = 'round';
+  for (const pass of [0, 1]) {
+    for (const n of nodes) {
+      if (!n.parent) continue;
+      const grow_ = smooth(0, .8, t - n.born), fade = n.dying ? 1 - clamp((t - n.dying) / 3) : 1;
+      const a = grow_ * fade; if (a <= .01) continue;
+      const thick = (1 + 3.2 * Math.exp(-n.dist / (md * .28))) * k;
+      const c = curvePts(n);
+      const ex = grow_ < 1 ? qpt(c, grow_) : [n.x, n.y];
+      ox.beginPath(); ox.moveTo(c[0], c[1]);
+      if (grow_ < 1) { const mid = qpt(c, grow_ / 2); ox.quadraticCurveTo(mid[0], mid[1], ex[0], ex[1]); }
+      else ox.quadraticCurveTo(c[2], c[3], c[4], c[5]);
+      if (pass === 0) { ox.globalAlpha = .1 * a; ox.lineWidth = thick * 5; ox.strokeStyle = pal.vein; }
+      else { ox.globalAlpha = (.38 + .5 * n.flash) * a; ox.lineWidth = thick; ox.strokeStyle = n.flash > .3 ? pal.veinHot : pal.vein; }
+      ox.stroke();
+    }
+  }
+  // фронты удара бегут по жилам
+  ox.globalAlpha = 1;
+  for (const b of beats) {
+    const f = (t - b.t0) * sp; if (f <= 0) continue;
+    for (const n of nodes) {
+      if (!n.parent || n.dying) continue;
+      const d0 = n.parent.dist, d1 = n.dist; if (f < d0 || f >= d1) continue;
+      const [x, y] = qpt(curvePts(n), (f - d0) / (d1 - d0)), r = (2.2 + 2.5 * Math.exp(-d1 / (md * .3))) * k;
+      const g = ox.createRadialGradient(x, y, 0, x, y, r * 4);
+      g.addColorStop(0, pal.veinHot); g.addColorStop(1, 'rgba(0,0,0,0)');
+      ox.globalAlpha = .9 * b.amp * Math.exp(-f / (md * 1.2)); ox.fillStyle = g; ox.beginPath(); ox.arc(x, y, r * 4, 0, TAU); ox.fill();
+    }
+  }
+  // синапсы
+  for (const n of nodes) {
+    const a = smooth(0, .8, t - n.born) * (n.dying ? 1 - clamp((t - n.dying) / 3) : 1); if (a <= .01) continue;
+    const r = (n === coreN ? 9 : 1.4 + Math.min(4, n.kids.length * .9)) * k * (1 + .25 * n.flash);
+    if (n.kids.length > 1 || n === coreN || n.flash > .2) {
+      const g = ox.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 3.2);
+      g.addColorStop(0, pal.veinHot); g.addColorStop(.35, pal.vein); g.addColorStop(1, 'rgba(0,0,0,0)');
+      ox.globalAlpha = a * (.35 + .65 * n.flash); ox.fillStyle = g; ox.beginPath(); ox.arc(n.x, n.y, r * 3.2, 0, TAU); ox.fill();
+    }
+    n.flash *= .9;
+  }
+  ox.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------- споры в толще */
+let spores = [];
+function initSpores() { spores = Array.from({ length: Math.round(140 * (CW * CH) / (1600 * 900)) }, () => ({ x: rnd(W), y: rnd(H), z: rnd(.3, 1), s: rnd(TAU) })); }
+function drawSpores(dt) {
+  ox.fillStyle = pal.vein;
+  for (const p of spores) {
+    p.x += (Math.sin(t * .2 + p.s) * 6 + 3) * p.z * k * dt; p.y += (-5 - 4 * p.z + Math.cos(t * .3 + p.s * 2) * 4) * k * dt;
+    if (p.y < -10) { p.y = H + 10; p.x = rnd(W); } if (p.x > W + 10) p.x = -10;
+    ox.globalAlpha = .12 + .18 * p.z * (.6 + .4 * Math.sin(t * 1.3 + p.s));
+    ox.beginPath(); ox.arc(p.x, p.y, (.6 + 1.4 * p.z) * k, 0, TAU); ox.fill();
+  }
+  ox.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------- добыча: чужой порядок */
+const prey = { on: false, phase: 'none', next: 22, t0: 0, x: 0, y: 0, R: 0, segs: [], inhib: 0, mem: 0 };
+let morsels = [];
+function startPrey() {
+  if (prey.on) return;
+  const R = Math.min(W, H) * rnd(.12, .15);
+  let x, y, tries = 0;
+  do { x = rnd(R * 1.3, W - R * 1.3); y = rnd(R * 1.3, H - R * 1.3); tries++; }
+  while (Math.hypot(x - coreN.x, y - coreN.y) < Math.min(W, H) * .3 && tries < 40);
+  Object.assign(prey, { on: true, phase: 'appear', t0: t, x, y, R, inhib: 0, mem: 0, contact: null, frac: 0 });
+  // шестиугольная решётка внутри круга + двойная оболочка
+  const s = R / 4.6, segs = [], seen = new Set();
+  for (let q = -7; q <= 7; q++) for (let r = -7; r <= 7; r++) {
+    const cx = s * 1.5 * q, cy = s * Math.sqrt(3) * (r + q / 2);
+    if (Math.hypot(cx, cy) > R * .86) continue;
+    for (let i = 0; i < 6; i++) {
+      const a0 = i * TAU / 6, a1 = (i + 1) * TAU / 6;
+      const x0 = cx + Math.cos(a0) * s, y0 = cy + Math.sin(a0) * s, x1 = cx + Math.cos(a1) * s, y1 = cy + Math.sin(a1) * s;
+      const key = Math.round((x0 + x1) * 5) + ',' + Math.round((y0 + y1) * 5);
+      if (seen.has(key)) continue; seen.add(key);
+      segs.push({ x0: x + x0, y0: y + y0, x1: x + x1, y1: y + y1, d: Math.hypot((x0 + x1) / 2, (y0 + y1) / 2), brk: Infinity });
+    }
+  }
+  for (const rr of [R * .93, R]) for (let i = 0; i < 48; i++) {
+    const a0 = i / 48 * TAU, a1 = (i + 1) / 48 * TAU;
+    segs.push({ x0: x + Math.cos(a0) * rr, y0: y + Math.sin(a0) * rr, x1: x + Math.cos(a1) * rr, y1: y + Math.sin(a1) * rr, d: rr, brk: Infinity, shell: true });
+  }
+  prey.segs = segs;
+}
+function updPrey(dt) {
+  if (!prey.on) { prey.inhib = Math.max(0, prey.inhib - dt); prey.mem = Math.max(0, prey.mem - dt); if (t >= prey.next) startPrey(); return; }
+  const age = t - prey.t0;
+  if (prey.phase === 'appear' || prey.phase === 'resist') {
+    prey.inhib = smooth(0, 3, age);
+    for (let i = 0; i < 6 * dt * 10; i++) if (Math.random() < .7) grow(prey);               // сеть тянется к добыче
+    const [nb, d] = nearest(prey.x, prey.y);
+    if (prey.phase === 'appear' && age > 3.5) prey.phase = 'resist';
+    if (prey.phase === 'resist' && (d < prey.R * 1.08 || age > 20)) {
+      prey.phase = 'consume'; prey.tc = t; prey.contact = [nb.x, nb.y];
+      for (const sg of prey.segs) {
+        const mx = (sg.x0 + sg.x1) / 2, my = (sg.y0 + sg.y1) / 2;
+        sg.brk = t + Math.hypot(mx - nb.x, my - nb.y) / (2 * prey.R) * 8.5 + rnd(0, 1.6) + (sg.shell ? -.8 : 0);
+      }
+    }
+  } else if (prey.phase === 'consume') {
+    let broken = 0;
+    for (const sg of prey.segs) {
+      if (t >= sg.brk) { broken++;
+        if (!sg.eaten) { sg.eaten = true; const mx = (sg.x0 + sg.x1) / 2, my = (sg.y0 + sg.y1) / 2;
+          if (Math.random() < .6) morsels.push({ x: mx, y: my, tgt: nearest(mx, my)[0], born: t });
+          addSplat(mx, my, 3.5 * k, .18); }
+      }
+    }
+    prey.frac = broken / prey.segs.length;
+    prey.inhib = 1 - smooth(.15, .9, prey.frac);
+    for (let i = 0; i < 4 * dt * 10; i++) if (Math.random() < .5) grow({ x: prey.x, y: prey.y, R: prey.R * rnd(.2, .9) });
+    if (prey.frac >= 1) { prey.phase = 'adapt'; prey.ta = t; }
+  } else if (prey.phase === 'adapt') {
+    prey.inhib = 0; prey.mem = smooth(0, 3, t - prey.ta);
+    if (t - prey.ta > 4) { prey.on = false; prey.phase = 'none'; prey.next = t + rnd(75, 120); }
+  }
+}
+function drawPrey() {
+  if (!prey.on) return;
+  const age = t - prey.t0, P = pal.prey, col = `rgb(${P.map(v => Math.round(v * 255)).join(',')})`;
+  ox.lineCap = 'round';
+  const flick = prey.phase === 'resist' ? .75 + .25 * Math.sin(t * 23) : prey.phase === 'consume' ? .7 + .3 * Math.random() : 1;
+  for (const pass of [0, 1]) for (const sg of prey.segs) {
+    const rev = clamp((age * 1.1 * prey.R - sg.d) / (prey.R * .3));
+    let a = rev * flick;
+    if (t >= sg.brk) a *= clamp(1 - (t - sg.brk) / .45) * (Math.random() < .5 ? 1 : .3);
+    if (prey.phase === 'adapt') a = 0;
+    if (a <= .01) continue;
+    ox.globalAlpha = a * (pass ? .85 : .16); ox.strokeStyle = pass ? '#eafcff' : col; ox.lineWidth = (pass ? 1.1 : 5) * k * (sg.shell ? 1.3 : 1);
+    ox.beginPath(); ox.moveTo(sg.x0, sg.y0); ox.lineTo(sg.x1, sg.y1); ox.stroke();
+  }
+  if (prey.phase !== 'adapt') {      // сердцевина чужого порядка
+    const a = smooth(0, 1.5, age) * (1 - prey.frac), r = prey.R * .12;
+    const g = ox.createRadialGradient(prey.x, prey.y, 0, prey.x, prey.y, r * 2.5);
+    g.addColorStop(0, '#f4feff'); g.addColorStop(.4, col); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ox.globalAlpha = a; ox.fillStyle = g; ox.beginPath(); ox.arc(prey.x, prey.y, r * 2.5, 0, TAU); ox.fill();
+  }
+  ox.globalAlpha = 1;
+}
+function updMorsels(dt) {   // переваривание: обломки текут по жилам к сердцу
+  const sp = 150 * k;
+  for (const m of morsels) {
+    let tg = m.tgt; while (tg && tg.dead) tg = tg.parent; if (!tg) tg = coreN; m.tgt = tg;
+    const dx = tg.x - m.x, dy = tg.y - m.y, d = Math.hypot(dx, dy);
+    if (d < sp * dt) { m.x = tg.x; m.y = tg.y; if (tg === coreN) { m.done = true; coreN.flash = 1; addSplat(coreN.x, coreN.y, 6 * k, .12); } else m.tgt = tg.parent || coreN; }
+    else { m.x += dx / d * sp * dt; m.y += dy / d * sp * dt; }
+  }
+  morsels = morsels.filter(m => !m.done);
+}
+function drawMorsels() {
+  const P = pal.prey;
+  for (const m of morsels) {
+    const f = clamp((t - m.born) / 6), r = 3 * k;
+    const c = `rgb(${Math.round(lerp(P[0], pal.glow[0], f) * 255)},${Math.round(lerp(P[1], pal.glow[1], f) * 255)},${Math.round(lerp(P[2], pal.glow[2], f) * 255)})`;
+    const g = ox.createRadialGradient(m.x, m.y, 0, m.x, m.y, r * 3);
+    g.addColorStop(0, '#ffffff'); g.addColorStop(.35, c); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ox.globalAlpha = .9; ox.fillStyle = g; ox.beginPath(); ox.arc(m.x, m.y, r * 3, 0, TAU); ox.fill();
+  }
+  ox.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------- тень в варпе */
+let shadow = 0, nextShade = 50, shadeT0 = -99;
+function updShadow(dt) {
+  let target = 0;
+  if (prey.phase === 'consume') target = .38;
+  if (t >= nextShade && !prey.on) { shadeT0 = t; nextShade = t + rnd(50, 90); }
+  const s = t - shadeT0; if (s < 7) target = Math.max(target, .55 * Math.sin(Math.PI * s / 7));
+  shadow += (target - shadow) * Math.min(1, dt * 1.6);
+}
+
+/* ------------------------------------------------------------- кадр */
+let t = 0, last = performance.now(), paused = false, growAcc = 0, witherAcc = 0;
+const STEPS = 10;
+function step(dt) {
+  t += dt;
+  updBeats(); updPrey(dt); updMorsels(dt); updShadow(dt);
+  growAcc += dt; while (growAcc > .22) { growAcc -= .22; if (nodes.length < 230) grow(null); }
+  witherAcc += dt; while (witherAcc > .5) { witherAcc -= .5; if (nodes.length > 170) wither(); }
+  removeDead();
+  for (let i = 0; i < 3; i++) { const n = nodes[Math.random() * nodes.length | 0]; if (n && !n.dying) addSplat(n.x, n.y, 3 * k, .05); }
+}
+function render(dt) {
+  // ткань: несколько шагов реакции–диффузии
+  gl.useProgram(simP.p); gl.viewport(0, 0, SW, SH);
+  gl.uniform2f(simP.u.px, 1 / SW, 1 / SH); gl.uniform1f(simP.u.uT, t); gl.uniform1f(simP.u.aspect, aspect);
+  const [pu, pv] = toUv(prey.x, prey.y);
+  gl.uniform4f(simP.u.prey, pu, pv, prey.R / H, prey.inhib); gl.uniform1f(simP.u.memWrite, prey.mem);
+  for (let i = 0; i < STEPS; i++) {
+    const sp = i === 0 ? splats : [];
+    gl.uniform1i(simP.u.nSplat, sp.length);
+    if (sp.length) gl.uniform4fv(simP.u.splat, new Float32Array(sp.flat().concat(Array((32 - sp.length) * 4).fill(0))));
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo[1 - cur]); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex[cur]);
+    gl.uniform1i(simP.u.S, 0); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); cur = 1 - cur;
+  }
+  splats = [];
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, glc.width, glc.height);
+  gl.useProgram(showP.p); gl.bindTexture(gl.TEXTURE_2D, tex[cur]); gl.uniform1i(showP.u.S, 0);
+  gl.uniform2f(showP.u.px, 1 / SW, 1 / SH); gl.uniform1f(showP.u.uT, t); gl.uniform1f(showP.u.aspect, aspect);
+  gl.uniform1f(showP.u.shadow, shadow);
+  const lb = beats.length ? beats[beats.length - 1] : null, f = lb ? Math.max(0, (t - lb.t0)) : 99;
+  gl.uniform1f(showP.u.pulse, lb ? Math.exp(-f * .9) : 0); gl.uniform1f(showP.u.pulseR, f * BEAT_SPEED() / H);
+  const [cu, cv] = toUv(coreN.x, coreN.y); gl.uniform2f(showP.u.core, cu, cv);
+  for (const [nm, v] of [['cDark', pal.dark], ['cFlesh', pal.flesh], ['cBone', pal.bone], ['cGlow', pal.glow], ['cPrey', pal.prey]]) gl.uniform3fv(showP.u[nm], v);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  // наложение
+  ox.clearRect(0, 0, W, H);
+  ox.globalCompositeOperation = 'lighter';
+  const veil = 1 - .65 * shadow;
+  ox.save(); ox.globalAlpha = 1;
+  drawSpores(dt);
+  ox.restore();
+  ox.save(); if (veil < 1) ox.filter = 'none';
+  drawNet(); drawPrey(); drawMorsels();
+  ox.restore();
+  if (shadow > .01) { ox.globalCompositeOperation = 'source-over'; ox.fillStyle = `rgba(0,0,0,${.6 * shadow})`; ox.fillRect(0, 0, W, H); }
+  ox.globalCompositeOperation = 'source-over';
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (paused) return;
+  step(dt); render(dt);
+}
+
+/* ------------------------------------------------------------- управление */
+const ui = document.getElementById('ui'); let uiT = 0;
+function showUI() { ui.classList.add('show'); clearTimeout(uiT); uiT = setTimeout(() => ui.classList.remove('show'), 2800); }
+addEventListener('mousemove', showUI); addEventListener('touchstart', showUI, { passive: true });
+function act(a) {
+  if (a === 'prey') { if (!prey.on) startPrey(); }
+  else if (a === 'pal') { palKey = palKey === 'violet' ? 'blood' : 'violet'; pal = PALS[palKey]; }
+  else if (a === 'pause') paused = !paused;
+  else if (a === 'fs') { const d = document; (d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+}
+ui.addEventListener('click', e => { const b = e.target.closest('button'); if (b) act(b.dataset.a); });
+addEventListener('keydown', e => {
+  const m = { a: 'prey', 'ф': 'prey', g: 'pal', 'п': 'pal', p: 'pause', 'з': 'pause', ' ': 'pause', f: 'fs', 'а': 'fs' }[e.key.toLowerCase()];
+  if (m) { e.preventDefault(); act(m); }
+});
+let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(resize, 200); });
+resize();
+for (let i = 0; i < 40; i++) { step(1 / 30); render(1 / 30); }     // ткань успевает прорасти до первого кадра
+window.__alv = { step, render, prey, startPrey, get t() { return t; } };
+requestAnimationFrame(n => { last = n; requestAnimationFrame(frame); });
+</script>
+</body>
+</html>

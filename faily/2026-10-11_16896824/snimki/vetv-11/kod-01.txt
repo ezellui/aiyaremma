@@ -1,0 +1,24 @@
+Create a photorealistic archival photograph of a single historical document: a seismogram from the Pulkovo Observatory seismic station, dated December 1951. It must look like a real museum or archive photo of an aged paper artifact, matching a series of fictional archival documents photographed on a dark charcoal-grey background under soft, slightly warm side light.
+
+WORLD CONTEXT (for correct details; do not illustrate it literally):
+This document belongs to an alternate-history archive of the "Р.С.Ф.Г.Р." — a fictional Soviet-like state of the 1920s–1970s that worships a sleeping cosmic entity (the "Sleeper", Cthulhu) lying beneath the city of R'lyeh, relocated in this world to the Arctic coast of the Kara Sea. Citizens are "dissolved" into a vast collective fungal network called the Great Mycelium. The state uses pre-1918 Russian orthography (letters ѣ, і and a final ъ) on all printed matter. Its symbol is a red five-pointed star with a spiral inside instead of a hammer and sickle; its official stamps are violet ink with a small stylised octopus. On the night of the winter solstice of 1951 the Sleeper stirred in his sleep for the first time; seismographs across the world recorded it, and the state later declared that night the beginning of a new calendar, the "Era of Awakening". This seismogram is that recording. The horror must be quiet and scientific: no monsters, no tentacles, no fantasy imagery — only an ordinary instrument record that looks wrong.
+
+THE OBJECT:
+A long horizontal strip of developed photographic seismogram paper (the record of a Golitsyn galvanometric seismograph), off-white to pale grey with a faint silvery sheen, aged, with yellowed edges, slight curl, two old fold lines and a small tear at one corner. Across it run about 10–12 thin, perfectly parallel horizontal black trace lines (one line per hour of drum rotation), each with tiny regular breaks every minute (time marks). Most lines are calm, with only a fine microseismic tremor.
+On one line, roughly a third of the way along, the trace suddenly erupts into enormous oscillations: the swings grow so large that they leave the line, cross several neighbouring lines and run off the top and bottom edges of the paper, then fade back. At the very start of the eruption the trace makes one small, clean inward-curling spiral — barely noticeable, as if drawn by the pen itself.
+On every line after the event the trace is no longer flat: it carries a slow, very regular, smooth wave, like the rhythm of breathing during sleep, identical on each subsequent line.
+
+INSCRIPTIONS (render the text exactly as written, letter for letter; keep the old letters ѣ, і, ъ; never use the letter ё; do not modernise the spelling):
+1. Printed in small black serif type along the top margin of the strip: «ПУЛКОВСКАЯ ОБСЕРВАТОРІЯ · СЕЙСМИЧЕСКАЯ СТАНЦІЯ»
+2. Printed in the left margin under it: «Сейсмографъ системы кн. Б. Б. Голицына · составляющая С.—Ю.»
+3. Handwritten in the observer's graphite pencil next to the eruption, with a thin arrow pointing at the small spiral: «0 ч. 13 м. — Р'льехъ»
+4. Handwritten in pencil near the edge where the swings leave the paper: «амплитуда за предѣлами ленты»
+5. Handwritten in pencil beside the slow waves on a later line, small and hesitant, ending with a question mark: «дыханіе?»
+6. Across the lower right part, written later by a different hand in red ink, larger, confident, partly over the trace lines: «Считать началомъ Эры Пробужденія. Ц.У.Г.» — with a large circled Roman numeral «I» beside it.
+7. A round violet rubber stamp, slightly smudged and tilted, with a small stylised octopus in the centre and the circular text: «НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ»
+8. A small rectangular violet date stamp: «23 XII 1951 · Споролѣтіе XXXI»
+9. Tiny printed line at the bottom edge: «Ктулху фхтагнъ — Ленинъ фхтагнъ»
+
+COMPOSITION AND STYLE:
+Landscape format 3:2. The strip lies flat on the dark background, slightly diagonal and filling most of the frame, with a dark margin around it. A rusted paper clip on the left end holds a small brown archive tag tied with string; the tag has only a handwritten number «Л. 1». Shallow depth of field, crisp focus on the eruption and the pencil notes, realistic paper texture, fine dust, slight vignetting. The colour palette is restrained: grey-white paper, black traces, graphite pencil, one accent of red ink and the violet stamps.
+Avoid: modern objects, English text, glossy digital look, illustrated or cartoon style, any visible creature, tentacles or eyes, text other than the inscriptions listed above.

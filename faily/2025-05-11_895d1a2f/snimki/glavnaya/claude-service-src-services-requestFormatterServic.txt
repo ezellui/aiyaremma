@@ -1,0 +1,315 @@
+/**
+ * Request formatter service for Claude API requests
+ */
+
+const { defaultLogger } = require('../../../shared/lib/logging/logger');
+const { BadRequestError } = require('../../../shared/lib/errors/HttpErrors');
+const TemplateService = require('./templateService');
+const { claude: claudeConfig } = require('../config');
+
+/**
+ * Service for formatting requests to Claude API
+ */
+class RequestFormatterService {
+  /**
+   * Create a new request formatter service
+   * @param {Object} [dependencies={}] - Service dependencies
+   * @param {Object} [logger=defaultLogger] - Logger instance
+   */
+  constructor(dependencies = {}, logger = defaultLogger) {
+    this.logger = logger;
+    this.templateService = dependencies.templateService || new TemplateService();
+    
+    // Import formatters
+    this.formatters = {
+      graph: require('../utils/formatters/graphFormatters'),
+      thesis: require('../utils/formatters/thesisFormatters'),
+      synthesis: require('../utils/formatters/synthesisFormatters'),
+    };
+  }
+
+  /**
+   * Format a request for Claude API
+   * @param {string} queryType - Type of query
+   * @param {Object} data - Query data
+   * @param {Object} [options={}] - Additional options
+   * @returns {Promise<Object>} Formatted request
+   */
+  async format(queryType, data, options = {}) {
+    try {
+      this.logger.debug('Formatting request', { queryType, data });
+      
+      // Get formatter for query type
+      const formatter = this._getFormatter(queryType);
+      
+      if (!formatter) {
+        throw new BadRequestError(`No formatter found for query type: ${queryType}`);
+      }
+      
+      // Get system prompt based on query type
+      const systemPrompt = this._getSystemPrompt(queryType, options);
+      
+      // Format the query content
+      let content;
+      
+      // Check if template is specified
+      if (options.templateId) {
+        const template = await this.templateService.getTemplate(options.templateId);
+        if (!template) {
+          throw new BadRequestError(`Template not found: ${options.templateId}`);
+        }
+        
+        // Validate template is for correct query type
+        if (template.templateType !== queryType) {
+          throw new BadRequestError(
+            `Template type mismatch. Expected: ${queryType}, got: ${template.templateType}`
+          );
+        }
+        
+        content = await this.templateService.renderTemplate(template.templateId, data);
+      } else {
+        // Use formatter to create content
+        content = formatter(data, options);
+      }
+      
+      // Build the request object
+      const request = {
+        model: options.model || claudeConfig.model.defaultModel,
+        max_tokens: options.maxTokens || claudeConfig.response.maxTokens,
+        temperature: options.temperature !== undefined 
+          ? options.temperature 
+          : claudeConfig.response.temperature,
+        system: systemPrompt,
+        messages: [
+          {
+            role: 'user',
+            content,
+          },
+        ],
+      };
+      
+      // Add optional parameters
+      if (options.topP !== undefined) {
+        request.top_p = options.topP;
+      }
+      
+      if (options.topK !== undefined) {
+        request.top_k = options.topK;
+      }
+      
+      if (options.stopSequences) {
+        request.stop_sequences = options.stopSequences;
+      }
+      
+      // Add metadata if provided
+      if (options.metadata) {
+        request.metadata = {
+          user_id: data.userId,
+          query_type: queryType,
+          ...options.metadata,
+        };
+      }
+      
+      this.logger.debug('Request formatted successfully', { queryType });
+      
+      return request;
+    } catch (error) {
+      this.logger.error('Error formatting request', {
+        error: error.message,
+        queryType,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get formatter function for query type
+   * @param {string} queryType - Query type
+   * @returns {Function|null} Formatter function
+   * @private
+   */
+  _getFormatter(queryType) {
+    // Map query types to formatter functions
+    const formatterMap = {
+      graph_validation: this.formatters.graph.formatGraphValidation,
+      graph_enrichment: this.formatters.graph.formatGraphEnrichment,
+      category_description: this.formatters.graph.formatCategoryDescription,
+      relationship_description: this.formatters.graph.formatRelationshipDescription,
+      thesis_generation: this.formatters.thesis.formatThesisGeneration,
+      thesis_elaboration: this.formatters.thesis.formatThesisElaboration,
+      thesis_comparison: this.formatters.thesis.formatThesisComparison,
+      graph_from_thesis: this.formatters.thesis.formatGraphFromThesis,
+      synthesis: this.formatters.synthesis.formatSynthesis,
+      compatibility_analysis: this.formatters.synthesis.formatCompatibilityAnalysis,
+      synthesis_critique: this.formatters.synthesis.formatSynthesisCritique,
+      general_query: this._formatGeneralQuery.bind(this),
+    };
+    
+    return formatterMap[queryType];
+  }
+
+  /**
+   * Get system prompt for query type
+   * @param {string} queryType - Query type
+   * @param {Object} options - Options
+   * @returns {string} System prompt
+   * @private
+   */
+  _getSystemPrompt(queryType, options) {
+    // Use custom system prompt if provided
+    if (options.systemPrompt) {
+      return options.systemPrompt;
+    }
+    
+    // Use template's system prompt if available
+    if (options.templateId && options.templateSystemPrompt) {
+      return options.templateSystemPrompt;
+    }
+    
+    // Get from config based on query type
+    const queryTypeMap = {
+      graph_validation: 'graphValidation',
+      graph_enrichment: 'graphValidation',
+      category_description: 'graphValidation',
+      relationship_description: 'graphValidation',
+      thesis_generation: 'thesisGeneration',
+      thesis_elaboration: 'thesisGeneration',
+      thesis_comparison: 'thesisGeneration',
+      graph_from_thesis: 'graphValidation',
+      synthesis: 'synthesis',
+      compatibility_analysis: 'synthesis',
+      synthesis_critique: 'synthesis',
+      name_analysis: 'nameAnalysis',
+      origin_detection: 'synthesis',
+      general_query: 'default',
+    };
+    
+    const promptKey = queryTypeMap[queryType] || 'default';
+    return claudeConfig.systemPrompt[promptKey] || claudeConfig.systemPrompt.default;
+  }
+
+  /**
+   * Format a general query
+   * @param {Object} data - Query data
+   * @param {Object} options - Options
+   * @returns {string} Formatted query
+   * @private
+   */
+  _formatGeneralQuery(data, options) {
+    const { query, context } = data;
+    
+    if (!query) {
+      throw new BadRequestError('Query text is required for general query');
+    }
+    
+    let content = query;
+    
+    // Add context if provided
+    if (context) {
+      content = `Context:\n${JSON.stringify(context, null, 2)}\n\nQuery:\n${query}`;
+    }
+    
+    // Add any additional instructions
+    if (options.instructions) {
+      content += `\n\nInstructions:\n${options.instructions}`;
+    }
+    
+    return content;
+  }
+
+  /**
+   * Validate request data for query type
+   * @param {string} queryType - Query type
+   * @param {Object} data - Request data
+   * @throws {BadRequestError} If validation fails
+   */
+  validateRequestData(queryType, data) {
+    // Basic validation rules for each query type
+    const validationRules = {
+      graph_validation: () => {
+        if (!data.graph) throw new BadRequestError('Graph data is required');
+        if (!data.conceptName) throw new BadRequestError('Concept name is required');
+      },
+      
+      graph_enrichment: () => {
+        if (!data.graph) throw new BadRequestError('Graph data is required');
+        if (!data.conceptName) throw new BadRequestError('Concept name is required');
+      },
+      
+      category_description: () => {
+        if (!data.categoryName) throw new BadRequestError('Category name is required');
+        if (!data.categoryDefinition) throw new BadRequestError('Category definition is required');
+        if (!data.conceptName) throw new BadRequestError('Concept name is required');
+      },
+      
+      relationship_description: () => {
+        if (!data.sourceCategory) throw new BadRequestError('Source category is required');
+        if (!data.targetCategory) throw new BadRequestError('Target category is required');
+        if (!data.relationshipType) throw new BadRequestError('Relationship type is required');
+      },
+      
+      thesis_generation: () => {
+        if (!data.graph) throw new BadRequestError('Graph data is required');
+        if (!data.thesisType) throw new BadRequestError('Thesis type is required');
+        if (!data.count) throw new BadRequestError('Thesis count is required');
+      },
+      
+      thesis_elaboration: () => {
+        if (!data.thesis) throw new BadRequestError('Thesis is required');
+        if (!data.graph) throw new BadRequestError('Graph data is required');
+      },
+      
+      thesis_comparison: () => {
+        if (!data.theses1) throw new BadRequestError('First set of theses is required');
+        if (!data.theses2) throw new BadRequestError('Second set of theses is required');
+      },
+      
+      graph_from_thesis: () => {
+        if (!data.theses) throw new BadRequestError('Theses are required');
+      },
+      
+      synthesis: () => {
+        if (!data.concepts) throw new BadRequestError('Concepts are required');
+        if (!Array.isArray(data.concepts) || data.concepts.length < 2) {
+          throw new BadRequestError('At least two concepts are required for synthesis');
+        }
+        if (!data.method) throw new BadRequestError('Synthesis method is required');
+      },
+      
+      compatibility_analysis: () => {
+        if (!data.concepts) throw new BadRequestError('Concepts are required');
+        if (!Array.isArray(data.concepts) || data.concepts.length < 2) {
+          throw new BadRequestError('At least two concepts are required for compatibility analysis');
+        }
+      },
+      
+      synthesis_critique: () => {
+        if (!data.synthesis) throw new BadRequestError('Synthesis data is required');
+        if (!data.parentConcepts) throw new BadRequestError('Parent concepts are required');
+      },
+      
+      name_analysis: () => {
+        if (!data.conceptName) throw new BadRequestError('Concept name is required');
+        if (!data.conceptContent) throw new BadRequestError('Concept content is required');
+      },
+      
+      origin_detection: () => {
+        if (!data.concept) throw new BadRequestError('Concept data is required');
+      },
+      
+      general_query: () => {
+        if (!data.query) throw new BadRequestError('Query text is required');
+      },
+    };
+    
+    const validator = validationRules[queryType];
+    if (!validator) {
+      throw new BadRequestError(`Unknown query type: ${queryType}`);
+    }
+    
+    validator();
+  }
+}
+
+module.exports = RequestFormatterService;

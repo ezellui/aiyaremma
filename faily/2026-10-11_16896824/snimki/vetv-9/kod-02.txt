@@ -1,0 +1,14 @@
+The same 1947 newspaper front page as an isolated object for compositing: a flat, perfectly front-on scan of the whole page, no perspective, no rotation, no cloth, no table, no drop shadow, no lighting gradient. Fully transparent background (alpha) around the paper; keep the ragged torn bottom-right corner and slightly uneven paper edges so the transparency follows the real outline. Portrait 2:3, the page fills the frame with a small transparent margin.
+
+WORLD CONTEXT: Alternate history. Russia became the R.S.F.G.R., a "fungal" union where people dissolve into one collective organism, the Great Mycelium; its sleeping tentacled deity lies under the Arctic capital R'lyeh on the Kara Sea. Union citizens wear glass jars over their heads. The "Awake" nations (incl. the USA) resist with salt, fire and quarantine. In September 1947 a giant spore cloud crossed the Bering Strait and white fungal threads covered the Territory of Alaska; this is the American local newspaper's front page about it, later seized into the union's archive.
+
+CONTENT (identical to the photographic version):
+- Masthead: "The Fairbanks Morning Courier"
+- Dateline: "FAIRBANKS, TERRITORY OF ALASKA · TUESDAY, SEPTEMBER 16, 1947 · VOL. XXXVIII, No. 214 · FIVE CENTS"
+- Banner headline: "WHITE THREADS ON THE YUKON" / "TERRITORY QUARANTINED"
+- Decks: "Spore Cloud From Siberia Crosses Bering Strait Overnight" · "Army Engineers Salt the Tanana Valley; Burn Line Ordered Along Canadian Border"
+- Halftone photo: snowy tundra covered with a white lace-like web of fungal threads, two soldiers in parkas and gas masks spraying salt. Caption: "Mycelium on the Chena River flats, 6 a.m. Monday. Courier photo."
+- Column headlines: "Nome Residents Report 'Dreams of a Black Sun'" · "Sleepers Seen on Beach Wearing Glass Jars" · "Close Your Windows at Night — Civil Defense Notice: Spore Hours 10 P.M. to 4 A.M." · "Sweden Renews Offer of Asylum to the Awake"
+- Archive marks in pre-1918 Russian orthography, exact letters including Ѣ ъ і: violet rectangular stamp "НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ / ОТДѢЛЪ СПОРОВОДСТВА И ПЕРЕВОДОВЪ / Вх. № 2219 / Споролѣтіе XXVII"; round violet seal with an octopus and ring text "НАРКОМАТЪ · ЗДОРОВАГО БЕЗУМІЯ"; red-pencil handwritten diagonal resolution "Прорасло. Въ архивъ."; pencil "л. 31" at the top; two punched holes on the left (transparent through the holes).
+
+STYLE: realistic aged yellowed newsprint, fold creases, light stains, a few thin white fungal threads from one fold. Even, shadowless illumination so it can be lit and shadowed later in compositing.

@@ -1,0 +1,363 @@
+--- предыдущая/Социальная-сеть-русской-философии.mmd
++++ текущая/Социальная-сеть-русской-философии.mmd
+@@ -14,134 +14,164 @@
+     classDef modern fill:#b1ddf0,stroke:#10739e,color:#333
+     classDef foreign fill:#e2e2e2,stroke:#666666,color:#333
+ 
+-    %% ДРЕВНЕРУССКИЙ ПЕРИОД (XI-XVII вв.)
+-    Ilarion[Иларион Киевский<br>XI в.]:::ancient
+-    Kirik[Кирик Новгородец<br>XII в.]:::ancient
+-    KirillT[Кирилл Туровский<br>XII в.]:::ancient
+-    KlimS[Климент Смолятич<br>XII в.]:::ancient
+-    MaksimG[Максим Грек<br>XV-XVI вв.]:::ancient
+-    NilS[Нил Сорский<br>1433-1508]:::ancient
+-    IosifV[Иосиф Волоцкий<br>1439-1515]:::ancient
+-    FedorK[Фёдор Курицын<br>XV-XVI вв.]:::ancient
+-    AndKurb[Андрей Курбский<br>1528-1583]:::ancient
+-    IvanP[Иван Пересветов<br>XVI в.]:::ancient
+-    IvanG[Иван Грозный<br>1530-1584]:::ancient
++    %% ГРУППИРОВКА ПО ПЕРИОДАМ
++    subgraph "Древнерусский период (XI-XVII вв.)"
++        Ilarion[Иларион Киевский<br>XI в.]:::ancient
++        Kirik[Кирик Новгородец<br>XII в.]:::ancient
++        KirillT[Кирилл Туровский<br>XII в.]:::ancient
++        KlimS[Климент Смолятич<br>XII в.]:::ancient
++        MaksimG[Максим Грек<br>XV-XVI вв.]:::ancient
++        NilS[Нил Сорский<br>1433-1508]:::ancient
++        IosifV[Иосиф Волоцкий<br>1439-1515]:::ancient
++        FedorK[Фёдор Курицын<br>XV-XVI вв.]:::ancient
++        AndKurb[Андрей Курбский<br>1528-1583]:::ancient
++        IvanP[Иван Пересветов<br>XVI в.]:::ancient
++        IvanG[Иван Грозный<br>1530-1584]:::ancient
++    end
+ 
+     %% XVIII ВЕК - ПРОСВЕЩЕНИЕ
+-    Lomonosov[Михаил Ломоносов<br>1711-1765]:::enlightenment
+-    Novikov[Николай Новиков<br>1744-1818]:::enlightenment
+-    Radishchev[Александр Радищев<br>1749-1802]:::enlightenment
+-    Skovoroda[Григорий Сковорода<br>1722-1794]:::enlightenment
+-    Gamalei[Семён Гамалея<br>1743-1822]:::enlightenment
+-    Lopukhin[Иван Лопухин<br>1756-1816]:::enlightenment
+-    Labzin[Александр Лабзин<br>1766-1825]:::enlightenment
++    subgraph "Эпоха Просвещения (XVIII в.)"
++        Lomonosov[Михаил Ломоносов<br>1711-1765]:::enlightenment
++        Novikov[Николай Новиков<br>1744-1818]:::enlightenment
++        Radishchev[Александр Радищев<br>1749-1802]:::enlightenment
++        Skovoroda[Григорий Сковорода<br>1722-1794]:::enlightenment
++        Gamalei[Семён Гамалея<br>1743-1822]:::enlightenment
++        Lopukhin[Иван Лопухин<br>1756-1816]:::enlightenment
++        Labzin[Александр Лабзин<br>1766-1825]:::enlightenment
++    end
+ 
+     %% XIX ВЕК - СЛАВЯНОФИЛЫ И ЗАПАДНИКИ
+-    %% Славянофилы
+-    Khomyakov[Алексей Хомяков<br>1804-1860]:::slavophil
+-    Kireevsky[Иван Киреевский<br>1806-1856]:::slavophil
+-    PKireevsky[Пётр Киреевский<br>1808-1856]:::slavophil
+-    KonstAksakov[Константин Аксаков<br>1817-1860]:::slavophil
+-    IvanAksakov[Иван Аксаков<br>1823-1886]:::slavophil
+-    YuriSamarin[Юрий Самарин<br>1819-1876]:::slavophil
+-    Danilevsky[Николай Данилевский<br>1822-1885]:::slavophil
+-    Leontiev[Константин Леонтьев<br>1831-1891]:::slavophil
+-    Strakhov[Николай Страхов<br>1828-1896]:::slavophil
+-    Grigoriev[Аполлон Григорьев<br>1822-1864]:::slavophil
+-    Dostoyevsky[Фёдор Достоевский<br>1821-1881]:::slavophil
+-    MDostoyevsky[Михаил Достоевский<br>1820-1864]:::slavophil
+-    Tyutchev[Фёдор Тютчев<br>1803-1873]:::slavophil
+-    Hilferding[Александр Гильфердинг<br>1831-1872]:::slavophil
+-    Dal[Владимир Даль<br>1801-1872]:::slavophil
+-    Yazykov[Николай Языков<br>1803-1846]:::slavophil
+-
+-    %% Западники
+-    Chaadaev[Пётр Чаадаев<br>1794-1856]:::westerner
+-    Belinsky[Виссарион Белинский<br>1811-1848]:::westerner
+-    Hertzen[Александр Герцен<br>1812-1870]:::westerner
+-    Ogarev[Николай Огарёв<br>1813-1877]:::westerner
+-    Turgenev[Иван Тургенев<br>1818-1883]:::westerner
+-    Kavelin[Константин Кавелин<br>1818-1885]:::westerner
+-    Chernyshevsky[Николай Чернышевский<br>1828-1889]:::westerner
+-    Granovsky[Тимофей Грановский<br>1813-1855]:::westerner
+-    Botkin[Василий Боткин<br>1811-1869]:::westerner
+-    Annenkov[Павел Анненков<br>1812-1887]:::westerner
+-    Redkin[Пётр Редкин<br>1808-1891]:::westerner
+-    Babst[Иван Бабст<br>1823-1881]:::westerner
+-    Vernadsky_I[Иван Вернадский<br>1821-1884]:::westerner
+-    Chicherin[Борис Чичерин<br>1828-1904]:::westerner
+-    Katkov[Михаил Катков<br>1818-1887]:::westerner
+-    Korsh[Евгений Корш<br>1810-1897]:::westerner
+-    Nikitenko[Александр Никитенко<br>1804-1877]:::westerner
++    subgraph "Славянофилы (XIX в.)"
++        Khomyakov[Алексей Хомяков<br>1804-1860]:::slavophil
++        Kireevsky[Иван Киреевский<br>1806-1856]:::slavophil
++        PKireevsky[Пётр Киреевский<br>1808-1856]:::slavophil
++        KonstAksakov[Константин Аксаков<br>1817-1860]:::slavophil
++        IvanAksakov[Иван Аксаков<br>1823-1886]:::slavophil
++        YuriSamarin[Юрий Самарин<br>1819-1876]:::slavophil
++        Danilevsky[Николай Данилевский<br>1822-1885]:::slavophil
++        Leontiev[Константин Леонтьев<br>1831-1891]:::slavophil
++        Strakhov[Николай Страхов<br>1828-1896]:::slavophil
++        Grigoriev[Аполлон Григорьев<br>1822-1864]:::slavophil
++        Dostoyevsky[Фёдор Достоевский<br>1821-1881]:::slavophil
++        MDostoyevsky[Михаил Достоевский<br>1820-1864]:::slavophil
++        Tyutchev[Фёдор Тютчев<br>1803-1873]:::slavophil
++        Hilferding[Александр Гильфердинг<br>1831-1872]:::slavophil
++        Dal[Владимир Даль<br>1801-1872]:::slavophil
++        Yazykov[Николай Языков<br>1803-1846]:::slavophil
++    end
++
++    subgraph "Западники (XIX в.)"
++        Chaadaev[Пётр Чаадаев<br>1794-1856]:::westerner
++        Belinsky[Виссарион Белинский<br>1811-1848]:::westerner
++        Hertzen[Александр Герцен<br>1812-1870]:::westerner
++        Ogarev[Николай Огарёв<br>1813-1877]:::westerner
++        Turgenev[Иван Тургенев<br>1818-1883]:::westerner
++        Kavelin[Константин Кавелин<br>1818-1885]:::westerner
++        Chernyshevsky[Николай Чернышевский<br>1828-1889]:::westerner
++        Granovsky[Тимофей Грановский<br>1813-1855]:::westerner
++        Botkin[Василий Боткин<br>1811-1869]:::westerner
++        Annenkov[Павел Анненков<br>1812-1887]:::westerner
++        Redkin[Пётр Редкин<br>1808-1891]:::westerner
++        Babst[Иван Бабст<br>1823-1881]:::westerner
++        Vernadsky_I[Иван Вернадский<br>1821-1884]:::westerner
++        Chicherin[Борис Чичерин<br>1828-1904]:::westerner
++        Katkov[Михаил Катков<br>1818-1887]:::westerner
++        Korsh[Евгений Корш<br>1810-1897]:::westerner
++        Nikitenko[Александр Никитенко<br>1804-1877]:::westerner
++    end
+ 
+     %% РЕЛИГИОЗНАЯ ФИЛОСОФИЯ КОНЕЦ XIX-НАЧАЛО XX вв.
+-    Solovyov[Владимир Соловьёв<br>1853-1900]:::religious
+-    FedorovN[Николай Фёдоров<br>1829-1903]:::religious
+-    Yurkevich[Памфил Юркевич<br>1826-1874]:::religious
+-    Rozanov[Василий Розанов<br>1856-1919]:::religious
+-    Shestov[Лев Шестов<br>1866-1938]:::religious
+-    Merezhkovsky[Дмитрий Мережковский<br>1865-1941]:::religious
+-    Berdyaev[Николай Бердяев<br>1874-1948]:::religious
+-    Bulgakov[Сергей Булгаков<br>1871-1944]:::religious
+-    Frank[Семён Франк<br>1877-1950]:::religious
+-    ShingarevS[Сергей Шингарёв<br>1858-1919]:::religious
+-    Florensky[Павел Флоренский<br>1882-1937]:::religious
+-    Lossky[Николай Лосский<br>1870-1965]:::religious
+-    Trubetskoy_E[Евгений Трубецкой<br>1863-1920]:::religious
+-    Trubetskoy_S[Сергей Трубецкой<br>1862-1905]:::religious
+-    Gershenzon[Михаил Гершензон<br>1869-1925]:::religious
+-    Karsavin[Лев Карсавин<br>1882-1952]:::religious
+-    Ilyin[Иван Ильин<br>1883-1954]:::religious
+-    Vysheslavtsev[Борис Вышеславцев<br>1877-1954]:::religious
+-    Zenkovsky[Василий Зеньковский<br>1881-1962]:::religious
+-    Florovsky[Георгий Флоровский<br>1893-1979]:::religious
+-    Shpet[Густав Шпет<br>1879-1937]:::religious
+-    Losev[Алексей Лосев<br>1893-1988]:::religious
+-    Vvedensky[Александр Введенский<br>1856-1925]:::religious
++    subgraph "Религиозная философия (кон. XIX - нач. XX вв.)"
++        Solovyov[Владимир Соловьёв<br>1853-1900]:::religious
++        FedorovN[Николай Фёдоров<br>1829-1903]:::religious
++        Yurkevich[Памфил Юркевич<br>1826-1874]:::religious
++        Rozanov[Василий Розанов<br>1856-1919]:::religious
++        Shestov[Лев Шестов<br>1866-1938]:::religious
++        Merezhkovsky[Дмитрий Мережковский<br>1865-1941]:::religious
++        Berdyaev[Николай Бердяев<br>1874-1948]:::religious
++        Bulgakov[Сергей Булгаков<br>1871-1944]:::religious
++        Frank[Семён Франк<br>1877-1950]:::religious
++        Florensky[Павел Флоренский<br>1882-1937]:::religious
++        Lossky[Николай Лосский<br>1870-1965]:::religious
++        Trubetskoy_E[Евгений Трубецкой<br>1863-1920]:::religious
++        Trubetskoy_S[Сергей Трубецкой<br>1862-1905]:::religious
++        Gershenzon[Михаил Гершензон<br>1869-1925]:::religious
++        Karsavin[Лев Карсавин<br>1882-1952]:::religious
++        Ilyin[Иван Ильин<br>1883-1954]:::religious
++        Vysheslavtsev[Борис Вышеславцев<br>1877-1954]:::religious
++        Zenkovsky[Василий Зеньковский<br>1881-1962]:::religious
++        Florovsky[Георгий Флоровский<br>1893-1979]:::religious
++        Shpet[Густав Шпет<br>1879-1937]:::religious
++        Losev[Алексей Лосев<br>1893-1988]:::religious
++        Vvedensky[Александр Введенский<br>1856-1925]:::religious
++    end
+ 
+     %% РУССКИЙ КОСМИЗМ
+-    Tsiolkovsky[Константин Циолковский<br>1857-1935]:::kosmos
+-    Umov[Николай Умов<br>1846-1915]:::kosmos
+-    Vernadsky[Владимир Вернадский<br>1863-1945]:::kosmos
+-    Chizhevsky[Александр Чижевский<br>1897-1964]:::kosmos
++    subgraph "Русский космизм"
++        Tsiolkovsky[Константин Циолковский<br>1857-1935]:::kosmos
++        Umov[Николай Умов<br>1846-1915]:::kosmos
++        Vernadsky[Владимир Вернадский<br>1863-1945]:::kosmos
++        Chizhevsky[Александр Чижевский<br>1897-1964]:::kosmos
++    end
+ 
+     %% МАРКСИСТЫ И СОВЕТСКИЕ ФИЛОСОФЫ
+-    Plekhanov[Георгий Плеханов<br>1856-1918]:::soviet
+-    Lenin[Владимир Ленин<br>1870-1924]:::soviet
+-    Bogdanov[Александр Богданов<br>1873-1928]:::soviet
+-    Lunacharsky[Анатолий Луначарский<br>1875-1933]:::soviet
+-    Ilyenkov[Эвальд Ильенков<br>1924-1979]:::soviet
+-    Mamardashvili[Мераб Мамардашвили<br>1930-1990]:::soviet
++    subgraph "Советская философия"
++        Plekhanov[Георгий Плеханов<br>1856-1918]:::soviet
++        Lenin[Владимир Ленин<br>1870-1924]:::soviet
++        Bogdanov[Александр Богданов<br>1873-1928]:::soviet
++        Lunacharsky[Анатолий Луначарский<br>1875-1933]:::soviet
++        Ilyenkov[Эвальд Ильенков<br>1924-1979]:::soviet
++        Mamardashvili[Мераб Мамардашвили<br>1930-1990]:::soviet
++    end
+ 
+     %% СОВРЕМЕННЫЕ ФИЛОСОФЫ (ПОСТСОВЕТСКИЕ)
+-    Contemporary1[Современные<br>российские<br>философы]:::modern
++    subgraph "Современная философия"
++        Contemporary1[Современные<br>российские<br>философы]:::modern
++    end
+ 
+     %% ЗАРУБЕЖНЫЕ ФИЛОСОФЫ, ВЛИЯВШИЕ НА РУССКУЮ ФИЛОСОФИЮ
+-    Platon[Платон<br>427-347 до н.э.]:::foreign
+-    Aristotle[Аристотель<br>384-322 до н.э.]:::foreign
+-    Plotin[Плотин<br>204/205-270]:::foreign
+-    JohnDamascus[Иоанн Дамаскин<br>ок. 675-749]:::foreign
+-    ThomasAquin[Фома Аквинский<br>1225-1274]:::foreign
+-    Voltaire[Вольтер<br>1694-1778]:::foreign
+-    Rousseau[Жан-Жак Руссо<br>1712-1778]:::foreign
+-    Montesquieu[Монтескьё<br>1689-1755]:::foreign
+-    Diderot[Дидро<br>1713-1784]:::foreign
+-    Kant[Иммануил Кант<br>1724-1804]:::foreign
+-    Schelling[Фридрих Шеллинг<br>1775-1854]:::foreign
+-    Hegel[Георг Гегель<br>1770-1831]:::foreign
+-    Feuerbach[Людвиг Фейербах<br>1804-1872]:::foreign
+-    Marx[Карл Маркс<br>1818-1883]:::foreign
+-    Nietzsche[Фридрих Ницше<br>1844-1900]:::foreign
+-    Bergson[Анри Бергсон<br>1859-1941]:::foreign
+-    Husserl[Эдмунд Гуссерль<br>1859-1938]:::foreign
++    subgraph "Зарубежные философы"
++        Platon[Платон<br>427-347 до н.э.]:::foreign
++        Aristotle[Аристотель<br>384-322 до н.э.]:::foreign
++        Plotin[Плотин<br>204/205-270]:::foreign
++        JohnDamascus[Иоанн Дамаскин<br>ок. 675-749]:::foreign
++        ThomasAquin[Фома Аквинский<br>1225-1274]:::foreign
++        Voltaire[Вольтер<br>1694-1778]:::foreign
++        Rousseau[Жан-Жак Руссо<br>1712-1778]:::foreign
++        Montesquieu[Монтескьё<br>1689-1755]:::foreign
++        Diderot[Дидро<br>1713-1784]:::foreign
++        Kant[Иммануил Кант<br>1724-1804]:::foreign
++        Schelling[Фридрих Шеллинг<br>1775-1854]:::foreign
++        Hegel[Георг Гегель<br>1770-1831]:::foreign
++        Feuerbach[Людвиг Фейербах<br>1804-1872]:::foreign
++        Marx[Карл Маркс<br>1818-1883]:::foreign
++        Nietzsche[Фридрих Ницше<br>1844-1900]:::foreign
++        Bergson[Анри Бергсон<br>1859-1941]:::foreign
++        Husserl[Эдмунд Гуссерль<br>1859-1938]:::foreign
++    end
+ 
+     %% СВЯЗИ МЕЖДУ ФИЛОСОФАМИ
+ 
+-    %% Древнерусский период
++    %% Древнерусский период - внутренние связи
++    Ilarion --> Kirik
++    Ilarion --> KirillT
++    Ilarion --> KlimS
++    KlimS <--> KirillT
++    Kirik <--> KlimS
++    MaksimG --> NilS
++    MaksimG --> IosifV
+     NilS -.-> IosifV
+     IosifV -.-> NilS
+     IvanG <-.-> AndKurb
+     FedorK --> IvanP
++    FedorK --> IvanG
++
++    %% Связи древнерусских философов с зарубежными
++    Platon --> Ilarion
++    Aristotle --> MaksimG
++    Plotin --> NilS
++    JohnDamascus --> IosifV
++    ThomasAquin --> MaksimG
+ 
+     %% Просвещение
+     Voltaire --> Lomonosov
+@@ -154,6 +184,8 @@
+     Novikov --> Lopukhin
+     Lopukhin --> Labzin
+     Skovoroda --> Lomonosov
++    NilS --> Skovoroda
++    IosifV --> Lomonosov
+ 
+     %% Славянофилы и западники
+     Schelling --> Khomyakov
+@@ -179,6 +211,9 @@
+     Khomyakov --> Dostoyevsky
+     Dostoyevsky --> Dal
+     Dal <--> Yazykov
++    Tyutchev --> IvanAksakov
++    Tyutchev --> Dostoyevsky
++    Hilferding --> Danilevsky
+ 
+     %% Западники связи
+     Chaadaev --> Belinsky
+@@ -202,6 +237,10 @@
+     Granovsky --> Katkov
+     Katkov <--> Korsh
+     Korsh <--> Nikitenko
++    Feuerbach --> Belinsky
++    Feuerbach --> Hertzen
++    Hegel --> Granovsky
++    Kant --> Chicherin
+ 
+     %% Славянофилы и Западники между собой
+     Chaadaev --> Khomyakov
+@@ -251,6 +290,12 @@
+     Frank <--> Vysheslavtsev
+     Trubetskoy_E --> Florovsky
+     Trubetskoy_E --> Zenkovsky
++    Nietzsche --> Shestov
++    Nietzsche --> Berdyaev
++    Kant --> Vvedensky
++    Bergson --> Lossky
++    Husserl --> Shpet
++    Husserl --> Frank
+ 
+     %% Космисты
+     FedorovN --> Tsiolkovsky
+@@ -258,6 +303,8 @@
+     Tsiolkovsky <-.-> Vernadsky
+     Vernadsky --> Chizhevsky
+     Vernadsky_I -.-> Vernadsky
++    Umov --> Tsiolkovsky
++    Umov --> Vernadsky
+ 
+     %% Советские философы
+     Marx --> Plekhanov
+@@ -269,6 +316,8 @@
+     Lenin --> Ilyenkov
+     Bogdanov --> Ilyenkov
+     Ilyenkov <--> Mamardashvili
++    Hegel --> Ilyenkov
++    Feuerbach --> Plekhanov
+ 
+     %% Современная философия
+     Berdyaev --> Contemporary1
+@@ -281,22 +330,11 @@
+     Florovsky --> Contemporary1
+     Vernadsky --> Contemporary1
+     Ilyin --> Contemporary1
+-
+-    %% ЛЕГЕНДА
+-    subgraph Легенда
+-        L_Ancient[Древнерусский период<br>XI-XVII вв.]:::ancient
+-        L_Enlightenment[Эпоха Просвещения<br>XVIII в.]:::enlightenment
+-        L_Slavophil[Славянофилы<br>XIX в.]:::slavophil
+-        L_Westerner[Западники<br>XIX в.]:::westerner
+-        L_Religious[Религиозная философия<br>кон. XIX - нач. XX вв.]:::religious
+-        L_Kosmos[Русский космизм]:::kosmos
+-        L_Soviet[Советская философия]:::soviet
+-        L_Modern[Современная философия]:::modern
+-        L_Foreign[Зарубежные философы]:::foreign
+-    end
+-
+-    %% Типы связей
+-    subgraph ТипыСвязей
++    Shpet --> Contemporary1
++    Lenin --> Contemporary1
++
++    %% ЛЕГЕНДА И ТИПЫ СВЯЗЕЙ
++    subgraph "Типы связей"
+         A1[A] -->|влияние<br>учитель-ученик| B1[B]
+         A2[A] <-->|взаимное влияние| B2[B]
+         A3[A] -.->|критика| B3[B]

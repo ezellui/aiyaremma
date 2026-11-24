@@ -1,0 +1,230 @@
+--- предыдущая/Прямое-наблюдение-сверхбыстрого-усиления-водородны.md
++++ текущая/Прямое-наблюдение-сверхбыстрого-усиления-водородны.md
+@@ -65,4 +65,226 @@
+ ### Доступность кода
+ Некоммерческие коды, используемые для моделирования и анализа здесь, доступны от соответствующих авторов по обоснованному запросу.
+ 
+-[Ссылки 31-32 и далее...]
++## Полный список ссылок
++
++1. Stillinger, F. H. Water revisited. Science 209, 451–457 (1980).
++2. Perakis, F. et al. Vibrational spectroscopy and dynamics of water. Chem. Rev. 116, 7590–7607 (2016).
++3. Woutersen, S. & Bakker, H. J. Resonant intermolecular transfer of vibrational energy in liquid water. Nature 402, 507–509 (1999).
++4. Laage, D., Stirnemann, G., Sterpone, F., Rey, R. & Hynes, J. T. Reorientation and allied dynamics in water and aqueous solutions. Annu. Rev. Phys. Chem. 62, 395–416 (2011).
++5. Lawrence, C. P. & Skinner, J. L. Vibrational spectroscopy of HOD in liquid D2O. III. Spectral diffusion, and hydrogen-bonding and rotational dynamics. J. Chem. Phys. 118, 264–272 (2003).
++6. Fecko, C. J., Eaves, J. D., Loparo, J. J., Tokmakoff, A. & Geissler, P. L. Ultrafast hydrogen-bond dynamics in the infrared spectroscopy of water. Science 301, 1698–1702 (2003).
++7. Ramasesha, K., De Marco, L., Mandal, A. & Tokmakoff, A. Water vibrations have strongly mixed intra- and intermolecular character. Nat. Chem. 5, 935–940 (2013).
++8. Rey, R., Møller, K. B. & Hynes, J. T. Hydrogen bond dynamics in water and ultrafast infrared spectroscopy. J. Phys. Chem. A 106, 11993–11996 (2002).
++9. Soper, A. K. The radial distribution functions of water and ice from 220 to 673 K and at pressures up to 400 MPa. Chem. Phys. 258, 121–137 (2000).
++10. Skinner, L. B. et al. Benchmark oxygen-oxygen pair-distribution function of ambient water from x-ray diffraction measurements with a wide Q-range. J. Chem. Phys. 138, 074506 (2013).
++11. Sellberg, J. A. et al. Ultrafast X-ray probing of water structure below the homogeneous ice nucleation temperature. Nature 510, 381–384 (2014).
++12. Kim, K. H. et al. Maxima in the thermodynamic response and correlation functions of deeply supercooled water. Science 358, 1589–1593 (2017).
++13. Perakis, F. et al. Coherent X-rays reveal the influence of cage effects on ultrafast water dynamics. Nat. Commun. 9, 1917 (2018).
++14. Kim, K. H. et al. Direct observation of bond formation in solution with femtosecond X-ray scattering. Nature 518, 385–389 (2015).
++15. van Driel, T. B. et al. Atomistic characterization of the active-site solvation dynamics of a model photocatalyst. Nat. Commun. 7, 13678 (2016).
++16. Nunes, J. P. F. et al. Liquid-phase mega-electron-volt ultrafast electron diffraction. Struct. Dyn. 7, 024301 (2020).
++17. Koralek, J. D. et al. Generation and characterization of ultrathin free-flowing liquid sheets. Nat. Commun. 9, 1353 (2018).
++18. Ihee, H. et al. Visualizing reaction pathways in photoactive yellow protein from nanoseconds to seconds. Proc. Natl Acad. Sci. USA 102, 7145–7150 (2005).
++19. Wernet, P. et al. The structure of the first coordination shell in liquid water. Science 304, 995–999 (2004).
++20. Elles, C. G., Khakhalin, A. E., Crowell, R. A., Bradforth, S. E. & Shkrob, I. A. Transient X-ray absorption spectroscopy of hydrated halogen atom. J. Phys. Chem. A 117, 6433–6442 (2013).
++21. Cheng, B., Engel, E. A., Behler, J., Dellago, C. & Ceriotti, M. Ab initio thermodynamics of liquid and solid water. Proc. Natl Acad. Sci. USA 116, 1110–1115 (2019).
++22. Dettori, R. & Donadio, D. Molecular dynamics simulations of vibrational energy relaxation of hot water molecules using the generalized Langevin equation. J. Chem. Theory Comput. 16, 5630–5639 (2020).
++23. Rossi, M., Kapil, V. & Ceriotti, M. Fine tuning classical and quantum molecular dynamics using a generalized Langevin equation. J. Chem. Phys. 148, 102301 (2018).
++24. Wendler, K., Thar, J., Zahn, S. & Kirchner, B. Estimating the hydrogen bond energy. J. Phys. Chem. A 114, 9529–9536 (2010).
++25. Lippincott, E. R. & Schroeder, R. One-dimensional model of the hydrogen bond. J. Chem. Phys. 23, 1099–1106 (1955).
++26. Schroeder, R. & Lippincott, E. R. Potential function model of hydrogen bonds. II. J. Phys. Chem. 61, 921–928 (1957).
++27. Huggins, M. L. Hydrogen bridges in ice and liquid water. J. Phys. Chem. 40, 723–731 (1936).
++28. Isaacs, E. D. et al. Covalency of the hydrogen bond in ice: a direct X-ray measurement. Phys. Rev. Lett. 82, 600–603 (1999).
++29. Soper, A. K. & Benmore, C. J. Quantum differences between heavy and light water. Phys. Rev. Lett. 101, 065502 (2008).
++30. Ceriotti, M., Cuny, J., Parrinello, M. & Manolopoulos, D. E. Nuclear quantum effects and hydrogen bond fluctuations in water. Proc. Natl Acad. Sci. USA 110, 15591–15596 (2013).
++31. Weathersby, S. P. et al. Mega-electron-volt ultrafast electron diffraction at SLAC National Accelerator Laboratory. Rev. Sci. Instrum. 86, 073702 (2015).
++32. Bertie, J. E. & Lan, Z. Infrared intensities of liquids XX: the intensity of the OH stretching band of liquid water revisited, and the best current values of the optical constants of H2O(l) at 25 °C between 15,000 and 1 cm-1. Appl. Spectrosc. 50, 1047–1057 (1996).
++33. Soper, A. K. Empirical potential Monte Carlo simulation of fluid structure. Chem. Phys. 202, 295–306 (1996).
++34. Mott, N. F. & Massey, H. S. W. The Theory of Atomic Collisions 3rd edn (Clarendon Press, 1965).
++35. Prince, E. International Tables for Crystallography. Volume C: Mathematical, Physical and Chemical Tables (Springer, 2004).
++36. Yang, J. et al. Diffractive imaging of coherent nuclear motion in isolated molecules. Phys. Rev. Lett. 117, 153002 (2016).
++37. Horn, H. W. et al. Development of an improved four-site water model for biomolecular simulations: TIP4P-Ew. J. Chem. Phys. 120, 9665–9678 (2004).
++38. Humphrey, W., Dalke, A. & Schulten, K. VMD: visual molecular dynamics. J. Mol. Graph. 14, 33–38 (1996).
++39. McGreevy, R. L. & Pusztai, L. Reverse Monte Carlo simulation: a new technique for the determination of disordered structures. Mol. Simul. 1, 359–367 (1988).
++40. Keen, D. A. A comparison of various commonly used correlation functions for describing total scattering. J. Appl. Crystallogr. 34, 172–177 (2001).
++41. Hubbell, J. H. et al. Atomic form factors, incoherent scattering functions, and photon scattering cross sections. J. Phys. Chem. Ref. Data 4, 471–538 (1975).
++42. Nishiyama, K., Yamaguchi, T. & Hirata, F. Hydrogen-bonded structure in aqueous sulfuric acid solutions. J. Solution Chem. 33, 625–630 (2004).
++43. Zhang, Y. & Yang, W. Comment on "Generalized gradient approximation made simple". Phys. Rev. Lett. 80, 890 (1998).
++44. Grimme, S., Antony, J., Ehrlich, S. & Krieg, H. A consistent and accurate ab initio parametrization of density functional dispersion correction (DFT-D) for the 94 elements H-Pu. J. Chem. Phys. 132, 154104 (2010).
++45. Bussi, G., Donadio, D. & Parrinello, M. Canonical sampling through velocity rescaling. J. Chem. Phys. 126, 014101 (2007).
++46. Zwanzig, R. Nonlinear generalized Langevin equations. J. Stat. Phys. 9, 215–220 (1973).
++47. Ceriotti, M., Bussi, G. & Parrinello, M. Colored-noise thermostats à la carte. J. Chem. Theory Comput. 6, 1170–1180 (2010).
++48. Markland, T. E. & Manolopoulos, D. E. An efficient ring polymer contraction scheme for imaginary time path integral simulations. J. Chem. Phys. 129, 024105 (2008).
++49. Craig, I. R. & Manolopoulos, D. E. Quantum statistics and classical mechanics: real time correlation functions from ring polymer molecular dynamics. J. Chem. Phys. 121, 3368–3373 (2004).
++50. Rossi, M., Ceriotti, M. & Manolopoulos, D. E. How to remove the spurious resonances from ring polymer molecular dynamics. J. Chem. Phys. 140, 234116 (2014).
++51. Hockney, R. W. & Eastwood, J. W. Computer Simulation Using Particles (CRC Press, 1988).
++52. Plimpton, S. Fast parallel algorithms for short-range molecular dynamics. J. Comput. Phys. 117, 1–19 (1995).
++53. Dunning Jr, T. H. Gaussian basis sets for use in correlated molecular calculations. I. The atoms boron through neon and hydrogen. J. Chem. Phys. 90, 1007–1023 (1989).
++54. Ufimtsev, I. S. & Martinez, T. J. Quantum chemistry on graphical processing units. 3. Analytical energy gradients, geometry optimization, and first principles molecular dynamics. J. Chem. Theory Comput. 5, 2619–2628 (2009).
++55. Seritan, S. et al. TeraChem: a graphical processing unit-accelerated electronic structure package for large-scale ab initio molecular dynamics. WIREs Comput. Mol. Sci. 11, e1494 (2021).
++56. Song, C. & Martinez, T. J. Atomic orbital-based SOS-MP2 with tensor hypercontraction. I. GPU-based tensor construction and exploiting sparsity. J. Chem. Phys. 144, 174111 (2016).
++57. Yang, J. et al. Simultaneous observation of nuclear and electronic dynamics by ultrafast electron diffraction. Science 368, 885–889 (2020).
++58. Egerton, R. F. Electron Energy-Loss Spectroscopy in the Electron Microscope (Springer, 2011).
++59. Light, J. C. & Carrington Jr, T. Discrete-variable representations and their utilization. Adv. Chem. Phys. 114, 263–310 (2000).
++60. Carter, S., Culik, S. J. & Bowman, J. M. Vibrational self-consistent field method for many-mode systems: a new approach and application to the vibrations of CO adsorbed on Cu(100). J. Chem. Phys. 107, 10458–10469 (1997).
++61. Ceriotti, M., Manolopoulos, D. E. & Parrinello, M. Accelerating the convergence of path integral dynamics with a generalized Langevin equation. J. Chem. Phys. 134, 084104 (2011).
++62. Ceriotti, M. & Manolopoulos, D. E. Efficient first-principles calculation of the quantum kinetic energy and momentum distribution of nuclei. Phys. Rev. Lett. 109, 100604 (2012).
++63. Marsalek, O. & Markland, T. E. Quantum dynamics and spectroscopy of ab initio liquid water: the interplay of nuclear and electronic quantum effects. J. Phys. Chem. Lett. 8, 1545–1551 (2017).
++64. Lin, L., Morrone, J. A. & Car, R. Correlated tunneling in hydrogen bonds. J. Stat. Phys. 145, 365–384 (2011).
++
++## Информация об авторах и их принадлежности
++
++¹SLAC National Accelerator Laboratory, Менло-Парк, Калифорния, США
++²Stanford PULSE Institute, SLAC National Accelerator Laboratory, Стэнфордский университет, Стэнфорд, Калифорния, США
++³Кафедра химии, Калифорнийский университет в Дэвисе, Дэвис, Калифорния, США
++⁴Кафедра физики и астрономии, Университет Небраски-Линкольн, Линкольн, Небраска, США
++⁵Кафедра химии, Стэнфордский университет, Стэнфорд, Калифорния, США
++⁶Кафедра прикладной физики, Стэнфордский университет, Стэнфорд, Калифорния, США
++⁷Кафедра химии, Йельский университет, Нью-Хейвен, Коннектикут, США
++⁸Кафедра материаловедения и инженерии, Стэнфордский университет, Стэнфорд, Калифорния, США
++⁹Стэнфордский институт материаловедения и энергетических наук, SLAC National Accelerator Laboratory, Менло-Парк, Калифорния, США
++¹⁰Кафедра физики, Стокгольмский университет, AlbaNova университетский центр, Стокгольм, Швеция
++¹¹Текущий адрес: Кафедра химии, Университет штата Орегон, Корваллис, Орегон, США
++
++✉ e-mail: jie.yang@slac.stanford.edu; ddonadio@ucdavis.edu; kgaffney@slac.stanford.edu; toddjmartinez@gmail.com; wangxj@slac.stanford.edu
++
++## Дополнительная информация
++
++### Благодарности
++Мы благодарим М. Кениске за операции MeV-UED. Эта работа была поддержана Управлением науки Министерства энергетики США, Управлением фундаментальных энергетических наук, через контракты DE-AC02-76SF00515 (SLAC National Accelerator Laboratory), DE-SC0014170 (Университет Небраски) и научно-исследовательскую программу химических наук, наук о Земле и биологических наук. Использование линейного ускорителя SLAC и установки MeV-UED было поддержано Управлением науки Министерства энергетики США, Управлением фундаментальных энергетических наук, контракт номер DE-AC02-76SF00515. T.J.A.W. был поддержан стипендией Александра фон Гумбольдта. Компьютерное время было предоставлено Национальным научным вычислительным центром энергетических исследований (NERSC), пользовательским центром Управления науки Министерства энергетики США, поддерживаемым Управлением науки Министерства энергетики США по контракту № DE-AC02-05CH11231. Д.Д. и Р.Д. благодарят за поддержку грант NSF CHE-1565434.
++
++### Вклад авторов
++J.Y., T.J.A.W., K.J.G., T.J.M. и X.W. задумали идею исследования. J.Y., J.P.F.N., N.H.L., E.B., M.C., Z.C., A.A.C., D.P.D., T.F.H., M.E.K., K.L., M.-F.L., A.M.L., M.M., A.N., X.S., T.J.A.W., K.J.G. и X.W. провели эксперименты и проанализировали экспериментальные данные. R.D. и D.D. провели моделирование молекулярной динамики. J.Y., R.D., D.D., K.J.G., T.J.M. и X.W. написали рукопись при участии всех авторов.
++
++### Конкурирующие интересы
++Авторы заявляют об отсутствии конкурирующих интересов.
++
++### Дополнительная информация
++Дополнительная информация доступна для этой статьи по адресу https://doi.org/10.1038/s41586-021-03793-9.
++
++Корреспонденцию и запросы материалов следует адресовать J.Y., D.D., K.J.G., T.J.M. или X.W.
++
++Информация о рецензировании Nature благодарит анонимных рецензентов за их вклад в рецензирование этой работы. Доступна информация о рецензировании.
++
++Детали переиздания и разрешений доступны на www.nature.com/reprints.
++
++## Расширенные данные
++
++В оригинальной статье содержатся расширенные данные, включающие 10 дополнительных рисунков с подробными техническими деталями:
++
++- **Расширенные данные, рис. 1**: Ab initio моделирование электронного рассеяния и дополнительные экспериментальные данные
++- **Расширенные данные, рис. 2**: Распределения Вигнера для модели Липпинкотта-Шрёдера
++- **Расширенные данные, рис. 3**: Сравнение квантовых и классических распределений
++- **Расширенные данные, рис. 4**: Примеры сдвинутых g(r) и соответствующих ΔPDF
++- **Расширенные данные, рис. 5**: Анализ функции распределения зарядовых пар (CPDF)
++- **Расширенные данные, рис. 6**: Сравнение ΔPDF из NNP и TIP4P-Ew
++- **Расширенные данные, рис. 7**: Влияние начальной энергии на динамику
++- **Расширенные данные, рис. 8**: Эволюция температуры для различных мод
++- **Расширенные данные, рис. 9**: 2D потенциальные поверхности растяжения
++- **Расширенные данные, рис. 10**: Квантовые эффекты в структуре и динамике воды
++
++Эти расширенные данные предоставляют дополнительную техническую информацию и валидацию основных результатов, представленных в статье.
++
++## Ключевые выводы и значение исследования
++
++### Основные результаты:
++1. **Впервые напрямую наблюдалось усиление водородных связей** в жидкой воде на фемтосекундных временных масштабах после возбуждения колебаний OH
++2. **Водородные связи сокращаются на ~0,04 Å** за время около 80 фемтосекунд
++3. **Квантовые эффекты критически важны** для правильного описания динамики - классическое моделирование не воспроизводит экспериментальные результаты
++4. **Раскрыт межмолекулярный характер** колебаний воды на атомном уровне
++
++### Научное значение:
++- Исследование проливает свет на фундаментальную природу водородных связей в воде
++- Демонстрирует важность квантово-механических эффектов в динамике жидкой воды
++- Открывает новые возможности для понимания химических реакций в водных растворах
++- Методология LUES может быть применена для изучения других жидкостей и растворов
++
++### Технические достижения:
++- Разработана методика жидкостного сверхбыстрого электронного рассеяния (LUES) с беспрецедентным временным (~200 фс) и пространственным (атомным) разрешением
++- Создана комплексная методология анализа данных для извлечения структурной информации из картин рассеяния
++- Разработаны передовые методы моделирования молекулярной динамики с квантовыми эффектами
++
++Это исследование представляет собой важный шаг в понимании одной из самых фундаментальных жидкостей в природе и демонстрирует мощь современных экспериментальных и вычислительных методов для изучения сверхбыстрой молекулярной динамики.
++
++31. Weathersby, S. P. et al. Mega-electron-volt ultrafast electron diffraction at SLAC National Accelerator Laboratory. Rev. Sci. Instrum. 86, 073702 (2015).
++32. Bertie, J. E. & Lan, Z. Infrared intensities of liquids XX: the intensity of the OH stretching band of liquid water revisited, and the best current values of the optical constants of H2O(l) at 25 °C between 15,000 and 1 cm-1. Appl. Spectrosc. 50, 1047–1057 (1996).
++
++## Полный раздел методов (продолжение)
++
++### Обработка картин рассеяния
++Интенсивность рассеяния I(t;Q) генерируется через стандартную процедуру обработки вычитания фона, поиска центра, нормализации и радиального усреднения.
++
++Разностная кривая рассеяния QΔS(t;Q) рассчитывается по уравнению:
++
++QΔS(t;Q) = Q[I(t;Q) - I_ref(t<0;Q)] / [I_ref(t<0;Q) × Σ_α f_α(Q)]
++
++где I_ref(t < 0;Q) - это эталонная картина, взятая до нулевого времени, сумма по α выполняется по трём атомам в молекуле воды, а f_α(Q) - модифицированный атомный фактор рассеяния¹⁰,³³. Здесь модифицированные атомные факторы рассеяния вычисляются с использованием метода, аналогичного ссылке 33, но адаптированного для электронного рассеяния с использованием формулы Мотта-Бете³⁴:
++
++f_α(Q) = Z × a_α × exp(-δ²Q²/4) × f_α^X(Q)
++
++где Z - атомный номер (8 для кислорода, 1 для водорода), a_α - коэффициент масштабирования частичного заряда (1,11 для кислорода, 0,56 для водорода), δ = 2,2 Å⁻¹, а f_α^X - атомный форм-фактор в рамках модели независимых атомов для рентгеновского рассеяния, взятый из ссылки 35.
++
++Нулевое время в экспериментальных данных определяется по положению пика гауссовой подгонки к сигналу с низким Q, показанному на рис. 1e.
++
++### Преобразование Фурье-синус для расчёта ΔPDF
++ΔPDF может быть рассчитана через преобразование Фурье-синус QΔS(t;Q), как объяснено в ссылках 14,18:
++
++ΔPDF(t;r) = r ∫[от Q=1 до Q_max] QΔS(t;Q)sin(Qr)e^(-0.03Q²)dQ
++
++где e^(-0.03Q²) - это демпфирующий член для избежания краевых эффектов в преобразовании и эквивалентен гауссовому сглаживанию в реальном пространстве. В уравнении (3) используется только Q > 1 Å⁻¹, чтобы избежать вклада от неупругой компоненты при низком Q. Q_max в этом эксперименте составляет 11,8 Å⁻¹. 
++
++### Одно- и двухпараметрическая χ² подгонка
++Мы использовали однопараметрическую (рис. 2e) и двухпараметрическую (рис. 3e) стандартную χ² подгонку для извлечения изменений длин связей. В однопараметрической подгонке вводится простой сдвиг ΔR₁ к g(r) как для первой оболочки OO (R₁), так и для водородно-связанных пар OH (r₂), а g(r) для всех других пар атомов остаётся неизменной. Из этой модифицированной g(r) моделируется картина рассеяния, а затем ΔPDF рассчитывается из моделированной картины рассеяния с использованием уравнения (3). 
++
++Двухпараметрическая подгонка включает дополнительный параметр Δr₃, который дополнительно сдвигает g_OH(r) для r > 2,5 Å, представляя изменение расстояния OH первой оболочки, при всех остальных условиях, идентичных однопараметрической подгонке. 
++
++χ² рассчитывается по формуле:
++χ² = Σ_i (ΔPDF_exp(r_i) - c_s × ΔPDF_sim(r_i))² / σ_i²
++
++где c_s - это масштабный коэффициент между экспериментом и моделированием, который получается путём сопоставления пика первой оболочки OO в функции распределения зарядовых пар (CPDF), а σ - стандартное отклонение экспериментальных данных.
++
++### Извлечение g₂ и температуры
++На рис. 4 мы использовали g₂ (то есть высоту пика второй оболочки OO в RDF) для извлечения температуры для каждого времени задержки. Для извлечения g₂ нам нужно напрямую анализировать необработанные картины рассеяния, а не разностные картины рассеяния. Это требует правильной обработки как неупругого, так и бесструктурного атомного фона рассеяния.
++
++В недавней статье мы предложили CPDF, которая может быть получена непосредственно из необработанных картин без атомных форм-факторов или фона. Преимущество этого метода заключается в том, что вклад от неупругого и других форм фона концентрируется при r < ~2 Å и поэтому не влияет на высоту пика второй оболочки около 4,4 Å.
++
++### Моделирование равновесной воды
++Статическая вода моделируется классической молекулярной динамикой с 4054 молекулами в коробках 50 × 50 × 50 Å в программном пакете GROMACS с использованием силового поля TIP4P-Ew³⁷, которое использовалось для предсказания статической структуры воды как в экспериментах электронного рассеяния¹⁶, так и рентгеновского рассеяния³⁷. 
++
++Классические траектории молекулярной динамики были преобразованы в усреднённую по времени RDF g(r) с использованием пакета VMD³⁸,³⁹, а упругая картина рассеяния моделировалась с использованием формулы, приведённой в ссылке 40:
++
++I_sim^el(Q) = Σ_{l,m} N_l f_l(Q) × [δ_{l,m} + N_m f_m(Q)ρ/V × ∫_0^L 4πr²g_{l,m}(r)[sin(Qr)/Qr]dr × sin(QR_box)/QR_box]
++
++где индексы l, m - это типы атомов (O и H здесь), N_l - количество атомов типа l, f_l(Q) - атомный форм-фактор для l, δ_{l,m} - дельта-функция Кронекера, V - объём моделируемой коробки, R_box - длина моделируемой коробки, g_{l,m}(r) - RDF пары атомов lm, а L - половина длины моделируемой коробки.
++
++### Моделирование молекулярной динамики накачка-зонд
++Для моделирования эксперимента накачка-зонд моделирование молекулярной динамики проводилось с периодическими граничными условиями на кубической коробке с длиной стороны 25,05 Å, содержащей 522 молекулы воды, что соответствует плотности ρ = 0,994 г/см³. Молекулы воды моделировались согласно NNP²¹, обученному на структурах воды из ab initio молекулярной динамики на основе пересмотренного функционала плотности Пердью-Берка-Эрнцерхофа⁴³ с поправками ван-дер-Ваальса с использованием метода D3⁴⁴.
++
++Система была первоначально подготовлена при 300 К с NVT-прогоном посредством стохастического перемасштабирования скорости⁴⁵ в течение 200 пс. После этого прогона были выполнены дополнительные 200 пс при 300 К, сохраняя атомную конфигурацию (положения + скорости) каждую пс, чтобы получить 200 независимых реплик.
++
++Два различных подхода, называемых «классическим» и «квантовым», использовались для моделирования возбуждения, вызванного инфракрасной накачкой. В каждом случае 5% молекул (то есть 26 молекул) были случайным образом возбуждены в соответствии с экспериментально оцененной долей возбуждения.
++
++В классической выборке молекулы возбуждались с помощью термостата GLE²²,²³. GLE реализует немарковскую динамику путём введения зависящих от истории членов⁴⁶ в стандартное уравнение Ланжевена. 
++
++В квантовой выборке процесс возбуждения предполагался мгновенным и локализованным на одной из двух связей OH с начальными условиями для возбуждённого растяжения OH, сгенерированными из распределения Вигнера v_OH = 1 уточнённой модели Липпинкотта-Шрёдера⁵.
++
++### Определение мгновенной кинетической температуры из моделирования молекулярной динамики накачка-зонд
++Мгновенная кинетическая температура колебательных мод вычислялась путём рассмотрения специфических компонент атомных скоростей. Температура мод растяжения OH вычислялась путём проецирования разности между скоростями кислорода и водорода на единичный вектор, идентифицирующий связь OH.
++
++### Ab initio моделирование электронного рассеяния
++Ab initio электронное рассеяние используется для предсказания изменений неупругого и упругого сигнала первого колебательно возбуждённого состояния растяжения OH (v_OH = 1) по сравнению с основным состоянием (v_OH = 0). Моделирование выполняется на одной изолированной молекуле воды с использованием расстояния OH 1,021 Å для возбуждённой связи v_OH = 1, 0,994 Å для невозбуждённой связи (соответствующей v_OH = 0,1 уровню при расстоянии R₁ 2,80 Å) и 0,989 Å для v_OH = 0 (расстояние R₁ 2,85 Å).
++
++### 2D потенциал растяжения NNP против модели Липпинкотта-Шрёдера
++Мы показываем, что модель Липпинкотта-Шрёдера обеспечивает разумное 1D представление движения растяжения OH в моделировании жидкой воды на основе NNP, несмотря на значительные отклонения при больших расстояниях OH. Для этого мы рассматриваем только потенциал растяжения OH для одной молекулы воды с фиксированным углом связи и в замороженной среде.
++
++### Время утечки энергии нулевой точки
++Подход моделирования молекулярной динамики, используемый для интерпретации экспериментальных результатов, состоит из квантового возбуждения, за которым следует релаксация, в которой динамика является ньютоновской. Следовательно, наблюдаемая динамика релаксации представляет не только перераспределение энергии после фотовозбуждения, но и динамику уравновешивания квантового распределения до классического состояния.
++
++### Влияние начальной энергии с классическими начальными условиями
++Чтобы лучше понять происхождение разницы между квантовыми и классическими процедурами для представления начальных условий после возбуждения, мы повторили моделирование горячей точки GLE, вводя полную энергию v = 1; то есть E = 3/2 hν (которая включает энергию нулевой точки).
++
++### Доступность данных
++Необработанные наборы данных доступны от соответствующих авторов по обоснованному запросу. Исходные данные предоставляются вместе с этой статьёй.
++
++### Доступность кода
++Некоммерческие коды, используемые для моделирования и анализа здесь, доступны от соответствующих авторов по обоснованному запросу.

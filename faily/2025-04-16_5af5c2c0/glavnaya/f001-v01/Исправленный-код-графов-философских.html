@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Графы философских концепций</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-data/7.1.2/vis-data.min.js"></script>
+
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+h1, h2 {
+  color: #2c3e50;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.concept {
+  margin-bottom: 40px;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.graph {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #ddd;
+  background-color: #ffffff;
+  border-radius: 4px;
+}
+
+.description {
+  margin-top: 20px;
+  line-height: 1.6;
+}
+
+.legend {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+}
+
+.legend h3 {
+  margin-top: 0;
+  font-size: 1.1em;
+}
+
+.category-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.category-item {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9em;
+}
+
+.ontological { background-color: #ffcccc; }
+.epistemological { background-color: #ccffcc; }
+.axiological { background-color: #ccccff; }
+.logical { background-color: #ffffcc; }
+.anthropological { background-color: #ffccff; }
+
+.controls {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 8px 15px;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.tab-button {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  border-radius: 4px 4px 0 0;
+}
+
+.tab-button.active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Графы философских концепций</h1>
+  
+  <div class="legend">
+    <h3>Легенда</h3>
+    <h4>Категории:</h4>
+    <div class="category-group">
+      <span class="category-item ontological">Онтологические</span>
+      <span class="category-item epistemological">Эпистемологические</span>
+      <span class="category-item axiological">Аксиологические</span>
+      <span class="category-item logical">Логические</span>
+      <span class="category-item anthropological">Антропологические</span>
+    </div>
+    
+    <h4>Типы связей:</h4>
+    <div>
+      <ul>
+        <li><strong>Основание</strong> - одна категория служит фундаментом для другой</li>
+        <li><strong>Противоположность</strong> - категории противопоставлены друг другу</li>
+        <li><strong>Диалектическое единство</strong> - категории образуют синтез противоположностей</li>
+        <li><strong>Причинность</strong> - одна категория порождает другую</li>
+        <li><strong>Понятийная связь</strong> - категории связаны на уровне понятий</li>
+        <li><strong>Иерархия</strong> - категории связаны отношением подчинения</li>
+        <li><strong>Дополнительность</strong> - категории дополняют друг друга</li>
+        <li><strong>Эмерджентность</strong> - из одних категорий возникают другие, обладающие новыми свойствами</li>
+        <li><strong>Тождественность</strong> - категории по сути одно и то же в разных аспектах</li>
+        <li><strong>Редукция</strong> - сведение одной категории к другой</li>
+        <li><strong>Интерпретация</strong> - одна категория истолковывает другую</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="controls">
+    <div class="tab-buttons">
+      <div class="tab-button active" onclick="showConcept('platonism')">Платонизм</div>
+      <div class="tab-button" onclick="showConcept('aristotle')">Аристотелизм</div>
+      <div class="tab-button" onclick="showConcept('kantian')">Кантианство</div>
+      <div class="tab-button" onclick="showConcept('hegelian')">Гегельянство</div>
+      <div class="tab-button" onclick="showConcept('existentialism')">Экзистенциализм</div>
+      <div class="tab-button" onclick="showConcept('phenomenology')">Феноменология</div>
+    </div>
+  </div>
+  
+  <div id="platonism" class="concept">
+    <h2>Платонизм</h2>
+    <div id="platonism-graph" class="graph"></div>
+    <div class="description">
+      <p>В платонизме центральная роль отводится идеальным формам (сущностям), которые считаются более реальными, чем материальный мир. Истинное знание возможно только через постижение этих форм разумом, а не через чувственное восприятие материального мира. Красота и благо рассматриваются как высшие идеи, понимание которых возможно через созерцание. Материальный мир является лишь отражением мира идей.</p>
+    </div>
+  </div>
+  
+  <div id="aristotle" class="concept" style="display:none;">
+    <h2>Аристотелизм</h2>
+    <div id="aristotle-graph" class="graph"></div>
+    <div class="description">
+      <p>Философия Аристотеля выстраивается вокруг понятий формы и материи, потенциальности и актуальности. В отличие от Платона, Аристотель считал, что форма неотделима от материи и существует только в конкретных вещах. Сущность вещи определяется её формой, которая актуализирует потенциальность материи. Знание достигается через изучение причинности в природе, а этика направлена на достижение добродетели как средства к благу.</p>
+    </div>
+  </div>
+  
+  <div id="kantian" class="concept" style="display:none;">
+    <h2>Кантианство</h2>
+    <div id="kantian-graph" class="graph"></div>
+    <div class="description">
+      <p>Иммануил Кант разделил реальность на мир явлений (феноменов) и мир вещей в себе (ноуменов). Познание ограничено миром явлений, структурированным априорными формами чувственности (пространством и временем) и рассудка (категориями). Разум стремится к целостному пониманию, но наталкивается на антиномии. Этика Канта основана на категорическом императиве, связывающем свободу воли с всеобщим моральным законом.</p>
+    </div>
+  </div>
+  
+  <div id="hegelian" class="concept" style="display:none;">
+    <h2>Гегельянство</h2>
+    <div id="hegelian-graph" class="graph"></div>
+    <div class="description">
+      <p>Гегелевская философия представляет историю как развитие Абсолютной Идеи через диалектический процесс тезиса, антитезиса и синтеза. Сознание, согласно Гегелю, развивается от субъективного духа через объективный дух к абсолютному духу. История рассматривается как поступательное движение к осознанию свободы. Истина понимается как весь процесс диалектического развития, а не как статичный результат.</p>
+    </div>
+  </div>
+  
+  <div id="existentialism" class="concept" style="display:none;">
+    <h2>Экзистенциализм</h2>
+    <div id="existentialism-graph" class="graph"></div>
+    <div class="description">
+      <p>Экзистенциализм фокусируется на конкретном существовании человека, его свободе и ответственности. Сущность человека не предзадана, а создаётся через его существование и выбор. Свобода рассматривается как бремя, вызывающее тревогу перед лицом необходимости выбора. Экзистенциалисты исследуют такие феномены как тревога, отчуждение, абсурд, а также аутентичность как способ противостоять обезличиванию в обществе.</p>
+    </div>
+  </div>
+  
+  <div id="phenomenology" class="concept" style="display:none;">
+    <h2>Феноменология</h2>
+    <div id="phenomenology-graph" class="graph"></div>
+    <div class="description">
+      <p>Феноменология исследует структуры сознания и феномены как они являются в опыте. Центральным понятием является интенциональность сознания -- его направленность на объекты. Феноменологический метод предполагает "заключение в скобки" (эпохе) естественной установки для выявления чистых феноменов. Феноменология стремится описать сущности опыта, как они даны сознанию, без предварительных теоретических допущений.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Функция для отображения выбранной концепции
+function showConcept(conceptId) {
+  // Скрыть все концепции
+  document.querySelectorAll('.concept').forEach(concept => {
+    concept.style.display = 'none';
+  });
+  
+  // Отобразить выбранную концепцию
+  document.getElementById(conceptId).style.display = 'block';
+  
+  // Обновить активную кнопку
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.classList.remove('active');
+  });
+  
+  const activeButton = 
+    Array.from(document.querySelectorAll('.tab-button')).find(button =>
+      button.textContent.toLowerCase().includes(conceptId) ||
+      conceptId.includes(button.textContent.toLowerCase())
+    );
+  
+  if (activeButton) activeButton.classList.add('active');
+  
+  // Перерисовать граф (для корректного отображения при первом показе)
+  if (networks[conceptId]) {
+    networks[conceptId].fit();
+    networks[conceptId].redraw();
+  }
+}
+
+// Цвета для разных типов категорий
+const categoryColors = {
+  'онтологическая': { background: '#ffcccc', border: '#ff9999' },
+  'эпистемологическая': { background: '#ccffcc', border: '#99ff99' },
+  'аксиологическая': { background: '#ccccff', border: '#9999ff' },
+  'логическая': { background: '#ffffcc', border: '#ffff99' },
+  'антропологическая': { background: '#ffccff', border: '#ff99ff' }
+};
+
+// Опции для графа
+const options = {
+  physics: {
+    forceAtlas2Based: {
+      gravitationalConstant: -50,
+      centralGravity: 0.01,
+      springLength: 150,
+      springConstant: 0.08
+    },
+    maxVelocity: 50,
+    solver: 'forceAtlas2Based',
+    timestep: 0.5,
+    stabilization: { iterations: 150 }
+  },
+  nodes: {
+    shape: 'ellipse',
+    font: {
+      size: 16,
+      face: 'Arial',
+      align: 'center'
+    },
+    borderWidth: 2,
+    shadow: true
+  },
+  edges: {
+    width: 2,
+    shadow: true,
+    font: {
+      size: 12,
+      face: 'Arial',
+      align: 'middle'
+    },
+    arrows: {
+      to: { enabled: true, scaleFactor: 0.5 }
+    }
+  },
+  layout: {
+    improvedLayout: true
+  }
+};
+
+// Словарь для хранения сетей
+const networks = {};
+
+// Платонизм
+const platonismNodes = new vis.DataSet([
+  { id: 1, label: 'Сущность\n(Идеи)', group: 'онтологическая' },
+  { id: 2, label: 'Бытие', group: 'онтологическая' },
+  { id: 3, label: 'Материя', group: 'онтологическая' },
+  { id: 4, label: 'Знание', group: 'эпистемологическая' },
+  { id: 5, label: 'Истина', group: 'эпистемологическая' },
+  { id: 6, label: 'Разум', group: 'эпистемологическая' },
+  { id: 7, label: 'Созерцание', group: 'эпистемологическая' },
+  { id: 8, label: 'Благо', group: 'аксиологическая' },
+  { id: 9, label: 'Красота', group: 'аксиологическая' }
+]);
+
+const platonismEdges = new vis.DataSet([
+  { from: 1, to: 2, label: 'Основание', arrows: 'to' },
+  { from: 1, to: 3, label: 'Противоположность', arrows: 'to, from' },
+  { from: 1, to: 5, label: 'Тождественность', arrows: 'to, from' },
+  { from: 6, to: 4, label: 'Основание', arrows: 'to' },
+  { from: 6, to: 7, label: 'Понятийная связь', arrows: 'to' },
+  { from: 7, to: 1, label: 'Интерпретация', arrows: 'to' },
+  { from: 1, to: 8, label: 'Иерархия', arrows: 'to' },
+  { from: 1, to: 9, label: 'Иерархия', arrows: 'to' },
+  { from: 8, to: 9, label: 'Дополнительность', arrows: 'to, from' }
+]);
+
+// Аристотелизм
+const aristotleNodes = new vis.DataSet([
+  { id: 1, label: 'Сущность', group: 'онтологическая' },
+  { id: 2, label: 'Форма', group: 'онтологическая' },
+  { id: 3, label: 'Материя', group: 'онтологическая' },
+  { id: 4, label: 'Потенциальность', group: 'онтологическая' },
+  { id: 5, label: 'Актуальность', group: 'онтологическая' },
+  { id: 6, label: 'Причинность', group: 'логическая' },
+  { id: 7, label: 'Телеология', group: 'логическая' },
+  { id: 8, label: 'Знание', group: 'эпистемологическая' },
+  { id: 9, label: 'Добродетель', group: 'аксиологическая' },
+  { id: 10, label: 'Благо', group: 'аксиологическая' },
+  { id: 11, label: 'Природа', group: 'онтологическая' }
+]);
+
+const aristotleEdges = new vis.DataSet([
+  { from: 1, to: 2, label: 'Понятийная связь', arrows: 'to' },
+  { from: 1, to: 3, label: 'Понятийная связь', arrows: 'to' },
+  { from: 2, to: 3, label: 'Диалектическое единство', arrows: 'to, from' },
+  { from: 3, to: 4, label: 'Тождественность', arrows: 'to' },
+  { from: 2, to: 5, label: 'Тождественность', arrows: 'to' },
+  { from: 4, to: 5, label: 'Противоположность', arrows: 'to, from' },
+  { from: 6, to: 8, label: 'Основание', arrows: 'to' },
+  { from: 7, to: 11, label: 'Интерпретация', arrows: 'to' },
+  { from: 9, to: 10, label: 'Причинность', arrows: 'to' },
+  { from: 5, to: 7, label: 'Понятийная связь', arrows: 'to' }
+]);
+
+// Кантианство
+const kantianNodes = new vis.DataSet([
+  { id: 1, label: 'Сущность\n(вещь в себе)', group: 'онтологическая' },
+  { id: 2, label: 'Явление\n(феномен)', group: 'онтологическая' },
+  { id: 3, label: 'Разум', group: 'эпистемологическая' },
+  { id: 4, label: 'Рассудок', group: 'эпистемологическая' },
+  { id: 5, label: 'Чувственность', group: 'эпистемологическая' },
+  { id: 6, label: 'Знание', group: 'эпистемологическая' },
+  { id: 7, label: 'Необходимость', group: 'логическая' },
+  { id: 8, label: 'Всеобщность', group: 'логическая' },
+  { id: 9, label: 'Свобода', group: 'антропологическая' },
+  { id: 10, label: 'Долг', group: 'аксиологическая' },
+  { id: 11, label: 'Воля', group: 'антропологическая' }
+]);
+
+const kantianEdges = new vis.DataSet([
+  { from: 1, to: 2, label: 'Противоположность', arrows: 'to, from' },
+  { from: 3, to: 4, label: 'Иерархия', arrows: 'to' },
+  { from: 4, to: 5, label: 'Иерархия', arrows: 'to' },
+  { from: 5, to: 2, label: 'Интерпретация', arrows: 'to' },
+  { from: 4, to: 2, label: 'Интерпретация', arrows: 'to' },
+  { from: 5, to: 6, label: 'Основание', arrows: 'to' },
+  { from: 4, to: 6, label: 'Основание', arrows: 'to' },
+  { from: 7, to: 6, label: 'Понятийная связь', arrows: 'to' },
+  { from: 8, to: 6, label: 'Понятийная связь', arrows: 'to' },
+  { from: 9, to: 10, label: 'Диалектическое единство', arrows: 'to, from' },
+  { from: 11, to: 10, label: 'Понятийная связь', arrows: 'to' },
+  { from: 11, to: 9, label: 'Основание', arrows: 'to' }
+]);
+
+// Гегельянство
+const hegelianNodes = new vis.DataSet([
+  { id: 1, label: 'Бытие', group: 'онтологическая' },
+  { id: 2, label: 'Ничто', group: 'онтологическая' },
+  { id: 3, label: 'Становление', group: 'онтологическая' },
+  { id: 4, label: 'Сознание', group: 'антропологическая' },
+  { id: 5, label: 'Самосознание', group: 'антропологическая' },
+  { id: 6, label: 'Дух', group: 'антропологическая' },
+  { id: 7, label: 'История', group: 'антропологическая' },
+  { id: 8, label: 'Свобода', group: 'антропологическая' },
+  { id: 9, label: 'Разум', group: 'эпистемологическая' },
+  { id: 10, label: 'Истина', group: 'эпистемологическая' },
+  { id: 11, label: 'Диалектика', group: 'логическая' }
+]);
+
+const hegelianEdges = new vis.DataSet([
+  { from: 1, to: 2, label: 'Противоположность', arrows: 'to, from' },
+  { from: 1, to: 3, label: 'Диалектическое единство', arrows: 'to' },
+  { from: 2, to: 3, label: 'Диалектическое единство', arrows: 'to' },
+  { from: 4, to: 5, label: 'Диалектическое единство', arrows: 'to' },
+  { from: 5, to: 6, label: 'Диалектическое единство', arrows: 'to' },
+  { from: 6, to: 7, label: 'Эмерджентность', arrows: 'to' },
+  { from: 7, to: 8, label: 'Телеология', arrows: 'to' },
+  { from: 9, to: 10, label: 'Диалектическое единство', arrows: 'to' },
+  { from: 9, to: 11, label: 'Понятийная связь', arrows: 'to' },
+  { from: 6, to: 9, label: 'Эмерджентность', arrows: 'to' },
+  { from: 11, to: 3, label: 'Понятийная связь', arrows: 'to' }
+]);
+
+// Экзистенциализм
+const existentialismNodes = new vis.DataSet([
+  { id: 1, label: 'Существование', group: 'онтологическая' },
+  { id: 2, label: 'Сущность', group: 'онтологическая' },
+  { id: 3, label: 'Свобода', group: 'антропологическая' },
+  { id: 4, label: 'Выбор', group: 'антропологическая' },
+  { id: 5, label: 'Ответственность', group: 'антропологическая' },
+  { id: 6, label: 'Тревога', group: 'антропологическая' },
+  { id: 7, label: 'Личность', group: 'антропологическая' },
+  { id: 8, label: 'Общество', group: 'антропологическая' },
+  { id: 9, label: 'Подлинность', group: 'аксиологическая' },
+  { id: 10, label: 'Абсурд', group: 'логическая' }
+]);
+
+const existentialismEdges = new vis.DataSet([
+  { from: 1, to: 2, label: 'Причинность', arrows: 'to' },
+  { from: 1, to: 3, label: 'Понятийная связь', arrows: 'to' },
+  { from: 3, to: 4, label: 'Эмерджентность', arrows: 'to' },
+  { from: 4, to: 5, label: 'Причинность', arrows: 'to' },
+  { from: 3, to: 6, label: 'Причинность', arrows: 'to' },
+  { from: 7, to: 8, label: 'Противоположность', arrows: 'to, from' },
+  { from: 7, to: 9, label: 'Телеология', arrows: 'to' },
+  { from: 10, to: 1, label: 'Интерпретация', arrows: 'to' },
+  { from: 4, to: 7, label: 'Понятийная связь', arrows: 'to' },
+  { from: 9, to: 6, label: 'Редукция', arrows: 'to' }
+]);
+
+// Феноменология
+const phenomenologyNodes = new vis.DataSet([
+  { id: 1, label: 'Сознание

@@ -1,0 +1,29 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Копируем shared модуль
+COPY shared /app/shared
+WORKDIR /app/shared
+RUN npm ci --only=production
+
+# Копируем Graph Service
+WORKDIR /app/graph-service
+COPY graph-service/package*.json ./
+RUN npm ci --only=production
+
+COPY graph-service/src ./src
+
+# Создаем директорию для логов
+RUN mkdir -p logs
+
+# Создаем пользователя без привилегий
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
+
+USER nodejs
+
+EXPOSE 4003
+
+CMD ["node", "src/index.js"]

@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кузница Феанора: Создание Сильмариллов - Расширенная версия</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e);
+            color: #e8e8e8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #444;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(100, 150, 255, 0.3);
+        }
+        
+        h1 {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .stats-block {
+            background: rgba(20, 20, 40, 0.6);
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .stats-block h3 {
+            font-family: 'Cinzel', serif;
+            color: #87ceeb;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+        
+        .stat-value {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .reputation-block {
+            background: rgba(30, 20, 40, 0.6);
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .reputation-block h3 {
+            font-family: 'Cinzel', serif;
+            color: #dda0dd;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .reputation-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.95em;
+        }
+        
+        .reputation-value {
+            color: #dda0dd;
+        }
+        
+        .game-text {
+            background: rgba(10, 10, 20, 0.6);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            min-height: 200px;
+            line-height: 1.8;
+            font-size: 1.15em;
+        }
+        
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .choice-btn {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            border: 2px solid #3949ab;
+            color: #e8e8e8;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-family: 'Crimson Text', serif;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .choice-btn:hover {
+            background: linear-gradient(135deg, #283593, #3949ab);
+            border-color: #5c6bc0;
+            box-shadow: 0 0 15px rgba(92, 107, 192, 0.4);
+            transform: translateX(5px);
+        }
+        
+        .choice-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #333, #444);
+        }
+        
+        .choice-btn.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .materials-display {
+            background: rgba(40, 20, 0, 0.4);
+            border: 1px solid #8b4513;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+            font-style: italic;
+            color: #daa520;
+        }
+        
+        .event-warning {
+            color: #ff6b6b;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.1em;
+            animation: pulse 2s infinite;
+        }
+        
+        .buff-display {
+            background: rgba(0, 40, 20, 0.4);
+            border: 1px solid #228b22;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            color: #90ee90;
+            font-size: 0.95em;
+        }
+        
+        .curse-display {
+            background: rgba(40, 0, 0, 0.4);
+            border: 1px solid #8b0000;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            color: #ff6b6b;
+            font-size: 0.95em;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .special-event {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(135, 206, 235, 0.1));
+            border: 1px solid #ffd700;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+        }
+        
+        .ending-text {
+            font-size: 1.2em;
+            line-height: 1.8;
+            text-align: center;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .restart-btn {
+            display: block;
+            margin: 30px auto 0;
+            background: linear-gradient(135deg, #ff6b00, #ff8800);
+            border: 2px solid #ffa500;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-btn:hover {
+            background: linear-gradient(135deg, #ff8800, #ffaa00);
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+        }
+        
+        .silmaril-complete {
+            animation: glow 2s infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reaction-text {
+            background: linear-gradient(135deg, rgba(75, 0, 130, 0.2), rgba(138, 43, 226, 0.1));
+            border-left: 4px solid #9370db;
+            padding: 20px;
+            margin: 15px 0;
+            font-style: italic;
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #e8d4ff;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(147, 112, 219, 0.3);
+        }
+        
+        .achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4a0080, #8b008b);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            animation: slideIn 0.5s, fadeOut 0.5s 3s forwards;
+            z-index: 1000;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Кузница Феанора</h1>
+        
+        <div class="stats-container">
+            <div class="stats-block">
+                <h3>Феанор</h3>
+                <div class="stat-line">
+                    <span>Мудрость:</span>
+                    <span class="stat-value" id="wisdom">50</span>
+                </div>
+                <div class="stat-line">
+                    <span>Мастерство:</span>
+                    <span class="stat-value" id="skill">70</span>
+                </div>
+                <div class="stat-line">
+                    <span>Гордость:</span>
+                    <span class="stat-value" id="pride">60</span>
+                </div>
+            </div>
+            
+            <div class="stats-block">
+                <h3>Сильмариллы</h3>
+                <div class="stat-line">
+                    <span>Свет:</span>
+                    <span class="stat-value" id="light">0</span>
+                </div>
+                <div class="stat-line">
+                    <span>Чистота:</span>
+                    <span class="stat-value" id="purity">0</span>
+                </div>
+                <div class="stat-line">
+                    <span>Сила:</span>
+                    <span class="stat-value" id="power">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="reputation-block" id="reputationBlock" style="display: none;">
+            <h3>Репутация</h3>
+            <div class="reputation-line">
+                <span>Валар:</span>
+                <span class="reputation-value" id="repValar">0</span>
+            </div>
+            <div class="reputation-line">
+                <span>Нолдор:</span>
+                <span class="reputation-value" id="repNoldor">0</span>
+            </div>
+            <div class="reputation-line">
+                <span>Тэлери:</span>
+                <span class="reputation-value" id="repTeleri">0</span>
+            </div>
+            <div class="reputation-line">
+                <span>Ваньяр:</span>
+                <span class="reputation-value" id="repVanyar">0</span>
+            </div>
+        </div>
+        
+        <div class="game-text" id="gameText">
+            Загрузка...
+        </div>
+        
+        <div class="choices-container" id="choices">
+        </div>
+    </div>
+    
+    <script>
+        const gameState = {
+            stage: 0,
+            feanor: {
+                wisdom: 50,
+                skill: 70,
+                pride: 60
+            },
+            silmarils: {
+                light: 0,
+                purity: 0,
+                power: 0
+            },
+            reputation: {
+                valar: 0,
+                noldor: 0,
+                teleri: 0,
+                vanyar: 0
+            },
+            materials: [],
+            choices: {
+                helpFromValar: null,
+                melkorRelation: null,
+                familySupport: null,
+                method: null
+            },
+            events: [],
+            buffs: [],
+            curses: [],
+            hiddenStats: {
+                musicConnection: 0,
+                shadowAffinity: 0,
+                treeResonance: 0
+            },
+            achievements: [],
+            metaAwareness: false
+        };
+
+        // Система достижений
+        const achievementsList = {
+            'diplomat': { name: 'Дипломат Валинора', condition: () => gameState.reputation.valar >= 50 },
+            'family_man': { name: 'Семейный человек', condition: () => gameState.choices.familySupport === true && gameState.events.includes('family_blessing') },
+            'trickster': { name: 'Обманщик Тьмы', condition: () => gameState.events.includes('melkor_tricked') },
+            'philosopher': { name: 'Философ Света', condition: () => gameState.feanor.wisdom >= 90 },
+            'mad_genius': { name: 'Безумный Гений', condition: () => gameState.feanor.pride >= 90 && gameState.feanor.skill >= 90 && gameState.feanor.wisdom <= 30 },
+            'canon_breaker': { name: 'Нарушитель Канона', condition: () => gameState.metaAwareness === true },
+            'shadow_master': { name: 'Повелитель Теней', condition: () => gameState.hiddenStats.shadowAffinity >= 50 },
+            'tree_friend': { name: 'Друг Древ', condition: () => gameState.hiddenStats.treeResonance >= 50 },
+            'music_weaver': { name: 'Ткач Музыки', condition: () => gameState.hiddenStats.musicConnection >= 50 }
+        };
+
+        function checkAchievements() {
+            for (const [key, achievement] of Object.entries(achievementsList)) {
+                if (!gameState.achievements.includes(key) && achievement.condition()) {
+                    gameState.achievements.push(key);
+                    showAchievement(achievement.name);
+                }
+            }
+        }
+
+        function showAchievement(name) {
+            const notification = document.createElement('div');
+            notification.className = 'achievement-notification';
+            notification.textContent = `🏆 Достижение разблокировано: ${name}`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 4000);
+        }
+
+        // Система баффов и проклятий
+        function addBuff(name, duration, effect) {
+            gameState.buffs.push({ name, duration, effect });
+            applyBuffEffects();
+        }
+
+        function addCurse(name, duration, effect) {
+            gameState.curses.push({ name, duration, effect });
+            applyCurseEffects();
+        }
+
+        function applyBuffEffects() {
+            // Применение эффектов баффов
+            gameState.buffs.forEach(buff => {
+                if (buff.effect) buff.effect();
+            });
+        }
+
+        function applyCurseEffects() {
+            // Применение эффектов проклятий
+            gameState.curses.forEach(curse => {
+                if (curse.effect) curse.effect();
+            });
+        }
+
+        function updateBuffDurations() {
+            gameState.buffs = gameState.buffs.map(buff => ({
+                ...buff,
+                duration: buff.duration - 1
+            })).filter(buff => buff.duration > 0);
+
+            gameState.curses = gameState.curses.map(curse => ({
+                ...curse,
+                duration: curse.duration - 1
+            })).filter(curse => curse.duration > 0);
+        }
+
+        // Новые специальные события
+        const specialEvents = {
+            // События с шансом появления
+            ravenSpy: {
+                probability: 0.3,
+                stage: 1,
+                text: "Внезапно ты замечаешь ворона на окне кузницы. Это не обычная птица - её глаза слишком разумны. Мелькор наблюдает за тобой через своего слугу!",
+                choices: [
+                    {
+                        text: "Поймать ворона и допросить",
+                        reaction: "Ты хватаешь ворона быстрее мысли. Птица каркает: 'Мелькор знает о твоём труде! Он предлагает союз или вражду - выбирай!' Ворон растворяется в тени.",
+                        effect: () => {
+                            gameState.feanor.skill += 10;
+                            gameState.choices.melkorRelation = 'aware';
+                            gameState.silmarils.power += 5;
+                            gameState.events.push('raven_caught');
+                        }
+                    },
+                    {
+                        text: "Накормить ворона и отправить с посланием",
+                        reaction: "Ты пишешь на эльфийском: 'Наблюдай, но не мешай.' Ворон кивает и улетает. Странно, но ты чувствуешь, что заключил перемирие.",
+                        effect: () => {
+                            gameState.feanor.wisdom += 15;
+                            gameState.choices.melkorRelation = 'truce';
+                            gameState.silmarils.purity += 10;
+                        }
+                    },
+                    {
+                        text: "Использовать ворона как подопытного",
+                        reaction: "Ты проверяешь воздействие света заготовок на тёмное создание. Ворон визжит и превращается в обычную птицу! Твой эксперимент удался.",
+                        effect: () => {
+                            gameState.feanor.skill += 20;
+                            gameState.silmarils.light += 15;
+                            gameState.choices.melkorRelation = 'enemy';
+                        }
+                    }
+                ]
+            },
+            auleGift: {
+                probability: 0.25,
+                stage: 2,
+                text: "Ауле Кузнец появляется в дверях! 'Я слышал о твоём великом труде, Феанор. У меня есть нечто особенное - Искра Первого Горна, которым я ковал сами горы Арды.'",
+                choices: [
+                    {
+                        text: "Принять дар с благодарностью",
+                        reaction: "Ауле вручает тебе крошечную, но невероятно горячую искру. 'Используй мудро, ибо второй такой не будет до конца времён.'",
+                        effect: () => {
+                            gameState.materials.push('first_forge_spark');
+                            gameState.silmarils.power += 35;
+                            gameState.feanor.wisdom += 10;
+                            gameState.reputation.valar += 15;
+                            addBuff('Благословение Ауле', 3, () => gameState.feanor.skill += 5);
+                        }
+                    },
+                    {
+                        text: "Попросить научить технике Валар",
+                        reaction: "Ауле улыбается: 'Гордый ученик! Смотри и учись!' Он показывает движения, которые изменяют саму структуру материи.",
+                        effect: () => {
+                            gameState.feanor.skill += 40;
+                            gameState.feanor.pride -= 15;
+                            gameState.silmarils.purity += 20;
+                            gameState.reputation.valar += 20;
+                        }
+                    },
+                    {
+                        text: "Вызвать на соревнование кузнецов",
+                        reaction: "Ауле хохочет: 'Дерзкий! Мне это нравится! Давай - кто создаст лучший сосуд для света!' Вы работаете всю ночь. К рассвету у тебя новые знания и синяки от его дружеских похлопываний.",
+                        effect: () => {
+                            gameState.feanor.pride += 30;
+                            gameState.feanor.skill += 25;
+                            gameState.silmarils.power += 20;
+                            gameState.events.push('aule_competition');
+                            gameState.reputation.noldor += 25;
+                        }
+                    }
+                ]
+            },
+            twinsProphecy: {
+                probability: 0.2,
+                stage: 3,
+                text: "Твои младшие сыновья-близнецы входят в кузницу, держась за руки. Их глаза странно сияют: 'Отец, мы видели сон... один и тот же... о судьбе Сильмариллов.'",
+                choices: [
+                    {
+                        text: "Выслушать пророчество полностью",
+                        reaction: "Близнецы говорят в унисон: 'Три пути, три судьбы, три конца. Огонь, вода и земля примут по камню. Но если ты свяжешь их с нами, твоими сыновьями, иная судьба возможна.' Их глаза гаснут, они падают без сил.",
+                        effect: () => {
+                            gameState.feanor.wisdom += 30;
+                            gameState.events.push('twins_prophecy');
+                            gameState.silmarils.purity += 15;
+                            gameState.hiddenStats.musicConnection += 15;
+                        }
+                    },
+                    {
+                        text: "Прервать их - пророчества опасны",
+                        reaction: "Ты затыкаешь им рты: 'Довольно! Я сам кузнец своей судьбы!' Близнецы плачут: 'Отец, ты не понимаешь...' Они уходят, но оставляют странный рисунок.",
+                        effect: () => {
+                            gameState.feanor.pride += 25;
+                            gameState.feanor.wisdom -= 10;
+                            gameState.silmarils.power += 20;
+                            addCurse('Отвергнутое пророчество', 2, () => gameState.feanor.wisdom -= 5);
+                        }
+                    },
+                    {
+                        text: "Попросить их помочь, используя их дар",
+                        reaction: "Амрод и Амрас берутся за руки вокруг Сильмариллов: 'Мы видим... свет, который никогда не погаснет, если...' Они направляют твою работу, словно видят будущее.",
+                        effect: () => {
+                            gameState.choices.familySupport = true;
+                            gameState.silmarils.light += 25;
+                            gameState.silmarils.purity += 20;
+                            gameState.events.push('twins_guidance');
+                        }
+                    }
+                ]
+            },
+            valierDance: {
+                probability: 0.15,
+                stage: 4,
+                text: "Две Валиэр - Ниэнна Плакальщица и Эстэ Целительница - появляются вместе. 'Мы чувствуем великую радость и великую скорбь в твоём труде. Позволь нам помочь уравновесить их.'",
+                choices: [
+                    {
+                        text: "Принять благословение обеих",
+                        reaction: "Ниэнна роняет слезу радости, а Эстэ поёт песню исцеления. Сильмариллы начинают излучать не только свет, но и утешение для страждущих.",
+                        effect: () => {
+                            gameState.silmarils.light += 20;
+                            gameState.silmarils.purity += 35;
+                            gameState.feanor.wisdom += 20;
+                            gameState.events.push('valier_blessing');
+                            gameState.reputation.valar += 25;
+                        }
+                    },
+                    {
+                        text: "Попросить их показать видение будущего исцеления",
+                        reaction: "Валиэр берутся за руки, и ты видишь: Сильмариллы исцеляют раны мира после великой войны. Но также видишь и цену этого исцеления...",
+                        effect: () => {
+                            gameState.feanor.wisdom += 40;
+                            gameState.feanor.pride -= 20;
+                            gameState.silmarils.purity += 25;
+                            gameState.hiddenStats.musicConnection += 20;
+                        }
+                    },
+                    {
+                        text: "Отказаться - скорбь и исцеление не нужны совершенству",
+                        reaction: "Ниэнна грустно улыбается: 'Гордость, Феанор, всегда была твоей силой и слабостью.' Они уходят, но их присутствие что-то изменило в самой атмосфере.",
+                        effect: () => {
+                            gameState.feanor.pride += 35;
+                            gameState.silmarils.power += 30;
+                            gameState.silmarils.purity -= 15;
+                            gameState.reputation.valar -= 10;
+                        }
+                    }
+                ]
+            },
+            councilOfWise: {
+                probability: 0.2,
+                stage: 5,
+                text: "Манвэ созвал срочный совет! Ингвэ, Эльвэ и Ольвэ - короли всех эльфийских родов - прибыли обсудить Сильмариллы. Тебя вызывают для объяснений.",
+                choices: [
+                    {
+                        text: "Явиться с Сильмариллами и поразить всех",
+                        reaction: "Ты входишь, и свет Сильмариллов ослепляет всех! Эльвэ падает на колени: 'Это... прекраснее звёзд!' Даже Манвэ встаёт в знак уважения.",
+                        effect: () => {
+                            gameState.feanor.pride += 40;
+                            gameState.silmarils.light += 25;
+                            gameState.events.push('council_amazed');
+                            gameState.reputation.noldor += 30;
+                            gameState.reputation.teleri += 20;
+                            gameState.reputation.vanyar += 15;
+                        }
+                    },
+                    {
+                        text: "Прийти смиренно и просить совета королей",
+                        reaction: "Короли эльфов делятся мудростью трёх народов. Ингвэ говорит о чистоте, Эльвэ о красоте, Ольвэ о глубине. Их советы бесценны!",
+                        effect: () => {
+                            gameState.feanor.wisdom += 35;
+                            gameState.feanor.pride -= 25;
+                            gameState.silmarils.purity += 30;
+                            gameState.silmarils.light += 20;
+                            gameState.reputation.vanyar += 30;
+                            gameState.reputation.teleri += 25;
+                        }
+                    },
+                    {
+                        text: "Отказаться являться - это твоё личное дело",
+                        reaction: "Твой отказ вызывает переполох! Некоторые поддерживают твою независимость, другие видят в этом опасную гордыню. Раскол начинается...",
+                        effect: () => {
+                            gameState.feanor.pride += 50;
+                            gameState.events.push('council_rejected');
+                            gameState.silmarils.power += 35;
+                            gameState.reputation.valar -= 20;
+                            gameState.reputation.noldor += 10;
+                        }
+                    },
+                    {
+                        text: "Послать одного из сыновей представлять тебя",
+                        reaction: "Маэдрос достойно представляет дом Феанора. Его дипломатия сглаживает напряжение, и он возвращается с дарами от королей.",
+                        effect: () => {
+                            gameState.feanor.wisdom += 20;
+                            gameState.materials.push('gifts_of_kings');
+                            gameState.silmarils.purity += 25;
+                            gameState.reputation.teleri += 15;
+                            gameState.reputation.vanyar += 10;
+                        }
+                    }
+                ]
+            },
+            yavannaIntervention: {
+                probability: 0.25,
+                stage: 6,
+                text: "Йаванна врывается в кузницу! 'Стой! Я чувствую - Древа откликаются на Сильмариллы! Если ты продолжишь, может произойти нечто непредвиденное!'",
+                choices: [
+                    {
+                        text: "Остановиться и выслушать Йаванну",
+                        reaction: "Йаванна касается Сильмариллов: 'Они живые! Как семена света! Если посадить их правильно, вырастут новые Древа!' Она показывает тебе как.",
+                        effect: () => {
+                            gameState.feanor.wisdom += 25;
+                            gameState.events.push('living_silmarils');
+                            gameState.silmarils.light += 30;
+                            gameState.hiddenStats.treeResonance += 30;
+                        }
+                    },
+                    {
+                        text: "Продолжить, несмотря на предупреждение",
+                        reaction: "Ты игнорируешь её крик. Внезапно корни Древ прорастают прямо в кузнице! Они оплетают Сильмариллы, создавая невиданную связь.",
+                        effect: () => {
+                            gameState.feanor.pride += 30;
+                            gameState.silmarils.power += 40;
+                            gameState.events.push('roots_binding');
+                            gameState.hiddenStats.treeResonance += 20;
+                        }
+                    },
+                    {
+                        text: "Предложить Йаванне стать со-создателем",
+                        reaction: "Йаванна изумлена: 'Ты... делишься славой?' Она принимает, и вместе вы создаёте Сильмариллы, которые могут питать жизнь светом.",
+                        effect: () => {
+                            gameState.feanor.pride -= 30;
+                            gameState.feanor.wisdom += 30;
+                            gameState.silmarils.purity += 40;
+                            gameState.silmarils.light += 35;
+                            gameState.reputation.valar += 35;
+                        }
+                    }
+                ]
+            },
+            shadowRebellion: {
+                probability: 0.1,
+                stage: 7,
+                text: "Все тени в Валиноре внезапно ожили и ползут к твоей кузнице! Они шепчут: 'Свет Сильмариллов нарушает баланс! Верни нам наше право на существование!'",
+                choices: [
+                    {
+                        text: "Договориться с тенями",
+                        reaction: "Ты обещаешь теням, что Сильмариллы будут отбрасывать благородные тени, не уничтожая тьму полностью. Тени соглашаются служить хранителями.",
+                        effect: () => {
+                            gameState.feanor.wisdom += 35;
+                            gameState.silmarils.power += 30;
+                            gameState.events.push('shadow_pact');
+                            gameState.hiddenStats.shadowAffinity += 40;
+                        }
+                    },
+                    {
+                        text: "Изгнать тени светом Сильмариллов",
+                        reaction: "Ты поднимаешь Сильмариллы, и их свет изгоняет все тени из Валинора! Но теперь в мире нет полутонов - только ослепительный свет и абсолютная тьма.",
+                        effect: () => {
+                            gameState.silmarils.light += 50;
+                            gameState.silmarils.purity -= 20;
+                            gameState.events.push('shadows_banished');
+                            gameState.hiddenStats.shadowAffinity -= 30;
+                        }
+                    },
+                    {
+                        text: "Вплести тени в Сильмариллы как баланс",
+                        reaction: "Революционная идея! Ты вплетаешь тени в саму структуру света. Сильмариллы теперь показывают всю красоту сумерек.",
+                        effect: () => {
+                            gameState.feanor.skill += 40;
+                            gameState.silmarils.power += 35;
+                            gameState.silmarils.light += 25;
+                            gameState.events.push('twilight_gems');
+                            gameState.hiddenStats.shadowAffinity += 50;
+                        }
+                    }
+                ]
+            },
+            entAwakening: {
+                probability: 0.15,
+                stage: 7,
+                text: "Древнейшие Энты Валинора пробудились от векового сна! Древобород himself пришёл посмотреть на Сильмариллы: 'Хрум, хум! Что это за спешка с светом?'",
+                choices: [
+                    {
+                        text: "Выслушать неспешную мудрость Энтов",
+                        reaction: "Три дня ты слушаешь историю света от начала времён. Это невыносимо медленно, но ты понимаешь глубинную суть света как никогда!",
+                        effect: () => {
+                            gameState.feanor.wisdom += 50;
+                            gameState.feanor.pride -= 30;
+                            gameState.silmarils.purity += 40;
+                            addBuff('Мудрость Энтов', 5, () => gameState.feanor.wisdom += 5);
+                        }
+                    },
+                    {
+                        text: "Попросить Энтов поделиться древесной силой",
+                        reaction: "Энты дают тебе сок Древнейшего Древа - того, что росло до Древ Валинора. Этот материал старше самого Валинора!",
+                        effect: () => {
+                            gameState.materials.push('eldest_sap');
+                            gameState.silmarils.power += 45;
+                            gameState.silmarils.light += 30;
+                            gameState.hiddenStats.treeResonance += 25;
+                        }
+                    },
+                    {
+                        text: "Использовать спешку как преимущество",
+                        reaction: "Ты работаешь так быстро, что даже Энты впечатлены! 'Хрум! Никогда не видел, чтобы кто-то делал за час то, на что у нас ушло бы столетие!'",
+                        effect: () => {
+                            gameState.feanor.skill += 35;
+                            gameState.feanor.pride += 25;
+                            gameState.silmarils.power += 30;
+                        }
+                    }
+                ]
+            },
+            voiceOfIluvatar: {
+                probability: 0.05,
+                stage: 8,
+                text: "В момент завершения работы ты слышишь Голос - не звук, но само присутствие Эру Илуватара: 'Дитя моё, ты создаёшь то, чего не было в Музыке. Что ты выберешь?'",
+                choices: [
+                    {
+                        text: "Просить благословения Создателя",
+                        reaction: "Тепло наполняет кузницу. 'Твори, дитя. Даже Я любопытен, что получится.' Сильмариллы обретают искру самой Музыки Творения.",
+                        effect: () => {
+                            gameState.silmarils.light += 60;
+                            gameState.silmarils.purity += 70;
+                            gameState.silmarils.power += 50;
+                            gameState.events.push('eru_blessed');
+                            gameState.hiddenStats.musicConnection += 50;
+                        }
+                    },
+                    {
+                        text: "Заявить о праве творить независимо",
+                        reaction: "'Смелость!' - смеётся Голос. 'Ты напоминаешь Мне... меня. Твори свободно, и пусть последствия будут уроком.'",
+                        effect: () => {
+                            gameState.feanor.pride += 70;
+                            gameState.feanor.skill += 50;
+                            gameState.silmarils.power += 60;
+                        }
+                    },
+                    {
+                        text: "Попросить изменить Музыку, включив Сильмариллы",
+                        reaction: "Долгая пауза. 'Это... неожиданно. Хорошо. Музыка изменена. Сильмариллы теперь были всегда.' Реальность дрожит и перестраивается.",
+                        effect: () => {
+                            gameState.events.push('music_rewritten');
+                            gameState.silmarils.light += 40;
+                            gameState.silmarils.purity += 40;
+                            gameState.silmarils.power += 40;
+                            gameState.hiddenStats.musicConnection += 100;
+                        }
+                    }
+                ]
+            },
+            fourthWall: {
+                probability: 0.01,
+                stage: -1, // Может появиться на любой стадии
+                text: "Внезапно ты осознаёшь, что кто-то наблюдает за твоей историей извне, делая выборы за тебя. Ты смотришь прямо на... игрока?",
+                choices: [
+                    {
+                        text: "Подмигнуть игроку и продолжить",
+                        reaction: "Ты подмигиваешь в пустоту и возвращаешься к работе. Где-то за пределами реальности, игрок улыбается.",
+                        effect: () => {
+                            gameState.events.push('meta_awareness');
+                            gameState.feanor.wisdom += 100;
+                            gameState.feanor.pride += 100;
+                            gameState.metaAwareness = true;
+                        }
+                    },
+                    {
+                        text: "Попытаться взять контроль над собственной историей",
+                        reaction: "Ты борешься с невидимой силой за право выбора! На момент ты свободен... но это иллюзия?",
+                        effect: () => {
+                            gameState.metaAwareness = true;
+                            addBuff('Свобода воли', 10, () => {
+                                gameState.feanor.wisdom += 10;
+                                gameState.feanor.skill += 10;
+                            });
+                        }
+                    },
+                    {
+                        text: "Попросить игрока сделать мудрый выбор",
+                        reaction: "Ты шепчешь в пустоту: 'Выбирай мудро, незримый друг. От твоего выбора зависит судьба Арды.'",
+                        effect: () => {
+                            gameState.feanor.wisdom += 50;
+                            gameState.metaAwareness = true;
+                            addBuff('Благословение игрока', 3, () => {
+                                gameState.silmarils.light += 10;
+                                gameState.silmarils.purity += 10;
+                            });
+                        }
+                    }
+                ]
+            }
+        };
+
+        // Функция проверки и запуска специальных событий
+        function checkSpecialEvents(stageId) {
+            const eventsForStage = Object.entries(specialEvents).filter(([key, event]) => {
+                return (event.stage === stageId || event.stage === -1) && 
+                       Math.random() < event.probability &&
+                       !gameState.events.includes(key);
+            });
+
+            if (eventsForStage.length > 0) {
+                const [eventKey, event] = eventsForStage[0];
+                return {
+                    text: event.text,
+                    choices: event.choices.map(choice => ({
+                        ...choice,
+                        effect: () => {
+                            choice.effect();
+                            gameState.events.push(eventKey);
+                        }
+                    }))
+                };
+            }
+            return null;
+        }
+        
+        // Основные стадии игры (сокращённые для примера)
+        const stages = [
+            {
+                id: 0,
+                text: "Ты - Феанор, величайший из эльдар, мастер-ремесленник Валинора. В твоём сердце горит желание создать нечто невиданное - камни, что будут хранить несотворённый Свет Древ. Но прежде чем начать великий труд, ты должен подготовиться.",
+                choices: [
+                    {
+                        text: "Обратиться к Валар за благословением",
+                        reaction: "Ты склоняешь гордую голову перед Валар. Манвэ кивает с одобрением, а Варда касается твоего чела, даруя благословение звёзд. 'Да пребудет с тобой свет Илуватара', - шепчет она.",
+                        effect: () => {
+                            gameState.feanor.wisdom += 10;
+                            gameState.feanor.pride -= 5;
+                            gameState.choices.helpFromValar = true;
+                            gameState.silmarils.purity += 10;
+                            gameState.reputation.valar += 10;
+                        },
+                        next: 1
+                    },
+                    {
+                        text: "Положиться только на собственные силы",
+                        reaction: "Ты гордо выпрямляешься. 'Я - Феанор! Мне не нужна помощь Валар для создания моего величайшего творения!' Огонь решимости загорается в твоих глазах ярче прежнего.",
+                        effect: () => {
+                            gameState.feanor.pride += 15;
+                            gameState.feanor.skill += 5;
+                            gameState.choices.helpFromValar = false;
+                            gameState.silmarils.power += 10;
+                            gameState.reputation.noldor += 15;
+                        },
+                        next: 1
+                    },
+                    {
+                        text: "Тайно изучить запретные знания",
+                        reaction: "Под покровом ночи ты пробираешься в запретные архивы. Древние свитки шепчут тайны, которые не должен знать ни один из Детей Илуватара. Твои руки дрожат от предвкушения и... страха?",
+                        effect: () => {
+                            gameState.feanor.skill += 15;
+                            gameState.feanor.wisdom -= 10;
+                            gameState.feanor.pride += 10;
+                            gameState.silmarils.power += 15;
+                            gameState.silmarils.purity -= 10;
+                            gameState.reputation.valar -= 5;
+                            gameState.hiddenStats.shadowAffinity += 10;
+                        },
+                        next: 1
+                    }
+                ]
+            },
+            // Остальные стадии следуют той же структуре...
+        ];
+
+        // Функция обновления статистики
+        function updateStats() {
+            document.getElementById('wisdom').textContent = gameState.feanor.wisdom;
+            document.getElementById('skill').textContent = gameState.feanor.skill;
+            document.getElementById('pride').textContent = gameState.feanor.pride;
+            document.getElementById('light').textContent = gameState.silmarils.light;
+            document.getElementById('purity').textContent = gameState.silmarils.purity;
+            document.getElementById('power').textContent = gameState.silmarils.power;
+            
+            // Обновление репутации
+            if (Object.values(gameState.reputation).some(v => v !== 0)) {
+                document.getElementById('reputationBlock').style.display = 'block';
+                document.getElementById('repValar').textContent = gameState.reputation.valar;
+                document.getElementById('repNoldor').textContent = gameState.reputation.noldor;
+                document.getElementById('repTeleri').textContent = gameState.reputation.teleri;
+                document.getElementById('repVanyar').textContent = gameState.reputation.vanyar;
+            }
+            
+            // Подсветка критических значений
+            const stats = [
+                { id: 'wisdom', value: gameState.feanor.wisdom },
+                { id: 'skill', value: gameState.feanor.skill },
+                { id: 'pride', value: gameState.feanor.pride },
+                { id: 'light', value: gameState.silmarils.light },
+                { id: 'purity', value: gameState.silmarils.purity },
+                { id: 'power', value: gameState.silmarils.power }
+            ];
+            
+            stats.forEach(stat => {
+                const element = document.getElementById(stat.id);
+                element.style.color = '#ffd700';
+                element.style.textShadow = 'none';
+                
+                if (stat.value >= 80) {
+                    element.style.color = '#00ff00';
+                    element.style.textShadow = '0 0 10px rgba(0, 255, 0, 0.8)';
+                } else if (stat.value >= 60) {
+                    element.style.color = '#ffff00';
+                    element.style.textShadow = '0 0 8px rgba(255, 255, 0, 0.6)';
+                } else if (stat.value <= 20) {
+                    element.style.color = '#ff4444';
+                    element.style.textShadow = '0 0 8px rgba(255, 68, 68, 0.6)';
+                }
+                
+                if (stat.value >= 100) {
+                    element.style.color = '#ffffff';
+                    element.style.textShadow = '0 0 15px rgba(255, 255, 255, 1)';
+                    element.style.animation = 'pulse 1s infinite';
+                } else if (stat.value <= 0) {
+                    element.style.color = '#8b0000';
+                    element.style.textShadow = '0 0 10px rgba(139, 0, 0, 0.8)';
+                }
+            });
+            
+            checkAchievements();
+        }
+
+        // Функция показа реакции перед переходом
+        function showReactionAndProceed(reactionText, nextStageId, delay = 3000) {
+            const textDiv = document.getElementById('gameText');
+            const choicesDiv = document.getElementById('choices');
+            
+            textDiv.innerHTML = `<div class="reaction-text" style="animation: fadeIn 0.5s">${reactionText}</div>`;
+            choicesDiv.innerHTML = `<div style="text-align: center; color: #888; font-style: italic;">Продолжение следует...</div>`;
+            
+            setTimeout(() => {
+                renderStage(nextStageId);
+            }, delay);
+        }
+
+        // Функция рендеринга стадии
+        function renderStage(stageId) {
+            // Обновляем длительности баффов и проклятий
+            updateBuffDurations();
+            
+            // Проверяем специальные события
+            const specialEvent = checkSpecialEvents(stageId);
+            if (specialEvent && Math.random() < 0.5) { // 50% шанс что специальное событие прервёт обычную стадию
+                renderSpecialEvent(specialEvent, stageId);
+                return;
+            }
+            
+            const stage = stages.find(s => s.id === stageId);
+            const textDiv = document.getElementById('gameText');
+            const choicesDiv = document.getElementById('choices');
+            
+            if (!stage || stageId > 8) {
+                renderEnding();
+                return;
+            }
+            
+            let stageText = typeof stage.text === 'function' ? stage.text() : stage.text;
+            textDiv.innerHTML = stageText;
+            
+            // Отображение материалов
+            if (gameState.materials.length > 0) {
+                const materialNames = {
+                    'telperion_dew': 'Роса Телпериона',
+                    'star_dust': 'Звёздная пыль Варды',
+                    'adamant': 'Адамант глубин',
+                    'nienna_tear': 'Слеза Ниэнны',
+                    'primordial_darkness': 'Осколок Первозданной Тьмы',
+                    'master_alloy': 'Мастерский сплав',
+                    'comet_dust': 'Кометная пыль',
+                    'first_forge_spark': 'Искра Первого Горна',
+                    'eldest_sap': 'Сок Древнейшего Древа',
+                    'gifts_of_kings': 'Дары Королей'
+                };
+                const materials = gameState.materials.map(m => materialNames[m] || m).join(', ');
+                textDiv.innerHTML += `<div class="materials-display">Собранные материалы: ${materials}</div>`;
+            }
+            
+            // Отображение баффов
+            if (gameState.buffs.length > 0) {
+                const buffList = gameState.buffs.map(b => `${b.name} (${b.duration})`).join(', ');
+                textDiv.innerHTML += `<div class="buff-display">✨ Благословения: ${buffList}</div>`;
+            }
+            
+            // Отображение проклятий
+            if (gameState.curses.length > 0) {
+                const curseList = gameState.curses.map(c => `${c.name} (${c.duration})`).join(', ');
+                textDiv.innerHTML += `<div class="curse-display">💀 Проклятия: ${curseList}</div>`;
+            }
+            
+            // Предупреждения о критических значениях
+            const warnings = [];
+            if (gameState.feanor.pride >= 90) {
+                warnings.push("⚠️ Твоя гордость достигла опасного уровня!");
+            }
+            if (gameState.feanor.wisdom <= 20) {
+                warnings.push("⚠️ Ты теряешь мудрость в погоне за величием!");
+            }
+            if (gameState.silmarils.purity <= 20 && gameState.silmarils.power > 0) {
+                warnings.push("⚠️ Тьма проникает в Сильмариллы!");
+            }
+            if (gameState.silmarils.power >= 90) {
+                warnings.push("⚡ Сильмариллы пульсируют невероятной мощью!");
+            }
+            
+            if (warnings.length > 0) {
+                textDiv.innerHTML += `<div class="special-event">${warnings.join('<br>')}</div>`;
+            }
+            
+            // Рендеринг выборов
+            choicesDiv.innerHTML = '';
+            stage.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                
+                // Проверяем, доступен ли выбор (можно добавить условия)
+                let isDisabled = false;
+                if (choice.condition && !choice.condition()) {
+                    isDisabled = true;
+                    btn.className += ' disabled';
+                }
+                
+                btn.textContent = choice.text;
+                btn.onclick = () => {
+                    if (isDisabled) return;
+                    
+                    choice.effect();
+                    updateStats();
+                    
+                    if (choice.reaction) {
+                        const reactionText = typeof choice.reaction === 'function' 
+                            ? choice.reaction() 
+                            : choice.reaction;
+                        showReactionAndProceed(reactionText, choice.next);
+                    } else {
+                        renderStage(choice.next);
+                    }
+                };
+                choicesDiv.appendChild(btn);
+            });
+        }
+
+        // Функция рендеринга специального события
+        function renderSpecialEvent(event, returnToStage) {
+            const textDiv = document.getElementById('gameText');
+            const choicesDiv = document.getElementById('choices');
+            
+            textDiv.innerHTML = `<div class="special-event">${event.text}</div>`;
+            
+            choicesDiv.innerHTML = '';
+            event.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text;
+                btn.onclick = () => {
+                    choice.effect();
+                    updateStats();
+                    
+                    if (choice.reaction) {
+                        showReactionAndProceed(choice.reaction, returnToStage);
+                    } else {
+                        renderStage(returnToStage);
+                    }
+                };
+                choicesDiv.appendChild(btn);
+            });
+        }
+
+        // Функция рендеринга концовки
+        function renderEnding() {
+            const textDiv = document.getElementById('gameText');
+            const choicesDiv = document.getElementById('choices');
+            
+            document.querySelector('.game-container').classList.add('silmaril-complete');
+            
+            let endingTitle = "Сильмариллы Созданы";
+            let endingText = "После долгого труда, Сильмариллы завершены...";
+            
+            // Проверка различных концовок на основе состояния игры
+            if (gameState.metaAwareness && gameState.feanor.wisdom >= 100) {
+                endingTitle = "За Пределами Истории";
+                endingText = "Ты осознал истинную природу своего существования и вышел за пределы предначертанной судьбы. Сильмариллы созданы, но теперь ты сам пишешь историю Арды.";
+            } else if (gameState.hiddenStats.musicConnection >= 100) {
+                endingTitle = "Новая Музыка";
+                endingText = "Твоё творение изменило саму Музыку Айнур. Сильмариллы теперь часть изначального замысла, и вся история мира переписана.";
+            }
+            
+            // Подсчёт достижений
+            const achievementTexts = gameState.achievements.map(key => {
+                return `🏆 ${achievementsList[key].name}`;
+            });
+            
+            textDiv.innerHTML = `
+                <div class="ending-text">
+                    <h2 style="font-family: 'Cinzel', serif; color: #ffd700; margin-bottom: 20px;">${endingTitle}</h2>
+                    <p>${endingText}</p>
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #444;">
+                        <h3 style="font-family: 'Cinzel', serif; color: #87ceeb; margin-bottom: 15px;">Достижения:</h3>
+                        <p style="font-size: 1.1em; line-height: 1.8;">
+                            ${achievementTexts.length > 0 ? achievementTexts.join('<br>') : '📜 Начинающий Творец'}
+                        </p>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #444;">
+                        <p style="font-size: 0.9em; color: #aaa;">
+                            📊 Финальные характеристики:<br>
+                            Мудрость: ${gameState.feanor.wisdom} | Мастерство: ${gameState.feanor.skill} | Гордость: ${gameState.feanor.pride}<br>
+                            Свет: ${gameState.silmarils.light} | Чистота: ${gameState.silmarils.purity} | Сила: ${gameState.silmarils.power}<br>
+                            <br>
+                            🏛️ Репутация:<br>
+                            Валар: ${gameState.reputation.valar} | Нолдор: ${gameState.reputation.noldor}<br>
+                            Тэлери: ${gameState.reputation.teleri} | Ваньяр: ${gameState.reputation.vanyar}<br>
+                            <br>
+                            🎮 Откройте все ${Object.keys(achievementsList).length} достижений!
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            choicesDiv.innerHTML = `
+                <button class="restart-btn" onclick="location.reload()">🔄 Переписать судьбу</button>
+            `;
+        }
+
+        // Запуск игры
+        updateStats();
+        renderStage(0);
+    </script>
+</body>
+</html>

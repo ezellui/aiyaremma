@@ -1,0 +1,120 @@
+--- предыдущая/runt-prevention-strategies-spec.md
++++ текущая/runt-prevention-strategies-spec.md
+@@ -193,11 +193,96 @@
+ 
+ Никакого. Изменения в DOM — переписывание inline-style `--w` на существующих `.ws` спанах.
+ 
+-## B.3. JS — функция `compressPenultimateLine`
+-
+-Вставляется в `<script>` рядом с другими runt-функциями (~строка 6190, после `paginate`):
++## B.3. JS — функции `analyzeRunt`, `compressPenultimateLine`
++
++Вставляется в `<script>` рядом с другими runt-функциями (~строка 6190, после `paginate`). В этом блоке также живут общие утилиты `analyzeRunt` и `countVisualLines`, используемые и стратегией C.
+ 
+ ```js
++// ═══════════════════════════════════════════════════════════════
++// ОБЩАЯ УТИЛИТА: analyzeRunt(p)
++//
++// Возвращает данные о runt'е или null. Используется обеими страте-
++// гиями фазы 0.5 (B и C), а также preventRunts (как gate-условие).
++//
++// runt = объект { lineCount, lastLineWidth, penultLineWidth,
++//                 lastLineY, penultLineY }.
++//
++// Критерии runt-кандидата (всё одновременно):
++//   - lineCount >= 2 (одно-строчный абзац не runt по определению);
++//   - lastLineWidth < RUNT_MAX_LINE_WIDTH_PX (~60 px) ИЛИ
++//     lastLineWidth / penultLineWidth < RUNT_MAX_LINE_FRACTION (0.25).
++//
++// p должен быть уже в DOM (в measurer'е) при вызове, иначе
++// getClientRects() вернёт пустой массив. Также можно вернуть null
++// рано через флаг no-runt-hang на p — этот класс зарезервирован
++// как явный opt-out из любого runt-prevention для конкретного абзаца.
++// ═══════════════════════════════════════════════════════════════
++
++const RUNT_MAX_LINE_WIDTH_PX = 60;
++const RUNT_MAX_LINE_FRACTION = 0.25;
++
++function analyzeRunt(p) {
++  if (!p.isConnected) return null;
++  if (p.classList && p.classList.contains('no-runt-hang')) return null;
++
++  const range = document.createRange();
++  range.selectNodeContents(p);
++  const rawRects = range.getClientRects();
++
++  // Фильтруем нулевые и группируем по Y (несколько rect'ов могут
++  // лежать на одной визуальной строке, если параграф содержит
++  // inline-элементы разной высоты — например, .ws спан рядом с
++  // буквенным фрагментом).
++  const byLine = [];
++  for (let i = 0; i < rawRects.length; i++) {
++    const r = rawRects[i];
++    if (r.width === 0 || r.height === 0) continue;
++    // Ищем существующую строку с близким Y (допуск ±3 px).
++    let line = null;
++    for (let j = 0; j < byLine.length; j++) {
++      if (Math.abs(byLine[j].top - r.top) < 3) {
++        line = byLine[j];
++        break;
++      }
++    }
++    if (line) {
++      line.left = Math.min(line.left, r.left);
++      line.right = Math.max(line.right, r.right);
++      line.width = line.right - line.left;
++    } else {
++      byLine.push({
++        top: r.top,
++        left: r.left,
++        right: r.right,
++        width: r.width
++      });
++    }
++  }
++
++  if (byLine.length < 2) return null;
++
++  // Сортируем по top (на всякий случай — обычно rects идут в порядке
++  // отрисовки сверху вниз, но не гарантировано).
++  byLine.sort(function(a, b) { return a.top - b.top; });
++
++  const last = byLine[byLine.length - 1];
++  const penult = byLine[byLine.length - 2];
++
++  const isRunt =
++    last.width < RUNT_MAX_LINE_WIDTH_PX ||
++    (last.width / penult.width) < RUNT_MAX_LINE_FRACTION;
++
++  if (!isRunt) return null;
++
++  return {
++    lineCount: byLine.length,
++    lastLineWidth: last.width,
++    penultLineWidth: penult.width,
++    lastLineY: last.top,
++    penultLineY: penult.top,
++  };
++}
++
+ // ═══════════════════════════════════════════════════════════════
+ // Стратегия B: занижает --w у .ws спанов предпоследней строки
+ // runt-абзаца, чтобы runt-слово вернулось на предпоследнюю строку.
+@@ -779,7 +864,7 @@
+ |---|---|---|
+ | `<style>` после секции jitter (~стр. 1521) | добавить блок `RUNT-HANG` CSS (два правила: `.runt-hang` и `.folio-content.has-runt-hang-inside`) | ~30 строк |
+ | `<script>` после `walkWrapLongWords` (~стр. 8650) | добавить `markLastWords`, `isLastwordRelevant`, `LASTWORD_MIN_LEN` | ~60 строк |
+-| `<script>` после `paginate` (~стр. 6190) | добавить `analyzeRunt`, `applyRuntHang`, `compressPenultimateLine`, `findRuntTailRange`, `findProbeElementForRange`, `getRuntHangLimit`, `unwrapElement`, `countVisualLines`, `preventRunts`, `markFoliosWithRuntHang`, шрифт-адаптивные константы | ~290 строк |
++| `<script>` после `paginate` (~стр. 6190) | добавить `analyzeRunt` + константы `RUNT_MAX_LINE_*`, `applyRuntHang`, `compressPenultimateLine`, `findRuntTailRange`, `findProbeElementForRange`, `getRuntHangLimit`, `unwrapElement`, `countVisualLines`, `preventRunts`, `markFoliosWithRuntHang`, шрифт-адаптивные константы | ~375 строк |
+ | `<script>` `walkJitter` (~стр. 7714) | в classList-проверке добавить `lastword-no-wbr` и `runt-hang` | +2 строки |
+ | `<script>` `walkWbrOnly` (~стр. 8480) | в classList-проверке добавить `lastword-no-wbr` и `runt-hang` | +2 строки |
+ | `<script>` `walkWrapLongWords` (~стр. 8650) | в classList-проверке добавить `lastword-no-wbr` и `runt-hang` | +2 строки |
+@@ -787,7 +872,7 @@
+ | `<script>` `run()` (~стр. 9794) | добавить блок Фазы 0.5 (`preventRunts` + логирование) и `markFoliosWithRuntHang()` после `renderBook` | +15 строк |
+ | (При патче KELLS-NOTORN) `KELLS_NOTORN_SKIP_DESC_CLASSES` | добавить `lastword-no-wbr` и `runt-hang` | +2 строки |
+ 
+-**Итого:** ~400 строк добавлений, ~8 строк точечных правок существующего кода. Атомарный коммит, простой откат.
++**Итого:** ~485 строк добавлений, ~8 строк точечных правок существующего кода. Атомарный коммит, простой откат.
+ 
+ ---
+ 

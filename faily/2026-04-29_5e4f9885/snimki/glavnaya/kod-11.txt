@@ -1,0 +1,65 @@
+Anime poster illustration, full-body magical girl warrior character.
+90s Japanese anime aesthetic: clean cel-shaded line art, large expressive eyes,
+dramatic lighting, dark and gold color scheme.
+
+CHARACTER:
+Young woman in a magical warrior uniform — black and midnight navy
+with matte gold trim, structured sailor-collar silhouette,
+long black hair wind-swept dramatically.
+White gloves. Tall black knee-high boots with gold cuffs.
+Confident wide stance, facing slightly to the side.
+
+TIARA:
+Golden compass-rose headpiece with a radiant starburst gem at center.
+
+WEAPON (both hands):
+A large open golden architectural compass (draftsman's compass),
+held as if measuring the distance between two concept-nodes on the map.
+In the other hand: a magnifying glass showing two concept bubbles
+with a similarity percentage (e.g. "87%") between them.
+
+CAPE — THIS IS THE KEY ELEMENT:
+The character's long dark cape spreads wide across the entire lower half
+of the image. The cape fabric IS the philosophical concept graph —
+printed/woven into it: hundreds of labeled nodes (Russian concept names:
+бытие, сознание, материя, свобода, истина, субъект, объект, причина...),
+connected by color-coded edges where each color represents
+a different type of philosophical relationship.
+Philosopher names (Платон, Аристотель, Кант, Спиноза, Гегель,
+Ницше, Хайдеггер, Декарт, Делёз...) float as larger labeled nodes
+scattered across the cape. The cape glows faintly from within.
+
+BACKGROUND:
+Interior of a grand neoclassical library — marble columns,
+high arched ceilings, warm candlelight.
+Ancient philosopher busts on stone pedestals flanking the character.
+Stacks of thick books on the floor, spines labeled with tradition names:
+ОНТОЛОГИЯ, ГНОСЕОЛОГИЯ, ЭТИКА, ЭСТЕТИКА, ЛОГИКА, ФИЛОСОФИЯ НАУКИ,
+ФИЛОСОФИЯ ЯЗЫКА, СОЦИАЛЬНАЯ ФИЛОСОФИЯ.
+Latin inscriptions on the stone walls.
+
+TOP LEFT corner — "КАРТА ФИЛОСОФСКИХ ПОНЯТИЙ" panel:
+A zoomed fragment of the concept network as a separate inset panel,
+with stats: УЗЛЫ: 842 / СВЯЗИ: 3921 / КЛАСТЕРЫ: 12
+
+TOP RIGHT corner — vertical analytics dashboard panel:
+Dark semi-transparent panel with data:
+"АНАЛИЗ КОНЦЕПТОВ"
+— Top-10 list by degree centrality with colored horizontal bars
+  (бытие 0.812, сознание 0.764, материя 0.701...)
+— Cluster breakdown list with node counts
+  (Онтология 186, Гносеология 142, Философия сознания 128...)
+— Graph metrics: средняя длина пути / диаметр / плотность
+— Small degree distribution histogram
+
+BOTTOM TITLE:
+Bold ornate gold lettering: "SAILOR ΦILOSΦAIRA"
+Smaller subtitle beneath: "ЗНАНИЕ • СВЯЗИ • БОЛЕЕ ЧЕЛОВЕЧНЫЙ МИР"
+
+Color palette: black, midnight navy, matte gold, dark parchment for cape,
+multi-color glowing edges on the graph (purple, crimson, teal, amber, green),
+warm candlelight amber for library background.
+
+Style: vintage Japanese magical girl anime illustration,
+detailed linework, cel-shading, dramatic soft lighting,
+collectible poster composition, rich dark atmosphere.

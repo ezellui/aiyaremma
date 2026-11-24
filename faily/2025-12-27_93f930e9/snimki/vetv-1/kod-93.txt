@@ -1,0 +1,58 @@
+// Создание ограничений уникальности для узлов
+
+// Концепции
+CREATE CONSTRAINT concept_id_unique IF NOT EXISTS
+FOR (c:Concept) REQUIRE c.concept_id IS UNIQUE;
+
+// Категории
+CREATE CONSTRAINT category_id_unique IF NOT EXISTS
+FOR (cat:Category) REQUIRE cat.category_id IS UNIQUE;
+
+// Создание индексов для улучшения производительности
+
+// Индексы для Concept
+CREATE INDEX concept_name_index IF NOT EXISTS
+FOR (c:Concept) ON (c.name);
+
+// Индексы для Category
+CREATE INDEX category_name_index IF NOT EXISTS
+FOR (cat:Category) ON (cat.name);
+
+CREATE INDEX category_concept_id_index IF NOT EXISTS
+FOR (cat:Category) ON (cat.concept_id);
+
+CREATE INDEX category_type_index IF NOT EXISTS
+FOR (cat:Category) ON (cat.type);
+
+CREATE INDEX category_innovation_index IF NOT EXISTS
+FOR (cat:Category) ON (cat.innovation_degree);
+
+// Индексы для связей RELATED_TO
+CREATE INDEX relationship_type_index IF NOT EXISTS
+FOR ()-[r:RELATED_TO]-() ON (r.type);
+
+CREATE INDEX relationship_innovation_index IF NOT EXISTS
+FOR ()-[r:RELATED_TO]-() ON (r.innovation_degree);
+
+// Ограничения на свойства
+
+// Проверка innovation_degree для Category
+// Neo4j 4.4+ поддерживает property existence constraints
+CREATE CONSTRAINT category_innovation_range IF NOT EXISTS
+FOR (cat:Category) 
+REQUIRE cat.innovation_degree IS :: INTEGER;
+
+// Fulltext индексы для поиска
+CALL db.index.fulltext.createNodeIndex(
+  'categoryFulltext',
+  ['Category'],
+  ['name', 'definition'],
+  {eventually_consistent: 'true'}
+);
+
+CALL db.index.fulltext.createNodeIndex(
+  'conceptFulltext',
+  ['Concept'],
+  ['name'],
+  {eventually_consistent: 'true'}
+);

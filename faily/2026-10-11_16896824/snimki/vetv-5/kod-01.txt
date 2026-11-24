@@ -1,0 +1,40 @@
+Photorealistic archival photograph of a single paper document from a fictional alternate-history state. Make it look like the other items of the same museum series: an old document photographed flat from directly above on a dark charcoal-grey cloth background, soft even museum lighting, high detail, visible paper fibres. Vertical 4:5 composition, the card fills about 80 % of the frame.
+
+WORLD CONTEXT (for correct style, do not write this on the image):
+In this fictional world, the Kronstadt mutiny of 1921 founded the R.S.F.G.R. – the "Russian Socialist Federative Fungal Republic" – a Soviet-style state ruled from the city of R'lyeh on the Kara Sea, where the sleeping Cthulhu is venerated as one being with the sleeping Lenin. Citizens are dissolved into the "Great Mycelium", and since 1930 the state counts spores instead of people. The country never adopted the 1918 spelling reform, so ALL printed text uses pre-revolutionary Russian orthography (letters ѣ, і, final ъ). Years are also counted in "Sporoletie" (Споролѣтіе), year I = 1921. Official documents of this state look like Russian imperial/early-Soviet printed forms of the 1920s–30s: letterpress on cheap paper, serif typefaces, thin double rule borders, a red five-pointed star with a spiral inside it instead of a hammer and sickle, small mushroom ornaments in the corners, and a round violet ink stamp showing an octopus with curling tentacles. In 1938–1940 a great drought hit the steppe province "Мицелярія" (Kazakhstan region); the mycelium there dried out and water was rationed. This item is a water ration card from that drought.
+
+THE OBJECT:
+A water ration card on thick grey-beige cardboard, slightly curled, brittle and bone-dry: dusty surface, faded edges, a few fine cracks, one corner broken off. Along the bottom edge, a few brittle, dried-up white mycelium threads crumble off the cardboard. No mould and no water stains: everything looks parched.
+
+Upper third, centered, printed in black serif type:
+small top line: "Р. С. Ф. Г. Р."
+second line: "Центральное Управленіе Грибницъ · Отдѣлъ Влагоснабженія"
+below it, the small red spiral-star emblem
+large red title in bold condensed serif capitals: "КАРТОЧКА НА ВЛАГУ"
+under the title: "на III кварталъ 1939 года · Споролѣтіе XIX"
+
+Fill-in fields with dotted lines; the handwritten entries are in faded blue-black ink, in pre-reform cursive:
+"Грибница-градъ:" — handwritten "Акмолинскъ"
+"№ грибницы:" — handwritten "112-М"
+"Спороносецъ:" — handwritten "Ивановъ"
+"Учтено споръ:" — handwritten "4"
+printed line: "Норма — 3 ведра на грибницу въ декаду"
+
+Lower two-thirds: a grid of 9 tear-off coupons (3 rows × 3 columns), separated by perforated lines. Each coupon has a thin border and two printed lines, the period on top and the norm below:
+row 1: "VII · 1-я декада", "VII · 2-я декада", "VII · 3-я декада"
+row 2: "VIII · 1-я декада", "VIII · 2-я декада", "VIII · 3-я декада"
+row 3: "IX · 1-я декада", "IX · 2-я декада", "IX · 3-я декада"
+second line on every coupon: "3 ведра"
+The first four coupons (all of row 1 and the first coupon of row 2) have been cut out with scissors: clean rectangular holes through which the dark background shows. The remaining five coupons are intact.
+
+Across the five intact coupons, a diagonal handwritten note in thick red pencil reads: "Мицелярія — отпускъ прекращенъ", underlined twice.
+
+The round violet ink stamp with the octopus, ring text "НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ", sits slightly overlapping the right edge of the fields block, partly faded and unevenly inked.
+
+Very small printed footer at the bottom edge:
+left: "Безъ печати недѣйствительна. Утерянная карточка не возобновляется."
+center: "Ктулху фхтагнъ — Ленинъ фхтагнъ."
+right: "Ф. № 14"
+
+TEXT RULES:
+Render every inscription exactly as written above, letter by letter, in pre-1918 Russian orthography, keeping the letters ѣ, і and the final ъ exactly where they are. Do not modernise the spelling, do not add or translate any text, no English text anywhere. Use no other words, logos, watermarks or captions.

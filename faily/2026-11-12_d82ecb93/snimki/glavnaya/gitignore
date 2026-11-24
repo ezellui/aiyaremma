@@ -1,0 +1,8 @@
+libs/
+**/out/
+__pycache__/
+*.pyc
+*.wav
+*.mp3
+*.mp4
+!examples/**/sample-*.mp3

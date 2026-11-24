@@ -1,0 +1,499 @@
+/**
+ * Claude service - Main business logic for Claude interactions
+ */
+
+const { v4: uuidv4 } = require('uuid');
+const { defaultLogger } = require('../../../shared/lib/logging/logger');
+const { BadRequestError, ServiceUnavailableError } = require('../../../shared/lib/errors/HttpErrors');
+const ClaudeInteraction = require('../models/interactionModel');
+const ClaudeTask = require('../models/taskModel');
+const InteractionRepository = require('../repositories/interactionRepository');
+const TaskRepository = require('../repositories/taskRepository');
+const ClaudeApiClient = require('../clients/claudeApiClient');
+const RequestFormatterService = require('./requestFormatterService');
+const ResponseProcessorService = require('./responseProcessorService');
+const TaskQueueService = require('./taskQueueService');
+const TemplateService = require('./templateService');
+const { claude: claudeConfig } = require('../config');
+const { taskTypes } = require('../config/queues');
+
+/**
+ * Claude service for handling all Claude API interactions
+ */
+class ClaudeService {
+  /**
+   * Create a new Claude service
+   * @param {Object} [dependencies={}] - Service dependencies
+   * @param {Object} [logger=defaultLogger] - Logger instance
+   */
+  constructor(dependencies = {}, logger = defaultLogger) {
+    this.logger = logger;
+    
+    // Initialize repositories
+    this.interactionRepository = dependencies.interactionRepository || new InteractionRepository();
+    this.taskRepository = dependencies.taskRepository || new TaskRepository();
+    
+    // Initialize services
+    this.claudeApiClient = dependencies.claudeApiClient || new ClaudeApiClient();
+    this.requestFormatter = dependencies.requestFormatter || new RequestFormatterService();
+    this.responseProcessor = dependencies.responseProcessor || new ResponseProcessorService();
+    this.taskQueueService = dependencies.taskQueueService || new TaskQueueService();
+    this.templateService = dependencies.templateService || new TemplateService();
+    
+    // Cache for performance
+    this.templateCache = new Map();
+    this.templateCacheTTL = 300000; // 5 minutes
+  }
+
+  /**
+   * Execute a synchronous query to Claude
+   * @param {Object} queryData - Query data
+   * @param {string} queryData.userId - User ID
+   * @param {string} [queryData.conceptId] - Concept ID (if applicable)
+   * @param {string} queryData.queryType - Type of query
+   * @param {Object} queryData.data - Query data
+   * @param {Object} [queryData.options={}] - Query options
+   * @returns {Promise<Object>} Promise resolving to query result
+   */
+  async query(queryData) {
+    try {
+      this.logger.info('Processing Claude query', { 
+        queryType: queryData.queryType,
+        userId: queryData.userId 
+      });
+      
+      // Create interaction record
+      const interaction = new ClaudeInteraction({
+        userId: queryData.userId,
+        conceptId: queryData.conceptId,
+        queryType: queryData.queryType,
+        queryContent: JSON.stringify(queryData.data),
+        metadata: queryData.options?.metadata || {},
+      });
+      
+      const savedInteraction = await this.interactionRepository.create(interaction);
+      
+      try {
+        // Format the request
+        const formattedRequest = await this.requestFormatter.format(
+          queryData.queryType,
+          queryData.data,
+          queryData.options
+        );
+        
+        // Send to Claude API
+        const startTime = Date.now();
+        const response = await this.claudeApiClient.send(formattedRequest);
+        const processingTime = (Date.now() - startTime) / 1000;
+        
+        // Process the response
+        const processedResponse = await this.responseProcessor.process(
+          queryData.queryType,
+          response
+        );
+        
+        // Update interaction with response
+        await this.interactionRepository.update(savedInteraction.interactionId, {
+          responseContent: JSON.stringify(processedResponse),
+          processingTime,
+          status: 'success',
+          inputTokens: response.usage?.input_tokens || 0,
+          outputTokens: response.usage?.output_tokens || 0,
+          cost: this._calculateCost(response),
+          model: response.model || claudeConfig.model.defaultModel,
+        });
+        
+        this.logger.info('Claude query completed successfully', {
+          interactionId: savedInteraction.interactionId,
+          processingTime,
+        });
+        
+        return {
+          result: processedResponse,
+          interactionId: savedInteraction.interactionId,
+          processingTime,
+          tokens: {
+            input: response.usage?.input_tokens || 0,
+            output: response.usage?.output_tokens || 0,
+          },
+        };
+      } catch (error) {
+        // Update interaction with error
+        await this.interactionRepository.update(savedInteraction.interactionId, {
+          status: 'failed',
+          error: error.message,
+        });
+        
+        throw error;
+      }
+    } catch (error) {
+      this.logger.error('Error processing Claude query', {
+        error: error.message,
+        queryType: queryData.queryType,
+        userId: queryData.userId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Queue an asynchronous task for Claude processing
+   * @param {Object} taskData - Task data
+   * @param {string} taskData.userId - User ID
+   * @param {string} [taskData.conceptId] - Concept ID (if applicable)
+   * @param {string} taskData.taskType - Type of task
+   * @param {Object} taskData.data - Task data
+   * @param {Object} [taskData.options={}] - Task options
+   * @returns {Promise<Object>} Promise resolving to task information
+   */
+  async queueTask(taskData) {
+    try {
+      this.logger.info('Queuing Claude task', {
+        taskType: taskData.taskType,
+        userId: taskData.userId,
+      });
+      
+      // Validate task type
+      if (!taskTypes[taskData.taskType]) {
+        throw new BadRequestError(`Invalid task type: ${taskData.taskType}`);
+      }
+      
+      // Create task record
+      const task = new ClaudeTask({
+        userId: taskData.userId,
+        conceptId: taskData.conceptId,
+        taskType: taskData.taskType,
+        taskData: taskData.data,
+        priority: taskData.options?.priority || 5,
+        metadata: taskData.options?.metadata || {},
+        maxRetries: taskData.options?.maxRetries || 3,
+        scheduledFor: taskData.options?.scheduledFor,
+      });
+      
+      const savedTask = await this.taskRepository.create(task);
+      
+      // Queue the task
+      await this.taskQueueService.queueTask(savedTask);
+      
+      this.logger.info('Claude task queued successfully', {
+        taskId: savedTask.taskId,
+        taskType: savedTask.taskType,
+      });
+      
+      return {
+        taskId: savedTask.taskId,
+        status: savedTask.status,
+        priority: savedTask.priority,
+        estimatedProcessingTime: this._estimateProcessingTime(taskData.taskType),
+      };
+    } catch (error) {
+      this.logger.error('Error queuing Claude task', {
+        error: error.message,
+        taskType: taskData.taskType,
+        userId: taskData.userId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get task status and result
+   * @param {string} taskId - Task ID
+   * @returns {Promise<Object>} Promise resolving to task status
+   */
+  async getTaskStatus(taskId) {
+    try {
+      const task = await this.taskRepository.findById(taskId);
+      
+      if (!task) {
+        throw new BadRequestError(`Task not found: ${taskId}`);
+      }
+      
+      const result = {
+        taskId: task.taskId,
+        taskType: task.taskType,
+        status: task.status,
+        progress: task.progress,
+        createdAt: task.createdAt,
+        startedAt: task.startedAt,
+        completedAt: task.completedAt,
+      };
+      
+      if (task.status === 'completed') {
+        result.result = task.result;
+        
+        // Get associated interaction if available
+        if (task.interactionId) {
+          const interaction = await this.interactionRepository.findById(task.interactionId);
+          if (interaction) {
+            result.processingTime = interaction.processingTime;
+            result.tokens = {
+              input: interaction.inputTokens,
+              output: interaction.outputTokens,
+            };
+          }
+        }
+      } else if (task.status === 'failed') {
+        result.error = task.error;
+      }
+      
+      return result;
+    } catch (error) {
+      this.logger.error('Error getting task status', {
+        error: error.message,
+        taskId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Cancel a pending task
+   * @param {string} taskId - Task ID
+   * @returns {Promise<boolean>} Promise resolving to whether task was cancelled
+   */
+  async cancelTask(taskId) {
+    try {
+      const task = await this.taskRepository.findById(taskId);
+      
+      if (!task) {
+        throw new BadRequestError(`Task not found: ${taskId}`);
+      }
+      
+      if (task.status !== 'pending') {
+        throw new BadRequestError(`Cannot cancel task in status: ${task.status}`);
+      }
+      
+      // Update task status
+      await this.taskRepository.update(taskId, {
+        status: 'cancelled',
+        completedAt: new Date(),
+      });
+      
+      // Remove from queue if present
+      await this.taskQueueService.removeTask(taskId);
+      
+      this.logger.info('Task cancelled successfully', { taskId });
+      
+      return true;
+    } catch (error) {
+      this.logger.error('Error cancelling task', {
+        error: error.message,
+        taskId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get available templates for a query type
+   * @param {string} queryType - Query type
+   * @returns {Promise<Array>} Promise resolving to array of templates
+   */
+  async getTemplates(queryType) {
+    try {
+      // Check cache first
+      const cacheKey = `templates:${queryType}`;
+      const cached = this.templateCache.get(cacheKey);
+      
+      if (cached && cached.expires > Date.now()) {
+        return cached.data;
+      }
+      
+      // Get templates from service
+      const templates = await this.templateService.getTemplatesForType(queryType);
+      
+      // Update cache
+      this.templateCache.set(cacheKey, {
+        data: templates,
+        expires: Date.now() + this.templateCacheTTL,
+      });
+      
+      return templates;
+    } catch (error) {
+      this.logger.error('Error getting templates', {
+        error: error.message,
+        queryType,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get interaction history
+   * @param {Object} options - Query options
+   * @returns {Promise<Object>} Promise resolving to interaction history
+   */
+  async getInteractionHistory(options = {}) {
+    try {
+      const {
+        page = 1,
+        pageSize = 20,
+        userId,
+        conceptId,
+        queryType,
+        dateFrom,
+        dateTo,
+        sortBy = 'interaction_date',
+        sortOrder = 'desc',
+      } = options;
+      
+      const filters = {};
+      
+      if (userId) filters.userId = userId;
+      if (conceptId) filters.conceptId = conceptId;
+      if (queryType) filters.queryType = queryType;
+      if (dateFrom) filters.dateFrom = dateFrom;
+      if (dateTo) filters.dateTo = dateTo;
+      
+      const result = await this.interactionRepository.findAll(
+        page,
+        pageSize,
+        sortBy,
+        sortOrder,
+        filters
+      );
+      
+      return {
+        interactions: result.items.map(this._formatInteractionForResponse),
+        pagination: {
+          page,
+          pageSize,
+          total: result.total,
+          totalPages: Math.ceil(result.total / pageSize),
+        },
+      };
+    } catch (error) {
+      this.logger.error('Error getting interaction history', {
+        error: error.message,
+        options,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get usage statistics
+   * @param {Object} options - Query options
+   * @returns {Promise<Object>} Promise resolving to statistics
+   */
+  async getStatistics(options = {}) {
+    try {
+      const { userId, startDate, endDate } = options;
+      
+      const [interactionStats, taskStats] = await Promise.all([
+        this.interactionRepository.getStatistics(userId, startDate, endDate),
+        this.taskRepository.getStatistics(userId, startDate, endDate),
+      ]);
+      
+      return {
+        interactions: interactionStats,
+        tasks: taskStats,
+        summary: {
+          totalRequests: interactionStats.totals.totalInteractions + taskStats.totals.totalTasks,
+          successRate: (
+            (interactionStats.totals.successfulInteractions + taskStats.totals.completedTasks) /
+            (interactionStats.totals.totalInteractions + taskStats.totals.totalTasks) * 100
+          ).toFixed(2),
+          totalCost: interactionStats.totals.totalCost,
+          totalTokens: {
+            input: interactionStats.totals.totalInputTokens,
+            output: interactionStats.totals.totalOutputTokens,
+          },
+        },
+      };
+    } catch (error) {
+      this.logger.error('Error getting statistics', {
+        error: error.message,
+        options,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Calculate cost for a Claude response
+   * @param {Object} response - Claude API response
+   * @returns {number} Cost in USD
+   * @private
+   */
+  _calculateCost(response) {
+    if (!claudeConfig.costTracking.enabled) {
+      return 0;
+    }
+    
+    const model = response.model || claudeConfig.model.defaultModel;
+    const pricing = claudeConfig.costTracking.pricePerToken[model];
+    
+    if (!pricing) {
+      this.logger.warn(`No pricing found for model: ${model}`);
+      return 0;
+    }
+    
+    const usage = response.usage || {};
+    const inputCost = (usage.input_tokens || 0) * pricing.input;
+    const outputCost = (usage.output_tokens || 0) * pricing.output;
+    
+    return inputCost + outputCost;
+  }
+
+  /**
+   * Estimate processing time for a task type
+   * @param {string} taskType - Task type
+   * @returns {number} Estimated processing time in seconds
+   * @private
+   */
+  _estimateProcessingTime(taskType) {
+    const estimates = {
+      graph_validation: 30,
+      graph_enrichment: 60,
+      category_description: 30,
+      relationship_description: 30,
+      thesis_generation: 90,
+      thesis_elaboration: 60,
+      thesis_comparison: 60,
+      graph_from_thesis: 90,
+      synthesis: 180,
+      compatibility_analysis: 60,
+      synthesis_critique: 90,
+      name_analysis: 30,
+      origin_detection: 60,
+      general_query: 30,
+    };
+    
+    return estimates[taskType] || 60;
+  }
+
+  /**
+   * Format interaction for response
+   * @param {ClaudeInteraction} interaction - Interaction to format
+   * @returns {Object} Formatted interaction
+   * @private
+   */
+  _formatInteractionForResponse(interaction) {
+    return {
+      interactionId: interaction.interactionId,
+      userId: interaction.userId,
+      conceptId: interaction.conceptId,
+      queryType: interaction.queryType,
+      status: interaction.status,
+      interactionDate: interaction.interactionDate,
+      processingTime: interaction.processingTime,
+      tokens: {
+        input: interaction.inputTokens,
+        output: interaction.outputTokens,
+      },
+      cost: interaction.cost,
+      model: interaction.model,
+    };
+  }
+}
+
+module.exports = ClaudeService;

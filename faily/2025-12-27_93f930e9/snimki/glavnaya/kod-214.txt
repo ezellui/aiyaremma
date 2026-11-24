@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Устанавливаем nodemon глобально
+RUN npm install -g nodemon
+
+# Копируем shared модуль
+COPY shared /app/shared
+WORKDIR /app/shared
+RUN npm install
+
+# Копируем Graph Service
+WORKDIR /app/graph-service
+COPY graph-service/package*.json ./
+RUN npm install
+
+COPY graph-service .
+
+EXPOSE 4003
+
+CMD ["npm", "run", "dev"]

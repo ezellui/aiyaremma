@@ -1,0 +1,52 @@
+--- предыдущая/Исследователь-аксиом-теории-чисел.jsx
++++ текущая/Исследователь-аксиом-теории-чисел.jsx
+@@ -104,7 +104,7 @@
+     const newProperties = {
+       divisibility: axioms.peano.successor && axioms.peano.noLoops,
+       primality: axioms.peano.successor && axioms.peano.noLoops,
+-      countability: true, // Начальное значение, изменится ниже
++      countability: true, // По умолчанию - множества счётны (натуральные, целые, рациональные)
+       density: axioms.ordering.archimedean && 
+               (newNumberSets.rationals || newNumberSets.reals),
+       completeness: axioms.completeness.supremum || axioms.completeness.cauchyConvergence || 
+@@ -112,20 +112,22 @@
+       algebraicClosure: newNumberSets.complex,
+     };
+ 
+-    // Определяем, какие множества счётны
+-    if (newNumberSets.reals && axioms.completeness.supremum) {
+-      newProperties.countability = false; // Вещественные числа несчётны
+-    } else {
+-      newProperties.countability = true;  // Остальные множества счётны
+-    }
++    // Свойство счётности зависит от выбранных аксиом
++    // Натуральные, целые и рациональные числа счётны,
++    // Вещественные и комплексные числа несчётны (при наличии аксиом полноты)
++    newProperties.countability = !(newNumberSets.reals && 
++      (axioms.completeness.supremum || axioms.completeness.cauchyConvergence || axioms.completeness.dedekindCuts));
+ 
+     // Определяем, какие теоремы можно доказать
+     const newTheorems = {
+       infinitePrimes: axioms.peano.induction && newNumberSets.naturals,
+       fundamentalTheoremArithmetic: axioms.peano.induction && newNumberSets.naturals,
+-      irrationality: newNumberSets.reals && !newNumberSets.rationals,
+-      transcendence: newNumberSets.reals,
+-      cantorUncountability: newNumberSets.reals && axioms.completeness.supremum,
++      irrationality: newNumberSets.reals && 
++                   (axioms.completeness.supremum || axioms.completeness.cauchyConvergence || axioms.completeness.dedekindCuts),
++      transcendence: newNumberSets.reals && 
++                   (axioms.completeness.supremum || axioms.completeness.cauchyConvergence || axioms.completeness.dedekindCuts),
++      cantorUncountability: newNumberSets.reals && 
++                          (axioms.completeness.supremum || axioms.completeness.cauchyConvergence || axioms.completeness.dedekindCuts),
+     };
+ 
+     setNumberSets(newNumberSets);
+@@ -181,7 +183,7 @@
+   const propertyDescriptions = {
+     divisibility: "Делимость чисел и теория делимости",
+     primality: "Понятие простого числа",
+-    countability: "Счётность множества",
++    countability: "Счётность множества (множество вещественных чисел несчётно)",
+     density: "Плотность (между любыми двумя числами есть ещё одно)",
+     completeness: "Полнота (отсутствие «дырок» в числовой прямой)",
+     algebraicClosure: "Алгебраическая замкнутость (все многочлены имеют корни)"

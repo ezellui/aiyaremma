@@ -1,0 +1,14 @@
+// Для категорий
+CREATE (c:Category {
+  category_id: $id,
+  name: $name,
+  is_generated: true,
+  generation_source: 'claude',
+  created_at: timestamp()
+})
+
+// Для связей
+CREATE (r:RELATED_TO {
+  is_generated: true,
+  generation_source: 'synthesis'
+})

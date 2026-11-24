@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лицо и диагональ</title>
+
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: { fontCache: 'global' },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" id="MathJax-script" async></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f4eee1;
+    --paper-deep: #e4ddca;
+    --ink: #18211f;
+    --ink-soft: #2f3b39;
+    --ink-faint: #586461;
+    --accent: #14595c;
+    --accent-deep: #0b393b;
+    --gold: #9a7b3f;
+    --rule: #b9c0b9;
+    --measure: 40rem;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(20,89,92,0.06), transparent 42%),
+      radial-gradient(ellipse at 82% 96%, rgba(154,123,63,0.05), transparent 50%),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.0625rem;
+    line-height: 1.72;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--measure); margin: 0 auto; padding: 5.5rem 1.6rem 7rem; }
+
+  .masthead { text-align: center; margin-bottom: 3.4rem; opacity: 0; animation: rise 1.1s ease forwards; }
+  .masthead .venue { font-family: 'Old Standard TT', serif; font-size: 0.72rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--accent); margin: 0; }
+  .masthead .venue-sub { font-style: italic; font-size: 0.84rem; color: var(--ink-faint); letter-spacing: 0.02em; margin: 0.5rem 0 0; }
+  .masthead .rule { width: 46px; height: 1px; background: var(--rule); margin: 1.4rem auto 0; }
+
+  .titleblock { text-align: center; margin-bottom: 3rem; opacity: 0; animation: rise 1.1s ease 0.12s forwards; }
+  h1.title { font-family: 'Old Standard TT', serif; font-weight: 700; font-size: clamp(2.1rem, 6vw, 3.05rem); line-height: 1.12; letter-spacing: 0.005em; color: var(--ink); margin: 0 0 0.85rem; }
+  h1.title em { font-style: italic; color: var(--accent); }
+  .subtitle { font-family: 'Spectral', serif; font-weight: 300; font-style: italic; font-size: 1.16rem; color: var(--ink-soft); margin: 0 auto; max-width: 31rem; line-height: 1.5; }
+  .byline { margin-top: 1.7rem; font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); }
+
+  .abstract {
+    margin: 0 0 3.6rem; padding: 1.7rem 1.9rem;
+    background: linear-gradient(180deg, rgba(228,221,202,0.6), rgba(228,221,202,0.25));
+    border-left: 2.5px solid var(--accent);
+    font-size: 0.965rem; line-height: 1.66; color: var(--ink-soft);
+    opacity: 0; animation: rise 1.1s ease 0.24s forwards;
+  }
+  .abstract .lbl { display: block; font-family: 'Old Standard TT', serif; font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.7rem; }
+  .abstract .kw { margin-top: 1rem; font-style: italic; font-size: 0.88rem; color: var(--ink-faint); }
+
+  section { margin-bottom: 2.7rem; }
+
+  h2 { font-family: 'Old Standard TT', serif; font-weight: 700; font-size: 1.44rem; line-height: 1.25; color: var(--ink); margin: 3.2rem 0 1.1rem; }
+  h2 .num { color: var(--accent); font-style: italic; margin-right: 0.6rem; }
+
+  p { margin: 0 0 1.15rem; text-align: justify; hyphens: auto; }
+
+  .lede::first-letter { font-family: 'Old Standard TT', serif; float: left; font-size: 4.1rem; line-height: 0.78; padding: 0.18rem 0.62rem 0 0; color: var(--accent); font-weight: 700; }
+
+  em, i { font-style: italic; }
+  strong, b { font-weight: 600; color: var(--ink); }
+  .fr, .lat, .de { font-style: italic; }
+  .term { font-style: italic; color: var(--accent-deep); }
+
+  .pull { margin: 2.2rem 0; padding: 0 1.4rem; border-left: 2px solid var(--gold); font-style: italic; font-size: 1.12rem; line-height: 1.5; color: var(--ink-soft); }
+
+  mjx-container[display="true"] { margin: 1.4rem 0 !important; }
+
+  .divider { text-align: center; margin: 2.8rem 0; color: var(--gold); font-size: 1rem; letter-spacing: 0.6em; }
+
+  sup.fn { font-size: 0.7em; color: var(--accent); font-weight: 600; cursor: default; padding-left: 1px; }
+
+  .notes { margin-top: 3.4rem; padding-top: 1.6rem; border-top: 1px solid var(--rule); font-size: 0.86rem; line-height: 1.55; color: var(--ink-soft); }
+  .notes h3, .biblio h3 { font-family: 'Old Standard TT', serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.1rem; }
+  .notes ol { margin: 0; padding-left: 1.4rem; }
+  .notes li { margin-bottom: 0.7rem; }
+
+  .biblio { margin-top: 2.8rem; padding-top: 1.6rem; border-top: 1px solid var(--rule); font-size: 0.86rem; line-height: 1.5; color: var(--ink-soft); }
+  .biblio p { text-indent: -1.3rem; padding-left: 1.3rem; text-align: left; margin-bottom: 0.6rem; }
+
+  .colophon { margin-top: 3.4rem; text-align: center; font-style: italic; font-size: 0.8rem; color: var(--ink-faint); letter-spacing: 0.02em; }
+  .seal { margin-top: 1.6rem; text-align: center; font-family: 'Old Standard TT', serif; font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 540px) {
+    .wrap { padding: 3.5rem 1.2rem 5rem; }
+    body { font-size: 1.01rem; }
+    .lede::first-letter { font-size: 3.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="venue">Аспирантский вестник Петра-Дубравы</p>
+    <p class="venue-sub">Тетради по философии математического &middot; sectio infiniti</p>
+    <div class="rule"></div>
+  </header>
+
+  <div class="titleblock">
+    <h1 class="title">Лицо и <em>диагональ</em></h1>
+    <p class="subtitle">Математическое прочтение левинасовской бесконечности и Иного в свете теоремы Кантора</p>
+    <p class="byline">Опыт прочтения &middot; финал</p>
+  </div>
+
+  <div class="abstract">
+    <span class="lbl">Аннотация</span>
+    Статья сопоставляет центральную мысль Эмманюэля Левинаса — что Иное и бесконечное <strong>переполняют</strong> (<span class="fr">débordent</span>) всякую тотальность и не поддаются охвату — с <strong>теоремой Кантора</strong>: ни одно множество не вмещает всех своих подмножеств, $|X| &lt; |\mathcal{P}(X)|$, а диагональное множество есть сам механизм переполнения. Защищаются отождествления: «бесконечное переполняет тотальность» ↔ канторова строгая неравность; картезианская идея бесконечного (<span class="lat">ideatum</span> превосходит идею) ↔ диагональная конструкция; высота и асимметрия Иного ↔ необратимость мощностного неравенства; тотальность как насилие, прерываемое лицом, ↔ невозможность универсального множества, прерываемого диагональю. Кульминация — историческое совпадение: канторов Абсолют, «который можно лишь признать, но никогда не познать», почти дословно есть левинасово бесконечное. Финальный раздел обращает главное возражение в развязку: неспособность теоремы вместить этическое <em>исполняет</em> тезис статьи.
+    <div class="kw">Ключевые слова: Левинас, Иное, бесконечное, тотальность, теорема Кантора, диагональный аргумент, Абсолют, лицо, экстериорность.</div>
+  </div>
+
+  <section>
+    <h2><span class="num">§ 1.</span>Ставка</h2>
+    <p class="lede">Это самый опасный из пяти опытов. Левинас построил свою этику <em>против</em> тотализации — против сведе́ния Иного к охватываемому содержанию, против онтологии как философии Того же самого, против самого жеста схватывания. А мы предлагаем формализовать его бесконечное самым тотализирующим из всех понятий — <em>мощностью</em>, числом. Риск здесь тяжелее, чем у Деррида, Лейбница, Гегеля или Ницше: свести этическую высоту Иного к кардиналу было бы ровно той онтологической редукцией, которой Левинас сопротивлялся всю жизнь. Лицо — не множество побольше.</p>
+
+    <p>И всё же одна-единственная формула — «<span class="fr">l'infini déborde la totalité</span>», бесконечное переполняет тотальность — есть структурно теорема Кантора; а самое поразительное во всей нашей серии совпадение состоит в том, что собственная теология Кантора, его учение об Абсолюте, читается как страница из Левинаса. Два мыслителя, два столетия, одна структура. Эта статья — последняя в номере, и в ней опасность придётся обратить в метод: показать, где формализация схватывает структуру переполнения, и где она сама оказывается переполнена тем, чего вместить не может.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">§ 2.</span>Теорема Кантора</h2>
+    <p>Теорема (1891): для всякого множества $X$ не существует сюръекции $X \to \mathcal{P}(X)$ на множество его подмножеств; следовательно, $|X| &lt; |\mathcal{P}(X)|$ строго. Доказательство — диагональный аргумент. Дано любое отображение $f\colon X \to \mathcal{P}(X)$; образуем</p>
+
+    $$ D \;=\; \{\, x \in X : x \notin f(x) \,\}. $$
+
+    <p>Это множество не лежит в образе $f$: будь $D = f(d)$ для некоторого $d$, мы получили бы $d \in D \iff d \notin f(d) = D$ — противоречие. Стало быть, как бы мы ни пытались охватить отображением $f$ все подмножества, $D$ ускользает за пределы охвата.</p>
+
+    <p>Существенно вот что: $D$ построено <em>средствами самого</em> $f$ — определено внутри попытки тотализации — и тем не менее ей <em>не принадлежит</em>. Переполнение не есть внешняя случайность; оно <strong>порождается самим жестом охвата</strong>.</p>
+  </section>
+
+  <div class="divider">&#10086;</div>
+
+  <section>
+    <h2><span class="num">§ 3.</span>Тотальность и бесконечное</h2>
+    <p>«Тотальность и бесконечное» (1961) строится на одной оппозиции. <em>Тотальность</em> — это царство Того же самого (<span class="fr">le Même</span>): онтология, постижение, охват, сведе́ние Иного к категориям познающего, и в пределе — война, в которой лица суть лишь носители сил, моменты целого. <em>Бесконечное</em> (<span class="fr">l'infini</span>) — то, что превышает и переполняет всякую тотальность, экстериорность, не вмещаемая ни в какую систему. «Бесконечное переполняет мысль, которая его мыслит».</p>
+
+    <p>Образец этой структуры Левинас берёт у Декарта. В Третьем размышлении идея бесконечного — единственная идея, чьё содержание (<span class="lat">ideatum</span>) превосходит саму идею, которая «мыслит больше, чем мыслится» (<span class="fr">penser plus qu'on ne pense</span>).<sup class="fn">1</sup> Конечное «я» несёт в себе идею, переполняющую его собственную ёмкость, — и в этом избытке свидетельствуется бесконечное. Не «я» полагает бесконечное; бесконечное вторгается в «я», превышая его.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">§ 4.</span>Переполнение как диагональ</h2>
+    <p>Здесь — острие отождествления. «Бесконечное переполняет тотальность» есть, дословно, теорема Кантора. Тотальность — это $X$, попытка охватить всё; её подмножества $\mathcal{P}(X)$ строго превышают её; и диагональное $D$ есть само переполнение. Картезианская структура — «<span class="lat">ideatum</span> превосходит идею», система мыслит больше, чем может вместить, — отображается на диагональ с точностью: $D$ <em>определено</em> внутри тотализации (оно — вполне законное подмножество, «помысленное» средствами области $f$) и тем не менее <em>ускользает</em> за её пределы.</p>
+
+    <p>Совпадение не поверхностно. У Декарта-Левинаса конечное порождает из себя идею, его переполняющую. У Кантора отображение $f$ порождает из себя множество $D$, ему не принадлежащее. В обоих случаях избыток не привносится извне — он <em>вырабатывается самим усилием охвата</em>. Какую бы тотализацию $f$ ни предпринять, диагональ её превзойдёт. Переполнение есть необходимое следствие попытки вместить.</p>
+
+    <div class="pull">Диагональ построена из материала тотальности и не вмещается в неё. «Мыслить больше, чем мыслится» — это и есть диагональный аргумент.</div>
+  </section>
+
+  <section>
+    <h2><span class="num">§ 5.</span>Высота и асимметрия</h2>
+    <p>Отношение к Иному, по Левинасу, <em>несимметрично</em> и необратимо. Иное дано в измерении <em>высоты</em> (<span class="fr">hauteur</span>): оно выше меня, я отвечаю за него прежде всякой взаимности, и пространство между нами «искривлено» этой асимметрией. Отношение нельзя обратить и нельзя свести к симметричной системе равных.</p>
+
+    <p>Мощностное неравенство воспроизводит эту асимметрию структурно. Имеется вложение $X \hookrightarrow \mathcal{P}(X)$ (каждый элемент — в свой синглтон), но <em>нет</em> сюръекции обратно: можно отобразить вверх, но никогда — на $\mathcal{P}(X)$ снизу. Неравенство $|X| &lt; |\mathcal{P}(X)|$ строго и необратимо. $\mathcal{P}(X)$ стои́т «выше» $X$, как Иное — выше меня: туда есть восхождение, оттуда нет покрытия. Асимметрия отношения $&lt;$ есть асимметрия этического отношения, искривление интерсубъективного пространства, записанное мощностями.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">§ 6.</span>Тотальность как насилие; диагональ как прерывание</h2>
+    <p>Предисловие «Тотальности и бесконечного» начинается с войны: тотальность есть точка зрения войны, где лицо упразднено и сведено к моменту целого. Лицо-в-лицо <em>прерывает</em> тотальность и войну, размыкая возможность мира. Тотализация этически есть насилие — сведе́ние Иного к Тому же самому.</p>
+
+    <p>Канторова вселенная воспроизводит и это. Нет универсального множества — «множества всех множеств»: оно содержало бы своё собственное $\mathcal{P}$, противореча теореме. Всякая попытка <em>замкнуть</em> тотальность — собрать всё в единство, перечислить сюръективно — <em>прерывается</em> диагональю и парадоксами (Бурали-Форти, Рассел). В письме к Дедекинду (1899) Кантор различил консистентные множественности (множества) и <strong>неконсистентные</strong> — те абсолютно бесконечные совокупности (вроде «всего»), которые невозможно собрать в единство без противоречия.<sup class="fn">2</sup> Абсолютная тотальность не просто велика — она <em>неконсистентна</em>. Жест охвата структурно терпит крах. Диагональ есть математическое лицо-в-лицо: она прерывает всякую тотальность изнутри.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">§ 7.</span>Абсолют Кантора и бесконечное Левинаса</h2>
+    <p>Здесь — вершина всей серии, самое невероятное из совпадений. Кантор различал <em>трансфинитное</em> (das Transfinite) — увеличиваемое, область множеств и кардиналов — и <em>Абсолют</em> (das Absolute), собственно-бесконечное, которое не есть определённая величина, не охватывается никаким множеством и которое Кантор прямо отождествлял с Богом, переписываясь о нём с католическими богословами.<sup class="fn">3</sup> О нём он писал: <span class="de">das Absolute kann nur anerkannt, nie erkannt, auch nicht annähernd erkannt werden</span> — «Абсолют может быть лишь признан, но никогда не познан, даже приблизительно».</p>
+
+    <p>Это почти дословно Левинас. Бесконечное и Иное <em>приближаемы</em>, засвидетельствованы в лице, <em>признаны</em> — но никогда не познаны, не тематизированы, не схвачены. Признание без познания, anerkennen без erkennen, — формула обоих. Оба бесконечных теологически заряжены; оба не поддаются тотализации; оба — «по ту сторону»: у Левинаса <span class="fr">au-delà de l'essence</span>, по ту сторону сущности; у Кантора — по ту сторону трансфинитного. Математик 1880-х и феноменолог 1960-х, не знавшие друг о друге, независимо пришли к одной фигуре: собственно бесконечное есть то, чего достигает признание, но не достигает знание.</p>
+
+    <div class="pull">«Признать, но никогда не познать» — это написал теоретик множеств о Боге за восемьдесят лет до того, как феноменолог написал то же о лице Иного.</div>
+  </section>
+
+  <section>
+    <h2><span class="num">§ 8.</span>Сказанное и Сказывание</h2>
+    <p>В «Иначе, чем быть» (1974) Левинас вводит различение Сказанного (<span class="fr">le Dit</span>) и Сказывания (<span class="fr">le Dire</span>): Сказанное — тематизированное, тотализованное содержание речи, область пропозиций и онтологии; Сказывание — самое обращение к Иному, выставленность, которая всегда переполняет и тревожит всякое Сказанное.</p>
+
+    <p>Диагональ простирается и сюда. Лимитативные теоремы Гёделя (1931) и Тарского суть диагональные аргументы: формальная система не может тотализовать собственную истину или доказуемость; то, что она <em>порождает</em> (неразрешимое предложение, предикат истины), она не может <em>вместить</em>.<sup class="fn">4</sup> Сказывание, переполняющее всякое Сказанное, есть нетотализуемое, которое система вырабатывает из себя, но не содержит, — диагональ на уровне языка о языке. Истина Сказанного всегда вне Сказанного, как Иное — вне темы.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">§ 9.</span>Предел — и развязка</h2>
+    <p>Во всей серии заключительный раздел шёл об угрозе, какую формализация несёт философии: у Деррида рисковало вернуться присутствие, у Лейбница — необходимость, у Гегеля — умертвлялось самодвижение; у Ницше, единственного, формализация служила. Здесь угроза тяжелее всех. Бесконечное Левинаса <em>этично</em>: лицо повелевает, взывает, заповедует «не убий», возлагает ответственность. Канторово же бесконечное есть <em>кардинал</em> — величина, структура, начисто лишённая этического, личного, повелевающего. Формализовать высоту Иного мощностью значит совершить ровно ту тотализующую, онтологическую редукцию, против которой вся его мысль. Лицо — не больший кардинал; трансценденция Иного не количественна.</p>
+
+    <p>Ответ: формализация схватывает <em>структуру</em> — переполнение, нетотализуемость, асимметрию, самопорождение избытка, — но никогда <em>содержание</em>: то, что этот избыток <em>повелевает</em>. Кантор даёт морфологию трансценденции-как-избытка; Левинас даёт плоть — что избыток смотрит на меня и обязывает. Теорема показывает форму переполнения; она не может показать, что переполняющее меня — <em>зовёт</em>.</p>
+
+    <p>И вот развязка, которой подобает закрыть весь номер. Сама неспособность формализации вместить этическое — <em>исполняет</em> тезис статьи. Теорема (Сказанное) не может содержать призыва (Сказывание); формальная система порождает диагональ, но не повелевает. Статья переполняется этическим остатком, которого не способна формализовать, — и это переполнение <em>и есть</em> <span class="fr">l'infini débordant la totalité</span>, бесконечное, переполняющее тотальность. Предел статьи свидетельствует то, что статья утверждает: всякая тотальность превзойдена тем, что в ней не помещается.</p>
+
+    <p>Пять мыслителей, пять структур — и повторяющийся урок: каждая формализация и освещает своё, и оказывается превзойдена тем, что формализует. Само наше предприятие — формализация философии — есть тотальность, переполняемая этической бесконечностью: ибо философы были не структурами, а лицами, призывами, голосами. Диагональ ускользает от перечня; лицо ускользает от теоремы; и это ускользание — единственное, что стоило формализовать — тем, что не удалось.</p>
+  </section>
+
+  <div class="notes">
+    <h3>Примечания</h3>
+    <ol>
+      <li>«Тотальность и бесконечное» (1961), особ. предисловие и раздел о картезианской идее бесконечного. Декарт, «Размышления о первой философии», III: идея бесконечного обладает большей объективной реальностью, чем мог бы породить конечный ум; <span class="lat">ideatum</span> превосходит идею. Формула Левинаса — «penser plus qu'on ne pense».</li>
+      <li>Письмо Кантора к Дедекинду (1899): различение консистентных множественностей (которые можно собрать в множество) и неконсистентных, «абсолютно бесконечных» (которые при попытке собрать ведут к противоречию). Это — точная форма тезиса «тотальность всего невозможна»; антиципация разрешения парадоксов Бурали-Форти и Рассела.</li>
+      <li>Кантор, «Grundlagen einer allgemeinen Mannigfaltigkeitslehre» (1883), и переписка с богословами (кардинал Францелин): Абсолют (<span class="de">das Absolute</span>) против трансфинитного; «das Absolute kann nur anerkannt, nie erkannt … werden». Историю теологического измерения канторовой мысли документирует Дж. Даубен.</li>
+      <li>«Иначе, чем быть, или По ту сторону сущности» (1974): Dire / Dit. Гёдель (1931) и Тарский (1933/36) — диагональные аргументы: невыразимость истины и неполнота как невозможность системы тотализовать собственное содержание.</li>
+    </ol>
+  </div>
+
+  <div class="biblio">
+    <h3>Библиография</h3>
+    <p>Левинас Э. Тотальность и бесконечное. — Paris, 1961.</p>
+    <p>Левинас Э. Иначе, чем быть, или По ту сторону сущности. — Paris, 1974.</p>
+    <p>Декарт Р. Размышления о первой философии. — 1641.</p>
+    <p>Cantor G. Grundlagen einer allgemeinen Mannigfaltigkeitslehre. — Leipzig, 1883.</p>
+    <p>Cantor G. Über eine elementare Frage der Mannigfaltigkeitslehre // Jahresber. Deutsch. Math.-Verein. — 1891. — Bd. 1. — S. 75—78.</p>
+    <p>Cantor G. Brief an Dedekind. — 1899.</p>
+    <p>Gödel K. Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme. — 1931.</p>
+    <p>Tarski A. Der Wahrheitsbegriff in den formalisierten Sprachen. — 1936.</p>
+    <p>Dauben J. W. Georg Cantor: His Mathematics and Philosophy of the Infinite. — Cambridge, Mass.: Harvard UP, 1979.</p>
+  </div>
+
+  <p class="colophon">⁂ Последний опыт прочтения, в котором теорема не вмещает лица — и тем его свидетельствует.</p>
+  <p class="seal">Explicit &middot; sectiones quinque &middot; temporis · harmonica · dialectica · recurrens · infiniti</p>
+
+</div>
+</body>
+</html>

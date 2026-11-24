@@ -1,0 +1,19 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Устанавливаем nodemon глобально
+RUN npm install -g nodemon
+
+# Копируем package.json
+COPY package*.json ./
+
+# Устанавливаем все зависимости
+RUN npm install
+
+# Копируем исходный код (volume в docker-compose перезапишет)
+COPY . .
+
+EXPOSE 4000
+
+CMD ["npm", "run", "dev"]

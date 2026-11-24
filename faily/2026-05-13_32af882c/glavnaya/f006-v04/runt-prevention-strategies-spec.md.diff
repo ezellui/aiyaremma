@@ -1,0 +1,88 @@
+--- предыдущая/runt-prevention-strategies-spec.md
++++ текущая/runt-prevention-strategies-spec.md
+@@ -175,7 +175,7 @@
+ 
+ - **Короткие абзацы (одно слово).** Слово оборачивается, но толку нет — там и так нет переноса. Безвредно.
+ - **Параграф заканчивается формулой** типа `Amen.` — `Amen` < `LASTWORD_MIN_LEN` (4 буквы), не оборачивается. Это намеренно: для коротких слов и так нет `<wbr>`.
+-- **Параграф заканчивается составной обёрткой**, например на `<em class="uncial-passage">`. TreeWalker дойдёт до text-node-а внутри `<em>`, оборачивание сработает — span появится **внутри** `<em>`. Это безопасно: style унаследуется через каскад (`lastword-no-wbr` стилей не имеет, только маркерный класс), uncial-шрифтовый контекст в `<em>` не нарушается. См. Часть III.4 о том, как стратегия C далее охватит и `<em>` целиком при необходимости.
++- **Параграф заканчивается составной обёрткой**, например на `<em class="uncial-passage">`. TreeWalker дойдёт до text-node-а внутри `<em>`, оборачивание сработает — span появится **внутри** `<em>`. Это безопасно: style унаследуется через каскад (`lastword-no-wbr` стилей не имеет, только маркерный класс), uncial-шрифтовый контекст в `<em>` не нарушается. Стратегия C, если запустится для этого абзаца, оборачивает только последнее слово (тоже внутри `<em>`) — без охвата всего `<em>` (см. C.4, Uncial-passage runt).
+ - **Параграф с `<abbr>` на конце**, например `Amen` — никаких `<wbr>` в `<abbr>` и так нет, ничего не оборачивается дополнительно. Безвредно.
+ - **Параграф, у которого последнее значащее — это abbreviation** типа `<abbr>DNI</abbr>` без хвостовой текстовой пунктуации. TreeWalker пропустит abbr (не text-node), последний text-node может оказаться на 1–2 уровня выше. Если в нём есть слово ≥ `LASTWORD_MIN_LEN` — оборачивается оно. Это семантически не «последнее слово абзаца», но для целей стратегии A безразлично — мы защищаем от runt'а слово, которое физически может попасть на отдельную строку, и любое длинное слово в хвосте абзаца — кандидат.
+ 
+@@ -389,7 +389,7 @@
+ 1. **Точечный margin.** `margin-right: -X` задаётся на самом `<span class="runt-hang">`, не на `<p>`. Inline-margin влияет только на outer-edge **этого** inline-box; line-break decisions других inline-box'ов в абзаце не затрагиваются. Только runt-строка получает дополнительную ширину для wrap-decision.
+ 2. **Шрифт-адаптивный лимит.** Максимальный выступ выбирается на основании шрифта runt-строки через `getComputedStyle()`. Для Uncialis (буквы 12.6 px при font-size 0.86em) — 65 px; для Kells (8.7 px) — 50 px; для Remedius — 50 px; для Beda — 45 px. Это позволяет лечить runt'ы из 4–5 крупных uncial-букв, не теряя сдержанности на Kells-абзацах.
+ 3. **Расширенная обёртка.** Span `runt-hang` всегда охватывает range **от начала runt-слова до конца блока** (включая хвостовую пунктуацию). Это страховка от того, что точка/запятая после runt-слова окажется снаружи span'а и negative margin её визуально втянет внутрь.
+-4. **Uncial-passage atomicity.** Если последнее слово лежит внутри `<em class="uncial-passage">`, range стартует **перед** всем `<em>`, чтобы runt-hang обёртка охватывала uncial-фрагмент целиком и не разрезала шрифтовый контекст пополам.
++4. **Uncial-passage compatibility.** Если последнее слово лежит внутри `<em class="uncial-passage">`, runt-hang span создаётся **только вокруг этого слова** (внутри `<em>`), а не вокруг всего `<em>`. Шрифт-контекст (Uncialis) наследуется через каскад, и `white-space: nowrap` действует только на одно слово — не на весь uncial-фрагмент. Это критично: попытка охватить весь `<em>` атомарно ломает абзацы, целиком состоящие из uncial-passage, превращая их в одну непереносимую строку.
+ 
+ ## C.2. CSS
+ 
+@@ -627,26 +627,22 @@
+     }
+   }
+ 
+-  // Дополнительный подъём для uncial-passage. Если стартовый узел
+-  // всё ещё лежит внутри <em class="uncial-passage">, поднимаемся
+-  // до <em>. Это гарантирует, что runt-hang span охватит uncial-
+-  // фрагмент ЦЕЛИКОМ и не разрежет шрифтовый контекст пополам
+-  // (часть в Uncialis, часть в Kells — выглядело бы скверно).
+-  let probeAscender = startNode;
+-  while (probeAscender && probeAscender !== p) {
+-    if (probeAscender.tagName === 'EM' &&
+-        probeAscender.classList &&
+-        probeAscender.classList.contains('uncial-passage')) {
+-      const emParent = probeAscender.parentNode;
+-      if (emParent && emParent !== p.parentNode) {
+-        startNode = emParent;
+-        startOff = Array.prototype.indexOf.call(
+-          emParent.childNodes, probeAscender);
+-      }
+-      break;
+-    }
+-    probeAscender = probeAscender.parentNode;
+-  }
++  // ВНИМАНИЕ: ветка «подъёма до <em.uncial-passage>» НАМЕРЕННО НЕ
++  // реализована. Раньше пытались поднимать range до самого <em>,
++  // чтобы «не разрезать шрифт-контекст». Это давало баг: если
++  // <em class="uncial-passage"> занимал весь абзац (или большую
++  // его часть), runt-hang span охватывал весь <em>, и
++  // white-space: nowrap на .runt-hang слепливал все uncial-строки
++  // в одну, уезжающую за правое поле. Симптом особенно ярко
++  // проявлялся в абзацах рядом с .mg-coemanus (узкая колонка →
++  // больше runt'ов в uncial).
++  //
++  // Правильное поведение: оборачивать ТОЛЬКО последнее слово,
++  // даже если оно внутри <em.uncial-passage>. Шрифт-контекст
++  // (Uncialis) автоматически наследуется через каскад — runt-hang
++  // span, лежащий внутри <em>, рендерится Uncialis'ом. Никакого
++  // разрезания шрифта не происходит, потому что в обёртку попадает
++  // только хвост уже uncial-форматированного текста.
+ 
+   const range = document.createRange();
+   if (startNode === tn) {
+@@ -690,16 +686,19 @@
+ - **Содержимое после runt-слова не помещается в span целиком.** Может случиться, если в `<p>` есть необычная структура — например, иллюминированный ornament-line после слова. Тогда `range.surroundContents` бросит ошибку (range cross-boundary). Fallback через `extractContents` + `insertNode` справится с большинством случаев, но decoratives внутри лучше обходить — в `findRuntTailRange` стоит проверить, нет ли блочных элементов между runt-словом и концом `<p>`, и в случае их обнаружения вернуть `null`.
+ - **Translate-режим.** Когда runt-hang обёртка лежит вокруг `.word-wbr` (двойного source/render), `findRuntTailRange` поднимается до самого `.word-wbr` через ветку `word-render`/`word-source`, и span охватывает оба внутренних слоя. В translate-режиме `.word-render` скрыт, виден `.word-source` — но и для него `margin-right: -X` работает (margin наследуется на тот же span). Поведение симметрично, выступание корректное.
+ - **Коллизия с маргиналией в outer-padding.** Эта же проблема, что и раньше — выступ может зайти на территорию маргиналии. Не лечится в рамках этой спеки (нужна post-render validation после `positionMarginalia`).
+-- **Uncial-passage runt.** Если последнее слово лежит внутри `<em class="uncial-passage">`, `findRuntTailRange` поднимает range до самого `<em>`. Получается:
++- **Uncial-passage runt.** Если последнее слово лежит внутри `<em class="uncial-passage">`, runt-hang span создаётся вокруг **этого слова** (внутри `<em>`), а **не** вокруг всего `<em>`. Получается:
+   ```html
+   <p>
+     ... обычный текст ...
+-    <span class="runt-hang">
+-      <em class="uncial-passage">... uncial text ... Amen.</em>
+-    </span>
++    <em class="uncial-passage">
++      ... uncial text ... 
++      <span class="runt-hang">Amen.</span>
++    </em>
+   </p>
+   ```
+-  Шрифт внутри runt-hang — Uncialis (от `<em>`); снаружи — Kells (от `<p>`). Граница шрифта не пересекает слово. `getRuntHangLimit` запросит computed font-family у первого text-node-а внутри `<em>` (получит `0550 Uncialis`) и применит лимит 65 px.
++  Шрифт-контекст внутри runt-hang span'а — Uncialis, потому что span наследует font-family от родительского `<em>`. Никакого разрезания шрифта не происходит. `getRuntHangLimit` опросит computed font-family у span'а (получит `0550 Uncialis`) и применит лимит 65 px.
++
++  **Важно: НЕ поднимать range до `<em>` целиком.** Если runt-hang охватывает весь `<em class="uncial-passage">`, `white-space: nowrap` на span'е заставит все строки uncial-пассажа слиться в одну, уезжающую за правое поле. Это особенно ярко проявляется в абзацах рядом с `.mg-coemanus` маргиналиями, где узкая колонка чаще порождает runt-условия для uncial-фрагментов. См. комментарий в `findRuntTailRange`.
+ - **Шрифт не распознан.** Если `font-family` runt-строки не содержит ни одного из ключевых имён (`uncialis`/`remedius`/`beda`/`kells`), `getRuntHangLimit` возвращает `RUNT_HANG_LIMIT_DEFAULT` (50 px). В консоль логируется `fontHint: 'unknown:...'` — это сигнал, что либо появился новый шрифт, либо font-family записан в неожиданном виде; стоит обновить mapping. На практике в текущем проекте такого не должно случаться.
+ 
+ ---

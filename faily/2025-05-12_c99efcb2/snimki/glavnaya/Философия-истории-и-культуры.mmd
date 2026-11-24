@@ -1,0 +1,63 @@
+graph TD
+    subgraph "Диалектика исторического процесса"
+        A[Исторический процесс] --> B[Спиральное движение]
+        
+        B --> C[Эпоха как горизонт понимания]
+        C --> D[Внутренние противоречия]
+        D --> E[Кризис]
+        E --> F[Новая парадигма]
+        F -.-> C
+        
+        G[Языковая игра эпохи] --- C
+    end
+    
+    subgraph "Историчность понимания"
+        H[Историчность понимания] --> I[Пред-структура понимания]
+        H --> J[Традиция]
+        
+        I --> K[Пред-понимание]
+        I --> L[Пред-суждение]
+        I --> M[Пред-усмотрение]
+        
+        J --> N[Консервативный момент]
+        J --> O[Творческий момент]
+        
+        P[Диалог горизонтов] --> Q[Прошлое]
+        P --> R[Настоящее]
+        
+        Q <--> R
+    end
+    
+    subgraph "Культура и техника"
+        S[Культура] --> T[Символическое самотолкование бытия]
+        
+        T --> U[Искусство]
+        T --> V[Религия]
+        T --> W[Философия]
+        
+        X[Техника] --> Y[Раскрытие бытия]
+        X --> Z[Сокрытие бытия]
+        
+        Y <--> Z
+        
+        AA[Инструментальная рациональность] --- X
+        AB[Диалектическое переосмысление] --- X
+        
+        AC[Традиция] <--> AD[Инновация]
+    end
+    
+    A --- H
+    A --- S
+    A --- X
+    J --- AC
+    O --- AD
+    
+    classDef primary fill:#f9d5e5,stroke:#333,stroke-width:3px
+    classDef secondary fill:#d5e5f9,stroke:#333,stroke-width:2px
+    classDef tertiary fill:#e5f9d5,stroke:#333,stroke-width:2px
+    classDef quaternary fill:#f9e5d5,stroke:#333,stroke-width:2px
+    
+    class A,H,S,X primary
+    class B,I,J,T,Y,Z,AC,AD secondary
+    class C,D,E,F,K,L,M,N,O,U,V,W,AA,AB tertiary
+    class G,P,Q,R quaternary

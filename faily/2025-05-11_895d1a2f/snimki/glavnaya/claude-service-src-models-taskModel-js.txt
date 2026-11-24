@@ -1,0 +1,258 @@
+/**
+ * Model for Claude tasks
+ */
+
+const { v4: uuidv4 } = require('uuid');
+
+/**
+ * Claude task model for async operations
+ */
+class ClaudeTask {
+  /**
+   * Create a new Claude task
+   * @param {Object} data - Task data
+   * @param {string} [data.taskId] - Unique identifier for the task
+   * @param {string} data.userId - ID of the user who created the task
+   * @param {string} [data.conceptId] - ID of the related concept (if applicable)
+   * @param {string} data.taskType - Type of task
+   * @param {Object} data.taskData - Data needed for the task
+   * @param {number} [data.priority] - Task priority (1-10, higher is more important)
+   * @param {string} [data.status] - Task status
+   * @param {number} [data.progress] - Task progress percentage (0-100)
+   * @param {string} [data.result] - Task result (when completed)
+   * @param {string} [data.error] - Error message (if failed)
+   * @param {Object} [data.metadata] - Additional metadata
+   * @param {Date} [data.createdAt] - When the task was created
+   * @param {Date} [data.startedAt] - When the task was started
+   * @param {Date} [data.completedAt] - When the task was completed
+   * @param {number} [data.retryCount] - Number of retry attempts
+   * @param {number} [data.maxRetries] - Maximum number of retries allowed
+   * @param {Date} [data.scheduledFor] - When the task is scheduled to run
+   * @param {string} [data.interactionId] - Associated interaction ID
+   */
+  constructor(data) {
+    this.taskId = data.taskId || uuidv4();
+    this.userId = data.userId;
+    this.conceptId = data.conceptId || null;
+    this.taskType = data.taskType;
+    this.taskData = data.taskData;
+    this.priority = data.priority || 5;
+    this.status = data.status || 'pending';
+    this.progress = data.progress || 0;
+    this.result = data.result || null;
+    this.error = data.error || null;
+    this.metadata = data.metadata || {};
+    this.createdAt = data.createdAt || new Date();
+    this.startedAt = data.startedAt || null;
+    this.completedAt = data.completedAt || null;
+    this.retryCount = data.retryCount || 0;
+    this.maxRetries = data.maxRetries || 3;
+    this.scheduledFor = data.scheduledFor || null;
+    this.interactionId = data.interactionId || null;
+  }
+  
+  /**
+   * Convert to database format
+   * @returns {Object} Database representation
+   */
+  toDatabase() {
+    return {
+      task_id: this.taskId,
+      user_id: this.userId,
+      concept_id: this.conceptId,
+      task_type: this.taskType,
+      task_data: this.taskData,
+      priority: this.priority,
+      status: this.status,
+      progress: this.progress,
+      result: this.result,
+      error: this.error,
+      metadata: this.metadata,
+      created_at: this.createdAt,
+      started_at: this.startedAt,
+      completed_at: this.completedAt,
+      retry_count: this.retryCount,
+      max_retries: this.maxRetries,
+      scheduled_for: this.scheduledFor,
+      interaction_id: this.interactionId,
+    };
+  }
+  
+  /**
+   * Create from database format
+   * @param {Object} dbData - Database data
+   * @returns {ClaudeTask} ClaudeTask instance
+   */
+  static fromDatabase(dbData) {
+    return new ClaudeTask({
+      taskId: dbData.task_id,
+      userId: dbData.user_id,
+      conceptId: dbData.concept_id,
+      taskType: dbData.task_type,
+      taskData: dbData.task_data,
+      priority: dbData.priority,
+      status: dbData.status,
+      progress: dbData.progress,
+      result: dbData.result,
+      error: dbData.error,
+      metadata: dbData.metadata,
+      createdAt: dbData.created_at,
+      startedAt: dbData.started_at,
+      completedAt: dbData.completed_at,
+      retryCount: dbData.retry_count,
+      maxRetries: dbData.max_retries,
+      scheduledFor: dbData.scheduled_for,
+      interactionId: dbData.interaction_id,
+    });
+  }
+  
+  /**
+   * Mark task as started
+   */
+  start() {
+    this.status = 'processing';
+    this.startedAt = new Date();
+    this.progress = 0;
+  }
+  
+  /**
+   * Update task progress
+   * @param {number} progress - Progress percentage (0-100)
+   */
+  updateProgress(progress) {
+    this.progress = Math.min(100, Math.max(0, progress));
+  }
+  
+  /**
+   * Mark task as completed
+   * @param {Object} result - Task result
+   */
+  complete(result) {
+    this.status = 'completed';
+    this.result = result;
+    this.completedAt = new Date();
+    this.progress = 100;
+  }
+  
+  /**
+   * Mark task as failed
+   * @param {string} error - Error message
+   */
+  fail(error) {
+    this.status = 'failed';
+    this.error = error;
+    this.completedAt = new Date();
+  }
+  
+  /**
+   * Check if task can be retried
+   * @returns {boolean} Whether the task can be retried
+   */
+  canRetry() {
+    return this.status === 'failed' && this.retryCount < this.maxRetries;
+  }
+  
+  /**
+   * Increment retry count
+   */
+  incrementRetry() {
+    this.retryCount++;
+    this.status = 'pending';
+    this.error = null;
+  }
+  
+  /**
+   * Check if task is expired
+   * @param {number} maxAge - Maximum age in milliseconds
+   * @returns {boolean} Whether the task is expired
+   */
+  isExpired(maxAge) {
+    const age = Date.now() - this.createdAt.getTime();
+    return age > maxAge;
+  }
+  
+  /**
+   * Get task status enum values
+   * @returns {Array<string>} Status values
+   */
+  static getStatusValues() {
+    return ['pending', 'processing', 'completed', 'failed', 'cancelled'];
+  }
+  
+  /**
+   * Get task type enum values (same as query types from queues config)
+   * @returns {Array<string>} Task types
+   */
+  static getTaskTypes() {
+    return [
+      'graph_validation',
+      'graph_enrichment',
+      'category_description',
+      'relationship_description',
+      'thesis_generation',
+      'thesis_elaboration',
+      'thesis_comparison',
+      'graph_from_thesis',
+      'synthesis',
+      'compatibility_analysis',
+      'synthesis_critique',
+      'name_analysis',
+      'origin_detection',
+      'general_query',
+    ];
+  }
+  
+  /**
+   * Validate the task
+   * @throws {Error} If validation fails
+   */
+  validate() {
+    if (!this.userId) {
+      throw new Error('User ID is required');
+    }
+    
+    if (!this.taskType) {
+      throw new Error('Task type is required');
+    }
+    
+    if (!ClaudeTask.getTaskTypes().includes(this.taskType)) {
+      throw new Error(`Invalid task type: ${this.taskType}`);
+    }
+    
+    if (!this.taskData || typeof this.taskData !== 'object') {
+      throw new Error('Task data is required and must be an object');
+    }
+    
+    if (this.priority < 1 || this.priority > 10) {
+      throw new Error('Priority must be between 1 and 10');
+    }
+    
+    if (this.status && !ClaudeTask.getStatusValues().includes(this.status)) {
+      throw new Error(`Invalid status: ${this.status}`);
+    }
+    
+    if (this.progress < 0 || this.progress > 100) {
+      throw new Error('Progress must be between 0 and 100');
+    }
+  }
+  
+  /**
+   * Convert to queue message format
+   * @returns {Object} Queue message
+   */
+  toQueueMessage() {
+    return {
+      taskId: this.taskId,
+      userId: this.userId,
+      conceptId: this.conceptId,
+      taskType: this.taskType,
+      taskData: this.taskData,
+      priority: this.priority,
+      retryCount: this.retryCount,
+      maxRetries: this.maxRetries,
+      metadata: this.metadata,
+    };
+  }
+}
+
+module.exports = ClaudeTask;

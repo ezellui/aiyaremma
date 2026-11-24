@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ТПМ-2: модель машинки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: a working instrument; 3D view on the left, operator's panel on the right, the typed sheet under the keyboard */
+  --bg: #e9ebee;
+  --panel: #f7f8f9;
+  --ink: #1b2129;
+  --muted: #5d6773;
+  --line: #c9ced5;
+  --accent: #8a5a12;          /* brass: keys, active state */
+  --accent-soft: #f0e3cc;
+  --steel: #3c6a96;
+  --view: #dfe3e8;
+  --font-body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14181d; --panel: #1b2027; --ink: #e4e7eb; --muted: #9aa4af; --line: #313944;
+    --accent: #d9a24a; --accent-soft: #3a2e1b; --steel: #7fb0dd; --view: #20262e; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14181d; --panel: #1b2027; --ink: #e4e7eb; --muted: #9aa4af; --line: #313944;
+  --accent: #d9a24a; --accent-soft: #3a2e1b; --steel: #7fb0dd; --view: #20262e; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--font-body); }
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 430px; height: 100%; }
+.view { position: relative; background: var(--view); min-height: 320px; }
+#gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.views { position: absolute; left: 16px; top: 16px; display: flex; flex-wrap: wrap; gap: 6px; }
+.views button, .toggles label { font: 500 12px var(--font-body); }
+.toggles { position: absolute; left: 16px; bottom: 16px; display: flex; flex-wrap: wrap; gap: 12px;
+  background: color-mix(in srgb, var(--panel) 85%, transparent); padding: 6px 10px; border-radius: 6px; }
+.toggles label { display: flex; align-items: center; gap: 6px; color: var(--ink); }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); }
+aside { background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; padding: 18px 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+h1 { font: 600 22px/1.15 var(--font-display); margin: 0; letter-spacing: .01em; text-wrap: balance; }
+.lede { color: var(--muted); margin: 4px 0 0; max-width: 60ch; }
+h2 { font: 600 13px var(--font-display); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+button { cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; padding: 5px 9px; }
+button:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--steel); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.kb { display: flex; flex-direction: column; gap: 4px; }
+.kb-row { display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; }
+.kb-row.r1 { padding-left: 2.2%; } .kb-row.r2 { padding-left: 4.4%; } .kb-row.r3 { padding-left: 6.6%; }
+.key { position: relative; aspect-ratio: 1 / 1.15; padding: 0; display: grid; place-items: center; background: var(--panel); }
+.key svg { width: 72%; height: 64%; overflow: visible; }
+.key .up { position: absolute; top: 2px; right: 3px; width: 34%; height: 30%; opacity: .7; }
+.key .lat { position: absolute; bottom: 1px; left: 3px; font: 10px var(--font-mono); color: var(--muted); }
+.key.dead { background: color-mix(in srgb, var(--steel) 12%, var(--panel)); }
+.key.hit { background: var(--accent-soft); border-color: var(--accent); }
+.kb-service { display: grid; grid-template-columns: 1.2fr 2fr 2fr 1fr 1.3fr; gap: 4px; }
+.kb-service button { font-size: 12px; padding: 6px 4px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.controls select { font: 13px var(--font-body); padding: 4px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.state { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font: 12.5px var(--font-mono); font-variant-numeric: tabular-nums; }
+.state dt { color: var(--muted); }
+.state dd { margin: 0; }
+.cyc { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.cyc div { height: 100%; width: 0; background: var(--accent); }
+#sheet { width: 100%; height: auto; background: #fbfaf6; border: 1px solid var(--line); border-radius: 4px; display: block; }
+.note { color: var(--muted); font-size: 12px; max-width: 60ch; }
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 55vh auto; height: auto; }
+  aside { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="view">
+    <canvas id="gl" aria-label="Трёхмерная модель машинки ТПМ-2"></canvas>
+    <div class="loading" id="loading">Собираю модель…</div>
+    <div class="views" role="group" aria-label="Вид">
+      <button id="v-all" aria-pressed="true">Общий вид</button>
+      <button id="v-unit" aria-pressed="false">Печатающий узел</button>
+      <button id="v-code" aria-pressed="false">Кодовая часть снизу</button>
+      <button id="v-drive" aria-pressed="false">Двигатель</button>
+      <button id="v-sheet" aria-pressed="false">Лист</button>
+    </div>
+    <div class="toggles">
+      <label><input type="checkbox" id="t-car"> скрыть каретку и лист</label>
+      <label><input type="checkbox" id="t-frame"> скрыть раму</label>
+      <label><input type="checkbox" id="t-keys"> скрыть клавиши</label>
+    </div>
+  </div>
+  <aside>
+    <header>
+      <h1>ТПМ-2 — тенгварская пишущая машинка</h1>
+      <p class="lede">Компоновочная модель редакции 0.7: около 700 деталей. Нажмите клавишу — машинка наберёт код, цикловой вал повернёт и поднимет челнок к литере, молоток ударит, каретка пройдёт ширину литеры.</p>
+    </header>
+    <section>
+      <h2>Клавиатура</h2>
+      <div class="kb" id="kb"></div>
+      <div class="kb-service" style="margin-top:4px">
+        <button id="k-shift" aria-pressed="false">Регистр</button>
+        <button id="k-sp4">пробел 4u</button>
+        <button id="k-sp6">пробел 6u</button>
+        <button id="k-bk">забой</button>
+        <button id="k-nl">новая строка</button>
+      </div>
+      <p class="note">Можно печатать и с клавиатуры компьютера: раскладка совпадает с QWERTY, Shift — верхний регистр, пробел — 6u. Голубые клавиши — мёртвые знаки (техты): они ставятся над или под последней буквой.</p>
+    </section>
+    <section>
+      <h2>Ход</h2>
+      <div class="controls">
+        <label for="speed">Скорость</label>
+        <select id="speed">
+          <option value="1">как в машинке (≈ 0,4 с на знак)</option>
+          <option value="4" selected>в 4 раза медленнее</option>
+          <option value="15">в 15 раз медленнее</option>
+        </select>
+        <select id="demo" aria-label="Пример">
+          <option value="">Пример фразы…</option>
+        </select>
+        <button id="clear">Новый лист</button>
+      </div>
+    </section>
+    <section>
+      <h2>Состояние</h2>
+      <dl class="state" id="state"></dl>
+      <div class="cyc" title="Угол циклового вала"><div id="cycbar"></div></div>
+    </section>
+    <section>
+      <h2>Лист</h2>
+      <canvas id="sheet" width="1728" height="600" aria-label="Напечатанный текст"></canvas>
+      <p class="note">Литеры — рисунок шрифта Alcarin Tengwar (OFL). Положение каждого знака считается так же, как в машинке: продвигающая литера — от оси молотка, знак — с отводом печатающего узла на запомненное $b$ или $c$.</p>
+    </section>
+  </aside>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script type="application/json" id="model-data">__DATA__</script>
+<script>
+(function () {
+'use strict';
+const D = JSON.parse(document.getElementById('model-data').textContent);
+const C = D.C, U = C.U, S_FONT = C.EM / 1000;
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// ---------------------------------------------------------------- scene
+const canvas = $('gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, 1, 5, 6000);
+camera.up.set(0, 0, 1);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f96, 0.75));
+const sun = new THREE.DirectionalLight(0xffffff, 0.65); sun.position.set(-400, -700, 900); scene.add(sun);
+const fill = new THREE.DirectionalLight(0xffffff, 0.25); fill.position.set(500, 600, 300); scene.add(fill);
+function setBg() { scene.background = new THREE.Color(css('--view') || '#dfe3e8'); }
+setBg();
+try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setBg); } catch (e) {}
+
+function dec(s, T) { const b = atob(s), a = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return new T(a.buffer); }
+const meshes = [];
+const mats = {};
+for (const p of D.parts) {
+  const q = dec(p.v, Uint16Array), pos = new Float32Array(q.length);
+  for (let i = 0; i < q.length; i += 3) { pos[i] = p.o[0] + q[i] * D.Q; pos[i + 1] = p.o[1] + q[i + 1] * D.Q; pos[i + 2] = p.o[2] + q[i + 2] * D.Q; }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setIndex(new THREE.BufferAttribute(p.i32 ? dec(p.i, Uint32Array) : dec(p.i, Uint16Array), 1));
+  const key = p.c.join(',');
+  if (!mats[key]) mats[key] = new THREE.MeshPhongMaterial({ color: new THREE.Color(`rgb(${p.c[0]},${p.c[1]},${p.c[2]})`), flatShading: true, shininess: 18, side: THREE.DoubleSide });
+  const m = new THREE.Mesh(g, mats[key]);
+  m.matrixAutoUpdate = false; m.userData = p;
+  if (p.n === 'paper') m.visible = false;      // the printed sheet below replaces it
+  scene.add(m); meshes.push(m);
+}
+$('loading').remove();
+
+// printed sheet on the paper: a canvas texture in the carriage group
+const sheet = $('sheet'), sctx = sheet.getContext('2d');
+const PX = sheet.width / 216;                      // px per mm
+const SHEET_TOP = C.ROLLER[1] - 4, SHEET_H = sheet.height / PX;
+const tex = new THREE.CanvasTexture(sheet);
+tex.anisotropy = 4;
+const sheetMesh = new THREE.Mesh(new THREE.PlaneGeometry(216, SHEET_H), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide }));
+sheetMesh.rotation.x = Math.PI / 2;                 // plane faces -Y, text upright
+sheetMesh.position.set(C.CAR0, -0.12, SHEET_TOP - SHEET_H / 2);
+const sheetGroup = new THREE.Group(); sheetGroup.add(sheetMesh); scene.add(sheetGroup);
+
+// ---------------------------------------------------------------- machine state and motions
+const st = { f: {}, frames: { R: 0, W: 0, B: 0, C: 0, O: 0, N: 0 }, tier: 0, bits: {}, pos: (C.NPOS - 1) / 2, row: C.HOME_ROW,
+  slide: 0, detent: 0, hammer: 0, phi: 0, car: C.CAR0, mem: { b: 0, c: 0, w: 0 }, item: null, shift: false };
+const HOMEP = (C.NPOS - 1) / 2;
+const deg = Math.PI / 180;
+function cyc(t) { t = Math.min(Math.max(t, 0), 1); return t - Math.sin(2 * Math.PI * t) / (2 * Math.PI); }
+function camLift(kind, a) {
+  const c = C.CYCLE;
+  if (kind === 'out') {
+    if (a < c.out[0]) return 0;
+    if (a < c.out[1]) return cyc((a - c.out[0]) / (c.out[1] - c.out[0]));
+    if (a < c.back[0]) return 1;
+    if (a < c.back[1]) return 1 - cyc((a - c.back[0]) / (c.back[1] - c.back[0]));
+    return 0;
+  }
+  if (kind === 'detent') {
+    const d0 = c.detent[0], d1 = c.detent[1];
+    if (a < d0 - 10 || a > d1 + 10) return 0;
+    if (a < d0) return cyc((a - d0 + 10) / 10);
+    if (a > d1) return 1 - cyc((a - d1) / 10);
+    return 1;
+  }
+  if (kind === 'strike') { const s0 = c.strike; return (a >= s0 - 30 && a < s0) ? cyc((a - s0 + 30) / 30) : 0; }
+  return 0;
+}
+const PROFILE = { lift: 'out', rotate: 'out', detent: 'detent', hammer: 'strike' };
+const M = THREE.Matrix4;
+function about(rot, x, y, z) { return new M().makeTranslation(x, y, z).multiply(rot).multiply(new M().makeTranslation(-x, -y, -z)); }
+const rX = (a, y, z) => about(new M().makeRotationX(a), 0, y, z);
+const rY = (a, x, z) => about(new M().makeRotationY(a), x, 0, z);
+const rZ = (a, x, y) => about(new M().makeRotationZ(a), x, y, 0);
+const T = (x, y, z) => new M().makeTranslation(x, y, z);
+const keyByN = {}; for (const k of D.keys) keyByN[k.n] = k;
+function colRise(c) { let f = 0; for (let n = 4 * c; n < 4 * c + 4; n++) f = Math.max(f, st.f[n] || 0); return 4 * Math.min(1, f * 1.4); }
+
+function matrixFor(m) {
+  const lift = (st.row - C.HOME_ROW) * C.RH, th = (st.pos - HOMEP) * C.STEP_DEG * deg;
+  switch (m.t) {
+    case 'lever': return rX(Math.atan2(C.KEY_TRAVEL * (st.f[m.n] || 0), m.L), C.PIVOT[0], C.PIVOT[1]);
+    case 'keyz': return T(0, 0, -C.KEY_TRAVEL * (st.f[m.n] || 0));
+    case 'pusher': return T(0, 0, colRise(m.c));
+    case 'bit': return T(0, 0, 4 * (st.bits[m.b] || 0));
+    case 'bail': return T(0, C.TIER * st.tier, -st.frames[m.b]);
+    case 'sector': return rX(3.6 * st.frames[m.b] * deg, C.SECT[0], C.SECT[1]);
+    case 'unit': {
+      const base = T(-st.slide * U, 0, 0);
+      if (m.s === 'shuttle') return base.multiply(T(0, 0, lift)).multiply(rZ(th, 0, C.AXIS_Y));
+      if (m.s === 'drum') return base.multiply(rZ(th, 0, C.AXIS_Y));
+      if (m.s === 'tape') return base.multiply(T(0, (st.pos - HOMEP) * C.TAPE, 0));
+      if (m.s === 'fork') return base.multiply(rY(-(Math.atan((lift - C.LIFT_MIN) / 150) - Math.atan(-C.LIFT_MIN / 150)), C.FORK[0], C.FORK[1]));
+      if (m.s === 'detent') return base.multiply(T(-3 * st.detent, 0, 0));
+      if (m.s === 'hammer') return base.multiply(rX(18 * st.hammer * deg, C.HAMMER[0], C.HAMMER[1]));
+      return base;
+    }
+    case 'camrod': return T(0, 0, C.CAM_LIFT[m.k] * camLift(PROFILE[m.k], st.phi));
+    case 'cyc': return rX(-st.phi * deg, C.CYC[0], C.CYC[1]);
+    case 'car': return T(st.car - C.CAR0, 0, 0);
+    case 'esc': return rZ(-(st.car - C.CAR0) / 5.053, C.ESC[0], C.ESC[1]);
+    case 'gov': return rX(-C.GOV * st.phi * deg, C.YD, C.CYC[1]);
+    default: return null;
+  }
+}
+const ID = new M();
+function applyState() {
+  for (const mesh of meshes) { const mm = matrixFor(mesh.userData.m); mesh.matrix.copy(mm || ID); }
+  sheetGroup.position.x = st.car - C.CAR0;
+  renderState();
+}
+
+// ---------------------------------------------------------------- sheet
+const LS = 1.6 * C.EM;                          // line spacing, mm
+let lines = [[]];
+function glyphPath(name) { return glyphPath.cache[name] || (glyphPath.cache[name] = new Path2D(D.paths[name])); }
+glyphPath.cache = {};
+function drawSheet() {
+  sctx.fillStyle = '#fbfaf6'; sctx.fillRect(0, 0, sheet.width, sheet.height);
+  sctx.fillStyle = '#e6e2d8'; sctx.fillRect(0, (SHEET_TOP - C.ZP) * PX - 0.5, sheet.width, 1);
+  sctx.fillStyle = '#20232a';
+  lines.forEach((ln, k) => {
+    const zb = C.ZP - 0.18 * C.EM + k * LS;
+    const y = (SHEET_TOP - zb) * PX;
+    if (y < -40) return;
+    for (const g of ln) {
+      sctx.save(); sctx.translate(g.x * PX, y); sctx.scale(S_FONT * PX, -S_FONT * PX); sctx.fill(glyphPath(g.g)); sctx.restore();
+    }
+  });
+  tex.needsUpdate = true;
+}
+function paperX(worldX) { return worldX - (st.car - 108); }
+function strike(it) {
+  const hx = -st.slide * U;                     // hammer axis, world x
+  if (['T', 'C', 'N', 'P'].includes(it.kind)) {
+    lines[0].push({ g: it.glyph, x: paperX(hx + it.a * U - it.ax * S_FONT) });
+    if (it.kind === 'C') lines[0].push({ g: it.mark, x: paperX(hx + it.a * U - it.max * S_FONT) });
+  } else {
+    lines[0].push({ g: it.glyph, x: paperX(hx + C.MARKREF * U - it.ax * S_FONT) });
+  }
+  drawSheet();
+}
+
+// ---------------------------------------------------------------- animation
+let slow = 4;
+function tween(ms, fn) {
+  return new Promise(res => {
+    const t0 = performance.now(), dur = Math.max(1, ms * slow);
+    function step(now) { const t = Math.min(1, (now - t0) / dur); fn(t); applyState(); if (t < 1) requestAnimationFrame(step); else res(); }
+    requestAnimationFrame(step);
+  });
+}
+const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const isAdv = it => ['T', 'C', 'N', 'P'].includes(it.kind);
+function lugs(it) {
+  if (isAdv(it)) return { R: C.TP, W: C.K * (it.w - C.WOFF), B: C.K * it.b, C: C.K * it.c };
+  const o = { O: C.TP }; if (it.below) o.N = C.TP; return o;
+}
+async function carriageTo(x, ms) { const x0 = st.car; await tween(ms, t => { st.car = x0 + (x - x0) * ease(t); }); }
+async function newLine() {
+  await carriageTo(C.CAR0, 380);
+  lines.unshift([]); if (lines.length > 14) lines.pop(); drawSheet();
+}
+async function press(n, tier) {
+  const k = keyByN[n]; if (!k) return;
+  hit(n, true);
+  if (k.kind === 'space') {
+    const w = k.id === 'space4' ? 4 : 6;
+    await tween(110, t => { st.f[n] = ease(t); });
+    await tween(110, t => { st.f[n] = 1 - ease(t); });
+    await carriageTo(st.car - w * U, 100);
+    st.mem = { b: 0, c: 0, w }; hit(n, false); return;
+  }
+  const it = tier ? k.up : k.lo; if (!it) { hit(n, false); return; }
+  st.item = it; st.tier = tier;
+  const target = lugs(it);
+  const ret = isAdv(it) ? 0 : (it.below ? st.mem.c : st.mem.b) + C.MARKREF;
+  const bits = {}; for (const b of ['r1', 'r2', 'r4', 'r8']) bits[b] = (k.c >> ({ r1: 0, r2: 1, r4: 2, r8: 3 })[b]) & 1;
+  bits.l1 = k.r & 1; bits.l2 = (k.r >> 1) & 1; bits.l4 = tier;
+  // 1. key down: codes, selector bits, the print unit retracts for a mark
+  await tween(150, t => {
+    const f = ease(t); st.f[n] = f;
+    for (const b of Object.keys(st.frames)) st.frames[b] = target[b] !== undefined ? Math.max(0, C.TP * f - (C.TP - target[b])) : 0;
+    for (const b in bits) st.bits[b] = bits[b] * f;
+    st.slide = ret * f;
+  });
+  // 2. one revolution of the cycle shaft
+  const rowT = k.r + 4 * tier; let printed = false;
+  await tween(400, t => {
+    st.phi = 360 * t;
+    const o = camLift('out', st.phi);
+    st.pos = HOMEP + (k.c - HOMEP) * o; st.row = C.HOME_ROW + (rowT - C.HOME_ROW) * o;
+    st.detent = camLift('detent', st.phi); st.hammer = camLift('strike', st.phi);
+    if (!printed && st.phi >= C.CYCLE.strike) { printed = true; strike(it); }
+  });
+  st.phi = 0;
+  // 3. key up, memory, feed
+  await tween(140, t => {
+    const f = 1 - ease(t); st.f[n] = f;
+    for (const b of Object.keys(st.frames)) st.frames[b] *= f > 0 ? f / Math.max(f + 1e-9, 1e-9) * 0 + f : 0;
+    for (const b in bits) st.bits[b] = bits[b] * f;
+    st.slide = ret * f;
+  });
+  for (const b of Object.keys(st.frames)) st.frames[b] = 0;
+  st.tier = 0;
+  if (isAdv(it)) {
+    st.mem = { b: it.b, c: it.c, w: it.w };
+    await carriageTo(st.car - it.w * U, 110);
+    if (C.CAR0 - st.car > C.LINE) await newLine();
+  }
+  hit(n, false);
+}
+let queue = [], busy = false;
+async function pump() {
+  if (busy) return; busy = true;
+  while (queue.length) { const job = queue.shift(); await job(); }
+  busy = false;
+}
+function enqueue(fn) { queue.push(fn); pump(); }
+function type(n, tier) { enqueue(() => press(n, tier)); }
+
+// ---------------------------------------------------------------- keyboard ui
+function glyphSvg(name, cls) {
+  if (!name) return '';
+  return `<svg class="${cls || ''}" viewBox="-80 -820 900 1180" aria-hidden="true"><path fill="currentColor" transform="scale(1,-1)" d="${D.paths[name]}"/></svg>`;
+}
+const kb = $('kb');
+const keyEls = {};
+for (let r = 0; r < 4; r++) {
+  const row = document.createElement('div'); row.className = 'kb-row r' + r;
+  for (let c = 0; c < 11; c++) {
+    const k = D.keys.find(x => x.kind === 'char' && x.r === r && x.c === c);
+    const b = document.createElement('button'); b.className = 'key' + (k.lo && !isAdv(k.lo) ? ' dead' : '');
+    const lat = D.legends[r][c];
+    b.innerHTML = glyphSvg(k.lo && k.lo.glyph) + (k.up ? glyphSvg(k.up.glyph, 'up') : '') + `<span class="lat">${lat}</span>`;
+    b.setAttribute('aria-label', `${lat}: ${k.lo ? k.lo.label : 'резерв'}${k.up ? ', с регистром — ' + k.up.label : ''}`);
+    b.addEventListener('click', () => { type(k.n, st.shift ? 1 : 0); setShift(false); });
+    keyEls[k.n] = b; row.appendChild(b);
+  }
+  kb.appendChild(row);
+}
+function hit(n, on) { if (keyEls[n]) keyEls[n].classList.toggle('hit', on); }
+function setShift(v) { st.shift = v; $('k-shift').setAttribute('aria-pressed', v ? 'true' : 'false'); }
+$('k-shift').addEventListener('click', () => setShift(!st.shift));
+$('k-sp4').addEventListener('click', () => type(-1, 0));
+$('k-sp6').addEventListener('click', () => type(44, 0));
+$('k-bk').addEventListener('click', () => enqueue(() => carriageTo(st.car + U, 100)));
+$('k-nl').addEventListener('click', () => enqueue(newLine));
+$('speed').addEventListener('change', e => { slow = +e.target.value; });
+$('clear').addEventListener('click', () => enqueue(async () => { lines = [[]]; drawSheet(); await carriageTo(C.CAR0, 300); }));
+const demoSel = $('demo');
+for (const name of Object.keys(D.demo)) { const o = document.createElement('option'); o.value = name; o.textContent = name; demoSel.appendChild(o); }
+demoSel.addEventListener('change', () => {
+  const seq = D.demo[demoSel.value]; demoSel.value = ''; if (!seq) return;
+  enqueue(newLine);
+  for (const [n, t] of seq) type(n, t);
+});
+const charMap = {};
+D.legends.forEach((row, r) => { for (let c = 0; c < row.length; c++) charMap[row[c].toLowerCase()] = { r, c }; });
+window.addEventListener('keydown', e => {
+  if (e.target.tagName === 'SELECT' || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === ' ') { e.preventDefault(); type(44, 0); return; }
+  if (e.key === 'Enter') { enqueue(newLine); return; }
+  if (e.key === 'Backspace') { e.preventDefault(); enqueue(() => carriageTo(st.car + U, 100)); return; }
+  const m = charMap[e.key.toLowerCase()] || (e.code && /^Key|^Digit/.test(e.code) ? null : null);
+  const viaCode = !m && e.code ? codeMap(e.code) : null;
+  const pos = m || viaCode; if (!pos) return;
+  const k = D.keys.find(x => x.kind === 'char' && x.r === pos.r && x.c === pos.c);
+  if (k) { e.preventDefault(); type(k.n, e.shiftKey ? 1 : 0); }
+});
+function codeMap(code) {   // physical position for non-latin layouts
+  const rows = ['Digit1 Digit2 Digit3 Digit4 Digit5 Digit6 Digit7 Digit8 Digit9 Digit0 Minus', 'KeyQ KeyW KeyE KeyR KeyT KeyY KeyU KeyI KeyO KeyP BracketLeft',
+    'KeyA KeyS KeyD KeyF KeyG KeyH KeyJ KeyK KeyL Semicolon Quote', 'KeyZ KeyX KeyC KeyV KeyB KeyN KeyM Comma Period Slash Backslash'];
+  for (let r = 0; r < 4; r++) { const c = rows[r].split(' ').indexOf(code); if (c >= 0) return { r, c }; }
+  return null;
+}
+
+// ---------------------------------------------------------------- state panel
+const f1 = x => x.toFixed(1).replace('.', ',');
+function renderState() {
+  const it = st.item;
+  const rows = [
+    ['литера', it ? it.label : '—'],
+    ['код', it ? (isAdv(it) ? `w ${it.w}  b ${it.b}  c ${it.c}` : (it.below ? 'знак снизу (отвод c)' : 'знак сверху (отвод b)')) : '—'],
+    ['память', `b ${st.mem.b}  c ${st.mem.c}  w ${st.mem.w}`],
+    ['отвод узла', `${f1(st.slide)} u (${f1(st.slide * U)} мм)`],
+    ['челнок', `позиция ${f1(st.pos + 1)}, ряд ${f1(st.row + 1)}`],
+    ['цикл', `${Math.round(st.phi)}°${st.hammer > 0.95 ? ' — удар' : st.detent > 0.5 ? ' — фиксаторы' : ''}`],
+    ['каретка', `${f1((C.CAR0 - st.car) / U)} u от начала строки`],
+  ];
+  $('state').innerHTML = rows.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
+  $('cycbar').style.width = (st.phi / 3.6) + '%';
+}
+
+// ---------------------------------------------------------------- views and toggles
+const VIEWS = {
+  'v-all': [[-620, -820, 640], [0, -130, 150]], 'v-unit': [[300, 260, 380], [10, -40, 170]],
+  'v-code': [[-300, -560, -260], [0, -280, 40]], 'v-drive': [[560, -520, 380], [150, -140, 40]], 'v-sheet': [[60, -330, 300], [0, 0, 250]],
+};
+function setView(id) {
+  const [e, t] = VIEWS[id]; camera.position.set(...e); controls.target.set(...t); controls.update();
+  for (const k of Object.keys(VIEWS)) $(k).setAttribute('aria-pressed', k === id ? 'true' : 'false');
+}
+for (const id of Object.keys(VIEWS)) $(id).addEventListener('click', () => setView(id));
+function toggle(id, test) {
+  $(id).addEventListener('change', e => { for (const m of meshes) if (test(m.userData)) m.visible = !e.target.checked && m.userData.n !== 'paper'; if (id === 't-car') sheetGroup.visible = !e.target.checked; });
+}
+toggle('t-car', p => p.g === 'carriage' || p.g === 'paper' || p.g === 'esc');
+toggle('t-frame', p => p.g === 'frame');
+toggle('t-keys', p => p.g === 'keys');
+
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false); camera.aspect = r.width / Math.max(1, r.height); camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+resize(); setView('v-all'); drawSheet(); applyState();
+(function loop() { controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop); })();
+})();
+</script>
+</body>
+</html>

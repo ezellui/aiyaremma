@@ -1,0 +1,231 @@
+--- предыдущая/Интерактивный-визуализатор-функций-комплексного-пе.html
++++ текущая/Интерактивный-визуализатор-функций-комплексного-пе.html
+@@ -457,6 +457,20 @@
+                 <div class="control-group">
+                     <label for="show-modulus-rings">Показать кольца модуля:</label>
+                     <input type="checkbox" id="show-modulus-rings" checked>
++                </div>
++                <div class="control-group">
++                    <label for="show-phase-lines">Показать линии фазы:</label>
++                    <input type="checkbox" id="show-phase-lines" checked>
++                </div>
++                <div class="control-group">
++                    <label for="modulus-density">Плотность колец модуля:</label>
++                    <input type="range" id="modulus-density" min="1" max="20" step="1" value="10">
++                    <span id="modulus-density-value">10</span>
++                </div>
++                <div class="control-group">
++                    <label for="phase-density">Плотность линий фазы:</label>
++                    <input type="range" id="phase-density" min="4" max="36" step="4" value="12">
++                    <span id="phase-density-value">12</span>
+                 </div>
+                 <div class="control-group">
+                     <label for="color-intensity">Интенсивность цвета:</label>
+@@ -580,6 +594,9 @@
+         
+         // Параметры для Domain Coloring
+         let showModulusRings = true;
++        let showPhaseLines = true;
++        let modulusDensity = 10;
++        let phaseDensity = 12;
+         let colorIntensity = 1.0;
+         
+         // Переменные для перетаскивания
+@@ -609,74 +626,44 @@
+         document.getElementById('zoom-range').addEventListener('input', function() {
+             zoomLevel = parseFloat(this.value);
+             document.getElementById('zoom-value').textContent = zoomLevel.toFixed(1);
+-            
+-            if (currentFunction) {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обновление центра X
+         document.getElementById('center-x').addEventListener('change', function() {
+             centerX = parseFloat(this.value) || 0;
+-            if (currentFunction) {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обновление центра Y
+         document.getElementById('center-y').addEventListener('change', function() {
+             centerY = parseFloat(this.value) || 0;
+-            if (currentFunction) {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обновление плотности сетки для конформных отображений
+         document.getElementById('grid-density').addEventListener('input', function() {
+             gridDensity = parseInt(this.value);
+             document.getElementById('grid-density-value').textContent = gridDensity;
+-            
+-            if (currentFunction && currentMethod === 'conformal-mapping') {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обновление цвета сетки для конформных отображений
+         document.getElementById('grid-color').addEventListener('change', function() {
+             gridColor = this.value;
+-            
+-            if (currentFunction && currentMethod === 'conformal-mapping') {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обновление плотности векторов для векторных полей
+         document.getElementById('vector-density').addEventListener('input', function() {
+             vectorDensity = parseInt(this.value);
+             document.getElementById('vector-density-value').textContent = vectorDensity;
+-            
+-            if (currentFunction && currentMethod === 'vector-field') {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обновление масштаба векторов для векторных полей
+         document.getElementById('vector-scale').addEventListener('input', function() {
+             vectorScale = parseFloat(this.value);
+             document.getElementById('vector-scale-value').textContent = vectorScale;
+-            
+-            if (currentFunction && currentMethod === 'vector-field') {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обновление цвета векторов для векторных полей
+         document.getElementById('vector-color').addEventListener('change', function() {
+             vectorColor = this.value;
+-            
+-            if (currentFunction && currentMethod === 'vector-field') {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обработка кнопок переключения между режимами отображения Re/Im
+@@ -684,48 +671,42 @@
+             document.querySelectorAll('.component-btn').forEach(btn => btn.classList.remove('active'));
+             this.classList.add('active');
+             realImagMode = 'both';
+-            
+-            if (currentFunction && currentMethod === 'real-imag') {
+-                visualizeFunction();
+-            }
+         });
+         
+         document.getElementById('real-btn').addEventListener('click', function() {
+             document.querySelectorAll('.component-btn').forEach(btn => btn.classList.remove('active'));
+             this.classList.add('active');
+             realImagMode = 'real';
+-            
+-            if (currentFunction && currentMethod === 'real-imag') {
+-                visualizeFunction();
+-            }
+         });
+         
+         document.getElementById('imag-btn').addEventListener('click', function() {
+             document.querySelectorAll('.component-btn').forEach(btn => btn.classList.remove('active'));
+             this.classList.add('active');
+             realImagMode = 'imag';
+-            
+-            if (currentFunction && currentMethod === 'real-imag') {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Обработка элементов управления для Domain Coloring
+         document.getElementById('show-modulus-rings').addEventListener('change', function() {
+             showModulusRings = this.checked;
+-            
+-            if (currentFunction && currentMethod === 'domain-coloring') {
+-                visualizeFunction();
+-            }
++        });
++        
++        document.getElementById('show-phase-lines').addEventListener('change', function() {
++            showPhaseLines = this.checked;
++        });
++        
++        document.getElementById('modulus-density').addEventListener('input', function() {
++            modulusDensity = parseInt(this.value);
++            document.getElementById('modulus-density-value').textContent = modulusDensity;
++        });
++        
++        document.getElementById('phase-density').addEventListener('input', function() {
++            phaseDensity = parseInt(this.value);
++            document.getElementById('phase-density-value').textContent = phaseDensity;
+         });
+         
+         document.getElementById('color-intensity').addEventListener('input', function() {
+             colorIntensity = parseFloat(this.value);
+             document.getElementById('color-intensity-value').textContent = colorIntensity.toFixed(1);
+-            
+-            if (currentFunction && currentMethod === 'domain-coloring') {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Сброс представления
+@@ -739,6 +720,7 @@
+             document.getElementById('center-x').value = centerX;
+             document.getElementById('center-y').value = centerY;
+             
++            // Сразу обновляем визуализацию с новыми параметрами
+             if (currentFunction) {
+                 visualizeFunction();
+             }
+@@ -775,7 +757,7 @@
+                 // Обновляем описание метода
+                 updateMethodInfo(currentMethod);
+                 
+-                // Если функция уже введена, перерисовываем с новым методом
++                // Если функция уже введена, визуализируем ее с новым методом
+                 if (currentFunction) {
+                     visualizeFunction();
+                 }
+@@ -1013,8 +995,17 @@
+                     
+                     // Добавляем кольца по модулю для лучшей визуализации, если включено
+                     if (showModulusRings) {
+-                        const rings = 0.1 * Math.sin(Math.PI * 2 * magnitude) * colorIntensity;
++                        const rings = 0.1 * Math.sin(Math.PI * modulusDensity * magnitude) * colorIntensity;
+                         lightness += rings;
++                    }
++                    
++                    // Добавляем линии по фазе, если включено
++                    if (showPhaseLines) {
++                        // Масштабируем аргумент в диапазоне 0-2π для линий фазы
++                        const scaledArg = (arg + Math.PI) / (2 * Math.PI / phaseDensity);
++                        // Создаем линии путем выделения областей, где аргумент близок к целому числу
++                        const phaseLines = 0.1 * (1 - Math.min(Math.abs(scaledArg - Math.round(scaledArg)), 0.2) * 5) * colorIntensity;
++                        lightness += phaseLines;
+                     }
+                     
+                     // Конвертируем HSL в RGB
+@@ -1445,11 +1436,6 @@
+             // Обновляем поле и текст с масштабом
+             document.getElementById('zoom-range').value = zoomLevel;
+             document.getElementById('zoom-value').textContent = zoomLevel.toFixed(1);
+-            
+-            // Перерисовываем функцию с новым масштабом
+-            if (currentFunction) {
+-                visualizeFunction();
+-            }
+         });
+         
+         // Начало перетаскивания
+@@ -1512,11 +1498,6 @@
+                 // Обновляем поля ввода
+                 document.getElementById('center-x').value = centerX.toFixed(2);
+                 document.getElementById('center-y').value = centerY.toFixed(2);
+-                
+-                // Перерисовываем функцию с новым центром
+-                if (currentFunction) {
+-                    visualizeFunction();
+-                }
+             }
+         });
+         

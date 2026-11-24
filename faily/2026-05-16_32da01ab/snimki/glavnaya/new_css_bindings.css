@@ -1,0 +1,202 @@
+/* ═══════════════════ ПРИМЕНЕНИЕ ФИЛЬТРА ═════════════════════════════
+   Три отдельных фильтра — каждый preview-блок привязан к своему,
+   что точно соответствует трёхфильтровой архитектуре в финальном
+   файле кодекса. SVG-G и ROOT режимы (см. setFilterMode в JS)
+   также используют корректный per-instance id.                       */
+
+body.pg-filter-on-css .preview-front .carpet-svg {
+  filter: url(#illumination-aged-front);
+}
+body.pg-filter-on-css .preview-back .carpet-svg {
+  filter: url(#illumination-aged-back);
+}
+body.pg-filter-on-css .preview-initial .illuminated-initial svg,
+body.pg-filter-on-css .preview-initial .big-initial svg {
+  filter: url(#illumination-aged-initial);
+}
+
+/* Кнопка обхода фильтра для сравнения */
+body.pg-filter-off .pg-preview .carpet-svg,
+body.pg-filter-off .pg-preview .illuminated-initial svg,
+body.pg-filter-off .pg-preview .big-initial svg {
+  filter: none !important;
+}
+
+/* ═══════════════════ UI: SEEDS + OVERRIDES ══════════════════════════ */
+
+.pg-seeds-block {
+  margin: 14px 0;
+  padding: 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 3px;
+}
+.pg-seeds-block-title {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom: 8px;
+}
+.pg-seeds-grid {
+  display: grid;
+  grid-template-columns: 70px repeat(3, 1fr);
+  gap: 6px 8px;
+  align-items: center;
+  font-size: 11px;
+}
+.pg-seeds-grid .pg-seeds-head {
+  color: #888;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  text-align: center;
+}
+.pg-seeds-grid .pg-seeds-row-label {
+  color: #aaa;
+  font-size: 11px;
+}
+.pg-seeds-grid input[type="number"] {
+  width: 100%;
+  padding: 3px 5px;
+  background: #0a0a0a;
+  color: #d4c8a8;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 11px;
+  text-align: center;
+}
+.pg-seeds-grid input[type="number"]:focus {
+  outline: none;
+  border-color: #5a4818;
+  background: #1a1408;
+}
+.pg-reseed-row {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+.pg-reseed-btn {
+  padding: 5px 10px;
+  background: #2a1f08;
+  color: #c8b890;
+  border: 1px solid #5a4818;
+  border-radius: 2px;
+  font: inherit;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+.pg-reseed-btn:hover {
+  background: #3a2f18;
+  border-color: #7a6828;
+}
+
+.pg-overrides {
+  margin: 14px 0 0;
+}
+.pg-overrides-title {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin: 14px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #2a2a2a;
+}
+.pg-override-block {
+  margin: 6px 0;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.pg-override-toggle {
+  width: 100%;
+  padding: 7px 10px;
+  background: transparent;
+  color: #aaa;
+  border: none;
+  border-bottom: 1px solid transparent;
+  font: inherit;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pg-override-toggle:hover {
+  background: #222;
+  color: #d4c8a8;
+}
+.pg-override-block.pg-override-open .pg-override-toggle {
+  background: #221a08;
+  color: #d4c8a8;
+  border-bottom-color: #2a2a2a;
+}
+.pg-override-arrow {
+  font-size: 9px;
+  opacity: 0.7;
+  transition: transform 0.15s;
+}
+.pg-override-block.pg-override-open .pg-override-arrow {
+  transform: rotate(90deg);
+}
+.pg-override-body {
+  display: none;
+  padding: 8px 10px 12px;
+}
+.pg-override-block.pg-override-open .pg-override-body {
+  display: block;
+}
+.pg-override-active-count {
+  color: #c8a050;
+  font-size: 10px;
+  font-weight: normal;
+}
+.pg-override-row {
+  display: grid;
+  grid-template-columns: 16px 1fr 60px;
+  gap: 6px;
+  align-items: center;
+  font-size: 11px;
+  margin: 3px 0;
+  padding: 2px 0;
+}
+.pg-override-row .pg-override-check {
+  margin: 0;
+  cursor: pointer;
+}
+.pg-override-row .pg-override-label {
+  color: #888;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pg-override-row.pg-override-active .pg-override-label {
+  color: #d4c8a8;
+}
+.pg-override-row input[type="range"] {
+  width: 100%;
+}
+.pg-override-row input[type="range"]:disabled {
+  opacity: 0.3;
+}
+.pg-override-row .pg-override-value {
+  font-family: inherit;
+  font-size: 10px;
+  color: #888;
+  text-align: right;
+}
+.pg-override-row.pg-override-active .pg-override-value {
+  color: #c8a050;
+}
+.pg-override-inherit-hint {
+  color: #555;
+  font-size: 9px;
+  font-style: italic;
+}

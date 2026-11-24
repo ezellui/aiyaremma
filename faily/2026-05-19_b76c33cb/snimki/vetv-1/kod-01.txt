@@ -1,0 +1,82 @@
+A documentary-style photograph of a real Russian regional newspaper from 1992, 
+lying on a worn wooden desk under soft natural daylight from a window to the left. 
+The shot is taken slightly from above at a gentle angle (about 20°), 
+shallow depth of field, with one corner of the newspaper folded back. 
+A cup of cooling tea in a thin glass with a metal podstakannik (Russian tea-glass holder) 
+is visible at the edge of the frame. The paper is grayish, low-quality, 
+typical of early post-Soviet Russian regional press: slightly yellowed, 
+with visible fiber texture, one small ink smudge in the lower margin.
+
+CONTEXT FOR THE NEWSPAPER CONTENT:
+This is the newspaper "Волжская коммуна" (Volzhskaya Kommuna), a real Samara 
+regional daily. The issue date is Thursday, 28 May 1992. 
+The visible spread is page 3 ("Культура. Общество" — Culture. Society section). 
+The masthead at the top of the page reads: 
+"ВОЛЖСКАЯ КОММУНА" in bold Cyrillic, with smaller subtitle 
+"Самарская областная общественно-политическая газета", 
+date "28 мая 1992 г., четверг", and issue number "№ 102 (22847)".
+
+TYPOGRAPHY:
+Standard late-Soviet / early-1990s Russian newsprint typography: 
+serif body type (similar to "Литературная" or "Журнальная рубленая"), 
+sans-serif headlines, three columns per page, thin black rules between columns. 
+Some other partial articles visible around the main one — fragments of headlines 
+like "О новых ценах на хлеб", "Гуманитарная помощь из Германии", 
+"Спорт: «Крылья Советов» проиграли" — to give realistic surroundings, 
+but these are out of focus and partly cut off by the frame.
+
+THE MAIN ARTICLE (sharply in focus, occupying roughly the center-left of the page, 
+two columns wide, about 12 cm tall):
+
+Headline, large bold serif, all caps:
+"ВОЗВРАЩЕНИЕ «АСПИРАНТСКАГО ВѢСТНИКА»"
+
+(IMPORTANT: the word "ВѢСТНИКА" must be rendered with the pre-revolutionary 
+Cyrillic letter YAT — "Ѣ" — instead of the modern "Е". This is essential. 
+Also "АСПИРАНТСКАГО" must end in "-АГО", not "-ОГО" — pre-revolutionary genitive ending.)
+
+Subhead, smaller italic:
+"В Самаре возобновляется выпуск дореволюционного философского журнала"
+
+Body text in two columns, regular newsprint serif, modern Russian orthography 
+EXCEPT for direct quotations of the journal's title 
+("Аспирантскаго вѣстника Петра-Дубравы"), which must keep yat (ѣ) and 
+the old genitive ending. Body text reads:
+
+"Самарское краеведческое общество объявило о возобновлении издания 
+«Аспирантскаго вѣстника Петра-Дубравы» — журнала, выходившего в нашей 
+области с 1907 по 1977 год.
+
+Издание было прекращено в конце 1970-х в связи с упразднением Областного 
+управления по делам философской пригодности. Полтора десятилетия архив 
+журнала хранился в Отделе редкой книги.
+
+По словам ответственного редактора В. А. Симаковой, в первый номер войдут 
+материалы из архива К. А. Пищулина (1908–1986), включая § 17, остававшийся 
+при жизни автора незавершённым, а также подборка из бесед с В. Н. Шапошниковым 
+(дедом Василием) в записи редактора. Номер выйдет в декабре.
+
+Главный редактор — А. М. Зайцев. Адрес редакции: г. Самара, ул. Куйбышева 
+(бывшая Дворянская), 132, флигель."
+
+Below the body, right-aligned, in italic:
+"А. Курбатова"
+
+ADDITIONAL VISUAL DETAILS:
+A small black-and-white archive photograph is embedded within the article, 
+upper right corner, about 4×5 cm: a group of people in 1940s-style clothing 
+standing in front of a building with classical columns, slightly grainy, 
+captioned underneath in small type "Сотрудники школы Петра-Дубравы, 1947 г.". 
+The photo is reproduced at low halftone resolution typical of 1990s newsprint.
+
+OVERALL MOOD:
+Quiet, documentary, slightly nostalgic. The newspaper is freshly opened — 
+no creases yet from reading. Morning light. The image should feel like an 
+unstaged shot in a Samara apartment, May 1992, the year the country was 
+still finding its post-Soviet bearings and old regional cultural projects 
+were beginning to resurface.
+
+STYLE:
+Sharp, realistic, photojournalistic. No watermarks, no AI artifacts. 
+Faithful Cyrillic typography. The pre-revolutionary letter "Ѣ" 
+in "ВѢСТНИКА" and "вѣстника" must be rendered correctly and legibly.

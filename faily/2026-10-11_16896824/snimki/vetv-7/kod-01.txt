@@ -1,0 +1,29 @@
+A vintage black-and-white documentary photograph from 1939, an amateur snapshot taken by a Finnish border guard. It shows a trilingual warning sign standing at the edge of a "salt belt" on the Karelian border.
+
+WORLD CONTEXT (for correct interpretation, do not render as text):
+This is an alternate history. After 1921 Russia became the R.S.F.G.R., a "fungal" union. It is ruled by the Great Mycelium, a living fungal network, and by a sleeping ancient deity (Cthulhu) beneath its Arctic capital R'lyeh. The Union does not conquer with armies: it spreads by "grafting" its mycelium into neighbouring lands, and its citizens are dissolved into spores. Neighbouring states that resisted call themselves "the Awake". The mycelium cannot grow in salt. So in the late 1930s Finland salted a wide strip of land along the whole border: a dead, white, crystalline belt that no fungus can cross. The sign marks this belt. It is written in Finnish and Swedish, the two official languages of Finland, and in Russian for anyone coming from the Union side. The Russian line uses pre-1918 Russian spelling, which is still standard in this world.
+
+SCENE:
+In the foreground stands a sturdy wooden sign on two weathered posts, slightly tilted, with a little rime of salt crystals on its top edge. Behind it stretches a flat belt of salted ground, about fifty metres wide, receding diagonally into the distance. It is glittering white crust with cracked patches, dead flattened grass and a few bleached tree stumps. It looks like snow at first glance but is clearly crystalline salt. On the far side of the belt is a dark, damp, overgrown pine and birch forest. The tree trunks are wrapped in pale white thread-like mycelium, like cobwebs, and a faint low mist hangs between them. Deep in that forest, barely visible, stands a thin pole topped with a small five-pointed star whose centre is a spiral. On the near side of the belt there are ordinary Finnish pines, a dirt track and a single strand of barbed wire on wooden stakes. Overcast northern light, early spring, quiet and desolate.
+
+THE SIGN:
+Painted lettering, white paint on a dark board, hand-lettered by a sign painter in a plain sans-serif. There are three language blocks stacked one under another, each with a bold heading line and a smaller line below. Render EXACTLY this text, letter for letter, and nothing else:
+
+SUOLAVYÖHYKE
+Sienirihmastoilta pääsy kielletty
+
+SALTBÄLTET
+Tillträde förbjudet för mycel
+
+СОЛЯНОЙ ПОЯСЪ
+Грибницамъ входъ воспрещенъ
+
+Between the Finnish/Swedish blocks and the Russian block there is a simple pictogram: a mushroom silhouette crossed out with a bold diagonal bar. The year "1939" is painted small in the lower right corner of the board.
+
+PHOTOGRAPHIC LOOK:
+A real 1930s gelatin silver print, small format, slightly soft focus, visible film grain, mild vignetting, a little motion blur in the far trees. The print has a white deckle-edged border and slightly curled, worn corners, with fine scratches and a faint fingerprint smudge. Handwritten in pencil on the bottom white margin, in Finnish: "Suolavyöhyke, Laatokan pohjoispuoli, 1939". The print lies on a plain dark grey archival board, photographed straight from above.
+
+STRICT RULES:
+- Reproduce all sign text exactly as given. Keep the Finnish letters Ö and Ä and the Swedish Ä. The Russian words end in the hard sign Ъ exactly where shown (ПОЯСЪ, ГРИБНИЦАМЪ, ВХОДЪ, ВОСПРЕЩЕНЪ). Do not use the letter Ё. Do not add any other words, logos or flags.
+- No monsters, no tentacles, no people in the frame. The horror is only in the contrast between the white dead salt and the overgrown forest beyond it.
+- No modern objects, no colour, no digital look.

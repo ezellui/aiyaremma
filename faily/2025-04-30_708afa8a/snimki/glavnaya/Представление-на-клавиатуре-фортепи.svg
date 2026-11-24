@@ -1,0 +1,224 @@
+
+<svg viewBox="0 0 900 650" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background and Title -->
+  <rect width="900" height="650" fill="#f9f9f9"/>
+  <text x="450" y="40" font-size="24" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Представление музыкальной структуры на клавиатуре фортепиано</text>
+  <text x="450" y="70" font-size="16" text-anchor="middle" font-family="Arial, sans-serif">Визуализация паттернов и интервальных отношений</text>
+  
+  <!-- Piano Keyboard (5 octaves) -->
+  <g transform="translate(50, 120)">
+    <!-- White Keys -->
+    <g>
+      <!-- Octave 1 -->
+      <rect x="0" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="20" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="40" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="60" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="80" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="100" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="120" y="0" width="20" height="160" fill="white" stroke="black"/>
+      
+      <!-- Octave 2 -->
+      <rect x="140" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="160" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="180" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="200" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="220" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="240" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="260" y="0" width="20" height="160" fill="white" stroke="black"/>
+      
+      <!-- Octave 3 -->
+      <rect x="280" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="300" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="320" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="340" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="360" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="380" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="400" y="0" width="20" height="160" fill="white" stroke="black"/>
+      
+      <!-- Octave 4 -->
+      <rect x="420" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="440" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="460" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="480" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="500" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="520" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="540" y="0" width="20" height="160" fill="white" stroke="black"/>
+      
+      <!-- Octave 5 -->
+      <rect x="560" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="580" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="600" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="620" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="640" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="660" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="680" y="0" width="20" height="160" fill="white" stroke="black"/>
+      
+      <!-- Octave 6 -->
+      <rect x="700" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="720" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="740" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="760" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="780" y="0" width="20" height="160" fill="white" stroke="black"/>
+      <rect x="800" y="0" width="20" height="160" fill="white" stroke="black"/>
+    </g>
+    
+    <!-- Black Keys -->
+    <g>
+      <!-- Octave 1 -->
+      <rect x="15" y="0" width="10" height="100" fill="black"/>
+      <rect x="35" y="0" width="10" height="100" fill="black"/>
+      <rect x="75" y="0" width="10" height="100" fill="black"/>
+      <rect x="95" y="0" width="10" height="100" fill="black"/>
+      <rect x="115" y="0" width="10" height="100" fill="black"/>
+      
+      <!-- Octave 2 -->
+      <rect x="155" y="0" width="10" height="100" fill="black"/>
+      <rect x="175" y="0" width="10" height="100" fill="black"/>
+      <rect x="215" y="0" width="10" height="100" fill="black"/>
+      <rect x="235" y="0" width="10" height="100" fill="black"/>
+      <rect x="255" y="0" width="10" height="100" fill="black"/>
+      
+      <!-- Octave 3 -->
+      <rect x="295" y="0" width="10" height="100" fill="black"/>
+      <rect x="315" y="0" width="10" height="100" fill="black"/>
+      <rect x="355" y="0" width="10" height="100" fill="black"/>
+      <rect x="375" y="0" width="10" height="100" fill="black"/>
+      <rect x="395" y="0" width="10" height="100" fill="black"/>
+      
+      <!-- Octave 4 -->
+      <rect x="435" y="0" width="10" height="100" fill="black"/>
+      <rect x="455" y="0" width="10" height="100" fill="black"/>
+      <rect x="495" y="0" width="10" height="100" fill="black"/>
+      <rect x="515" y="0" width="10" height="100" fill="black"/>
+      <rect x="535" y="0" width="10" height="100" fill="black"/>
+      
+      <!-- Octave 5 -->
+      <rect x="575" y="0" width="10" height="100" fill="black"/>
+      <rect x="595" y="0" width="10" height="100" fill="black"/>
+      <rect x="635" y="0" width="10" height="100" fill="black"/>
+      <rect x="655" y="0" width="10" height="100" fill="black"/>
+      <rect x="675" y="0" width="10" height="100" fill="black"/>
+      
+      <!-- Octave 6 -->
+      <rect x="715" y="0" width="10" height="100" fill="black"/>
+      <rect x="735" y="0" width="10" height="100" fill="black"/>
+      <rect x="775" y="0" width="10" height="100" fill="black"/>
+      <rect x="795" y="0" width="10" height="100" fill="black"/>
+    </g>
+    
+    <!-- Key Labels: C's for reference -->
+    <text x="0" y="180" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">C1</text>
+    <text x="140" y="180" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">C2</text>
+    <text x="280" y="180" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">C3</text>
+    <text x="420" y="180" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">C4</text>
+    <text x="560" y="180" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">C5</text>
+    <text x="700" y="180" font-size="12" text-anchor="middle" font-family="Arial, sans-serif">C6</text>
+  </g>
+  
+  <!-- Visualize the 12 rows of the structure as 12 different patterns on the keyboard -->
+  <g transform="translate(50, 300)">
+    <!-- Row 1: B1 Db2 Eb2 -->
+    <circle cx="120" cy="15" r="10" fill="#e6194B" stroke="black" stroke-width="1"/>
+    <circle cx="175" cy="15" r="10" fill="#e6194B" stroke="black" stroke-width="1"/>
+    <circle cx="210" cy="15" r="10" fill="#e6194B" stroke="black" stroke-width="1"/>
+    <path d="M 120,15 L 175,15 L 210,15" stroke="#e6194B" stroke-width="2" fill="none"/>
+    <text x="50" y="19" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 1:</text>
+    <text x="830" y="19" font-size="14" text-anchor="start" font-family="Arial, sans-serif">B1 Db2 Eb2</text>
+    
+    <!-- Row 2: E2 Gb2 Ab2 -->
+    <circle cx="180" cy="35" r="10" fill="#3cb44b" stroke="black" stroke-width="1"/>
+    <circle cx="235" cy="35" r="10" fill="#3cb44b" stroke="black" stroke-width="1"/>
+    <circle cx="270" cy="35" r="10" fill="#3cb44b" stroke="black" stroke-width="1"/>
+    <path d="M 180,35 L 235,35 L 270,35" stroke="#3cb44b" stroke-width="2" fill="none"/>
+    <text x="50" y="39" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 2:</text>
+    <text x="830" y="39" font-size="14" text-anchor="start" font-family="Arial, sans-serif">E2 Gb2 Ab2</text>
+    
+    <!-- Row 3: A2 B2 Db3 -->
+    <circle cx="240" cy="55" r="10" fill="#ffe119" stroke="black" stroke-width="1"/>
+    <circle cx="260" cy="55" r="10" fill="#ffe119" stroke="black" stroke-width="1"/>
+    <circle cx="315" cy="55" r="10" fill="#ffe119" stroke="black" stroke-width="1"/>
+    <path d="M 240,55 L 260,55 L 315,55" stroke="#ffe119" stroke-width="2" fill="none"/>
+    <text x="50" y="59" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 3:</text>
+    <text x="830" y="59" font-size="14" text-anchor="start" font-family="Arial, sans-serif">A2 B2 Db3</text>
+    
+    <!-- Row 4: D3 E3 Gb3 -->
+    <circle cx="340" cy="75" r="10" fill="#4363d8" stroke="black" stroke-width="1"/>
+    <circle cx="360" cy="75" r="10" fill="#4363d8" stroke="black" stroke-width="1"/>
+    <circle cx="415" cy="75" r="10" fill="#4363d8" stroke="black" stroke-width="1"/>
+    <path d="M 340,75 L 360,75 L 415,75" stroke="#4363d8" stroke-width="2" fill="none"/>
+    <text x="50" y="79" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 4:</text>
+    <text x="830" y="79" font-size="14" text-anchor="start" font-family="Arial, sans-serif">D3 E3 Gb3</text>
+    
+    <!-- Row 5: G3 A3 B3 -->
+    <circle cx="400" cy="95" r="10" fill="#f58231" stroke="black" stroke-width="1"/>
+    <circle cx="420" cy="95" r="10" fill="#f58231" stroke="black" stroke-width="1"/>
+    <circle cx="440" cy="95" r="10" fill="#f58231" stroke="black" stroke-width="1"/>
+    <path d="M 400,95 L 420,95 L 440,95" stroke="#f58231" stroke-width="2" fill="none"/>
+    <text x="50" y="99" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 5:</text>
+    <text x="830" y="99" font-size="14" text-anchor="start" font-family="Arial, sans-serif">G3 A3 B3</text>
+    
+    <!-- Row 6: C4 D4 E4 -->
+    <circle cx="420" cy="115" r="10" fill="#911eb4" stroke="black" stroke-width="1"/>
+    <circle cx="460" cy="115" r="10" fill="#911eb4" stroke="black" stroke-width="1"/>
+    <circle cx="480" cy="115" r="10" fill="#911eb4" stroke="black" stroke-width="1"/>
+    <path d="M 420,115 L 460,115 L 480,115" stroke="#911eb4" stroke-width="2" fill="none"/>
+    <text x="50" y="119" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 6:</text>
+    <text x="830" y="119" font-size="14" text-anchor="start" font-family="Arial, sans-serif">C4 D4 E4</text>
+    
+    <!-- Row 7: F4 G4 A4 -->
+    <circle cx="500" cy="135" r="10" fill="#42d4f4" stroke="black" stroke-width="1"/>
+    <circle cx="520" cy="135" r="10" fill="#42d4f4" stroke="black" stroke-width="1"/>
+    <circle cx="540" cy="135" r="10" fill="#42d4f4" stroke="black" stroke-width="1"/>
+    <path d="M 500,135 L 520,135 L 540,135" stroke="#42d4f4" stroke-width="2" fill="none"/>
+    <text x="50" y="139" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 7:</text>
+    <text x="830" y="139" font-size="14" text-anchor="start" font-family="Arial, sans-serif">F4 G4 A4</text>
+    
+    <!-- Row 8: Bb4 C5 D5 -->
+    <circle cx="535" cy="155" r="10" fill="#f032e6" stroke="black" stroke-width="1"/>
+    <circle cx="560" cy="155" r="10" fill="#f032e6" stroke="black" stroke-width="1"/>
+    <circle cx="600" cy="155" r="10" fill="#f032e6" stroke="black" stroke-width="1"/>
+    <path d="M 535,155 L 560,155 L 600,155" stroke="#f032e6" stroke-width="2" fill="none"/>
+    <text x="50" y="159" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 8:</text>
+    <text x="830" y="159" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Bb4 C5 D5</text>
+    
+    <!-- Row 9: Eb5 F5 G5 -->
+    <circle cx="595" cy="175" r="10" fill="#a9a9a9" stroke="black" stroke-width="1"/>
+    <circle cx="620" cy="175" r="10" fill="#a9a9a9" stroke="black" stroke-width="1"/>
+    <circle cx="640" cy="175" r="10" fill="#a9a9a9" stroke="black" stroke-width="1"/>
+    <path d="M 595,175 L 620,175 L 640,175" stroke="#a9a9a9" stroke-width="2" fill="none"/>
+    <text x="50" y="179" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 9:</text>
+    <text x="830" y="179" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Eb5 F5 G5</text>
+    
+    <!-- Row 10: Ab5 Bb5 C6 -->
+    <circle cx="675" cy="195" r="10" fill="#469990" stroke="black" stroke-width="1"/>
+    <circle cx="695" cy="195" r="10" fill="#469990" stroke="black" stroke-width="1"/>
+    <circle cx="700" cy="195" r="10" fill="#469990" stroke="black" stroke-width="1"/>
+    <path d="M 675,195 L 695,195 L 700,195" stroke="#469990" stroke-width="2" fill="none"/>
+    <text x="50" y="199" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 10:</text>
+    <text x="830" y="199" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Ab5 Bb5 C6</text>
+    
+    <!-- Row 11: Db6 Eb6 F6 -->
+    <circle cx="735" cy="215" r="10" fill="#e6beff" stroke="black" stroke-width="1"/>
+    <circle cx="755" cy="215" r="10" fill="#e6beff" stroke="black" stroke-width="1"/>
+    <circle cx="780" cy="215" r="10" fill="#e6beff" stroke="black" stroke-width="1"/>
+    <path d="M 735,215 L 755,215 L 780,215" stroke="#e6beff" stroke-width="2" fill="none"/>
+    <text x="50" y="219" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 11:</text>
+    <text x="830" y="219" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Db6 Eb6 F6</text>
+    
+    <!-- Row 12: Gb6 Ab6 Bb6 -->
+    <circle cx="795" cy="235" r="10" fill="#9A6324" stroke="black" stroke-width="1"/>
+    <circle cx="815" cy="235" r="10" fill="#9A6324" stroke="black" stroke-width="1"/>
+    <circle cx="835" cy="235" r="10" fill="#9A6324" stroke="black" stroke-width="1"/>
+    <path d="M 795,235 L 815,235 L 835,235" stroke="#9A6324" stroke-width="2" fill="none"/>
+    <text x="50" y="239" font-size="14" text-anchor="end" font-family="Arial, sans-serif" font-weight="bold">Ряд 12:</text>
+    <text x="830" y="239" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Gb6 Ab6 Bb6</text>
+  </g>
+  
+  <!-- Fourth relationship explanation -->
+  <g transform="translate(450, 580)">
+    <text x="0" y="0" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Отношения между строками:</text>
+    <text x="0" y="25" font-size="14" text-anchor="middle" font-family="Arial, sans-serif">Первая нота каждой строки движется вверх на чистую кварту (5 полутонов)</text>
+    <text x="0" y="45" font-size="14" text-anchor="middle" font-family="Arial, sans-serif">Внутри каждой строки: движение по целым тонам (2 полутона)</text>
+  </g>
+</svg>

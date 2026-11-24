@@ -1,0 +1,158 @@
+Anime character sheet poster, 90s magical girl aesthetic.
+Background: dark midnight navy with faint parchment-colored graph network
+texture, gold ornamental borders, subtle candlelight glow.
+
+LAYOUT — infographic style with multiple decorated panels, Russian text labels.
+
+═══════════════════════════════════════════════
+
+TOP CENTER: large full-body illustration of the character.
+Black and midnight navy sailor warrior uniform, matte gold trim.
+Long black wind-swept hair, golden compass-rose tiara.
+Wide confident stance.
+In one hand: large open golden architectural compass.
+In the other: magnifying glass with two concept bubbles and "87%" label.
+Her dark cape spreads behind her, the fabric covered with
+the philosophical concept graph — color-coded edges, Russian concept
+labels, philosopher name nodes glowing faintly.
+
+Title above: "СЕЙЛОР ΦИЛОСΦЕРА"
+Subtitle: "Хранительница Карты Концепций"
+
+═══════════════════════════════════════════════
+
+TOP RIGHT panel "ПРЕВРАЩЕНИЕ" — dark panel, gold border:
+Слова превращения:
+"Узлы — в путь!
+Связи — в свет!
+Карта, раскройся —
+СЕЙЛОР ΦИЛОСΦЕРА!"
+
+Small illustration: the compass opening wide,
+releasing a web of glowing concept nodes.
+
+Ниже — иллюстрация: золотой циркуль с расходящимися лучами графа.
+
+═══════════════════════════════════════════════
+
+LEFT column, three stacked panels:
+
+Panel "ЧЕРТЫ" — gold star bullets:
+★ созерцательная — видит суть через структуру связей
+★ беспристрастная — все философы равны в графе
+★ картограф — помнит каждый узел и каждое ребро
+★ любопытная — ищет скрытые кластеры и аномалии
+★ терпеливая — кратчайший путь требует обхода всего
+
+Panel "СИЛА":
+Хранит граф из сотен концепций и более ста философов —
+от Пифагора до Деррида.
+Управляет тысячами связей двенадцати типов,
+каждый цвет — особое отношение между идеями.
+Вычисляет сходство философов по профилю метрик.
+Находит кратчайший путь между любыми
+двумя точками мысли через всё пространство графа.
+
+Panel "ХАРАКТЕР":
+Молчалива, но замечает всё.
+Видит мир как сеть, где нет
+изолированных идей — только узлы
+с разной степенью связности.
+Верит: расстояние между любыми
+двумя мыслями конечно.
+Рядом с ней всегда стопка книг —
+корешки подписаны традициями.
+
+═══════════════════════════════════════════════
+
+CENTER BOTTOM — character data card, parchment-colored, gold border:
+
+ИМЯ:        Сейлор Φилосφера
+ПЛАНЕТА:    Граф
+КАМЕНЬ:     Изумруд Связи
+ЦВЕТА:      чёрный, полуночный синий, золото
+ЦВЕТОК:     Незабудка
+ЛЮБИМОЕ:    кратчайшие пути, скрытые кластеры,
+            топ-10 по центральности,
+            статистика сходства философов
+
+═══════════════════════════════════════════════
+
+RIGHT column, two panels:
+
+Panel "АТАКА" — dark panel, gold border:
+"Кратчайший Путь!"
+
+Раскрывает циркуль — золотые лучи
+прочерчивают оптимальный маршрут
+между двумя концепциями через всё
+пространство графа, сжигая ложные связи.
+
+Small action illustration:
+character holding open compass, beams of colored light
+tracing a path through floating concept nodes.
+Equations and node labels dissolving into the path.
+
+Panel "КОМНАТА":
+Зал с мраморными колоннами.
+Под куполом — живая проекция графа:
+узлы двенадцати кластеров светятся
+каждый своим цветом.
+На полу — имена философов кругом.
+На стенах — дашборды с метриками.
+Она сидит в центре с циркулем
+и просто наблюдает.
+
+Small illustration: cozy neoclassical hall interior,
+glowing network projected on ceiling,
+philosopher busts on pedestals, candlelight.
+
+═══════════════════════════════════════════════
+
+BOTTOM ROW "ОБРАЗЫ ВНЕ ПРЕВРАЩЕНИЯ" — 5 small figures in a row:
+Each figure: same character, different context, labeled below.
+
+ПРОСМОТР ГРАФА — за огромной светящейся картой
+ПРОФИЛЬ ФИЛОСОФА — читает карточку с бюстом Канта рядом
+КАРТА СХОДСТВА — держит лупу над кластером точек
+ПОИСК ПУТИ — циркуль раскрыт между двумя узлами
+ОПИСАНИЕ СВЯЗИ — пишет на свитке, рядом два узла с цветным ребром
+
+═══════════════════════════════════════════════
+
+BOTTOM RIGHT panel "МИССИЯ" — dark, gold ornament:
+Ни одна концепция не существует
+в одиночестве.
+
+Её миссия —
+показать, как далеко
+протянулись нити
+между мыслью Гераклита
+и мыслью Деррида.
+
+Больше связей —
+больше понимания.
+
+Small silhouette: character standing before enormous glowing graph.
+
+═══════════════════════════════════════════════
+
+BOTTOM of poster — full-width decorative strip:
+Stacked books with tradition labels on spines:
+ОНТОЛОГИЯ / ГНОСЕОЛОГИЯ / ЭТИКА / ЭСТЕТИКА /
+ЛОГИКА / ФИЛОСОФИЯ НАУКИ / ФИЛОСОФИЯ ЯЗЫКА / СОЦИАЛЬНАЯ ФИЛОСОФИЯ
+
+Center bottom title (gold lettering):
+"SAILOR ΦILOSΦAIRA"
+smaller: "ЗНАНИЕ • СВЯЗИ • БОЛЕЕ ЧЕЛОВЕЧНЫЙ МИР"
+
+═══════════════════════════════════════════════
+
+Color palette: black, midnight navy, matte gold, dark parchment,
+multi-color node glows (purple/crimson/teal/amber/green for edge types),
+warm candlelight amber accents.
+
+Style: 90s anime cel-shading, Russian text on all panels,
+decorative gold network-node dividers between sections,
+neoclassical library atmosphere,
+collectible character encyclopedia composition.

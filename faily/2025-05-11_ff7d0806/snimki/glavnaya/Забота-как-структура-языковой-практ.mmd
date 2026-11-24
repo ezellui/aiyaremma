@@ -1,0 +1,51 @@
+flowchart TD
+    A[Забота\nSorge] --> B[Фундаментальная\nструктура Dasein]
+    A --> C[Основание языковой\nпрактики]
+    A --> D[Символическое\nопосредование]
+    
+    subgraph "Структура заботы"
+        E[Забегание вперед\nSich-vorweg-sein] --> F[Уже-бытие-в\nSchon-sein-in]
+        F --> G[Бытие-при\nSein-bei]
+        G --> H[Единство структуры\nзаботы]
+        H -.-> E
+    end
+    
+    subgraph "Модусы заботы в языке"
+        I[Озабочение\nBesorgen] -->|Отношение к миру| J[Заботливость\nFürsorge]
+        J -->|Отношение к другим| K[Забота о себе\nSelbstsorge]
+        K -->|Отношение к себе| L[Языковая забота]
+        L -.-> I
+    end
+    
+    subgraph "Символическое освоение мира"
+        M[Подручность\nZuhandenheit] --> N[Наличность\nVorhandenheit]
+        N --> O[Символическая\nцелостность]
+        O --> P[Мир как\nсмысловое целое]
+        P -.-> M
+    end
+    
+    B -.-> E
+    C -.-> L
+    D -.-> O
+    
+    Q[Языковая игра как\nспособ заботы] --> R[Правила как\nструктуры озабочения]
+    R --> S[Употребление как\nзаботливое отношение]
+    S --> T[Форма жизни как\nпространство заботы]
+    T -.-> Q
+    
+    Q -.-> I
+    R -.-> M
+    S -.-> J
+    T -.-> P
+    
+    U[Миф как способ\nобживания мира] --> V[Символическое\nосвоение]
+    V --> W[Превращение чужого\nв свое]
+    W --> X[Дом бытия]
+    X -.-> U
+    
+    style A fill:#f9d5e5,stroke:#333,stroke-width:3px
+    style E fill:#d5e5f9,stroke:#333,stroke-width:2px
+    style I fill:#e5f9d5,stroke:#333,stroke-width:2px
+    style M fill:#f9e5d5,stroke:#333,stroke-width:2px
+    style Q fill:#e5d5f9,stroke:#333,stroke-width:2px
+    style U fill:#d5f9e5,stroke:#333,stroke-width:2px

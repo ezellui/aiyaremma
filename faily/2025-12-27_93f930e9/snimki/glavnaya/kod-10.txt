@@ -1,0 +1,20 @@
+origin-detection-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── mongo-connection.js
+│   │   └── postgres-connection.js
+│   ├── models/
+│   │   └── ConceptOrigin.js
+│   ├── controllers/
+│   │   └── origin.controller.js
+│   ├── services/
+│   │   └── origin.service.js
+│   └── routes/
+│       └── origin.routes.js
+└── tests/

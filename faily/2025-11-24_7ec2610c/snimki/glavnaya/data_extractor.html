@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Экстрактор данных - Philosophy Graph</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #2d3436;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #636e72;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .step-description {
+            color: #636e72;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .input-group {
+            margin: 20px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #f0f3ff;
+            font-size: 14px;
+        }
+        
+        input[type="file"]:hover {
+            background: #e8f4f8;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #e1e8ed;
+            color: #2d3436;
+        }
+        
+        .btn-secondary:hover {
+            background: #d1d8dd;
+        }
+        
+        .output {
+            background: #2d3436;
+            color: #2ecc71;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .output.show {
+            display: block;
+        }
+        
+        .output-line {
+            margin: 5px 0;
+        }
+        
+        .success {
+            color: #2ecc71;
+        }
+        
+        .error {
+            color: #e74c3c;
+        }
+        
+        .info {
+            color: #3498db;
+        }
+        
+        .warning {
+            color: #f39c12;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e1e8ed;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #636e72;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .alert {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .preview {
+            background: #f8f9fa;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .preview.show {
+            display: block;
+        }
+        
+        .preview pre {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #2d3436;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Экстрактор данных</h1>
+        <p class="subtitle">Автоматическое извлечение данных из HTML файла графа философских концепций</p>
+        
+        <div class="step">
+            <div class="step-title">
+                <span class="step-number">1</span>
+                Выберите файл
+            </div>
+            <div class="step-description">
+                Загрузите ваш HTML файл с графом философских концепций
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="fileInput">HTML файл графа</label>
+            <input type="file" id="fileInput" accept=".html,.htm" onchange="handleFileSelect(event)">
+        </div>
+        
+        <div class="alert" id="alert">
+            <strong>⚠️ Внимание!</strong>
+            <span id="alertText"></span>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-value" id="statPhilosophers">0</div>
+                <div class="stat-label">Философов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statConcepts">0</div>
+                <div class="stat-label">Концепций</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statConnections">0</div>
+                <div class="stat-label">Связей</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statRubrics">0</div>
+                <div class="stat-label">Рубрик</div>
+            </div>
+        </div>
+        
+        <div class="preview" id="preview">
+            <h3 style="margin-bottom: 10px; color: #2d3436;">Предпросмотр JSON:</h3>
+            <pre id="previewContent"></pre>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn-primary" id="extractBtn" onclick="extractData()" disabled>
+                Извлечь данные
+            </button>
+            <button class="btn-secondary" id="downloadBtn" onclick="downloadJSON()" disabled>
+                💾 Скачать JSON
+            </button>
+        </div>
+        
+        <div class="output" id="output"></div>
+        
+        <div class="step" style="margin-top: 30px;">
+            <div class="step-title">
+                <span class="step-number">2</span>
+                Что дальше?
+            </div>
+            <div class="step-description">
+                После скачивания JSON файла:
+                <ul style="margin: 10px 0 0 30px; color: #636e72;">
+                    <li>Создайте папку <code>data/</code> рядом с вашим HTML файлом</li>
+                    <li>Сохраните скачанный файл как <code>philosophy_data.json</code></li>
+                    <li>Следуйте инструкциям из руководства по интеграции</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let fileContent = '';
+        let extractedData = null;
+        
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            log('info', `📄 Выбран файл: ${file.name}`);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                fileContent = e.target.result;
+                document.getElementById('extractBtn').disabled = false;
+                log('success', '✅ Файл загружен, готов к извлечению данных');
+            };
+            reader.onerror = function() {
+                log('error', '❌ Ошибка чтения файла');
+                showAlert('Не удалось прочитать файл. Убедитесь, что это валидный HTML файл.');
+            };
+            reader.readAsText(file);
+        }
+        
+        function extractData() {
+            clearOutput();
+            log('info', '🔍 Начинаем извлечение данных...');
+            
+            try {
+                // Создаём временный DOM для парсинга
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(fileContent, 'text/html');
+                const scripts = doc.getElementsByTagName('script');
+                
+                let scriptContent = '';
+                for (let script of scripts) {
+                    if (script.innerHTML.includes('philosopherConcepts') || 
+                        script.innerHTML.includes('const concepts')) {
+                        scriptContent = script.innerHTML;
+                        break;
+                    }
+                }
+                
+                if (!scriptContent) {
+                    throw new Error('Не найден скрипт с данными');
+                }
+                
+                log('info', '📦 Извлекаем данные...');
+                
+                // Извлекаем данные с помощью регулярных выражений
+                const data = {
+                    philosopherConcepts: extractVariable(scriptContent, 'philosopherConcepts'),
+                    concepts: extractVariable(scriptContent, 'concepts'),
+                    connections: extractVariable(scriptContent, 'connections'),
+                    rubrics: extractVariable(scriptContent, 'rubrics'),
+                    conceptToRubrics: extractVariable(scriptContent, 'conceptToRubrics'),
+                    relationTypes: extractVariable(scriptContent, 'relationTypes')
+                };
+                
+                // Проверяем успешность извлечения
+                if (!data.philosopherConcepts || !data.concepts) {
+                    throw new Error('Не удалось извлечь основные данные');
+                }
+                
+                extractedData = data;
+                
+                // Обновляем статистику
+                updateStats(data);
+                
+                // Показываем предпросмотр
+                showPreview(data);
+                
+                log('success', '✅ Данные успешно извлечены!');
+                log('info', `   • Философов: ${Object.keys(data.philosopherConcepts).length}`);
+                log('info', `   • Концепций: ${data.concepts.length}`);
+                log('info', `   • Связей: ${data.connections.length}`);
+                log('info', `   • Рубрик: ${data.rubrics.length}`);
+                
+                document.getElementById('downloadBtn').disabled = false;
+                
+            } catch (error) {
+                log('error', `❌ Ошибка извлечения: ${error.message}`);
+                showAlert(`Ошибка извлечения данных: ${error.message}. Убедитесь, что это правильный файл графа.`);
+            }
+        }
+        
+        function extractVariable(scriptContent, varName) {
+            try {
+                // Ищем объявление переменной
+                const regex = new RegExp(`(?:const|let|var)\\s+${varName}\\s*=\\s*([\\s\\S]*?);(?:\\s*\\/\\/|\\s*\\/\\*|\\s*const|\\s*let|\\s*var|\\s*function|\\s*$)`, 'm');
+                const match = scriptContent.match(regex);
+                
+                if (!match) {
+                    console.warn(`Переменная ${varName} не найдена`);
+                    return varName === 'philosopherConcepts' ? {} : [];
+                }
+                
+                let valueStr = match[1].trim();
+                
+                // Удаляем trailing комментарии и лишние символы
+                valueStr = valueStr.replace(/\s*\/\/.*$/gm, '');
+                valueStr = valueStr.replace(/\s*\/\*[\s\S]*?\*\//g, '');
+                
+                // Пытаемся распарсить JSON
+                const value = JSON.parse(valueStr);
+                return value;
+                
+            } catch (error) {
+                console.error(`Ошибка парсинга ${varName}:`, error);
+                return varName === 'philosopherConcepts' ? {} : [];
+            }
+        }
+        
+        function updateStats(data) {
+            document.getElementById('stats').style.display = 'grid';
+            document.getElementById('statPhilosophers').textContent = Object.keys(data.philosopherConcepts).length;
+            document.getElementById('statConcepts').textContent = data.concepts.length;
+            document.getElementById('statConnections').textContent = data.connections.length;
+            document.getElementById('statRubrics').textContent = data.rubrics.length;
+        }
+        
+        function showPreview(data) {
+            const preview = document.getElementById('preview');
+            const content = document.getElementById('previewContent');
+            
+            // Показываем только первые несколько элементов
+            const previewData = {
+                philosopherConcepts: Object.fromEntries(
+                    Object.entries(data.philosopherConcepts).slice(0, 2)
+                ),
+                concepts: data.concepts.slice(0, 3),
+                connections: data.connections.slice(0, 3),
+                rubrics: data.rubrics.slice(0, 2),
+                relationTypes: data.relationTypes.slice(0, 3)
+            };
+            
+            content.textContent = JSON.stringify(previewData, null, 2) + '\n\n... (показаны первые элементы)';
+            preview.classList.add('show');
+        }
+        
+        function downloadJSON() {
+            if (!extractedData) {
+                showAlert('Сначала извлеките данные из HTML файла');
+                return;
+            }
+            
+            try {
+                const jsonStr = JSON.stringify(extractedData, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'philosophy_data.json';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                log('success', '💾 JSON файл скачан!');
+                log('info', '   Сохраните его как data/philosophy_data.json');
+                
+            } catch (error) {
+                log('error', `❌ Ошибка скачивания: ${error.message}`);
+                showAlert(`Ошибка создания JSON файла: ${error.message}`);
+            }
+        }
+        
+        function log(type, message) {
+            const output = document.getElementById('output');
+            output.classList.add('show');
+            
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            line.textContent = message;
+            output.appendChild(line);
+            
+            // Автоскролл вниз
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function clearOutput() {
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+        }
+        
+        function showAlert(text) {
+            const alert = document.getElementById('alert');
+            const alertText = document.getElementById('alertText');
+            alertText.textContent = text;
+            alert.classList.add('show');
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

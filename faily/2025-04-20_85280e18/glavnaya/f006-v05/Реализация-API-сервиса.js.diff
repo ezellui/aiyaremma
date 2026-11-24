@@ -1,0 +1,538 @@
+--- предыдущая/Реализация-API-сервиса.js
++++ текущая/Реализация-API-сервиса.js
+@@ -356,7 +356,66 @@
+     const theses = topicLines.slice(1).filter(line => /^\d+\./.test(line)).slice(0, maxThesesPerTopic);
+     
+     // Собираем обратно с заголовком
+-    return [topicHeader, ...theses, `*Показаны ${theses.length} тезисов из этой темы.*`].// API сервис (Node.js + Express)
++    return [topicHeader, ...theses, `*Показаны ${theses.length} тезисов из этой темы.*`].join('\n');
++  });
++  
++  // Собираем все вместе с заголовком секции
++  return [header, ...trimmedTopics].join('\n');
++}
++
++// Функция для сохранения промпта для дальнейшего анализа (полезно для отладки)
++async function savePromptForAnalysis(requestId, prompt) {
++  try {
++    // Сохраняем промпт в отдельной коллекции для анализа
++    const PromptAnalysis = mongoose.model('PromptAnalysis', new mongoose.Schema({
++      requestId: String,
++      prompt: String,
++      timestamp: { type: Date, default: Date.now }
++    }));
++    
++    await new PromptAnalysis({
++      requestId,
++      prompt
++    }).save();
++    
++  } catch (error) {
++    // Логируем ошибку, но не прерываем основной процесс
++    console.warn(`Failed to save prompt for analysis: ${error.message}`);
++  }
++}
++
++// Функция для создания связей между концепциями
++async function createConceptRelations(childId, parentIds) {
++  // Создаем записи о связях в отдельной коллекции
++  const ConceptRelation = mongoose.model('ConceptRelation', new mongoose.Schema({
++    parentId: String,
++    childId: String,
++    relationType: { type: String, default: 'derived' },
++    createdAt: { type: Date, default: Date.now }
++  }));
++  
++  // Создаем связи с каждым родителем
++  const relations = parentIds.map(parentId => ({
++    parentId,
++    childId,
++    relationType: 'derived'
++  }));
++  
++  await ConceptRelation.insertMany(relations);
++}
++
++// Настройка логгера для более подробной информации о процессе
++const logger = {
++  info: (context, message) => {
++    console.log(`[INFO] [${new Date().toISOString()}] [Request: ${context.requestId || 'unknown'}] ${message}`);
++  },
++  warn: (context, message) => {
++    console.warn(`[WARN] [${new Date().toISOString()}] [Request: ${context.requestId || 'unknown'}] ${message}`);
++  },
++  error: (context, message) => {
++    console.error(`[ERROR] [${new Date().toISOString()}] [Request: ${context.requestId || 'unknown'}] ${message}`);
++  }
++};// API сервис (Node.js + Express)
+ 
+ const express = require('express');
+ const cors = require('cors');
+@@ -419,9 +478,55 @@
+ // 1. Получение списка всех концепций
+ app.get('/api/concepts', async (req, res) => {
+   try {
+-    const concepts = await Concept.find({}).select('id name description authors source');
+-    res.json(concepts);
++    // Добавляем поддержку пагинации
++    const page = parseInt(req.query.page) || 1;
++    const limit = parseInt(req.query.limit) || 20;
++    const skip = (page - 1) * limit;
++    
++    // Поддержка поиска и фильтрации
++    const searchQuery = {};
++    
++    // Если указан поисковый запрос
++    if (req.query.search) {
++      const searchRegex = new RegExp(req.query.search, 'i');
++      searchQuery.$or = [
++        { name: searchRegex },
++        { description: searchRegex }
++      ];
++    }
++    
++    // Фильтрация по источнику (оригинальные/сгенерированные)
++    if (req.query.source) {
++      searchQuery.source = req.query.source;
++    }
++    
++    // Получаем общее количество соответствующих концепций для пагинации
++    const total = await Concept.countDocuments(searchQuery);
++    
++    // Получаем концепции с пагинацией и сортировкой
++    const sortField = req.query.sortBy || 'creationDate';
++    const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
++    const sortOptions = {};
++    sortOptions[sortField] = sortOrder;
++    
++    const concepts = await Concept.find(searchQuery)
++      .select('id name description authors source creationDate')
++      .sort(sortOptions)
++      .skip(skip)
++      .limit(limit);
++    
++    // Добавляем метаданные для пагинации в ответ
++    res.json({
++      data: concepts,
++      pagination: {
++        total,
++        page,
++        limit,
++        pages: Math.ceil(total / limit)
++      }
++    });
+   } catch (error) {
++    logger.error({ requestId: 'api_get_concepts' }, `Error retrieving concepts: ${error.message}`);
+     res.status(500).json({ error: error.message });
+   }
+ });
+@@ -429,12 +534,48 @@
+ // 2. Получение концепции по ID
+ app.get('/api/concepts/:id', async (req, res) => {
+   try {
++    // Добавляем возможность получить концепцию вместе с родительскими и дочерними
++    const includeRelated = req.query.includeRelated === 'true';
++    
++    // Получаем основную концепцию
+     const concept = await Concept.findOne({ id: req.params.id });
++    
+     if (!concept) {
+       return res.status(404).json({ error: 'Concept not found' });
+     }
+-    res.json(concept);
++    
++    // Если не требуется дополнительная информация, возвращаем только основную концепцию
++    if (!includeRelated) {
++      return res.json(concept);
++    }
++    
++    // В противном случае получаем связанные концепции
++    const ConceptRelation = mongoose.model('ConceptRelation');
++    
++    // Находим родительские концепции
++    const parentRelations = await ConceptRelation.find({ childId: concept.id });
++    const parentIds = parentRelations.map(relation => relation.parentId);
++    const parentConcepts = parentIds.length > 0 
++      ? await Concept.find({ id: { $in: parentIds } }).select('id name description')
++      : [];
++    
++    // Находим дочерние концепции
++    const childRelations = await ConceptRelation.find({ parentId: concept.id });
++    const childIds = childRelations.map(relation => relation.childId);
++    const childConcepts = childIds.length > 0 
++      ? await Concept.find({ id: { $in: childIds } }).select('id name description')
++      : [];
++    
++    // Возвращаем концепцию со связанными концепциями
++    res.json({
++      concept,
++      related: {
++        parents: parentConcepts,
++        children: childConcepts
++      }
++    });
+   } catch (error) {
++    logger.error({ requestId: 'api_get_concept', conceptId: req.params.id }, `Error retrieving concept: ${error.message}`);
+     res.status(500).json({ error: error.message });
+   }
+ });
+@@ -444,29 +585,75 @@
+   try {
+     const { selectedConcepts, generationParams, userId } = req.body;
+     
+-    if (!selectedConcepts || selectedConcepts.length < 2) {
++    // Валидация входных данных
++    if (!selectedConcepts || !Array.isArray(selectedConcepts) || selectedConcepts.length < 2) {
+       return res.status(400).json({ error: 'At least two concepts are required' });
+     }
+     
++    if (!userId) {
++      return res.status(400).json({ error: 'User ID is required' });
++    }
++    
++    // Проверяем существование выбранных концепций
++    const existingConcepts = await Concept.find({ id: { $in: selectedConcepts } });
++    if (existingConcepts.length !== selectedConcepts.length) {
++      const foundIds = existingConcepts.map(c => c.id);
++      const missingIds = selectedConcepts.filter(id => !foundIds.includes(id));
++      return res.status(400).json({ 
++        error: 'Some selected concepts do not exist',
++        missingIds
++      });
++    }
++    
++    // Проверяем лимит активных запросов для пользователя
++    const activeRequestsCount = await Request.countDocuments({ 
++      user: userId,
++      status: 'processing'
++    });
++    
++    const MAX_ACTIVE_REQUESTS = 3; // Максимальное количество одновременных запросов от одного пользователя
++    
++    if (activeRequestsCount >= MAX_ACTIVE_REQUESTS) {
++      return res.status(429).json({ 
++        error: 'Too many active generation requests',
++        message: `You have ${activeRequestsCount} active requests. Please wait for them to complete before creating a new one.`
++      });
++    }
++    
++    // Проверяем и форматируем параметры генерации
++    const validatedParams = validateGenerationParams(generationParams || {});
++    
+     // Создаем запись о запросе
++    const requestId = uuidv4();
+     const request = new Request({
+-      id: uuidv4(),
++      id: requestId,
+       user: userId,
+       selectedConcepts,
+-      generationParams,
+-      status: 'processing'
++      generationParams: validatedParams,
++      status: 'processing',
++      creationDate: new Date()
+     });
+     
+     await request.save();
+     
+-    // Запускаем асинхронную обработку
+-    generateCombinedConcept(request.id);
+-    
++    // Запускаем асинхронную обработку в отдельном процессе
++    // В продакшн версии здесь лучше использовать очередь задач (например, Redis Queue или Bull)
++    setTimeout(() => {
++      generateCombinedConcept(requestId)
++        .catch(error => {
++          logger.error({ requestId }, `Async error in generation: ${error.message}`);
++        });
++    }, 0);
++    
++    // Возвращаем информацию о созданном запросе
+     res.json({ 
+-      requestId: request.id,
+-      message: 'Generation started' 
++      requestId,
++      message: 'Generation started',
++      status: 'processing',
++      estimatedTime: calculateEstimatedTime(selectedConcepts.length, validatedParams)
+     });
+   } catch (error) {
++    logger.error({ requestId: 'api_generate' }, `Error starting generation: ${error.message}`);
+     res.status(500).json({ error: error.message });
+   }
+ });
+@@ -479,20 +666,271 @@
+       return res.status(404).json({ error: 'Request not found' });
+     }
+     
++    // Базовая информация о запросе
++    const response = {
++      request: {
++        id: request.id,
++        status: request.status,
++        creationDate: request.creationDate,
++        selectedConcepts: request.selectedConcepts.length,
++        error: request.error
++      }
++    };
++    
+     // Если запрос завершен, добавляем информацию о результате
+     if (request.status === 'completed' && request.result) {
+       const concept = await Concept.findOne({ id: request.result });
++      
++      if (concept) {
++        response.result = {
++          id: concept.id,
++          name: concept.name,
++          description: concept.description,
++          thesesCount: concept.theses.length,
++          creationDate: concept.creationDate
++        };
++      } else {
++        // Несоответствие в данных - запрос помечен как завершенный, но концепция не найдена
++        logger.warn({ requestId: req.params.id }, 'Request marked as completed but concept not found');
++        response.warning = 'Request is marked as completed but the result concept was not found';
++      }
++    }
++    
++    // Если запрос находится в обработке, добавляем оценку оставшегося времени
++    if (request.status === 'processing') {
++      const elapsedTime = new Date() - new Date(request.creationDate);
++      const estimatedTime = calculateEstimatedTime(
++        request.selectedConcepts.length, 
++        request.generationParams
++      );
++      
++      response.processingInfo = {
++        elapsedTimeSeconds: Math.floor(elapsedTime / 1000),
++        estimatedTotalTimeSeconds: estimatedTime,
++        estimatedRemainingSeconds: Math.max(0, estimatedTime - Math.floor(elapsedTime / 1000)),
++        progress: Math.min(100, Math.floor((elapsedTime / 1000 / estimatedTime) * 100))
++      };
++    }
++    
++    res.json(response);
++  } catch (error) {
++    logger.error({ requestId: req.params.id }, `Error checking request status: ${error.message}`);
++    res.status(500).json({ error: error.message });
++  }
++});
++
++// 5. Получение истории запросов пользователя
++app.get('/api/users/:userId/requests', async (req, res) => {
++  try {
++    const userId = req.params.userId;
++    
++    // Проверка аутентификации и авторизации (в реальном приложении)
++    // ...
++    
++    // Поддержка пагинации
++    const page = parseInt(req.query.page) || 1;
++    const limit = parseInt(req.query.limit) || 10;
++    const skip = (page - 1) * limit;
++    
++    // Фильтрация по статусу (если указан)
++    const statusFilter = req.query.status ? { status: req.query.status } : {};
++    
++    // Общий фильтр
++    const filter = {
++      user: userId,
++      ...statusFilter
++    };
++    
++    // Получаем общее количество запросов для пагинации
++    const total = await Request.countDocuments(filter);
++    
++    // Получаем запросы с сортировкой и пагинацией
++    const requests = await Request.find(filter)
++      .sort({ creationDate: -1 })
++      .skip(skip)
++      .limit(limit);
++    
++    // Получаем информацию о результатах для завершенных запросов
++    const completedRequestIds = requests
++      .filter(req => req.status === 'completed' && req.result)
++      .map(req => req.result);
++    
++    // Если есть завершенные запросы, получаем информацию о сгенерированных концепциях
++    const conceptsMap = {};
++    if (completedRequestIds.length > 0) {
++      const concepts = await Concept.find({ id: { $in: completedRequestIds } })
++        .select('id name description creationDate');
++      
++      concepts.forEach(concept => {
++        conceptsMap[concept.id] = concept;
++      });
++    }
++    
++    // Форматируем ответ
++    const formattedRequests = requests.map(request => {
++      const formattedRequest = {
++        id: request.id,
++        status: request.status,
++        creationDate: request.creationDate,
++        selectedConceptsCount: request.selectedConcepts.length
++      };
++      
++      // Добавляем информацию о результате для завершенных запросов
++      if (request.status === 'completed' && request.result && conceptsMap[request.result]) {
++        formattedRequest.result = {
++          conceptId: request.result,
++          name: conceptsMap[request.result].name,
++          description: conceptsMap[request.result].description,
++          creationDate: conceptsMap[request.result].creationDate
++        };
++      }
++      
++      // Добавляем информацию об ошибке, если запрос завершился с ошибкой
++      if (request.status === 'error' && request.error) {
++        formattedRequest.error = request.error;
++      }
++      
++      return formattedRequest;
++    });
++    
++    res.json({
++      data: formattedRequests,
++      pagination: {
++        total,
++        page,
++        limit,
++        pages: Math.ceil(total / limit)
++      }
++    });
++  } catch (error) {
++    logger.error({ userId: req.params.userId }, `Error retrieving user requests: ${error.message}`);
++    res.status(500).json({ error: error.message });
++  }
++});
++
++// 6. Получение концепций по тегам или темам
++app.get('/api/concepts/by-topic/:topic', async (req, res) => {
++  try {
++    const topic = req.params.topic;
++    
++    // Получаем ID тезисов с указанной темой
++    const ThesisTopics = mongoose.model('ThesisTopics', new mongoose.Schema({
++      thesisId: String,
++      topic: String
++    }));
++    
++    const thesisTopics = await ThesisTopics.find({ topic });
++    const thesisIds = thesisTopics.map(t => t.thesisId);
++    
++    // Если не найдено тезисов по этой теме
++    if (thesisIds.length === 0) {
+       return res.json({
+-        request,
+-        result: concept
++        data: [],
++        pagination: { total: 0, page: 1, limit: 20, pages: 0 }
+       });
+     }
+     
+-    res.json({ request });
++    // Находим концепции, содержащие эти тезисы
++    const concepts = await Concept.find({ 'theses.id': { $in: thesisIds } })
++      .select('id name description authors source creationDate');
++    
++    res.json({
++      data: concepts,
++      pagination: {
++        total: concepts.length,
++        page: 1,
++        limit: concepts.length,
++        pages: 1
++      }
++    });
+   } catch (error) {
++    logger.error({ topic: req.params.topic }, `Error retrieving concepts by topic: ${error.message}`);
+     res.status(500).json({ error: error.message });
+   }
+ });
++
++// Вспомогательная функция для оценки времени генерации
++function calculateEstimatedTime(conceptCount, params) {
++  // Базовое время в секундах
++  let baseTime = 30 + (conceptCount * 5);
++  
++  // Время на анализ тезисов и поиск противоречий
++  baseTime += Math.pow(conceptCount, 1.5) * 2;
++  
++  // Время на вызов Claude API (обычно занимает 10-20 секунд)
++  baseTime += 15;
++  
++  // Дополнительное время на обработку сложных параметров
++  if (params) {
++    if (params.additionalRequirements && params.additionalRequirements.length > 100) {
++      baseTime += 10;
++    }
++    
++    if (params.synthesisApproach === 'dialectical' || params.synthesisApproach === 'integrative') {
++      baseTime += 10; // Эти подходы требуют более сложного анализа
++    }
++  }
++  
++  return Math.round(baseTime);
++}
++
++// Функция для валидации и нормализации параметров генерации
++function validateGenerationParams(params) {
++  const validatedParams = { ...params };
++  
++  // Валидация допустимых подходов к синтезу
++  const validApproaches = ['dialectical', 'pragmatic', 'integrative', 'revolutionary'];
++  if (validatedParams.synthesisApproach && !validApproaches.includes(validatedParams.synthesisApproach)) {
++    validatedParams.synthesisApproach = 'integrative'; // Значение по умолчанию
++  }
++  
++  // Валидация списка фокусных тем
++  if (validatedParams.focusTopics && !Array.isArray(validatedParams.focusTopics)) {
++    try {
++      validatedParams.focusTopics = JSON.parse(validatedParams.focusTopics);
++    } catch {
++      validatedParams.focusTopics = [];
++    }
++  }
++  
++  // Валидация температуры для Claude API
++  if (validatedParams.temperature !== undefined) {
++    const temp = parseFloat(validatedParams.temperature);
++    if (isNaN(temp) || temp < 0 || temp > 1) {
++      validatedParams.temperature = 0.7; // Значение по умолчанию
++    } else {
++      validatedParams.temperature = temp;
++    }
++  }
++  
++  // Санитизация текстовых полей
++  if (validatedParams.additionalRequirements) {
++    validatedParams.additionalRequirements = sanitizeText(validatedParams.additionalRequirements, 1000);
++  }
++  
++  if (validatedParams.style) {
++    validatedParams.style = sanitizeText(validatedParams.style, 500);
++  }
++  
++  return validatedParams;
++}
++
++// Функция для санитизации текстовых полей
++function sanitizeText(text, maxLength = 1000) {
++  if (!text) return '';
++  
++  // Преобразуем в строку
++  let sanitized = String(text);
++  
++  // Удаляем потенциально опасные символы или теги
++  sanitized = sanitized.replace(/<script[^>]*>.*?<\/script>/gi, '')
++    .replace(/<[\/\!]*?[^<>]*?>/gi, '')
++    .replace(/<style[^>]*>.*?<\/style>/gi, '')
++    .replace(/<![\s\S]*?--[ \t\n\r]*>/gi, '');
++  
++  // Обрезаем до максимальной длины
++  return sanitized.substring(0, maxLength);
++}
+ 
+ // Алгоритм генерации новой концепции
+ async function generateCombinedConcept(requestId) {

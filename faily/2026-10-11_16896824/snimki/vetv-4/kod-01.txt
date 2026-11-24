@@ -1,0 +1,36 @@
+Photorealistic archival photograph, shot from directly above on a dark grey-brown cloth surface, soft directional daylight from the upper left, shallow natural shadows. Portrait format 2:3. The image shows a case file from a fictional state archive, photographed the way museums photograph historical documents.
+
+WORLD CONTEXT (for correct interpretation, do not depict literally):
+The documents come from the R.S.F.G.R. («Р.С.Ф.Г.Р.»), a fictional alternate Russia of the 1920s–30s in which the revolutionary state merged with a Lovecraftian cult: Lenin is "the Sleeper" beneath the Mausoleum, the capital is the city of R'lyeh on the Kara Sea, and citizens are ceremonially "dissolved" into the Great Mycelium (Великая Грибница), a collective fungal organism; after dissolution a family receives "one spore" instead of the person. Individual reason is treated as a crime ("рассудок в единоличном владении"); citizens may wear glass jars (сосуды) on their heads as external containers for their reason. The ministry in charge is the People's Commissariat of Healthy Madness (Наркоматъ Здороваго Безумія). Its emblem is a red five-pointed star with a spiral in the centre instead of a hammer and sickle; its round violet rubber stamp shows an octopus-like figure. Years are counted in "Sporolétie" (Споролѣтіе), year I = 1921, so Споролѣтіе XVI = 1936. "The dry world" (сухой міръ) means our ordinary, rational, non-mystical world; in this state, stories about the dry world are heretical folklore that frighten people precisely because nothing supernatural happens in them. This case file (Дѣло № 611-С) is an investigation into such folklore — "dry sayings" (сухія присказки) — found at a soil-moisture research institute, НИИ-27 «Мицелій». The mood of the image must be quiet, dry, bureaucratic dread: no monsters, no tentacles, no glowing effects, no fantasy illustration. Everything looks like a real 1930s Soviet-era archive object.
+
+COMPOSITION:
+1) Main object, filling the upper two thirds and rotated about 4° counter-clockwise: a closed archival case folder of thick buff-grey cardboard, worn corners, a faded cloth tie string, two punched holes at the left edge, slight water stain at the bottom. Printed cover in pre-revolutionary Russian typography (high-contrast serif and condensed headings, dark brown-black ink), with a small red star containing a spiral at the top centre. The cover text, exactly, line by line:
+   «Р. С. Ф. Г. Р.»
+   «Наркоматъ Здороваго Безумія»
+   «Отдѣлъ Спороводства и Переводовъ»
+   «ДѢЛО № 611-С» (large, the most prominent line)
+   «О распространеніи еретическаго фольклора въ НИИ-27 «Мицелій» (Корневище)» (smaller, two lines)
+   «Споролѣтіе XVI»
+   «На 42 листахъ»
+   At the upper right corner a rectangular violet rubber stamp, slightly crooked and unevenly inked: «ГРЁЗОЙ НЕ ТРОНУТО».
+   Below it, a smaller red rectangular stamp: «Хранить закупореннымъ».
+   At the lower left, the round violet stamp of the Commissariat with the octopus-like figure in the centre and the circular inscription «НАРКОМАТЪ · ЗДОРОВАГО БЕЗУМІЯ».
+
+2) Lying on top of the folder, lower right, rotated about 6° clockwise and overlapping the folder's bottom edge: one confiscated sheet of cheap greyish paper, folded once and flattened. It is the BACK side of a printed bureaucratic coupon form: faint mirrored print-through of the form's lines and of the label «Ф. № 6» shows through from the other side but is NOT legible. On this back side, text handwritten in pencil in uneven block capital letters, as by a tired person. Between lines, instead of punctuation, small hand-drawn spirals (like a little snail-shell curl). Exact handwritten text, in this order, each item on its own line, with a small spiral between items:
+   «19»
+   «НАКОНЕЦЪ ПРИШЛА ТВОЯ ОЧЕРЕДЬ»
+   «СНИМАЕШЬ СОСУДЪ. ЛОЖИШЬСЯ. ЗАКРЫВАЕШЬ ГЛАЗА»
+   «ЖДЁШЬ»
+   «ЖДЁШЬ»
+   «ОТКРЫВАЕШЬ ГЛАЗА»
+   «ТЫ ОСТАЛСЯ» (last line, slightly larger and pressed harder into the paper)
+   In the right margin of this sheet, diagonal handwriting in blue-violet ink in a fast official hand: «Не сжигать. Снять три копіи.» followed by a short illegible signature.
+
+3) Small details: a rusted paper clip on the top edge of the sheet; a faint pencil archival number «л. 42» in the lower corner of the sheet; a few grains of dust; no other objects.
+
+TEXT RULES (important):
+- All Russian text uses pre-1918 orthography exactly as written above, including the letters «ъ», «ѣ», «і» and the endings «-аго». Do not modernise, correct or translate any word. Keep «ё» where it is written.
+- Render every quoted line once, exactly, with correct letters; do not invent extra text, do not add English text, captions, watermarks or signatures in Latin letters.
+- The pencil block capitals must be clearly readable but genuinely handwritten (irregular baseline, varying letter size), not a font.
+
+STYLE: museum documentary photography of a real 1930s object; aged paper with foxing, soft creases, slightly faded inks; natural colours dominated by grey, buff, brown, faded red and violet stamps; realistic paper texture and fibre; no vignette filters, no sepia tint over the whole image, no fantasy art, no modern objects.

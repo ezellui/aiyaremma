@@ -1,0 +1,248 @@
+/* ============================================ */
+/* СТИЛИ ДЛЯ ИНДЕКСА НАПРЯЖЕНИЯ */
+/* ============================================ */
+
+/* Иконка типа напряжения */
+.tension-type-icon {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.tension-card:hover .tension-type-icon {
+    transform: scale(1.15);
+}
+
+/* Курсор для интерактивных карточек */
+.tension-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Визуальная шкала напряжения */
+.tension-breakdown-bar {
+    display: flex;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 12px 0;
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.tension-segment {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tension-segment:hover {
+    filter: brightness(1.3);
+    box-shadow: 0 0 8px currentColor;
+}
+
+.tension-segment.tension-immanent {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.tension-segment.tension-polemical {
+    background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+.tension-segment.tension-dialectical {
+    background: linear-gradient(90deg, #9b59b6, #8e44ad);
+}
+
+/* Бейджи типов напряжения */
+.tension-badge-immanent {
+    background: rgba(231, 76, 60, 0.2) !important;
+    border: 1px solid rgba(231, 76, 60, 0.5) !important;
+    color: #e74c3c !important;
+}
+
+.tension-badge-polemical {
+    background: rgba(243, 156, 18, 0.2) !important;
+    border: 1px solid rgba(243, 156, 18, 0.5) !important;
+    color: #f39c12 !important;
+}
+
+.tension-badge-dialectical {
+    background: rgba(155, 89, 182, 0.2) !important;
+    border: 1px solid rgba(155, 89, 182, 0.5) !important;
+    color: #9b59b6 !important;
+}
+
+/* Подсказка о раскрытии */
+.tension-summary {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(108, 92, 231, 0.2);
+    text-align: center;
+}
+
+.tension-expand-hint {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.3s ease;
+}
+
+.tension-card:hover .tension-expand-hint {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.tension-card.expanded .tension-expand-hint {
+    color: #3498db;
+}
+
+/* Панель с деталями */
+.tension-detail-panel {
+    margin-top: 15px;
+    padding: 18px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(10, 10, 25, 0.4));
+    border-radius: 10px;
+    border: 1px solid rgba(108, 92, 231, 0.3);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Секции деталей */
+.tension-detail-section {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(108, 92, 231, 0.15);
+}
+
+.tension-detail-section:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.tension-detail-title {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tension-detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tension-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    font-size: 11px;
+    transition: background 0.2s ease;
+}
+
+.tension-detail-item:hover {
+    background: rgba(108, 92, 231, 0.15);
+}
+
+.tension-detail-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.tension-detail-value {
+    color: #3498db;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* Аналитическая секция */
+.tension-analytics-section {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tension-analytics-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+}
+
+.tension-analytics-label {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.tension-analytics-value {
+    color: #3498db;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* Описание концепции */
+.tension-concept-description {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(108, 92, 231, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #6c5ce7;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+}
+
+.tension-concept-description strong {
+    color: rgba(255, 255, 255, 0.9);
+    display: block;
+    margin-bottom: 6px;
+}
+
+/* Состояние развёрнутой карточки */
+.tension-card.expanded {
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.12), rgba(52, 152, 219, 0.08));
+    border-color: rgba(108, 92, 231, 0.4);
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 600px) {
+    .tension-breakdown-bar {
+        height: 8px;
+    }
+    
+    .metric-result-details {
+        flex-wrap: wrap;
+    }
+    
+    .tension-detail-panel {
+        padding: 14px;
+    }
+    
+    .tension-detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .tension-analytics-section {
+        font-size: 10px;
+    }
+}

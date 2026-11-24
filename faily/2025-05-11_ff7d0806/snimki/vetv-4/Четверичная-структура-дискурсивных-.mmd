@@ -1,0 +1,68 @@
+graph TD
+    A[Четыре дискурса] --> B[Дискурс\nГосподина]
+    A --> C[Дискурс\nУниверситета]
+    A --> D[Дискурс\nИстерика]
+    A --> E[Дискурс\nАналитика]
+    
+    subgraph "Дискурс Господина"
+        B --> F[S1→S2]
+        F --> G[$  ← a]
+        G --> H[Господское означающее\nкомандует знанием]
+        H --> I[Производство\nприбавочного наслаждения]
+    end
+    
+    subgraph "Дискурс Университета"
+        C --> J[S2→a]
+        J --> K[S1← $]
+        K --> L[Знание на месте\nкоманды]
+        L --> M[Производство\nсубъекта]
+    end
+    
+    subgraph "Дискурс Истерика"
+        D --> N[$→S1]
+        N --> O[a←S2]
+        O --> P[Субъект вопрошает\nгосподина]
+        P --> Q[Производство\nзнания]
+    end
+    
+    subgraph "Дискурс Аналитика"
+        E --> R[a→$]
+        R --> S[S2←S1]
+        S --> T[Объект-причина\nна месте агента]
+        T --> U[Производство\nгосподского означающего]
+    end
+    
+    subgraph "Структурная матрица"
+        V[агент → другой]
+        V --> W[истина ← продукт]
+        W --> X[Четыре позиции:\nместа дискурса]
+        X --> Y[Четыре элемента:\nS1, S2, $, a]
+    end
+    
+    subgraph "Вращение дискурсов"
+        Z[Поворот на\nчетверть] --> AA[Смена\nсоциальной связи]
+        AA --> AB[Трансформация\nсубъективности]
+        AB --> AC[Новый режим\njouissance]
+        AC -.-> Z
+    end
+    
+    B & C & D & E --> V
+    
+    AD[Капиталистический\nдискурс] --> AE[$→S2]
+    AE --> AF[S1←a]
+    AF --> AG[Извращение дискурса\nгосподина]
+    
+    AD -.-> A
+    
+    AH[Дискурс как\nсоциальная связь] --> AI[Способ обращения\nс jouissance]
+    AI --> AJ[Структура\nневозможного]
+    AJ --> A
+    
+    style A fill:#f9d5e5,stroke:#333,stroke-width:3px
+    style B fill:#99ccff,stroke:#333,stroke-width:2px
+    style C fill:#99ff99,stroke:#333,stroke-width:2px
+    style D fill:#ffcc99,stroke:#333,stroke-width:2px
+    style E fill:#ff9999,stroke:#333,stroke-width:2px
+    style V fill:#cc99ff,stroke:#333,stroke-width:2px
+    style Z fill:#ccffcc,stroke:#333,stroke-width:2px
+    style AD fill:#ffcccc,stroke:#333,stroke-width:2px

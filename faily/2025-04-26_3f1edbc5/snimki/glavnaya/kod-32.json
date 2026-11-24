@@ -1,0 +1,24 @@
+"template": "Для следующей категории в контексте философской концепции, предложи расширенное описание, возможные альтернативные трактовки, исторические аналоги и связанные концепты.
+
+Название концепции: {{concept_name}}
+Описание концепции: {{concept_description}}
+
+Категория: {{category_name}}
+Определение: {{category_definition}}
+{{#if tradition_concepts}}
+Традиции/Концепции: {{#each tradition_concepts}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+{{/if}}
+{{#if philosophers}}
+Философы: {{#each philosophers}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+{{/if}}
+
+Структурируй ответ следующим образом:...",
+
+"parameters": [
+  "concept_name",
+  "concept_description",
+  "category_name",
+  "category_definition",
+  "tradition_concepts",
+  "philosophers"
+],

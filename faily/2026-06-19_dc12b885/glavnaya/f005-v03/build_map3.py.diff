@@ -1,0 +1,82 @@
+--- предыдущая/build_map3.py
++++ текущая/build_map3.py
+@@ -135,11 +135,10 @@
+ 
+ TOTW,TOTH=PADL+W+PADR,PADT+H+PADB
+ oc=outline()
+-S=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {TOTW} {TOTH}" font-family="Georgia, \'Times New Roman\', serif">']
++S=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {TOTW} {TOTH}" font-family="\'Iowan Old Style\',\'Palatino Linotype\',\'Book Antiqua\',Palatino,Georgia,serif">']
+ S.append('<defs>'
+- '<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6a5012"/></marker>'
+- '<style>.coast{stroke:#33424a;stroke-width:.6;stroke-opacity:.5;stroke-linejoin:round}'
+- '.grat{fill:none;stroke:#aebcc2;stroke-width:.6;stroke-opacity:.5}</style>'
++ '<style>.coast{stroke:#33424a;stroke-width:.55;stroke-opacity:.4;stroke-linejoin:round}'
++ '.grat{fill:none;stroke:#aebcc2;stroke-width:.6;stroke-opacity:.45}</style>'
+  f'<clipPath id="w"><path d="{oc}"/></clipPath></defs>')
+ S.append(f'<rect width="{TOTW}" height="{TOTH}" fill="#f4f1ea"/>')
+ S.append(f'<path d="{oc}" fill="#dbe6ea"/>')
+@@ -152,43 +151,34 @@
+         S.append(f'<path d="{geom_d(dissolved[k])}" fill="{color}" class="coast"/>')
+ 
+ # ---- немецкие подписи --------------------------------------------------------
+-def halo(col,sz):
+-    r,g,b=int(col[1:3],16),int(col[3:5],16),int(col[5:7],16)
+-    lum=0.299*r+0.587*g+0.114*b
+-    return ('#152228' if lum>128 else '#f6f9fa', max(1.8, sz*0.12))   # светлый текст -> тёмное гало
+ def lab(lon,lat,lines,anc='middle'):
+-    """lines: список (text,size,weight,color) — стопкой по центру, с контурным гало."""
++    """lines: (text, size, weight, color, tracking_em, italic) — без обводки, тон заливки."""
+     x,y=to_svg(*project(lon,lat)); out=[]; cy=y
+-    for t,sz,wt,col in lines:
+-        hc,hw=halo(col,sz); ls=1.0 if wt>=700 else 0.3
+-        out.append(f'<text x="{x:.0f}" y="{cy:.0f}" text-anchor="{anc}" font-size="{sz}" '
+-                   f'font-weight="{wt}" fill="{col}" letter-spacing="{ls}" paint-order="stroke" '
+-                   f'stroke="{hc}" stroke-width="{hw}" stroke-opacity="0.92" stroke-linejoin="round">{t}</text>')
+-        cy+=sz*1.06
++    for t,sz,wt,col,tr,it in lines:
++        st='font-style:italic' if it else ''
++        out.append(f'<text x="{x:.1f}" y="{cy:.1f}" text-anchor="{anc}" font-size="{sz}" '
++                   f'font-weight="{wt}" fill="{col}" letter-spacing="{sz*tr:.2f}" style="{st}">{t}</text>')
++        cy+=sz*1.16
+     return ''.join(out)
+-D='#16232a'; L='#eef2f3'
+-# великие державы
+-S.append(lab(45,53,[('GROSSDEUTSCHES',30,700,L),('REICH',30,700,L)]))
+-S.append(lab(-99,41,[('PANAMERIKANISCHE',26,700,L),('UNION',26,700,L)]))
+-S.append(lab(95,59,[('SOWJETUNION',31,700,'#3a2c0f')]))
+-S.append(lab(114,10,[('JAPANISCHE SPHÄRE',22,700,L),('Großostasiatische Wohlstandssphäre',12,400,L)]))
++L='#e4e9f2'
++# великие державы — капитель в разрядку, тон заливки, без обводки
++S.append(lab(45,53,[('GROSSDEUTSCHES',22,400,'#dde6e8',0.16,False),('REICH',22,400,'#dde6e8',0.16,False)]))
++S.append(lab(96,59,[('SOWJETUNION',22,400,'#4a3410',0.16,False)]))
++S.append(lab(-93,44,[('PANAMERIKANISCHE',19,400,'#e4e9f2',0.10,False),('UNION',19,400,'#e4e9f2',0.16,False)]))
++S.append(lab(113,14,[('JAPANISCHE SPHÄRE',18,400,'#4e2018',0.13,False)]))
+ # имперские / региональные
+-S.append(lab(16,25,[('ITALIENISCHES',21,700,'#23240e'),('IMPERIUM',21,700,'#23240e'),('Mare Nostrum',13,400,'#33340f')]))
+-S.append(lab(22,-2,[('MITTELAFRIKA',22,700,'#11201f')]))
+-S.append(lab(-60,-16,[('Südamerika',18,600,L)]))
+-# второстепенные государства
+-S.append(lab(101,30,[('Freies China',17,600,'#3f3b29')]))
+-S.append(lab(80,21,[('Freies Indien',17,600,'#3f3b29')]))
+-S.append(lab(47,21,[('Neutraler Orient',16,600,'#4a4636')]))
+-# коридор СССР к океану
+-ax,ay=to_svg(*project(60.5,26.2)); bx,by=to_svg(*project(61.5,22))
+-S.append(f'<path d="M{ax:.0f},{ay:.0f} L{bx:.0f},{by:.0f}" stroke="#6a5012" stroke-width="2.4" marker-end="url(#arr)"/>')
+-S.append(lab(63,15,[('Zugang zum',14,600,'#5a4310'),('Indischen Ozean',14,600,'#5a4310')],anc='start'))
++S.append(lab(16,25,[('ITALIENISCHES',15,400,'#2c2f12',0.16,False),('IMPERIUM',15,400,'#2c2f12',0.18,False),('Mare Nostrum',11,400,'#3a3d1a',0.02,True)]))
++S.append(lab(22,-2,[('MITTELAFRIKA',16,400,'#1f363a',0.18,False)]))
++# второстепенные — курсив
++S.append(lab(-60,-16,[('Südamerika',15,400,'#e4e9f2',0.03,True)]))
++S.append(lab(101,30,[('Freies China',14,400,'#544e3f',0.03,True)]))
++S.append(lab(80,21,[('Freies Indien',14,400,'#544e3f',0.03,True)]))
++S.append(lab(47,21,[('Neutraler Orient',13,400,'#5b5546',0.03,True)]))
+ 
+ # ---- заголовок ---------------------------------------------------------------
+ cx=TOTW/2
+-S.append(f'<text x="{cx:.0f}" y="60" text-anchor="middle" font-size="40" font-weight="700" fill="#1d2a30" letter-spacing="2">DER KRUMME SIEG</text>')
+-S.append(f'<text x="{cx:.0f}" y="90" text-anchor="middle" font-size="18" font-style="italic" fill="#42525a">Die Aufteilung der Welt nach dem Zweiten Weltkrieg · um 1948</text>')
++S.append(f'<text x="{cx:.0f}" y="60" text-anchor="middle" font-size="37" font-weight="600" fill="#23313b" letter-spacing="8">DER KRUMME SIEG</text>')
++S.append(f'<text x="{cx:.0f}" y="89" text-anchor="middle" font-size="17" font-style="italic" fill="#4a5a62" letter-spacing="1">Die Aufteilung der Welt nach dem Zweiten Weltkrieg · um 1948</text>')
+ 
+ # ---- легенда -----------------------------------------------------------------
+ ly=PADT+H+42; lx=PADL+30; cw=380

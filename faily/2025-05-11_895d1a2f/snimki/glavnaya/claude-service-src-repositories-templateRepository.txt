@@ -1,0 +1,514 @@
+/**
+ * Repository for Claude templates
+ */
+
+const { defaultLogger } = require('../../../shared/lib/logging/logger');
+const { mongoClient } = require('../../../shared/lib/db/mongodb/client');
+const ClaudeTemplate = require('../models/templateModel');
+
+/**
+ * Repository for managing Claude templates in MongoDB
+ */
+class TemplateRepository {
+  /**
+   * Create a new TemplateRepository
+   * @param {Object} [options={}] - Repository options
+   * @param {Object} [logger=defaultLogger] - Logger instance
+   */
+  constructor(options = {}, logger = defaultLogger) {
+    this.collectionName = 'claude_templates';
+    this.dbName = options.dbName || 'philosophy';
+    this.logger = logger;
+  }
+
+  /**
+   * Get the MongoDB collection
+   * @returns {Collection} MongoDB collection
+   * @private
+   */
+  _getCollection() {
+    return mongoClient.db(this.dbName).collection(this.collectionName);
+  }
+
+  /**
+   * Find all templates with pagination and filtering
+   * @param {number} page - Page number
+   * @param {number} pageSize - Page size
+   * @param {string} [sortBy] - Sort field
+   * @param {string} [sortOrder='asc'] - Sort order ('asc' or 'desc')
+   * @param {Object} [filters={}] - Filter criteria
+   * @returns {Promise<Object>} Promise resolving to { items, total } object
+   */
+  async findAll(page, pageSize, sortBy = 'name', sortOrder = 'asc', filters = {}) {
+    try {
+      const collection = this._getCollection();
+      
+      // Build query
+      const query = {};
+      
+      if (filters.templateType) {
+        query.template_type = filters.templateType;
+      }
+      
+      if (filters.category) {
+        query.category = filters.category;
+      }
+      
+      if (filters.isActive !== undefined) {
+        query.is_active = filters.isActive;
+      }
+      
+      if (filters.tags && filters.tags.length > 0) {
+        query.tags = { $in: filters.tags };
+      }
+      
+      if (filters.search) {
+        query.$or = [
+          { name: { $regex: filters.search, $options: 'i' } },
+          { description: { $regex: filters.search, $options: 'i' } },
+        ];
+      }
+      
+      // Calculate skip
+      const skip = (page - 1) * pageSize;
+      
+      // Sort options
+      const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
+      
+      // Execute query with pagination
+      const [items, total] = await Promise.all([
+        collection
+          .find(query)
+          .sort(sortOptions)
+          .skip(skip)
+          .limit(pageSize)
+          .toArray(),
+        collection.countDocuments(query),
+      ]);
+      
+      // Convert to models
+      const templateItems = items.map(item => ClaudeTemplate.fromDatabase(item));
+      
+      return { items: templateItems, total };
+    } catch (error) {
+      this.logger.error(`Error finding templates: ${error.message}`, {
+        page,
+        pageSize,
+        sortBy,
+        sortOrder,
+        filters,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find a template by ID
+   * @param {string} templateId - Template ID
+   * @returns {Promise<ClaudeTemplate|null>} Promise resolving to template or null if not found
+   */
+  async findById(templateId) {
+    try {
+      const collection = this._getCollection();
+      const result = await collection.findOne({ template_id: templateId });
+      
+      if (!result) {
+        return null;
+      }
+      
+      return ClaudeTemplate.fromDatabase(result);
+    } catch (error) {
+      this.logger.error(`Error finding template by ID ${templateId}: ${error.message}`, {
+        templateId,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find a template by name
+   * @param {string} name - Template name
+   * @returns {Promise<ClaudeTemplate|null>} Promise resolving to template or null if not found
+   */
+  async findByName(name) {
+    try {
+      const collection = this._getCollection();
+      const result = await collection.findOne({ name });
+      
+      if (!result) {
+        return null;
+      }
+      
+      return ClaudeTemplate.fromDatabase(result);
+    } catch (error) {
+      this.logger.error(`Error finding template by name ${name}: ${error.message}`, {
+        name,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find templates by type
+   * @param {string} templateType - Template type
+   * @param {Object} [options={}] - Query options
+   * @returns {Promise<Array<ClaudeTemplate>>} Promise resolving to array of templates
+   */
+  async findByType(templateType, options = {}) {
+    try {
+      const collection = this._getCollection();
+      
+      const query = { template_type: templateType };
+      
+      if (options.isActive !== undefined) {
+        query.is_active = options.isActive;
+      }
+      
+      if (options.category) {
+        query.category = options.category;
+      }
+      
+      const sortOptions = options.sortBy
+        ? { [options.sortBy]: options.sortOrder === 'desc' ? -1 : 1 }
+        : { name: 1 };
+      
+      const cursor = collection.find(query).sort(sortOptions);
+      
+      if (options.limit) {
+        cursor.limit(options.limit);
+      }
+      
+      const results = await cursor.toArray();
+      
+      return results.map(result => ClaudeTemplate.fromDatabase(result));
+    } catch (error) {
+      this.logger.error(`Error finding templates by type ${templateType}: ${error.message}`, {
+        templateType,
+        options,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find templates by category
+   * @param {string} category - Template category
+   * @param {Object} [options={}] - Query options
+   * @returns {Promise<Array<ClaudeTemplate>>} Promise resolving to array of templates
+   */
+  async findByCategory(category, options = {}) {
+    try {
+      const collection = this._getCollection();
+      
+      const query = { category };
+      
+      if (options.isActive !== undefined) {
+        query.is_active = options.isActive;
+      }
+      
+      const sortOptions = options.sortBy
+        ? { [options.sortBy]: options.sortOrder === 'desc' ? -1 : 1 }
+        : { name: 1 };
+      
+      const cursor = collection.find(query).sort(sortOptions);
+      
+      if (options.limit) {
+        cursor.limit(options.limit);
+      }
+      
+      const results = await cursor.toArray();
+      
+      return results.map(result => ClaudeTemplate.fromDatabase(result));
+    } catch (error) {
+      this.logger.error(`Error finding templates by category ${category}: ${error.message}`, {
+        category,
+        options,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find active templates
+   * @param {Object} [options={}] - Query options
+   * @returns {Promise<Array<ClaudeTemplate>>} Promise resolving to array of templates
+   */
+  async findActive(options = {}) {
+    try {
+      const collection = this._getCollection();
+      
+      const query = { is_active: true };
+      
+      if (options.templateType) {
+        query.template_type = options.templateType;
+      }
+      
+      if (options.category) {
+        query.category = options.category;
+      }
+      
+      const sortOptions = options.sortBy
+        ? { [options.sortBy]: options.sortOrder === 'desc' ? -1 : 1 }
+        : { name: 1 };
+      
+      const cursor = collection.find(query).sort(sortOptions);
+      
+      if (options.limit) {
+        cursor.limit(options.limit);
+      }
+      
+      const results = await cursor.toArray();
+      
+      return results.map(result => ClaudeTemplate.fromDatabase(result));
+    } catch (error) {
+      this.logger.error(`Error finding active templates: ${error.message}`, {
+        options,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new template
+   * @param {ClaudeTemplate} template - Template to create
+   * @returns {Promise<ClaudeTemplate>} Promise resolving to created template
+   */
+  async create(template) {
+    try {
+      template.validate();
+      
+      const collection = this._getCollection();
+      const dbData = template.toDatabase();
+      
+      // Check if name already exists
+      const existing = await collection.findOne({ name: template.name });
+      if (existing) {
+        throw new Error(`Template with name "${template.name}" already exists`);
+      }
+      
+      const result = await collection.insertOne(dbData);
+      
+      if (!result.acknowledged) {
+        throw new Error('Failed to create template');
+      }
+      
+      return template;
+    } catch (error) {
+      this.logger.error(`Error creating template: ${error.message}`, {
+        template,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Update a template
+   * @param {string} templateId - Template ID
+   * @param {Partial<ClaudeTemplate>} updates - Update data
+   * @returns {Promise<ClaudeTemplate>} Promise resolving to updated template
+   */
+  async update(templateId, updates) {
+    try {
+      const collection = this._getCollection();
+      
+      // Remove fields that shouldn't be updated
+      const { template_id, created_at, ...updateData } = updates;
+      
+      // Set updated_at timestamp
+      updateData.updated_at = new Date();
+      
+      // Check if name is being updated and if it already exists
+      if (updateData.name) {
+        const existing = await collection.findOne({ 
+          name: updateData.name,
+          template_id: { $ne: templateId }
+        });
+        
+        if (existing) {
+          throw new Error(`Template with name "${updateData.name}" already exists`);
+        }
+      }
+      
+      const result = await collection.findOneAndUpdate(
+        { template_id: templateId },
+        { $set: updateData },
+        { returnDocument: 'after' }
+      );
+      
+      if (!result.value) {
+        return null;
+      }
+      
+      return ClaudeTemplate.fromDatabase(result.value);
+    } catch (error) {
+      this.logger.error(`Error updating template ${templateId}: ${error.message}`, {
+        templateId,
+        updates,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a template
+   * @param {string} templateId - Template ID
+   * @returns {Promise<boolean>} Promise resolving to whether the template was deleted
+   */
+  async delete(templateId) {
+    try {
+      const collection = this._getCollection();
+      const result = await collection.deleteOne({ template_id: templateId });
+      
+      return result.deletedCount > 0;
+    } catch (error) {
+      this.logger.error(`Error deleting template ${templateId}: ${error.message}`, {
+        templateId,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Activate a template
+   * @param {string} templateId - Template ID
+   * @returns {Promise<ClaudeTemplate>} Promise resolving to updated template
+   */
+  async activate(templateId) {
+    return this.update(templateId, { is_active: true });
+  }
+
+  /**
+   * Deactivate a template
+   * @param {string} templateId - Template ID
+   * @returns {Promise<ClaudeTemplate>} Promise resolving to updated template
+   */
+  async deactivate(templateId) {
+    return this.update(templateId, { is_active: false });
+  }
+
+  /**
+   * Clone a template
+   * @param {string} templateId - Template ID to clone
+   * @param {Object} modifications - Properties to modify in the clone
+   * @returns {Promise<ClaudeTemplate>} Promise resolving to cloned template
+   */
+  async clone(templateId, modifications = {}) {
+    try {
+      const original = await this.findById(templateId);
+      
+      if (!original) {
+        throw new Error(`Template ${templateId} not found`);
+      }
+      
+      const cloned = original.clone(modifications);
+      
+      return this.create(cloned);
+    } catch (error) {
+      this.logger.error(`Error cloning template ${templateId}: ${error.message}`, {
+        templateId,
+        modifications,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get template statistics
+   * @returns {Promise<Object>} Promise resolving to statistics
+   */
+  async getStatistics() {
+    try {
+      const collection = this._getCollection();
+      
+      const pipeline = [
+        {
+          $facet: {
+            totals: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: 1 },
+                  active: { $sum: { $cond: ['$is_active', 1, 0] } },
+                  inactive: { $sum: { $cond: ['$is_active', 0, 1] } },
+                }
+              }
+            ],
+            byType: [
+              {
+                $group: {
+                  _id: '$template_type',
+                  count: { $sum: 1 },
+                  active: { $sum: { $cond: ['$is_active', 1, 0] } },
+                }
+              },
+              { $sort: { count: -1 } }
+            ],
+            byCategory: [
+              {
+                $group: {
+                  _id: '$category',
+                  count: { $sum: 1 },
+                  active: { $sum: { $cond: ['$is_active', 1, 0] } },
+                }
+              },
+              { $sort: { count: -1 } }
+            ],
+            mostUsedTags: [
+              { $unwind: '$tags' },
+              {
+                $group: {
+                  _id: '$tags',
+                  count: { $sum: 1 }
+                }
+              },
+              { $sort: { count: -1 } },
+              { $limit: 10 }
+            ]
+          }
+        }
+      ];
+      
+      const results = await collection.aggregate(pipeline).toArray();
+      const stats = results[0];
+      
+      return {
+        totals: stats.totals[0] || {
+          total: 0,
+          active: 0,
+          inactive: 0,
+        },
+        byType: stats.byType.map(item => ({
+          type: item._id,
+          count: item.count,
+          active: item.active,
+        })),
+        byCategory: stats.byCategory.map(item => ({
+          category: item._id,
+          count: item.count,
+          active: item.active,
+        })),
+        mostUsedTags: stats.mostUsedTags.map(item => ({
+          tag: item._id,
+          count: item.count,
+        })),
+      };
+    } catch (error) {
+      this.logger.error(`Error getting template statistics: ${error.message}`, {
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+}
+
+module.exports = TemplateRepository;

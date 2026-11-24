@@ -9,6 +9,6 @@ aliases: [complex-atlas, complex.mjs]
 - [stated] Key parameters set: maxStepFrac=0.3 for Weierstrass continuation, adaptive probe radius ≈0.2·R₀ for the natural-boundary detector, Froissart-doublet filtering threshold > 1e-4 · maxResidual
 - [stated] Fixed an overlay-caching bug (analysisRedraw())
 - [stated] All three tools synchronized in complex.mjs with tests
-- [stated] Исправлены две фабрикации верификации, выявленные Nyankonyan (июль 2026)
+- [stated] Исправлены две фабрикации верификации, выявленные User (июль 2026)
 
 <!-- обновлено: 2026-08-21T05:43:06.885068+00:00 -->

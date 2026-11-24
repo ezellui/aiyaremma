@@ -1,0 +1,210 @@
+--- предыдущая/Интерактивный-метафилософский-граф.html
++++ текущая/Интерактивный-метафилософский-граф.html
+@@ -1070,7 +1070,206 @@
+           d.fy = d.y;
+         });
+         
+-        // Рек
++        // Рекурсивные узлы
++        recursiveNodes.forEach((d, i) => {
++          const angle = (i / recursiveNodes.length) * 2 * Math.PI;
++          d.x = centerX + Math.cos(angle) * 120;
++          d.y = centerY + Math.sin(angle) * 120;
++          d.fx = d.x;
++          d.fy = d.y;
++        });
++        
++        // Сущностные узлы
++        essentialNodes.forEach((d, i) => {
++          const angle = (i / essentialNodes.length) * 2 * Math.PI;
++          d.x = centerX + Math.cos(angle) * 230;
++          d.y = centerY + Math.sin(angle) * 230;
++          d.fx = d.x;
++          d.fy = d.y;
++        });
++        
++        // Вторичные узлы
++        secondaryNodes.forEach((d, i) => {
++          const angle = (i / secondaryNodes.length) * 2 * Math.PI;
++          d.x = centerX + Math.cos(angle) * 340;
++          d.y = centerY + Math.sin(angle) * 340;
++          d.fx = d.x;
++          d.fy = d.y;
++        });
++        
++        // Периферийные узлы
++        peripheralNodes.forEach((d, i) => {
++          const angle = (i / peripheralNodes.length) * 2 * Math.PI;
++          d.x = centerX + Math.cos(angle) * 440;
++          d.y = centerY + Math.sin(angle) * 440;
++          d.fx = d.x;
++          d.fy = d.y;
++        });
++        
++        // Обновляем позиции
++        ticked();
++      }
++    }
++    
++    // Настройка фильтров
++    function setupFilters() {
++      // Добавляем обработчики для фильтров типов связей
++      document.getElementById('filter-recursive').addEventListener('change', updateLinkVisibility);
++      document.getElementById('filter-constitution').addEventListener('change', updateLinkVisibility);
++      document.getElementById('filter-dialectic').addEventListener('change', updateLinkVisibility);
++      document.getElementById('filter-hermeneutic').addEventListener('change', updateLinkVisibility);
++      document.getElementById('filter-methodological').addEventListener('change', updateLinkVisibility);
++      document.getElementById('filter-historical').addEventListener('change', updateLinkVisibility);
++      document.getElementById('filter-transcendence').addEventListener('change', updateLinkVisibility);
++      document.getElementById('filter-legitimation').addEventListener('change', updateLinkVisibility);
++      document.getElementById('filter-reduction').addEventListener('change', updateLinkVisibility);
++    }
++    
++    // Обновление видимости связей по фильтрам
++    function updateLinkVisibility() {
++      const filters = {
++        recursive: document.getElementById('filter-recursive').checked,
++        constitution: document.getElementById('filter-constitution').checked,
++        dialectic: document.getElementById('filter-dialectic').checked,
++        hermeneutic: document.getElementById('filter-hermeneutic').checked,
++        methodological: document.getElementById('filter-methodological').checked,
++        historical: document.getElementById('filter-historical').checked,
++        transcendence: document.getElementById('filter-transcendence').checked,
++        legitimation: document.getElementById('filter-legitimation').checked,
++        reduction: document.getElementById('filter-reduction').checked
++      };
++      
++      link.style('display', d => filters[d.type] ? 'block' : 'none');
++      linkLabels.style('display', d => filters[d.type] ? 'block' : 'none');
++    }
++    
++    // Фильтрация связей по узлу
++    function filterLinksByNode(nodeId) {
++      link.style('display', d => {
++        if (d.source.id === nodeId || d.source === nodeId || 
++            d.target.id === nodeId || d.target === nodeId) {
++          return 'block';
++        }
++        return 'none';
++      });
++      
++      linkLabels.style('display', d => {
++        if (d.source.id === nodeId || d.source === nodeId || 
++            d.target.id === nodeId || d.target === nodeId) {
++          return 'block';
++        }
++        return 'none';
++      });
++    }
++    
++    // Сброс фильтра связей
++    function resetLinkFilter() {
++      link.style('display', 'block');
++      linkLabels.style('display', 'block');
++      updateLinkVisibility(); // Применяем фильтры из чекбоксов
++    }
++    
++    // Настройка поиска узлов
++    function setupSearch() {
++      const searchInput = document.getElementById('node-search');
++      const resultsContainer = document.getElementById('search-results');
++      
++      searchInput.addEventListener('input', function() {
++        const query = this.value.toLowerCase();
++        
++        if (query.length < 2) {
++          resultsContainer.innerHTML = '';
++          return;
++        }
++        
++        const results = nodeData.filter(node => 
++          node.name.toLowerCase().includes(query) || 
++          node.description.toLowerCase().includes(query)
++        );
++        
++        if (results.length === 0) {
++          resultsContainer.innerHTML = '<p>Ничего не найдено</p>';
++          return;
++        }
++        
++        let html = '';
++        results.slice(0, 5).forEach(node => {
++          html += `<div class="search-result" data-id="${node.id}">
++            <strong>${node.name}</strong><br>
++            <small>${node.description.substring(0, 100)}${node.description.length > 100 ? '...' : ''}</small>
++          </div>`;
++        });
++        
++        resultsContainer.innerHTML = html;
++        
++        // Добавляем обработчики для результатов поиска
++        document.querySelectorAll('.search-result').forEach(elem => {
++          elem.addEventListener('click', function() {
++            const nodeId = this.getAttribute('data-id');
++            focusOnNode(nodeId);
++            resultsContainer.innerHTML = '';
++            searchInput.value = '';
++          });
++        });
++      });
++    }
++    
++    // Фокусировка на узле
++    function focusOnNode(nodeId) {
++      const node = nodeData.find(n => n.id === nodeId);
++      if (!node) return;
++      
++      // Увеличиваем и центрируем на узле
++      const scale = 1.5;
++      const x = width / 2 - node.x * scale;
++      const y = height / 2 - node.y * scale;
++      
++      svg.transition().duration(750).call(
++        d3.zoom().transform,
++        d3.zoomIdentity.translate(x, y).scale(scale)
++      );
++      
++      // Подсвечиваем узел
++      d3.select(`#node-${nodeId}`).select('circle')
++        .transition()
++        .duration(750)
++        .attr('r', nodeTypes[node.type].radius * 1.3)
++        .transition()
++        .duration(750)
++        .attr('r', nodeTypes[node.type].radius);
++      
++      // Показываем связи этого узла
++      filterLinksByNode(nodeId);
++    }
++    
++    // Показать модальное окно справки
++    function showHelp() {
++      document.getElementById('help-modal').style.display = 'flex';
++    }
++    
++    // Запуск приложения при загрузке страницы
++    window.addEventListener('load', initApp);
++    
++    // Обработка изменения размера окна
++    window.addEventListener('resize', function() {
++      width = document.getElementById('graph-container').clientWidth;
++      height = document.getElementById('graph-container').clientHeight;
++      
++      svg.attr('width', width).attr('height', height);
++      
++      if (forceLayout) {
++        simulation.force("center", d3.forceCenter(width / 2, height / 2))
++          .alphaTarget(0.3)
++          .restart();
++      } else {
++        // Обновляем позиции для радиального размещения
++        toggleLayout();
++        toggleLayout();
++      }
++    });
++  </script>
++</body>
++</html>
+       // Рекурсивные связи
+       { source: 'FR', target: 'FR', type: 'recursive', label: 'Самореференция', description: 'Способность философской рефлексии делать себя предметом анализа.' },
+       { source: 'MF', target: 'FR', type: 'recursive', label: 'Взаимоконституирование', description: 'Взаимное определение метафилософии и философской рефлексии.' },

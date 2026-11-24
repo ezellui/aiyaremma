@@ -1,0 +1,10 @@
+// 1. Раскомментировать canvas ИЛИ убрать PNG из README
+"canvas": "^2.11.2"
+
+// 2. Добавить Chart.js (или указать CDN в README)
+// Опция А: через npm
+"chart.js": "^4.4.0"
+
+// Опция Б: в README указать CDN:
+<!-- index.html -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

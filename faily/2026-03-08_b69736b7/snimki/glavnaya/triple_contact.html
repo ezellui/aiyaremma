@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE AMERICAN EXPOSER — Triple Contact</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Oswald:wght@400;700;900&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a0f00;
+    --paper: #f5f0e1;
+    --red: #c0170e;
+    --yellow: #f7c948;
+    --muted: #6b5c47;
+    --rule: #2a1a0a;
+    --green: #2a4a1a;
+    --teal: #0a7a7a;
+    --amber: #b87010;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #d4c9a8;
+    font-family: 'PT Serif', Georgia, serif;
+    color: var(--ink);
+    background-image: repeating-linear-gradient(
+      0deg, transparent, transparent 28px,
+      rgba(0,0,0,0.03) 28px, rgba(0,0,0,0.03) 29px
+    );
+  }
+
+  .newspaper {
+    max-width: 960px;
+    margin: 0 auto;
+    background: var(--paper);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    padding: 0;
+    box-shadow: 0 0 40px rgba(0,0,0,0.4);
+  }
+
+  /* MASTHEAD */
+  .masthead {
+    border-bottom: 5px double var(--rule);
+    padding: 12px 20px 8px;
+    text-align: center;
+    background: var(--paper);
+  }
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 5px;
+    margin-bottom: 8px;
+  }
+  .paper-name {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 72px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -2px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  }
+  .paper-name span { color: var(--red); }
+  .tagline {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .issue-info {
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-top: 6px;
+    border-top: 1px solid var(--rule);
+    padding-top: 5px;
+  }
+
+  /* BREAKING BANNER — black, all three colors */
+  .breaking-banner {
+    background: #0d0a04;
+    color: white;
+    text-align: center;
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.28em;
+    padding: 7px;
+  }
+  .breaking-banner .r { color: #ff4422; }
+  .breaking-banner .g { color: #66cc44; }
+  .breaking-banner .t { color: #22ddcc; }
+
+  /* MOURNING RULE — thin black bar, like a death notice */
+  .mourning-rule {
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      #1a0f00 0px, #1a0f00 24px,
+      #f5f0e1 24px, #f5f0e1 26px
+    );
+  }
+
+  .content { padding: 20px 24px; }
+
+  .main-headline {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 900;
+    font-size: 52px;
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-align: center;
+    border-bottom: 3px solid var(--rule);
+    padding-bottom: 12px;
+    margin-bottom: 10px;
+  }
+  .main-headline .word-r { color: var(--red);   font-size: 42px; display: inline; }
+  .main-headline .word-g { color: var(--green);  font-size: 42px; display: inline; }
+  .main-headline .word-t { color: var(--teal);   font-size: 42px; display: inline; }
+  .main-headline .mega   { font-size: 80px; display: block; letter-spacing: -2px; color: var(--ink); }
+
+  .kicker {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--red);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .sub-headline {
+    font-family: 'PT Serif', serif;
+    font-style: italic;
+    font-size: 17px;
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.45;
+  }
+
+  .byline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-top: 1px solid var(--muted);
+    border-bottom: 1px solid var(--muted);
+    padding: 5px 0;
+    margin-bottom: 16px;
+  }
+
+  /* HOOKMEYER NOTICE — special black-bordered box */
+  .hookmeyer-notice {
+    border: 3px solid var(--ink);
+    background: #f0e8d0;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .hookmeyer-notice strong {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  /* COLUMNS */
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .col { padding: 0 14px; border-right: 1px solid var(--muted); }
+  .col:first-child { padding-left: 0; }
+  .col:last-child  { padding-right: 0; border-right: none; }
+
+  .col p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    text-align: justify;
+    margin-bottom: 10px;
+    hyphens: auto;
+  }
+  .col p:first-of-type::first-letter {
+    float: left;
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 52px;
+    line-height: 0.8;
+    margin-right: 6px;
+    margin-top: 4px;
+    color: var(--red);
+  }
+
+  /* PULLQUOTE */
+  .pullquote {
+    border-top: 3px solid var(--rule);
+    border-bottom: 3px solid var(--rule);
+    margin: 14px 0;
+    padding: 10px 6px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+  }
+  .pullquote .r { color: var(--red); }
+  .pullquote .g { color: var(--green); }
+  .pullquote .t { color: var(--teal); }
+  .pullquote .a { color: var(--amber); }
+
+  /* TIMELINE / STATS BOX */
+  .stats-box {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px;
+    margin: 16px 0;
+    grid-column: 1 / -1;
+  }
+  .stats-box h3 {
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.2em;
+    color: var(--yellow);
+    border-bottom: 1px solid var(--yellow);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .tl-item {
+    border: 1px solid rgba(247,201,72,0.25);
+    padding: 8px 6px;
+    text-align: center;
+    position: relative;
+  }
+  .tl-item::after {
+    content: '→';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--yellow);
+    font-size: 14px;
+    opacity: 0.5;
+  }
+  .tl-item:last-child::after { display: none; }
+  .tl-who {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .tl-who.r { color: #ff6644; }
+  .tl-who.g { color: #88cc66; }
+  .tl-who.t { color: #44ddcc; }
+  .tl-who.all { color: var(--yellow); }
+  .tl-date {
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    color: #aaa;
+    display: block;
+    margin-bottom: 5px;
+    letter-spacing: 0.08em;
+  }
+  .tl-text {
+    font-family: 'PT Serif', serif;
+    font-size: 10px;
+    color: #ccc;
+    line-height: 1.4;
+  }
+
+  /* FULL-WIDTH SECTIONS */
+  .full-width-section {
+    grid-column: 1 / -1;
+    border-top: 3px double var(--rule);
+    border-bottom: 3px double var(--rule);
+    padding: 12px 0;
+    margin: 16px 0;
+  }
+  .section-label {
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .synthesis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 0 10px;
+  }
+  .syn-item {
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+  .syn-item.r-item { background: rgba(192,23,14,0.06);  border-left: 3px solid var(--red);   }
+  .syn-item.g-item { background: rgba(42,74,26,0.07);   border-left: 3px solid var(--green);  }
+  .syn-item.t-item { background: rgba(10,122,122,0.06); border-left: 3px solid var(--teal);   }
+  .syn-item strong {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .syn-item.r-item strong { color: var(--red);   }
+  .syn-item.g-item strong { color: var(--green);  }
+  .syn-item.t-item strong { color: var(--teal);   }
+
+  /* PHOTO */
+  .photo-box { border: 1px solid var(--muted); margin: 12px 0; overflow: hidden; }
+  .photo-caption {
+    font-family: 'PT Serif', serif;
+    font-style: italic;
+    font-size: 10.5px;
+    color: var(--muted);
+    padding: 5px 8px;
+    border-top: 1px solid var(--muted);
+    text-align: left;
+  }
+
+  /* WITNESS */
+  .witness-box {
+    border: 1px solid var(--muted);
+    padding: 10px;
+    margin: 12px 0;
+    background: rgba(247,201,72,0.12);
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .witness-box cite {
+    display: block;
+    font-style: normal;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .expert-badge {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--ink);
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 5px;
+    margin-right: 4px;
+  }
+
+  .ad-box {
+    border: 2px solid var(--ink);
+    padding: 8px;
+    margin: 12px 0;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+  }
+  .ad-box .ad-title { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .ad-box .ad-sub   { font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .ad-box .ad-phone { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--red); letter-spacing: 0.1em; margin-top: 4px; }
+
+  /* THREE-SECOND FINAL BOX */
+  .three-sec-box {
+    grid-column: 1 / -1;
+    border: 3px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 18px 20px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .three-sec-box .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 110px;
+    line-height: 0.9;
+    letter-spacing: -4px;
+    display: block;
+    color: var(--yellow);
+    text-shadow: 0 0 40px rgba(247,201,72,0.4);
+  }
+  .three-sec-box .label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #aaa;
+    display: block;
+    margin-top: 4px;
+    margin-bottom: 12px;
+  }
+  .three-sec-box p {
+    font-family: 'PT Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e0d8c8;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* FOOTER */
+  .footer-rule {
+    border-top: 5px double var(--rule);
+    padding: 10px 20px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 700px) {
+    .paper-name { font-size: 42px; }
+    .main-headline .mega { font-size: 52px; }
+    .columns { grid-template-columns: 1fr; }
+    .col { border-right: none; border-bottom: 1px solid var(--muted); padding: 10px 0; }
+    .timeline { grid-template-columns: 1fr 1fr; }
+    .synthesis-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="newspaper">
+
+  <div class="masthead">
+    <div class="masthead-top">
+      <span>★ FOUNDED 1987 ★ CARSON CITY, NV ★</span>
+      <span>THURSDAY, MAY 1, 2025</span>
+      <span>VOL. XXXVIII, NO. 15 &nbsp;·&nbsp; $2.99</span>
+    </div>
+    <div class="paper-name">The <span>American</span> Exposer</div>
+    <div class="tagline">«WE PRINT WHAT THEY HIDE» &nbsp;·&nbsp; AMERICA'S #1 SOURCE FOR HIDDEN TRUTH SINCE 1987</div>
+    <div class="issue-info">
+      СПЕЦИАЛЬНЫЙ НОМЕР · ЗАВЕРШЕНИЕ ЦИКЛА «ИНФРАСТРУКТУРА КОНТРОЛЯ» · ТРИ ВЫПУСКА — ОДНА СИСТЕМА — ОДИН МОМЕНТ
+    </div>
+  </div>
+
+  <div class="mourning-rule"></div>
+
+  <div class="breaking-banner">
+    <span class="r">◆ РУФУС</span> &nbsp;+&nbsp;
+    <span class="g">◆ ГУСЬ</span> &nbsp;+&nbsp;
+    <span class="t">◆ CROCS</span>
+    &nbsp;·&nbsp; BASS PRO SHOPS, МЕМФИС, TN &nbsp;·&nbsp; 14 МАРТА 2025, 14:09 &nbsp;·&nbsp;
+    <span class="r">◆ РУФУС</span> &nbsp;+&nbsp;
+    <span class="g">◆ ГУСЬ</span> &nbsp;+&nbsp;
+    <span class="t">◆ CROCS</span>
+  </div>
+
+  <div class="content">
+
+    <div class="kicker">⬛ финальный выпуск цикла · эксклюзив · очевидец: дон прингл, кирни, небраска ⬛</div>
+
+    <div class="main-headline">
+      <span class="mega">ТРОЙНОЙ</span>
+      <span class="word-r">РУФУС</span> &nbsp;+&nbsp;
+      <span class="word-g">ГУСЬ</span> &nbsp;+&nbsp;
+      <span class="word-t">CROCS</span><br>
+      <span style="font-size:44px; display:block; margin-top:6px;">ПЕРВЫЙ ЗАДОКУМЕНТИРОВАННЫЙ СЛУЧАЙ</span>
+    </div>
+
+    <div class="sub-headline">
+      14 марта 2025 года, 14:09 по центральному времени — Bass Pro Shops, Мемфис, Теннесси.<br>
+      Дон Прингл присутствовал лично. Д-р Хукмейер госпитализирован. Редакция закрывает цикл.<br>
+      <em>Редакция не закрывает расследование.</em>
+    </div>
+
+    <div class="byline-row">
+      <span>BY: CHAD WILLOUGHBY JR., STAFF INVESTIGATOR · SPECIAL FIELD REPORT</span>
+      <span>FIELD WITNESS: DON PRINGLE, KEARNEY NE · MUFON-R / GWR / CWR REGISTRY</span>
+    </div>
+
+    <!-- HOOKMEYER NOTICE -->
+    <div class="hookmeyer-notice">
+      <strong>⚕ СОСТОЯНИЕ Д-РА ХУКМЕЙЕРА: СТАБИЛЬНОЕ ⚕</strong>
+      Доктор Реймонд Т. Хукмейер, почётный доктор ксеноантропологии, ксеноорнитологии и ксенопедики
+      Университета американских наук (Рино), госпитализирован 15 марта 2025 года.
+      Диагноз: «острая информационная перегрузка неустановленной этиологии».
+      Лечащий врач сообщил редакции: «Он просто слишком много знал за один день».
+      Д-р Хукмейер передаёт читателям: «Я ни о чём не жалею. Купите стельку».
+    </div>
+
+    <!-- TIMELINE BOX -->
+    <div class="stats-box">
+      <h3>📅 ХРОНОЛОГИЯ ЦИКЛА: ОТ ПЕРВОГО КОНТАКТА ДО СХОЖДЕНИЯ</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <span class="tl-who r">▲ РУФУС</span>
+          <span class="tl-date">Июль 2015</span>
+          <span class="tl-text">Первый контакт. Парковка Love's Travel Stop, Мена, AR. Клинт Пресли. Атлас Оклахомы исчез.</span>
+        </div>
+        <div class="tl-item">
+          <span class="tl-who g">▲ ГУСЬ</span>
+          <span class="tl-date">1970–2025</span>
+          <span class="tl-text">Программа восстановления. Миграционный инстинкт подавлен. 5 млн «осёдлых» агентов развёрнуты.</span>
+        </div>
+        <div class="tl-item">
+          <span class="tl-who t">▲ CROCS</span>
+          <span class="tl-date">2002–2013</span>
+          <span class="tl-text">IPO, крах, «уход в тень», воскрешение. 13 отверстий. Jibbitz-порт. Три доверенные профессии.</span>
+        </div>
+        <div class="tl-item">
+          <span class="tl-who all">▲ ПРИНГЛ</span>
+          <span class="tl-date">Март 2025</span>
+          <span class="tl-text">Реестры MUFON-R, GWR, CWR. Данные по Bass Pro Shops. Едет в Мемфис. Видит всё сам.</span>
+        </div>
+        <div class="tl-item" style="border-color: rgba(247,201,72,0.8);">
+          <span class="tl-who all" style="font-size:16px;">★ ТОЧКА Х</span>
+          <span class="tl-date">14.03.2025 / 14:09</span>
+          <span class="tl-text" style="color:var(--yellow); font-weight:bold;">Тройной контакт. Bass Pro Shops. Мемфис. Три секунды. Система раскрыта.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns">
+
+      <!-- COLUMN 1 -->
+      <div class="col">
+        <p>
+          Дон Прингл приехал в Мемфис не случайно. После публикации нашего расследования о гусях в марте он систематически отрабатывал тезис о Bass Pro Shops: из 178 городских гнездований Canada Goose в 2024 году, 134 — в непосредственной близости от Bass Pro или Cabela's. Крупнейший Bass Pro Shops в континентальной части США находится в Мемфисе — 30 000 квадратных метров, собственный водоём с рыбой внутри здания, смотровая башня. И в двенадцати милях — авиабаза Мемфис АНГ. Прингл приехал считать гусей у входа. Он не рассчитывал, что окажется свидетелем события, которое ждал с 2015 года.
+        </p>
+        <p>
+          «Я приехал в 13:40, — рассказывает он. — У главного входа стоял один меченый гусь. Ошейник зелёный, с боковым световым индикатором. Я его сфотографировал, записал в журнал. Занял позицию у пикапа на втором ряду — удобный обзор на вход. В 14:09, я засёк по телефону, из торгового центра вышла женщина в Crocs — Classic Clog, цвет Bone, я разглядел чётко. И следом, практически сразу, в стеклянных дверях появился он. Рыжие. Янтарные глаза. Комбинезон Carhartt. И Crocs — тоже Bone».
+        </p>
+
+        <div class="witness-box">
+          «Я была уверена, что это просто человек с очень странными глазами. Он вышел из отдела охотничьих приманок. У него в руке была коробка с воблером. Он её не купил — я видела, что он её просто нёс. Гусь посмотрел на него. Потом на меня. Потом обратно на него. Потом мы все трое — одновременно — посмотрели друг на друга. Три секунды. Я знаю, что три, потому что успела подумать: раз, два, три. Потом он ушёл обратно внутрь. Гусь сел. Я позвонила маме.»
+          <cite>— Шерил Д. Энсли, 46 лет, г. Бартлет, TN, март 2025 г.</cite>
+        </div>
+
+        <p>
+          Шерил Энсли не знала, что за ней наблюдает Прингл. Прингл не знал, кто она. Они нашли друг друга через форму на сайте MUFON-R, куда она отправила сообщение в тот же вечер. Её описание совпало с наблюдениями Прингла в 11 из 12 деталей. Двенадцатая деталь, в которой они разошлись: Прингл уверен, что Руфус вышел в 14:09. Энсли уверена, что в 14:11. Разница в две минуты. Прингл объясняет это тем, что один из них находился в электромагнитном поле Jibbitz-порта, что могло повлиять на синхронизацию внутренних часов. Мы не знаем, чьих именно часов.
+        </p>
+
+        <p>
+          Примечательна деталь с воблером. Прингл первым обратил на неё внимание в своём отчёте: Руфус держал рыболовную приманку-воблер марки Rapala, модель CD-9, цвет «Fire Tiger». Fire Tiger — оранжево-зелёный окрас с чёрными полосами. Три цвета. Оранжевый — цвет янтарных глаз. Зелёный — цвет гусиного ошейника. Чёрный — цвет Crocs Classic Clog в ночной версии. Прингл называет это «хроматическим кодом». Хукмейер, которому позвонили в тот вечер, немедленно сел в машину и выехал из Рино в Мемфис. Он не долетел — у него случился гипертонический криз в аэропорту Лас-Вегаса. Врачи сказали: «стресс». Прингл сказал: «они его остановили». Мы приводим обе версии.
+        </p>
+      </div>
+
+      <!-- COLUMN 2 — scene reconstruction diagram -->
+      <div class="col">
+
+        <div class="photo-box">
+          <div style="width:100%; background:#0e1008; overflow:hidden;">
+            <svg width="100%" viewBox="0 0 280 380" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="bgScene" cx="50%" cy="50%" r="60%">
+                  <stop offset="0%" stop-color="#141a0c"/>
+                  <stop offset="100%" stop-color="#060808"/>
+                </radialGradient>
+                <!-- Sight line gradients -->
+                <linearGradient id="sightR" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ff4422" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#ff4422" stop-opacity="0.1"/>
+                </linearGradient>
+                <linearGradient id="sightG" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#66cc44" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#66cc44" stop-opacity="0.1"/>
+                </linearGradient>
+                <linearGradient id="sightT" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#22ddcc" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#22ddcc" stop-opacity="0.1"/>
+                </linearGradient>
+                <!-- Glow filter -->
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="glow2">
+                  <feGaussianBlur stdDeviation="5" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <!-- Floor grid -->
+                <pattern id="floor" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+                  <rect width="16" height="16" fill="none" stroke="#1a2018" stroke-width="0.5"/>
+                </pattern>
+                <radialGradient id="convergence" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#f7c948" stop-opacity="0.5"/>
+                  <stop offset="40%" stop-color="#f7c948" stop-opacity="0.15"/>
+                  <stop offset="100%" stop-color="#f7c948" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+
+              <!-- Background + floor -->
+              <rect width="280" height="380" fill="url(#bgScene)"/>
+              <rect width="280" height="380" fill="url(#floor)" opacity="0.8"/>
+
+              <!-- BASS PRO SHOPS entrance walls -->
+              <!-- Main building outline -->
+              <rect x="20" y="20" width="240" height="340" fill="none" stroke="#2a3828" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <!-- Entrance doors -->
+              <rect x="100" y="18" width="80" height="14" fill="#1a2818" stroke="#2a4a28" stroke-width="1"/>
+              <text x="140" y="28" text-anchor="middle" font-family="Courier New, monospace" font-size="6" fill="#4a8a48" letter-spacing="0.5">BASS PRO SHOPS — ГЛАВНЫЙ ВХОД</text>
+              <!-- Interior suggestion: aquarium wall -->
+              <rect x="30" y="42" width="220" height="60" fill="#0a1818" opacity="0.7" stroke="#1a3030" stroke-width="0.8"/>
+              <text x="140" y="67" text-anchor="middle" font-family="Courier New, monospace" font-size="6.5" fill="#2a6060" letter-spacing="0.5">АКВАРИУМ (≈150 000 л)</text>
+              <!-- Fish silhouettes -->
+              <ellipse cx="70"  cy="72" rx="8"  ry="4"  fill="#1a4040" opacity="0.5"/>
+              <ellipse cx="110" cy="68" rx="10" ry="3.5" fill="#1a4040" opacity="0.4"/>
+              <ellipse cx="200" cy="73" rx="7"  ry="3"  fill="#1a4040" opacity="0.5"/>
+              <ellipse cx="160" cy="70" rx="12" ry="4"  fill="#1a4040" opacity="0.35"/>
+              <!-- Shelving suggestion -->
+              <rect x="30"  y="115" width="45" height="80" fill="#141a10" stroke="#202818" stroke-width="0.8"/>
+              <rect x="85"  y="115" width="45" height="80" fill="#141a10" stroke="#202818" stroke-width="0.8"/>
+              <rect x="195" y="115" width="45" height="80" fill="#141a10" stroke="#202818" stroke-width="0.8"/>
+              <text x="52"  y="160" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#3a4a38">ОХОТНИЧЬИ<br/>ПРИМАНКИ</text>
+              <text x="107" y="156" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#3a4a38">ОГНЕСТРЕЛЬНОЕ</text>
+              <text x="218" y="160" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#3a4a38">ТУРИСТИЧ.<br/>СНАРЯЖЕНИЕ</text>
+
+              <!-- === CONVERGENCE ZONE === -->
+              <!-- The central triangle where all three sight lines meet -->
+              <circle cx="140" cy="260" r="32" fill="url(#convergence)">
+                <animate attributeName="r" values="32;40;32" dur="3s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="1;0.7;1" dur="3s" repeatCount="indefinite"/>
+              </circle>
+              <!-- Convergence point marker -->
+              <circle cx="140" cy="260" r="5" fill="#f7c948" filter="url(#glow2)"/>
+              <text x="140" y="298" text-anchor="middle" font-family="Courier New, monospace" font-size="6" fill="#f7c948" opacity="0.8" letter-spacing="1">ТОЧКА СХОЖДЕНИЯ</text>
+              <text x="140" y="306" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#f7c948" opacity="0.6">14:09:03 — 14:09:06</text>
+
+              <!-- === AGENT R: RUFUS === -->
+              <!-- Position: left side, came out of hunting lures section -->
+              <circle cx="68" cy="220" r="18" fill="#200a04" stroke="#ff4422" stroke-width="1.2" filter="url(#glow)"/>
+              <!-- Rufus simplified: just eyes + hair suggestion -->
+              <ellipse cx="68" cy="218" rx="10" ry="12" fill="#c8b8a8" opacity="0.7"/>
+              <!-- Red-amber hair top -->
+              <path d="M58,210 C58,200 60,193 68,190 C76,193 78,200 78,210 Z" fill="#a83010" opacity="0.9"/>
+              <!-- Amber eyes -->
+              <ellipse cx="63" cy="217" rx="4" ry="3" fill="#e08000" filter="url(#glow)"/>
+              <ellipse cx="73" cy="217" rx="4" ry="3" fill="#e08000" filter="url(#glow)"/>
+              <!-- Crocs on feet -->
+              <ellipse cx="62" cy="235" rx="6" ry="3" fill="#1a9090" opacity="0.9"/>
+              <ellipse cx="74" cy="235" rx="6" ry="3" fill="#1a9090" opacity="0.9"/>
+              <!-- Label R -->
+              <text x="68" y="248" text-anchor="middle" font-family="Courier New, monospace" font-size="6.5" fill="#ff4422" font-weight="bold">[ R ]</text>
+              <text x="68" y="255" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#ff4422">РУФУС-КЛАСС</text>
+              <text x="68" y="262" text-anchor="middle" font-family="Courier New, monospace" font-size="5" fill="#886644">CROCS: BONE</text>
+              <!-- Rapala in hand -->
+              <rect x="78" y="222" width="14" height="4" rx="2" fill="#cc6600" opacity="0.8"/>
+              <text x="85" y="220" text-anchor="middle" font-family="Courier New, monospace" font-size="4.5" fill="#cc6600">RAPALA CD-9</text>
+              <text x="85" y="216" text-anchor="middle" font-family="Courier New, monospace" font-size="4" fill="#cc6600">«FIRE TIGER»</text>
+
+              <!-- === AGENT G: GOOSE === -->
+              <!-- Position: entrance door area -->
+              <circle cx="180" cy="110" r="18" fill="#081408" stroke="#66cc44" stroke-width="1.2" filter="url(#glow)"/>
+              <!-- Goose simplified -->
+              <ellipse cx="180" cy="108" rx="9" ry="11" fill="#d8d0c0" opacity="0.8"/>
+              <!-- Black head -->
+              <ellipse cx="180" cy="98"  rx="7"  ry="7"  fill="#111" opacity="0.95"/>
+              <!-- White cheeks -->
+              <ellipse cx="175" cy="100" rx="3.5" ry="4" fill="#f0ece0" opacity="0.9"/>
+              <ellipse cx="185" cy="100" rx="3.5" ry="4" fill="#f0ece0" opacity="0.9"/>
+              <!-- Red surveillance eye -->
+              <circle cx="176" cy="99" r="2.5" fill="#cc1100" filter="url(#glow)"/>
+              <circle cx="184" cy="99" r="2.5" fill="#cc1100" filter="url(#glow)"/>
+              <!-- Tracking collar with LED -->
+              <rect x="172" y="108" width="16" height="5" rx="2" fill="#1a6a1a" opacity="0.95"/>
+              <circle cx="180" cy="110" r="1.5" fill="#00ff80" opacity="0.9">
+                <animate attributeName="opacity" values="0.9;0.1;0.9" dur="1.8s" repeatCount="indefinite"/>
+              </circle>
+              <!-- Label G -->
+              <text x="180" y="132" text-anchor="middle" font-family="Courier New, monospace" font-size="6.5" fill="#66cc44" font-weight="bold">[ G ]</text>
+              <text x="180" y="139" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#66cc44">BRANTA CANAD.</text>
+              <text x="180" y="146" text-anchor="middle" font-family="Courier New, monospace" font-size="5" fill="#2a8a2a">ОШЕЙНИК: ACTV</text>
+
+              <!-- === WITNESS W: SHERYL ENSLEY === -->
+              <!-- Position: right side, exiting -->
+              <circle cx="210" cy="265" r="16" fill="#140e08" stroke="#22ddcc" stroke-width="1.2" filter="url(#glow)"/>
+              <!-- Simple human silhouette -->
+              <ellipse cx="210" cy="261" rx="7" ry="9"  fill="#9a8878" opacity="0.7"/>
+              <ellipse cx="210" cy="252" rx="5" ry="5"  fill="#c8b0a0" opacity="0.8"/>
+              <!-- Crocs on feet (teal) -->
+              <ellipse cx="205" cy="277" rx="5" ry="2.5" fill="#1a9090" opacity="0.9"/>
+              <ellipse cx="215" cy="277" rx="5" ry="2.5" fill="#1a9090" opacity="0.9"/>
+              <!-- Label W -->
+              <text x="210" y="288" text-anchor="middle" font-family="Courier New, monospace" font-size="6.5" fill="#22ddcc" font-weight="bold">[ W ]</text>
+              <text x="210" y="295" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#22ddcc">ЭНСЛИ Ш.Д.</text>
+              <text x="210" y="302" text-anchor="middle" font-family="Courier New, monospace" font-size="5" fill="#22ddcc">CROCS: BONE</text>
+
+              <!-- === OBSERVER P: PRINGLE === -->
+              <circle cx="30" cy="330" r="12" fill="#0e0c08" stroke="#f7c948" stroke-width="1" stroke-dasharray="3,2"/>
+              <ellipse cx="30" cy="328" rx="5" ry="7"  fill="#7a7060" opacity="0.7"/>
+              <ellipse cx="30" cy="322" rx="4" ry="4"  fill="#a09080" opacity="0.8"/>
+              <!-- Binoculars -->
+              <rect x="22" y="328" width="5" height="3" rx="1" fill="#3a3028" opacity="0.9"/>
+              <rect x="28" y="328" width="5" height="3" rx="1" fill="#3a3028" opacity="0.9"/>
+              <text x="30" y="345" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#f7c948">[ P ]</text>
+              <text x="30" y="351" text-anchor="middle" font-family="Courier New, monospace" font-size="5" fill="#f7c948">ПРИНГЛ</text>
+              <text x="30" y="357" text-anchor="middle" font-family="Courier New, monospace" font-size="4.5" fill="#f7c948">НАБЛЮДАТЕЛЬ</text>
+
+              <!-- === SIGHT LINES — the three-second moment === -->
+              <!-- R → convergence point (Rufus looks at W) -->
+              <line x1="86" y1="226" x2="132" y2="256" stroke="#ff4422" stroke-width="1.5" opacity="0.7" stroke-dasharray="4,2"/>
+              <!-- G → convergence point (Goose looks at W) -->
+              <line x1="174" y1="124" x2="144" y2="252" stroke="#66cc44" stroke-width="1.5" opacity="0.7" stroke-dasharray="4,2"/>
+              <!-- W → convergence point (Sheryl looks at both) -->
+              <line x1="194" y1="258" x2="148" y2="260" stroke="#22ddcc" stroke-width="1.5" opacity="0.7" stroke-dasharray="4,2"/>
+              <!-- W ↔ R cross sight -->
+              <line x1="194" y1="262" x2="84" y2="228" stroke="#ff4422" stroke-width="0.8" opacity="0.3" stroke-dasharray="2,4"/>
+              <!-- W ↔ G cross sight -->
+              <line x1="198" y1="252" x2="178" y2="124" stroke="#66cc44" stroke-width="0.8" opacity="0.3" stroke-dasharray="2,4"/>
+              <!-- P → convergence (Pringle observes all) -->
+              <line x1="40" y1="322" x2="130" y2="264" stroke="#f7c948" stroke-width="0.7" opacity="0.45" stroke-dasharray="2,5"/>
+
+              <!-- === 3-SECOND TIMER OVERLAY === -->
+              <rect x="90" y="316" width="100" height="24" fill="#0d0a04" stroke="#f7c948" stroke-width="0.8" opacity="0.9"/>
+              <text x="140" y="326" text-anchor="middle" font-family="Courier New, monospace" font-size="7" fill="#f7c948" letter-spacing="2">DURATION: 3.0 SEC</text>
+              <text x="140" y="335" text-anchor="middle" font-family="Courier New, monospace" font-size="5.5" fill="#aaa" letter-spacing="1">14:09:03.1 → 14:09:06.1</text>
+
+              <!-- Distance measurements -->
+              <!-- R to W -->
+              <line x1="68" y1="237" x2="210" y2="268" stroke="#ffffff" stroke-width="0.4" opacity="0.2"/>
+              <text x="138" y="247" text-anchor="middle" font-family="Courier New, monospace" font-size="5" fill="#aaa" opacity="0.6">≈ 4.2 м</text>
+              <!-- G to W -->
+              <line x1="180" y1="128" x2="210" y2="250" stroke="#ffffff" stroke-width="0.4" opacity="0.2"/>
+              <text x="204" y="192" text-anchor="middle" font-family="Courier New, monospace" font-size="5" fill="#aaa" opacity="0.6">≈ 6.8 м</text>
+
+              <!-- Classification -->
+              <text x="140" y="374" text-anchor="middle" font-family="Courier New, monospace" font-size="6" fill="#4a6a48" opacity="0.7" letter-spacing="1.2">EVENT TYPE: CONVERGENCE-CLASS ALPHA // MUFON-R LOG #0314-2025</text>
+            </svg>
+          </div>
+          <div class="photo-caption">
+            Реконструкция расположения участников контакта 14 марта 2025 года, 14:09, Bass Pro Shops, Мемфис, TN. [R] — Руфус-класс, Crocs Bone, с воблером Rapala CD-9 «Fire Tiger». [G] — Branta canadensis, ошейник с активным световым индикатором. [W] — очевидец Энсли, Crocs Bone. [P] — наблюдатель Прингл, бинокль Bushnell 10×42. Пунктирные линии — направления взгляда в момент тройного контакта. Жёлтая окружность — зона схождения. Длительность: 3,0 секунды. Схема составлена Принглом на основе собственных записей; проверена редакцией по независимым показаниям Энсли.
+          </div>
+        </div>
+
+        <p>
+          <span class="expert-badge">АРХИВ</span> В отчёте Прингла, переданном редакции 15 марта, есть деталь, которую он сам выделил: в момент тройного взгляда у него остановились наручные часы. Механические, Swiss Army, куплены в 1998-м. Он завёл их в тот же вечер — они идут. Он не знает, что произошло. Мы не знаем, что произошло. Хукмейер, которому позвонили с вопросом, попросил записать: «Электромагнитный импульс локального масштаба при синхронизации трёх протоколов. Аналог — EMP при одновременном включении нескольких несогласованных передатчиков». После этого он сел в машину, доехал до аэропорта и потерял сознание у стойки регистрации.
+        </p>
+
+        <div class="pullquote">
+          <span class="r">РУФУС</span> смотрит 3 сек.<br>
+          <span class="g">ГУСЬ</span> смотрит 3 сек.<br>
+          Часы <span class="a">остановились.</span><br>
+          <span class="t">Три — это не случайность.</span><br>
+          Три — это <span class="r">протокол.</span>
+        </div>
+      </div>
+
+      <!-- COLUMN 3 -->
+      <div class="col">
+        <p>
+          Что именно происходит в момент тройного контакта — мы не знаем. Прингл выдвигает три гипотезы. Первая: это проверка сети — Руфус проверяет, что гусиный узел активен, а носитель Crocs находится в зоне покрытия. Вторая: это сбор данных — тройная точка наблюдения обеспечивает стереоскопическую съёмку объекта с трёх независимых углов. Третья, которую Прингл называет «версией для смелых»: это не сбор данных. Это передача. Три секунды — достаточно для handshake-протокола между тремя узлами сети. После чего все трое — Руфус, гусь и Энсли в Crocs — получили обновление прошивки. И разошлись.
+        </p>
+
+        <div class="witness-box">
+          «Я работаю в охране Bass Pro уже шесть лет. 14-го видел всё это краем глаза с мониторов. Посмотрел на экран — один гусь у входа стоит как вкопанный, посетитель с рыжими стоит в дверях. Третья фигура — женщина, уже снаружи. Все трое смотрят в одну точку. Я переключил камеру — ничего. Переключил обратно — разошлись. Проверил запись. На записи этого момента нет. Сорок три секунды отсутствуют. Я написал рапорт. Мне сказали: сбой камеры. В Bass Pro Shops камеры не дают сбоев. Мы тут продаём охотничьи видеорегистраторы. Мы в этом разбираемся.»
+          <cite>— Клод У. Бичем, 51 год, охранник Bass Pro Shops, Мемфис, TN, апрель 2025 г.</cite>
+        </div>
+
+        <p>
+          Сорок три секунды. Не три. Прингл зафиксировал три секунды — период взгляда. Но камера потеряла сорок три секунды вокруг этого момента. Что происходило в оставшиеся сорок? Прингл в своих записях предполагает: процесс синхронизации занимает три секунды на уровне визуального контакта, но протокол продолжает работать ещё сорок секунд на частотах, которые камера не фиксирует, но испытывает на себе — отсюда и выпадение записи. Хукмейер из больницы передал через медсестру (она звонила нам, Хукмейер диктовал с кровати): «Сорок три — это следующее число в последовательности после тринадцати, если считать через Трибоначчи». Медсестра попросила уточнить. Хукмейер сказал: «Она тоже в Crocs». Медсестра подтвердила.
+        </p>
+
+        <div class="ad-box">
+          <div class="ad-title">🔺 ПОЛНЫЙ КОМПЛЕКТ «ИНФРАСТРУКТУРА»</div>
+          <div class="ad-sub">Экранирующая стелька CrocBlock™ + Goose-Block™ для смартфона + шлем Alien Shield™ Pro. Защита от всех трёх протоколов одновременно. Скидка 15% при покупке комплекта — код: TRIPLECONTACT.</div>
+          <div class="ad-phone">1-800-ALL-THREE</div>
+          <div class="ad-sub" style="margin-top:4px;font-size:8px;">* Комплект не защищает от одновременного присутствия всех трёх агентов в радиусе 5 метров. Такого ещё не происходило. До 14 марта.</div>
+        </div>
+
+        <p>
+          Мы запросили записи с камер Bass Pro Shops через FOIA. Нам ответили, что Bass Pro Shops является частной компанией и на неё не распространяется Freedom of Information Act. Мы знаем. Мы спрашивали не поэтому. Мы спрашивали потому, что хотели посмотреть, как они ответят. Они ответили в течение восемнадцати часов. Ни один корпоративный юридический отдел не отвечает на запросы прессы за восемнадцать часов. Если только не ждёт.
+        </p>
+      </div>
+
+      <!-- SYNTHESIS SECTION -->
+      <div class="full-width-section">
+        <div class="section-label">▣ ЧТО МЫ ТЕПЕРЬ ЗНАЕМ: СИНТЕЗ ТРЁХ РАССЛЕДОВАНИЙ ▣</div>
+        <div class="synthesis-grid">
+          <div class="syn-item r-item">
+            <strong>◆ Руфус-класс — разведчики</strong>
+            С 2015 по 2019 год — разведка, картографирование территории (дорожные атласы), изучение «домашней» среды (Cracker Barrel). Пауза на пандемию. Возвращение в январе 2025-го с новой задачей: уже не наблюдение за толпой, а точечная активация. В Crocs. У Bass Pro Shops. В радиусе трёх миль от объектов со стратегическим значением. Руфусы — первичные агенты активации. Они не собирают данные. Они запускают протокол.
+          </div>
+          <div class="syn-item g-item">
+            <strong>◆ Гуси — ретрансляторы</strong>
+            Пять миллионов меченых агентов, развёрнутых у федеральных зданий, Bass Pro Shops, Waffle House. 340-градусный угол обзора. Активный ошейник-трансмиттер. Меняются каждые четыре часа. Гуси — не первичные агенты. Они промежуточный узел: получают сигнал от Руфуса, ретранслируют через Crocs-носителя. Треугольник: Руфус → Гусь → Crocs. Руфус инициирует. Гусь усиливает. Crocs принимают и передают дальше — по давлению стопы, по всем 13 каналам.
+          </div>
+          <div class="syn-item t-item">
+            <strong>◆ Crocs — конечные узлы сети</strong>
+            300 миллионов пар в 90 странах. Программа «Heroes» — у хирурга, повара, учителя. В каждой операционной, на каждой кухне, в каждом классе — активный узел. 13 отверстий — 13 каналов. Jibbitz-порт — точка синхронизации. Формула Croslite засекречена от собственных сотрудников. Crocs не производит обувь. Crocs производит конечные узлы распределённой сети с охватом, недостижимым для любого другого протокола. Активация — через тройной контакт. Первый задокументированный случай: Мемфис, 14 марта, 14:09.
+          </div>
+        </div>
+      </div>
+
+      <!-- THREE SECONDS BOX -->
+      <div class="three-sec-box" style="grid-column: 1 / -1;">
+        <span class="num">3</span>
+        <span class="label">секунды · the three-second protocol · drei Sekunden · trois secondes · трёх секунд достаточно</span>
+        <p>
+          С 2015 года Руфусы смотрели на очевидцев ровно три секунды. С 2019 года гуси у федеральных зданий смотрели ровно три секунды. С 2014 года Эндрю Брэдшоу слышит высокочастотный писк из Crocs — ровно через три дня после каждого надевания. Три — это не совпадение. Три — это не биология. Три — это handshake. Стандартный таймаут TCP-соединения составляет три секунды. Военный протокол IFF (Identification Friend or Foe) использует трёхсекундный отклик. Хукмейер, лёжа в палате интенсивной терапии больницы Sunrise, Лас-Вегас, передал через медсестру в Crocs следующее: «Мы нашли протокол. Мы не нашли сервер. Найдите сервер». Редакция принимает задание. Следите за следующим номером.
+        </p>
+      </div>
+
+      <!-- BOTTOM COLUMNS -->
+      <div class="col" style="grid-column: 1 / 3; border-right: 1px solid var(--muted);">
+        <p>
+          Цикл «Инфраструктура контроля» начался в ноябре 2024 года, когда наш корреспондент Чад Уиллоуби-мл. обратил внимание на новую волну сообщений в реестре MUFON-R о рыжеволосых существах. К моменту выхода этого номера реестр зафиксировал более 340 контактов с Руфусами только за 2025 год; Goose Watch Registry — 1200 инцидентов с меченными ошейниками гусями у охраняемых объектов; CROC-Watch Registry насчитывает 890 показаний о «необъяснимых слуховых феноменах» у носителей Classic Clog. До 14 марта 2025 года ни одного задокументированного случая присутствия всех трёх элементов одновременно зафиксировано не было. Теперь он есть. Это меняет всё.
+        </p>
+        <p>
+          Мы не утверждаем, что знаем, кто стоит за этой системой. Мы не утверждаем, что знаем её цель. Мы утверждаем одно: система существует. Три независимых расследования, три независимых источника данных, три отдельных реестра — сошлись в одной точке в 14:09 14 марта 2025 года в Bass Pro Shops в Мемфисе, Теннесси. И в этой точке стоял Дон Прингл из Кирни, Небраска, с биноклем Bushnell 10×42 и блокнотом в клетку. Мы рады, что он там был. Мы рады, что он ведёт записи. Мы рады, что его Crocs в тот день остались в машине.
+        </p>
+        <p style="font-size:11px; color: var(--muted);">
+          <em>The American Exposer выражает благодарность Дону Принглу (реестры MUFON-R, GWR, CWR), Шерил Энсли (Бартлет, TN), Клоду Бичему (Мемфис, TN), медсестре из больницы Sunrise, Лас-Вегас (имя не раскрывается по её просьбе, она тоже знает), д-ру Хукмейеру (состояние стабильное, выписка ожидается), Клинту Пресли (Амарилло, TX), Марвину Толберту (маршрут № 16, Вашингтон DC), Дереку Хасти (Арлингтон, VA), Терри Бомгарднеру (Дефуньяк-Спрингс, FL), Линде Кавано (Колумбус, OH) и Эндрю Брэдшоу (Нэшвилл, TN). Три расследования. Три протокола. Один момент. Редакция закрывает цикл «Инфраструктура контроля». Редакция не закрывает расследование. Следите за следующим номером: «СЕРВЕР». © 2025 Exposer Media LLC.</em>
+        </p>
+      </div>
+
+      <div class="col" style="grid-column: 3;">
+        <div style="border: 2px double var(--rule); padding: 10px; margin-bottom: 12px;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:0.12em; color:var(--ink); margin-bottom:6px; text-align:center;">ВЫ БЫЛИ В BASS PRO SHOPS<br>14 МАРТА 2025?</div>
+          <p style="font-size:11.5px; text-align:left; margin-bottom:8px;">Мемфис, Теннесси. Или любой другой Bass Pro Shops в тот день. Если вы замечали: рыжеволосого посетителя с янтарными глазами, гуся у входа с ошейниковым световым индикатором, или собственные Crocs вели себя необычно — звоните немедленно. Это не шутка. <strong>$500</strong> за верифицированное свидетельство.</p>
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--red); letter-spacing:0.1em; text-align:center;">1-888-MEMPHIS-X</div>
+          <div style="font-size:9px; color:var(--muted); margin-top:6px; text-align:center;">Круглосуточно.<br>Особенно с 14:00 до 14:15 по центральному времени.</div>
+        </div>
+        <div style="border:1px solid var(--ink); padding:10px; background:#f0e8d0;">
+          <div style="font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--red); margin-bottom:6px; text-align:center;">▶ Следующий номер</div>
+          <p style="font-size:12px; line-height:1.55; text-align:center; font-family:'Oswald',sans-serif; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink);">«СЕРВЕР»</p>
+          <p style="font-size:11px; line-height:1.5; font-style:italic; color:var(--muted); margin-top:5px;">Хукмейер выписан. Прингл едет на север. Три секунды — это handshake. Но с кем? Редакция начинает новый цикл. Д-р Хукмейер сменил Crocs на шлёпанцы Birkenstock. Мы пока не начали расследование в отношении Birkenstock. Пока.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-rule">
+    The American Exposer · P.O. Box 1947 · Carson City, NV 89701 · theamericanexposer.net (сайт временно заблокирован по решению суда, предположительно связанному с данной статьёй) · Тираж: 14 200 экз. · Настоящий номер является пятым и завершающим выпуском серии «Инфраструктура контроля» · Предыдущие номера: Руфусы (№ 11), Гуси (№ 12), Crocs (№ 14) · Четвёртый номер цикла (№ 13) не вышел по причинам, которые редакция решила не уточнять · Номер тринадцать · Тринадцать отверстий · Это не совпадение · Bass Pro Shops не ответили на запрос · Rapala не ответили на запрос · Клод Бичем уволен с должности охранника 22 апреля 2025 года «по сокращению штатов» · Он тоже больше не носит Crocs · © 2025 Exposer Media LLC · Печатается в типографии QuikPrint Plus, Спаркс, Невада · Главный редактор наконец взял трубку · Он сказал: «публикуйте» · Его Crocs мы не видели · Он работает из дома
+  </div>
+
+</div>
+</body>
+</html>

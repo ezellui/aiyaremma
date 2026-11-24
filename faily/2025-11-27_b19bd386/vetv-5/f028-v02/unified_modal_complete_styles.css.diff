@@ -1,0 +1,257 @@
+--- предыдущая/unified_modal_complete_styles.css
++++ текущая/unified_modal_complete_styles.css
+@@ -245,26 +245,32 @@
+ /* Подсказка названия рубрики */
+ .rubric-name-tooltip {
+     position: relative;
++    cursor: help;
++    border-bottom: 1px dotted #a29bfe;
+     display: inline-block;
+-    cursor: help;
+-    border-bottom: 1px dashed #a29bfe;
+-}
+-
+-.rubric-name-tooltip:hover::after {
+-    content: attr(data-rubric-name);
++}
++
++.rubric-tooltip-text {
++    visibility: hidden;
++    background-color: rgba(0, 0, 0, 0.95);
++    color: #fff;
++    text-align: left;
++    border-radius: 6px;
++    padding: 8px 12px;
+     position: absolute;
+-    bottom: 100%;
++    z-index: 2001;
++    bottom: 125%;
+     left: 50%;
+     transform: translateX(-50%);
+-    background: rgba(0, 0, 0, 0.95);
+-    color: white;
+-    padding: 6px 12px;
+-    border-radius: 6px;
++    white-space: normal;
++    max-width: 300px;
+     font-size: 11px;
+-    white-space: nowrap;
+-    z-index: 1000;
+-    margin-bottom: 5px;
+-    border: 1px solid #a29bfe;
++    line-height: 1.4;
++    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
++}
++
++.rubric-name-tooltip:hover .rubric-tooltip-text {
++    visibility: visible;
+ }
+ 
+ /* ============================================================================ */
+@@ -331,85 +337,82 @@
+ /* 8. СЕКЦИЯ КОНЦЕПЦИЙ ФИЛОСОФА (в окне философа) */
+ /* ============================================================================ */
+ 
+-/* Контейнер списка концепций */
+-.philosopher-concepts-list {
++/* Контейнер секции концепций */
++.philosopher-concepts-section {
++    margin-top: 20px;
++}
++
++/* Элемент концепции с деталями */
++.concept-details-item {
++    background: rgba(255, 255, 255, 0.03);
++    border-radius: 8px;
++    padding: 12px;
++    margin-bottom: 10px;
++    border-left: 3px solid #a29bfe;
++    cursor: pointer;
++    transition: all 0.2s;
++}
++
++.concept-details-item:hover {
++    background: rgba(162, 155, 254, 0.1);
++    border-left-color: #6c5ce7;
++}
++
++/* Заголовок концепции */
++.concept-details-header {
+     display: flex;
+-    flex-direction: column;
+-    gap: 12px;
+-}
+-
+-/* Элемент концепции философа */
+-.philosopher-concept-item {
+-    background: rgba(255, 255, 255, 0.05);
+-    border-radius: 10px;
+-    padding: 12px;
+-    border: 1px solid rgba(255, 255, 255, 0.1);
+-    transition: all 0.2s;
+-}
+-
+-.philosopher-concept-item:hover {
+-    background: rgba(255, 255, 255, 0.08);
+-    border-color: rgba(162, 155, 254, 0.3);
+-}
+-
+-/* Заголовок концепции с кнопкой раскрытия */
+-.philosopher-concept-header {
+-    display: flex;
+-    align-items: center;
+-    gap: 10px;
+-    cursor: pointer;
++    justify-content: space-between;
++    align-items: flex-start;
++    margin-bottom: 8px;
+ }
+ 
+ /* Название концепции */
+-.philosopher-concept-name {
+-    font-weight: 600;
+-    color: #e0e0e0;
++.concept-details-name {
++    font-weight: 700;
+     font-size: 14px;
+-    flex-grow: 1;
+-}
+-
+-/* Кнопка раскрытия описания концепции */
+-.toggle-concept-desc-btn {
+-    background: rgba(162, 155, 254, 0.2);
+-    border: 1px solid rgba(162, 155, 254, 0.4);
+-    color: #a29bfe;
+-    padding: 4px 10px;
+-    border-radius: 5px;
+-    font-size: 11px;
+-    cursor: pointer;
+-    transition: all 0.2s;
+-}
+-
+-.toggle-concept-desc-btn:hover {
+-    background: rgba(162, 155, 254, 0.3);
+-}
+-
+-.toggle-concept-desc-btn.expanded {
+-    background: #a29bfe;
+-    color: white;
++    color: #a29bfe;
+ }
+ 
+ /* Краткое описание */
+-.philosopher-concept-short-desc {
+-    margin-top: 8px;
++.concept-short-desc {
+     font-size: 12px;
+     color: #b0b0b0;
+     line-height: 1.5;
++    margin: 8px 0;
+ }
+ 
+ /* Развернутое описание */
+ .concept-extended-desc {
+-    margin-top: 10px;
+-    padding-top: 10px;
++    font-size: 12px;
++    color: #e0e0e0;
++    line-height: 1.6;
++    margin-top: 8px;
++    padding-top: 8px;
+     border-top: 1px solid rgba(255, 255, 255, 0.1);
+-    font-size: 12px;
+-    color: #d0d0d0;
+-    line-height: 1.6;
+-    display: none;
++    max-height: 0;
++    overflow: hidden;
++    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
++    opacity: 0;
+ }
+ 
+ .concept-extended-desc.show {
+-    display: block;
++    max-height: 1000px;
++    opacity: 1;
++}
++
++/* Кнопка раскрытия описания */
++.toggle-concept-desc-btn {
++    background: none;
++    border: none;
++    color: #a29bfe;
++    cursor: pointer;
++    font-size: 16px;
++    padding: 4px 8px;
++    transition: transform 0.3s;
++}
++
++.toggle-concept-desc-btn.expanded {
++    transform: rotate(180deg);
+ }
+ 
+ /* Кнопка "Развернуть все описания" */
+@@ -429,6 +432,63 @@
+ 
+ .toggle-all-descriptions-btn:hover {
+     background: rgba(162, 155, 254, 0.25);
++}
++
++/* ============================================================================ */
++/* 8A. ВЗАИМОДЕЙСТВИЕ ФИЛОСОФОВ */
++/* ============================================================================ */
++
++/* Контейнер секции взаимодействия */
++.interaction-section {
++    margin-bottom: 15px;
++    padding: 12px;
++    background: rgba(108, 92, 231, 0.08);
++    border-radius: 8px;
++    border-left: 3px solid #a29bfe;
++}
++
++/* Тип взаимодействия (заголовок) */
++.interaction-type {
++    font-weight: 700;
++    color: #a29bfe;
++    margin-bottom: 8px;
++    font-size: 13px;
++}
++
++/* Направление взаимодействия */
++.interaction-direction {
++    margin: 6px 0;
++    padding-left: 10px;
++    font-size: 12px;
++    color: #e0e0e0;
++}
++
++/* Метка направления (влиял на / был под влиянием) */
++.interaction-direction-label {
++    font-weight: 600;
++    color: #b0b0b0;
++    font-size: 11px;
++    text-transform: uppercase;
++}
++
++/* Список философов */
++.philosopher-list {
++    display: inline;
++    margin-left: 5px;
++}
++
++/* Кликабельная ссылка на философа */
++.philosopher-link {
++    cursor: pointer;
++    color: #a29bfe;
++    font-weight: 600;
++    text-decoration: none;
++    transition: color 0.2s;
++}
++
++.philosopher-link:hover {
++    color: #6c5ce7;
++    text-decoration: underline;
+ }
+ 
+ /* ============================================================================ */

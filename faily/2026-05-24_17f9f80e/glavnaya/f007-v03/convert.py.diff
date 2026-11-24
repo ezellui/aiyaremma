@@ -1,0 +1,53 @@
+--- предыдущая/convert.py
++++ текущая/convert.py
+@@ -30,6 +30,9 @@
+ GO2COL = {'derrida': 'Cderrida', 'leibniz': 'Cleibniz', 'hegel': 'Chegel',
+           'nietzsche': 'Cnietzsche', 'levinas': 'Clevinas',
+           'preface': 'Cmatter', 'contents': 'Cmatter', 'afterword': 'Cmatter'}
++
++# статьи, у которых библиографию начинаем с новой страницы (она не влезает чуть-чуть)
++BIBLIO_NEWPAGE = {'derrida', 'leibniz', 'levinas'}
+ 
+ # ----- экранирование текста -----
+ UNI = {'\u00a0': '~', '§': r'\S{}', '↔': r'\(\leftrightarrow\)',
+@@ -171,10 +174,11 @@
+     s.append('\\end{notelist}\n')
+     return ''.join(s)
+ 
+-def render_biblio(div):
++def render_biblio(div, newpage=False):
+     h3 = div.find('h3')
+     label = h3.get_text().strip() if h3 else 'Библиография'
+-    s = ['\\notessection{%s}\n' % esc(label)]
++    s = (['\\clearpage\n'] if newpage else [])
++    s.append('\\notessection{%s}\n' % esc(label))
+     for p in div.find_all('p', recursive=False):
+         s.append('{\\small\\hangindent=1.3em\\hangafter=1\\noindent %s\\par}\n' % render_children(p).strip())
+     return ''.join(s)
+@@ -205,7 +209,7 @@
+         out.append('\\vspace{0.7em}\n')
+     return ''.join(out)
+ 
+-def render_generic(wrap):
++def render_generic(wrap, key=''):
+     out = []
+     for c in wrap.children:
+         if not isinstance(c, Tag):
+@@ -225,7 +229,7 @@
+         elif nm == 'div' and 'notes' in cls:
+             out.append(render_notes(c))
+         elif nm == 'div' and 'biblio' in cls:
+-            out.append(render_biblio(c))
++            out.append(render_biblio(c, newpage=(key in BIBLIO_NEWPAGE)))
+         elif nm == 'p' and 'colophon' in cls:
+             out.append(render_colophon(c))
+         elif nm == 'p' and 'explicit' in cls:
+@@ -342,7 +346,7 @@
+         continue
+     parts.append('\\clearpage\n')
+     wrap = v.find('div', class_='wrap')
+-    parts.append(render_generic(wrap))
++    parts.append(render_generic(wrap, key))
+ parts.append('\n\\end{document}\n')
+ 
+ open(OUT, 'w', encoding='utf-8').write(''.join(parts))

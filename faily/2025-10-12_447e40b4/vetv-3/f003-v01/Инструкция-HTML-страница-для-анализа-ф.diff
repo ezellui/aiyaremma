@@ -1,0 +1,1343 @@
+--- предыдущая/Инструкция-HTML-страница-для-анализа-философского.md
++++ текущая/Инструкция-HTML-страница-для-анализа-философского.md
+@@ -123,9 +123,35 @@
+ 
+ ### 3.1. Создайте папку `js` и файл `js/analyzer.js`
+ 
+-Этот файл будет содержать **ВСЕ** классы анализа. Скопируйте код по частям из второго документа (с количественными методами).
++**КРИТИЧЕСКИ ВАЖНО:** В файл `analyzer.js` нужно копировать ТОЛЬКО объявления классов, БЕЗ примеров использования после них!
++
++### ВАРИАНТ 1: Готовый файл (рекомендуется)
++
++Чтобы избежать ошибок, скопируйте готовый файл целиком из раздела [Готовый файл analyzer.js](#готовый-файл-analyzerjs) в конце инструкции.
++
++### ВАРИАНТ 2: Сборка по частям
++
++Если хотите собрать файл самостоятельно, следуйте инструкциям ниже:
++
++#### ⚠️ ПРАВИЛО: Копируйте только классы!
++
++Из документа "Количественные методы" нужно копировать **ТОЛЬКО** код классов:
++```javascript
++class ClassName {
++    // код класса
++}
++```
++
++**НЕ копируйте** примеры использования после классов:
++```javascript
++// Использование
++const something = new ClassName(...);  // ❌ НЕ КОПИРОВАТЬ
++console.log(...);                       // ❌ НЕ КОПИРОВАТЬ
++```
+ 
+ #### Часть 1: PhilosophyGraphAnalyzer
++
++**ВАЖНО:** Копируйте ТОЛЬКО объявление класса, БЕЗ примеров использования после него!
+ 
+ Скопируйте из документа "Количественные методы анализа философского графа" → Раздел 1 → весь класс `PhilosophyGraphAnalyzer`:
+ 
+@@ -149,9 +175,27 @@
+ }
+ ```
+ 
++**НЕ КОПИРУЙТЕ** строки после класса типа:
++```javascript
++// Использование
++const analyzer = new PhilosophyGraphAnalyzer(...);
++console.log(...);
++```
++
+ #### Часть 2: Классы центральности
+ 
+-Добавьте после `PhilosophyGraphAnalyzer` следующие классы из Раздела 2:
++**ВАЖНО:** Копируйте ТОЛЬКО объявления классов, БЕЗ примеров использования!
++
++Добавьте после `PhilosophyGraphAnalyzer` следующие классы из Раздела 2. 
++
++⚠️ **НЕ копируйте** строки после каждого класса типа:
++```javascript
++// Использование
++const degreeCentrality = new DegreeCentrality(...);
++console.log(...);
++```
++
++Копируйте только сами классы:
+ 
+ ```javascript
+ /**
+@@ -1166,4 +1210,1273 @@
+ 3. Проверьте, что данные загружены корректно
+ 4. Попробуйте открыть страницу в другом браузере
+ 
+-Для отладки используйте `console.log()` в ключевых местах кода.
++## Контакты и поддержка
++
++Если возникли проблемы:
++1. Проверьте консоль браузера (F12)
++2. Убедитесь, что все файлы на месте
++3. Проверьте, что данные загружены корректно
++4. Попробуйте открыть страницу в другом браузере
++
++Для отладки используйте `console.log()` в ключевых местах кода.
++
++---
++
++## Готовый файл analyzer.js
++
++**СКОПИРУЙТЕ ВЕСЬ КОД НИЖЕ В ФАЙЛ `js/analyzer.js`**
++
++Этот файл содержит все классы без примеров использования:
++
++```javascript
++/**
++ * analyzer.js
++ * Классы для количественного анализа философского графа
++ * БЕЗ примеров использования - только объявления классов
++ */
++
++// ============================================
++// 1. Основной анализатор
++// ============================================
++
++class PhilosophyGraphAnalyzer {
++    constructor(philosophers, concepts, relations, rubrics) {
++        this.philosophers = philosophers;
++        this.concepts = concepts;
++        this.relations = relations;
++        this.rubrics = rubrics;
++        
++        this.graph = this.buildGraph();
++        this.adjacencyMatrix = this.buildAdjacencyMatrix();
++    }
++    
++    buildGraph() {
++        const graph = new Map();
++        
++        this.concepts.forEach(concept => {
++            graph.set(concept.id, {
++                ...concept,
++                inEdges: [],
++                outEdges: [],
++                allEdges: []
++            });
++        });
++        
++        this.relations.forEach(rel => {
++            const source = graph.get(rel.source);
++            const target = graph.get(rel.target);
++            
++            if (source && target) {
++                const edge = {
++                    source: rel.source,
++                    target: rel.target,
++                    type: rel.type,
++                    weight: rel.weight || 1,
++                    bidirectional: rel.bidirectional || false
++                };
++                
++                source.outEdges.push(edge);
++                target.inEdges.push(edge);
++                source.allEdges.push(edge);
++                target.allEdges.push(edge);
++                
++                if (edge.bidirectional) {
++                    const reverseEdge = {
++                        source: rel.target,
++                        target: rel.source,
++                        type: rel.type,
++                        weight: rel.weight || 1,
++                        bidirectional: true
++                    };
++                    target.outEdges.push(reverseEdge);
++                    source.inEdges.push(reverseEdge);
++                }
++            }
++        });
++        
++        return graph;
++    }
++    
++    buildAdjacencyMatrix() {
++        const nodes = Array.from(this.graph.keys());
++        const n = nodes.length;
++        const matrix = Array(n).fill(0).map(() => Array(n).fill(0));
++        
++        nodes.forEach((nodeId, i) => {
++            const node = this.graph.get(nodeId);
++            node.outEdges.forEach(edge => {
++                const j = nodes.indexOf(edge.target);
++                if (j !== -1) {
++                    matrix[i][j] = edge.weight;
++                }
++            });
++        });
++        
++        return { matrix, nodes };
++    }
++    
++    getBasicStats() {
++        const numNodes = this.graph.size;
++        const numEdges = this.relations.length;
++        const bidirectionalEdges = this.relations.filter(r => r.bidirectional).length;
++        
++        const degrees = Array.from(this.graph.values()).map(node => ({
++            id: node.id,
++            label: node.label,
++            inDegree: node.inEdges.length,
++            outDegree: node.outEdges.length,
++            totalDegree: node.inEdges.length + node.outEdges.length
++        }));
++        
++        const totalDegree = degrees.reduce((sum, d) => sum + d.totalDegree, 0);
++        const avgDegree = totalDegree / numNodes;
++        
++        const maxEdges = numNodes * (numNodes - 1);
++        const density = numEdges / maxEdges;
++        
++        return {
++            numNodes,
++            numEdges,
++            bidirectionalEdges,
++            avgDegree: avgDegree.toFixed(3),
++            density: (density * 100).toFixed(4) + '%',
++            degrees: degrees.sort((a, b) => b.totalDegree - a.totalDegree)
++        };
++    }
++    
++    getRelationTypeStats() {
++        const typeCount = {};
++        const typeWeight = {};
++        
++        this.relations.forEach(rel => {
++            typeCount[rel.type] = (typeCount[rel.type] || 0) + 1;
++            typeWeight[rel.type] = (typeWeight[rel.type] || 0) + (rel.weight || 1);
++        });
++        
++        const total = this.relations.length;
++        const stats = Object.keys(typeCount).map(type => ({
++            type,
++            count: typeCount[type],
++            percentage: ((typeCount[type] / total) * 100).toFixed(2) + '%',
++            avgWeight: (typeWeight[type] / typeCount[type]).toFixed(2)
++        }));
++        
++        return stats.sort((a, b) => b.count - a.count);
++    }
++    
++    getRubricStats() {
++        const rubricCount = {};
++        
++        this.concepts.forEach(concept => {
++            concept.rubrics.forEach(rubric => {
++                rubricCount[rubric] = (rubricCount[rubric] || 0) + 1;
++            });
++        });
++        
++        const total = this.concepts.length;
++        const stats = Object.keys(rubricCount).map(rubric => {
++            const rubricInfo = this.rubrics.find(r => r.id === rubric);
++            return {
++                id: rubric,
++                name: rubricInfo?.name || rubric,
++                count: rubricCount[rubric],
++                percentage: ((rubricCount[rubric] / total) * 100).toFixed(2) + '%'
++            };
++        });
++        
++        return stats.sort((a, b) => b.count - a.count);
++    }
++    
++    getPhilosopherStats() {
++        const philoCount = {};
++        
++        this.concepts.forEach(concept => {
++            philoCount[concept.philosopher] = (philoCount[concept.philosopher] || 0) + 1;
++        });
++        
++        const stats = this.philosophers.map(philo => ({
++            id: philo.id,
++            name: philo.name,
++            years: philo.years,
++            birth: philo.birth,
++            death: philo.death,
++            conceptCount: philoCount[philo.id] || 0,
++            lifespan: Math.abs(philo.death - philo.birth)
++        }));
++        
++        return stats.sort((a, b) => b.conceptCount - a.conceptCount);
++    }
++}
++
++// ============================================
++// 2. Метрики центральности
++// ============================================
++
++class DegreeCentrality {
++    constructor(graph) {
++        this.graph = graph;
++    }
++    
++    compute() {
++        const results = [];
++        const n = this.graph.size;
++        
++        this.graph.forEach((node, id) => {
++            const inDegree = node.inEdges.length;
++            const outDegree = node.outEdges.length;
++            const totalDegree = inDegree + outDegree;
++            
++            results.push({
++                id,
++                label: node.label,
++                philosopher: node.philosopher,
++                inDegree,
++                outDegree,
++                totalDegree,
++                normalizedInDegree: (inDegree / (n - 1)).toFixed(4),
++                normalizedOutDegree: (outDegree / (n - 1)).toFixed(4),
++                normalizedTotalDegree: (totalDegree / (2 * (n - 1))).toFixed(4)
++            });
++        });
++        
++        return results.sort((a, b) => b.totalDegree - a.totalDegree);
++    }
++}
++
++class BetweennessCentrality {
++    constructor(graph) {
++        this.graph = graph;
++    }
++    
++    bfs(startNode) {
++        const queue = [startNode];
++        const dist = new Map([[startNode, 0]]);
++        const sigma = new Map([[startNode, 1]]);
++        const pred = new Map();
++        
++        while (queue.length > 0) {
++            const v = queue.shift();
++            const node = this.graph.get(v);
++            
++            node.outEdges.forEach(edge => {
++                const w = edge.target;
++                
++                if (!dist.has(w)) {
++                    dist.set(w, dist.get(v) + 1);
++                    queue.push(w);
++                }
++                
++                if (dist.get(w) === dist.get(v) + 1) {
++                    sigma.set(w, (sigma.get(w) || 0) + sigma.get(v));
++                    
++                    if (!pred.has(w)) {
++                        pred.set(w, []);
++                    }
++                    pred.get(w).push(v);
++                }
++            });
++        }
++        
++        return { dist, sigma, pred };
++    }
++    
++    compute() {
++        const cb = new Map();
++        const nodes = Array.from(this.graph.keys());
++        
++        nodes.forEach(node => cb.set(node, 0));
++        
++        nodes.forEach(s => {
++            const { dist, sigma, pred } = this.bfs(s);
++            const delta = new Map();
++            nodes.forEach(node => delta.set(node, 0));
++            
++            const sortedNodes = Array.from(dist.entries())
++                .sort((a, b) => b[1] - a[1])
++                .map(entry => entry[0]);
++            
++            sortedNodes.forEach(w => {
++                if (pred.has(w)) {
++                    pred.get(w).forEach(v => {
++                        const coeff = (sigma.get(v) / sigma.get(w)) * (1 + delta.get(w));
++                        delta.set(v, delta.get(v) + coeff);
++                    });
++                }
++                
++                if (w !== s) {
++                    cb.set(w, cb.get(w) + delta.get(w));
++                }
++            });
++        });
++        
++        const n = nodes.length;
++        const normFactor = (n - 1) * (n - 2);
++        
++        const results = [];
++        cb.forEach((value, id) => {
++            const node = this.graph.get(id);
++            results.push({
++                id,
++                label: node.label,
++                philosopher: node.philosopher,
++                betweenness: value.toFixed(4),
++                normalized: (value / normFactor).toFixed(6)
++            });
++        });
++        
++        return results.sort((a, b) => b.betweenness - a.betweenness);
++    }
++}
++
++class ClosenessCentrality {
++    constructor(graph) {
++        this.graph = graph;
++    }
++    
++    dijkstra(startNode) {
++        const dist = new Map();
++        const visited = new Set();
++        const pq = [[0, startNode]];
++        
++        dist.set(startNode, 0);
++        
++        while (pq.length > 0) {
++            pq.sort((a, b) => a[0] - b[0]);
++            const [d, u] = pq.shift();
++            
++            if (visited.has(u)) continue;
++            visited.add(u);
++            
++            const node = this.graph.get(u);
++            node.outEdges.forEach(edge => {
++                const v = edge.target;
++                const newDist = d + (edge.weight || 1);
++                
++                if (!dist.has(v) || newDist < dist.get(v)) {
++                    dist.set(v, newDist);
++                    pq.push([newDist, v]);
++                }
++            });
++        }
++        
++        return dist;
++    }
++    
++    compute() {
++        const results = [];
++        const nodes = Array.from(this.graph.keys());
++        const n = nodes.length;
++        
++        nodes.forEach(nodeId => {
++            const distances = this.dijkstra(nodeId);
++            
++            let sumDist = 0;
++            let reachable = 0;
++            
++            distances.forEach((dist, target) => {
++                if (target !== nodeId && dist < Infinity) {
++                    sumDist += dist;
++                    reachable++;
++                }
++            });
++            
++            const node = this.graph.get(nodeId);
++            const closeness = reachable > 0 ? reachable / sumDist : 0;
++            const normalized = reachable > 0 ? (reachable / (n - 1)) * closeness : 0;
++            
++            results.push({
++                id: nodeId,
++                label: node.label,
++                philosopher: node.philosopher,
++                closeness: closeness.toFixed(4),
++                normalized: normalized.toFixed(4),
++                reachableNodes: reachable,
++                avgDistance: reachable > 0 ? (sumDist / reachable).toFixed(3) : 'N/A'
++            });
++        });
++        
++        return results.sort((a, b) => b.closeness - a.closeness);
++    }
++}
++
++class PageRank {
++    constructor(graph, dampingFactor = 0.85, maxIterations = 100, tolerance = 1e-6) {
++        this.graph = graph;
++        this.dampingFactor = dampingFactor;
++        this.maxIterations = maxIterations;
++        this.tolerance = tolerance;
++    }
++    
++    compute() {
++        const nodes = Array.from(this.graph.keys());
++        const n = nodes.length;
++        
++        const pagerank = new Map();
++        nodes.forEach(node => pagerank.set(node, 1 / n));
++        
++        for (let iter = 0; iter < this.maxIterations; iter++) {
++            const newPagerank = new Map();
++            let diff = 0;
++            
++            nodes.forEach(nodeId => {
++                const node = this.graph.get(nodeId);
++                let rank = (1 - this.dampingFactor) / n;
++                
++                node.inEdges.forEach(edge => {
++                    const sourceNode = this.graph.get(edge.source);
++                    const outDegree = sourceNode.outEdges.length;
++                    
++                    if (outDegree > 0) {
++                        rank += this.dampingFactor * (pagerank.get(edge.source) / outDegree);
++                    }
++                });
++                
++                newPagerank.set(nodeId, rank);
++                diff += Math.abs(rank - pagerank.get(nodeId));
++            });
++            
++            if (diff < this.tolerance) {
++                console.log(`PageRank converged after ${iter + 1} iterations`);
++                break;
++            }
++            
++            nodes.forEach(node => pagerank.set(node, newPagerank.get(node)));
++        }
++        
++        const results = [];
++        pagerank.forEach((rank, id) => {
++            const node = this.graph.get(id);
++            results.push({
++                id,
++                label: node.label,
++                philosopher: node.philosopher,
++                pagerank: rank.toFixed(6),
++                normalized: (rank * n).toFixed(4)
++            });
++        });
++        
++        return results.sort((a, b) => b.pagerank - a.pagerank);
++    }
++}
++
++class EigenvectorCentrality {
++    constructor(graph, maxIterations = 100, tolerance = 1e-6) {
++        this.graph = graph;
++        this.maxIterations = maxIterations;
++        this.tolerance = tolerance;
++    }
++    
++    compute() {
++        const nodes = Array.from(this.graph.keys());
++        const n = nodes.length;
++        
++        let x = new Map();
++        nodes.forEach(node => x.set(node, 1 / Math.sqrt(n)));
++        
++        for (let iter = 0; iter < this.maxIterations; iter++) {
++            const newX = new Map();
++            
++            nodes.forEach(nodeId => {
++                const node = this.graph.get(nodeId);
++                let sum = 0;
++                
++                node.inEdges.forEach(edge => {
++                    sum += x.get(edge.source) * (edge.weight || 1);
++                });
++                
++                newX.set(nodeId, sum);
++            });
++            
++            let norm = 0;
++            newX.forEach(val => norm += val * val);
++            norm = Math.sqrt(norm);
++            
++            if (norm > 0) {
++                newX.forEach((val, key) => newX.set(key, val / norm));
++            }
++            
++            let diff = 0;
++            nodes.forEach(node => {
++                diff += Math.abs(newX.get(node) - x.get(node));
++            });
++            
++            if (diff < this.tolerance) {
++                console.log(`Eigenvector centrality converged after ${iter + 1} iterations`);
++                break;
++            }
++            
++            x = newX;
++        }
++        
++        const results = [];
++        x.forEach((centrality, id) => {
++            const node = this.graph.get(id);
++            results.push({
++                id,
++                label: node.label,
++                philosopher: node.philosopher,
++                eigenvector: centrality.toFixed(6)
++            });
++        });
++        
++        return results.sort((a, b) => b.eigenvector - a.eigenvector);
++    }
++}
++
++// ============================================
++// 3. Обнаружение сообществ
++// ============================================
++
++class LouvainCommunityDetection {
++    constructor(graph) {
++        this.graph = graph;
++        this.nodes = Array.from(graph.keys());
++        this.m = this.getTotalWeight();
++    }
++    
++    getTotalWeight() {
++        let total = 0;
++        this.graph.forEach(node => {
++            node.outEdges.forEach(edge => {
++                total += edge.weight || 1;
++            });
++        });
++        return total / 2;
++    }
++    
++    computeModularity(communities) {
++        let Q = 0;
++        const m2 = 2 * this.m;
++        
++        communities.forEach(community => {
++            const nodes = Array.from(community);
++            
++            let lc = 0;
++            let dc = 0;
++            
++            nodes.forEach(nodeId => {
++                const node = this.graph.get(nodeId);
++                
++                node.allEdges.forEach(edge => {
++                    dc += edge.weight || 1;
++                });
++                
++                node.outEdges.forEach(edge => {
++                    if (community.has(edge.target)) {
++                        lc += edge.weight || 1;
++                    }
++                });
++            });
++            
++            Q += (lc / m2) - Math.pow(dc / m2, 2);
++        });
++        
++        return Q;
++    }
++    
++    phase1(communities) {
++        let improved = true;
++        let iterations = 0;
++        
++        while (improved && iterations < 100) {
++            improved = false;
++            iterations++;
++            
++            this.nodes.forEach(nodeId => {
++                const currentCommunity = this.getCommunity(nodeId, communities);
++                let bestCommunity = currentCommunity;
++                let bestGain = 0;
++                
++                const node = this.graph.get(nodeId);
++                const neighborCommunities = new Set();
++                
++                node.allEdges.forEach(edge => {
++                    const neighbor = edge.source === nodeId ? edge.target : edge.source;
++                    neighborCommunities.add(this.getCommunity(neighbor, communities));
++                });
++                
++                neighborCommunities.forEach(community => {
++                    if (community !== currentCommunity) {
++                        const gain = this.modularityGain(nodeId, currentCommunity, community, communities);
++                        
++                        if (gain > bestGain) {
++                            bestGain = gain;
++                            bestCommunity = community;
++                        }
++                    }
++                });
++                
++                if (bestCommunity !== currentCommunity && bestGain > 0) {
++                    this.moveToCommunity(nodeId, currentCommunity, bestCommunity);
++                    improved = true;
++                }
++            });
++        }
++        
++        return communities;
++    }
++    
++    getCommunity(nodeId, communities) {
++        for (let community of communities) {
++            if (community.has(nodeId)) {
++                return community;
++            }
++        }
++        return null;
++    }
++    
++    modularityGain(nodeId, fromCommunity, toCommunity, communities) {
++        const node = this.graph.get(nodeId);
++        let kiIn = 0;
++        
++        node.allEdges.forEach(edge => {
++            const neighbor = edge.source === nodeId ? edge.target : edge.source;
++            if (toCommunity.has(neighbor)) {
++                kiIn += edge.weight || 1;
++            }
++        });
++        
++        const ki = node.allEdges.length;
++        const sigmaTot = Array.from(toCommunity).reduce((sum, id) => {
++            return sum + this.graph.get(id).allEdges.length;
++        }, 0);
++        
++        const m2 = 2 * this.m;
++        return (kiIn / m2) - (sigmaTot * ki) / (m2 * m2);
++    }
++    
++    moveToCommunity(nodeId, fromCommunity, toCommunity) {
++        fromCommunity.delete(nodeId);
++        toCommunity.add(nodeId);
++    }
++    
++    detect() {
++        let communities = new Set();
++        this.nodes.forEach(node => {
++            communities.add(new Set([node]));
++        });
++        
++        communities = this.phase1(communities);
++        communities = new Set(Array.from(communities).filter(c => c.size > 0));
++        
++        const modularity = this.computeModularity(communities);
++        
++        const results = [];
++        let communityId = 0;
++        
++        communities.forEach(community => {
++            communityId++;
++            community.forEach(nodeId => {
++                const node = this.graph.get(nodeId);
++                results.push({
++                    id: nodeId,
++                    label: node.label,
++                    philosopher: node.philosopher,
++                    community: communityId,
++                    communitySize: community.size
++                });
++            });
++        });
++        
++        return {
++            communities: results.sort((a, b) => a.community - b.community),
++            numCommunities: communities.size,
++            modularity: modularity.toFixed(4)
++        };
++    }
++}
++
++class LabelPropagation {
++    constructor(graph, maxIterations = 100) {
++        this.graph = graph;
++        this.maxIterations = maxIterations;
++    }
++    
++    detect() {
++        const nodes = Array.from(this.graph.keys());
++        
++        const labels = new Map();
++        nodes.forEach((node, i) => labels.set(node, i));
++        
++        for (let iter = 0; iter < this.maxIterations; iter++) {
++            let changed = false;
++            
++            const shuffled = [...nodes].sort(() => Math.random() - 0.5);
++            
++            shuffled.forEach(nodeId => {
++                const node = this.graph.get(nodeId);
++                
++                const labelCount = new Map();
++                
++                node.allEdges.forEach(edge => {
++                    const neighbor = edge.source === nodeId ? edge.target : edge.source;
++                    const label = labels.get(neighbor);
++                    const weight = edge.weight || 1;
++                    
++                    labelCount.set(label, (labelCount.get(label) || 0) + weight);
++                });
++                
++                if (labelCount.size > 0) {
++                    let maxLabel = labels.get(nodeId);
++                    let maxCount = 0;
++                    
++                    labelCount.forEach((count, label) => {
++                        if (count > maxCount || (count === maxCount && Math.random() > 0.5)) {
++                            maxCount = count;
++                            maxLabel = label;
++                        }
++                    });
++                    
++                    if (maxLabel !== labels.get(nodeId)) {
++                        labels.set(nodeId, maxLabel);
++                        changed = true;
++                    }
++                }
++            });
++            
++            if (!changed) {
++                console.log(`Label Propagation converged after ${iter + 1} iterations`);
++                break;
++            }
++        }
++        
++        const communities = new Map();
++        labels.forEach((label, nodeId) => {
++            if (!communities.has(label)) {
++                communities.set(label, []);
++            }
++            communities.get(label).push(nodeId);
++        });
++        
++        const results = [];
++        let communityId = 0;
++        
++        communities.forEach((members, label) => {
++            communityId++;
++            members.forEach(nodeId => {
++                const node = this.graph.get(nodeId);
++                results.push({
++                    id: nodeId,
++                    label: node.label,
++                    philosopher: node.philosopher,
++                    community: communityId,
++                    communitySize: members.length
++                });
++            });
++        });
++        
++        return {
++            communities: results.sort((a, b) => a.community - b.community),
++            numCommunities: communities.size
++        };
++    }
++}
++
++// ============================================
++// 4. Временной анализ
++// ============================================
++
++class TemporalAnalysis {
++    constructor(philosophers, concepts, relations) {
++        this.philosophers = philosophers;
++        this.concepts = concepts;
++        this.relations = relations;
++    }
++    
++    defineEpochs() {
++        return [
++            { name: 'Античность', start: -500, end: 300 },
++            { name: 'Средневековье', start: 300, end: 1500 },
++            { name: 'Новое время', start: 1500, end: 1800 },
++            { name: 'Немецкая классика', start: 1700, end: 1850 },
++            { name: 'XIX век', start: 1800, end: 1900 },
++            { name: 'XX век', start: 1900, end: 2000 }
++        ];
++    }
++    
++    analyzeProductivityByEpoch() {
++        const epochs = this.defineEpochs();
++        const results = [];
++        
++        epochs.forEach(epoch => {
++            const philos = this.philosophers.filter(p => 
++                p.birth >= epoch.start && p.birth < epoch.end
++            );
++            
++            const conceptIds = this.concepts
++                .filter(c => {
++                    const philo = this.philosophers.find(p => p.id === c.philosopher);
++                    return philo && philo.birth >= epoch.start && philo.birth < epoch.end;
++                })
++                .map(c => c.id);
++            
++            const relCount = this.relations.filter(r => 
++                conceptIds.includes(r.source) || conceptIds.includes(r.target)
++            ).length;
++            
++            results.push({
++                epoch: epoch.name,
++                years: `${epoch.start}-${epoch.end}`,
++                philosophers: philos.length,
++                concepts: conceptIds.length,
++                relations: relCount,
++                conceptsPerPhilo: philos.length > 0 ? 
++                    (conceptIds.length / philos.length).toFixed(2) : 0,
++                relationsPerConcept: conceptIds.length > 0 ?
++                    (relCount / conceptIds.length).toFixed(2) : 0
++            });
++        });
++        
++        return results;
++    }
++    
++    analyzeRelationTypeEvolution() {
++        const epochs = this.defineEpochs();
++        const results = [];
++        
++        epochs.forEach(epoch => {
++            const typeCount = {};
++            
++            this.relations.forEach(rel => {
++                const sourceConcept = this.concepts.find(c => c.id === rel.source);
++                const sourcePhilo = this.philosophers.find(p => p.id === sourceConcept?.philosopher);
++                
++                if (sourcePhilo && sourcePhilo.birth >= epoch.start && sourcePhilo.birth < epoch.end) {
++                    typeCount[rel.type] = (typeCount[rel.type] || 0) + 1;
++                }
++            });
++            
++            results.push({
++                epoch: epoch.name,
++                ...typeCount,
++                total: Object.values(typeCount).reduce((a, b) => a + b, 0)
++            });
++        });
++        
++        return results;
++    }
++    
++    buildTemporalInfluenceNetwork() {
++        const matrix = {};
++        const epochs = this.defineEpochs();
++        
++        epochs.forEach(fromEpoch => {
++            matrix[fromEpoch.name] = {};
++            
++            epochs.forEach(toEpoch => {
++                let count = 0;
++                
++                this.relations.forEach(rel => {
++                    const sourceConcept = this.concepts.find(c => c.id === rel.source);
++                    const targetConcept = this.concepts.find(c => c.id === rel.target);
++                    
++                    const sourcePhilo = this.philosophers.find(p => p.id === sourceConcept?.philosopher);
++                    const targetPhilo = this.philosophers.find(p => p.id === targetConcept?.philosopher);
++                    
++                    if (sourcePhilo && targetPhilo) {
++                        const sourceInEpoch = sourcePhilo.birth >= fromEpoch.start && 
++                                            sourcePhilo.birth < fromEpoch.end;
++                        const targetInEpoch = targetPhilo.birth >= toEpoch.start && 
++                                            targetPhilo.birth < toEpoch.end;
++                        
++                        if (sourceInEpoch && targetInEpoch) {
++                            count++;
++                        }
++                    }
++                });
++                
++                matrix[fromEpoch.name][toEpoch.name] = count;
++            });
++        });
++        
++        return matrix;
++    }
++    
++    analyzeCumulativeGrowth() {
++        const sorted = [...this.philosophers].sort((a, b) => a.birth - b.birth);
++        const results = [];
++        
++        let cumConcepts = 0;
++        let cumRelations = 0;
++        
++        sorted.forEach(philo => {
++            const newConcepts = this.concepts.filter(c => c.philosopher === philo.id);
++            cumConcepts += newConcepts.length;
++            
++            const conceptIds = this.concepts
++                .filter(c => {
++                    const p = this.philosophers.find(p => p.id === c.philosopher);
++                    return p && p.birth <= philo.birth;
++                })
++                .map(c => c.id);
++            
++            cumRelations = this.relations.filter(r => 
++                conceptIds.includes(r.source) && conceptIds.includes(r.target)
++            ).length;
++            
++            results.push({
++                year: philo.birth,
++                philosopher: philo.name,
++                cumulativeConcepts: cumConcepts,
++                cumulativeRelations: cumRelations,
++                density: cumConcepts > 1 ? 
++                    (cumRelations / (cumConcepts * (cumConcepts - 1))).toFixed(4) : 0
++            });
++        });
++        
++        return results;
++    }
++}
++
++// ============================================
++// 5. PCA анализ
++// ============================================
++
++class PCAAnalysis {
++    constructor(graph, philosophers) {
++        this.graph = graph;
++        this.philosophers = philosophers;
++    }
++    
++    createFeatureMatrix() {
++        const nodes = Array.from(this.graph.keys());
++        const features = [];
++        
++        nodes.forEach(nodeId => {
++            const node = this.graph.get(nodeId);
++            
++            features.push({
++                id: nodeId,
++                label: node.label,
++                inDegree: node.inEdges.length,
++                outDegree: node.outEdges.length,
++                totalDegree: node.inEdges.length + node.outEdges.length,
++                numRubrics: node.rubrics.length,
++                groundWeight: this.getWeightByType(node, 'ground'),
++                influenceWeight: this.getWeightByType(node, 'influence'),
++                developWeight: this.getWeightByType(node, 'develop'),
++                critiqueWeight: this.getWeightByType(node, 'critique')
++            });
++        });
++        
++        return features;
++    }
++    
++    getWeightByType(node, type) {
++        let weight = 0;
++        node.allEdges.forEach(edge => {
++            if (edge.type === type) {
++                weight += edge.weight || 1;
++            }
++        });
++        return weight;
++    }
++    
++    normalize(matrix, columns) {
++        const normalized = matrix.map(row => ({ ...row }));
++        
++        columns.forEach(col => {
++            const values = matrix.map(row => row[col]);
++            const mean = values.reduce((a, b) => a + b, 0) / values.length;
++            const std = Math.sqrt(
++                values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length
++            );
++            
++            if (std > 0) {
++                normalized.forEach((row, i) => {
++                    row[col] = (row[col] - mean) / std;
++                });
++            }
++        });
++        
++        return normalized;
++    }
++    
++    computeCovarianceMatrix(data, features) {
++        const n = data.length;
++        const covMatrix = [];
++        
++        features.forEach((f1, i) => {
++            covMatrix[i] = [];
++            features.forEach((f2, j) => {
++                let cov = 0;
++                for (let k = 0; k < n; k++) {
++                    cov += data[k][f1] * data[k][f2];
++                }
++                covMatrix[i][j] = cov / n;
++            });
++        });
++        
++        return covMatrix;
++    }
++    
++    analyze() {
++        const features = this.createFeatureMatrix();
++        const featureColumns = [
++            'inDegree', 'outDegree', 'totalDegree', 'numRubrics',
++            'groundWeight', 'influenceWeight', 'developWeight', 'critiqueWeight'
++        ];
++        
++        const normalized = this.normalize(features, featureColumns);
++        const covMatrix = this.computeCovarianceMatrix(normalized, featureColumns);
++        
++        return {
++            features,
++            normalized,
++            covarianceMatrix: covMatrix,
++            featureColumns
++        };
++    }
++}
++
++// ============================================
++// 6. Анализ путей
++// ============================================
++
++class PathAnalysis {
++    constructor(graph) {
++        this.graph = graph;
++    }
++    
++    floydWarshall() {
++        const nodes = Array.from(this.graph.keys());
++        const n = nodes.length;
++        const dist = Array(n).fill(null).map(() => Array(n).fill(Infinity));
++        const next = Array(n).fill(null).map(() => Array(n).fill(null));
++        
++        nodes.forEach((node, i) => {
++            dist[i][i] = 0;
++            next[i][i] = i;
++            
++            const nodeData = this.graph.get(node);
++            nodeData.outEdges.forEach(edge => {
++                const j = nodes.indexOf(edge.target);
++                if (j !== -1) {
++                    dist[i][j] = edge.weight || 1;
++                    next[i][j] = j;
++                }
++            });
++        });
++        
++        for (let k = 0; k < n; k++) {
++            for (let i = 0; i < n; i++) {
++                for (let j = 0; j < n; j++) {
++                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
++                        dist[i][j] = dist[i][k] + dist[k][j];
++                        next[i][j] = next[i][k];
++                    }
++                }
++            }
++        }
++        
++        return { dist, next, nodes };
++    }
++    
++    reconstructPath(u, v, next, nodes) {
++        if (next[u][v] === null) return null;
++        
++        const path = [nodes[u]];
++        while (u !== v) {
++            u = next[u][v];
++            path.push(nodes[u]);
++        }
++        return path;
++    }
++    
++    analyzeDiameter() {
++        const { dist, nodes } = this.floydWarshall();
++        const n = nodes.length;
++        
++        let maxDist = 0;
++        let avgDist = 0;
++        let count = 0;
++        let diameter = { distance: 0, from: null, to: null };
++        
++        for (let i = 0; i < n; i++) {
++            for (let j = 0; j < n; j++) {
++                if (i !== j && dist[i][j] < Infinity) {
++                    avgDist += dist[i][j];
++                    count++;
++                    
++                    if (dist[i][j] > maxDist) {
++                        maxDist = dist[i][j];
++                        diameter = {
++                            distance: dist[i][j],
++                            from: nodes[i],
++                            to: nodes[j]
++                        };
++                    }
++                }
++            }
++        }
++        
++        return {
++            diameter: maxDist,
++            averagePathLength: count > 0 ? (avgDist / count).toFixed(3) : 'N/A',
++            longestPath: diameter,
++            reachablePairs: count,
++            totalPairs: n * (n - 1)
++        };
++    }
++    
++    computeEccentricity() {
++        const { dist, nodes } = this.floydWarshall();
++        const n = nodes.length;
++        const results = [];
++        
++        nodes.forEach((nodeId, i) => {
++            let maxDist = 0;
++            
++            for (let j = 0; j < n; j++) {
++                if (i !== j && dist[i][j] < Infinity) {
++                    maxDist = Math.max(maxDist, dist[i][j]);
++                }
++            }
++            
++            const node = this.graph.get(nodeId);
++            results.push({
++                id: nodeId,
++                label: node.label,
++                philosopher: node.philosopher,
++                eccentricity: maxDist < Infinity ? maxDist : 'Unreachable'
++            });
++        });
++        
++        return results.sort((a, b) => {
++            if (a.eccentricity === 'Unreachable') return 1;
++            if (b.eccentricity === 'Unreachable') return -1;
++            return a.eccentricity - b.eccentricity;
++        });
++    }
++    
++    findLongestInfluenceChains() {
++        const { dist, next, nodes } = this.floydWarshall();
++        const chains = [];
++        
++        for (let i = 0; i < nodes.length; i++) {
++            for (let j = 0; j < nodes.length; j++) {
++                if (i !== j && dist[i][j] < Infinity) {
++                    const path = this.reconstructPath(i, j, next, nodes);
++                    
++                    if (path && path.length > 3) {
++                        chains.push({
++                            length: path.length,
++                            distance: dist[i][j],
++                            from: path[0],
++                            to: path[path.length - 1],
++                            path: path.map(id => this.graph.get(id).label).join(' → ')
++                        });
++                    }
++                }
++            }
++        }
++        
++        return chains
++            .sort((a, b) => b.length - a.length)
++            .slice(0, 20);
++    }
++}
++
++// ============================================
++// 7. Кластерный анализ
++// ============================================
++
++class ClusteringAnalysis {
++    constructor(graph) {
++        this.graph = graph;
++    }
++    
++    localClusteringCoefficient(nodeId) {
++        const node = this.graph.get(nodeId);
++        
++        const neighbors = new Set();
++        node.allEdges.forEach(edge => {
++            const neighbor = edge.source === nodeId ? edge.target : edge.source;
++            neighbors.add(neighbor);
++        });
++        
++        if (neighbors.size < 2) return 0;
++        
++        let edgesBetweenNeighbors = 0;
++        const neighborsArray = Array.from(neighbors);
++        
++        for (let i = 0; i < neighborsArray.length; i++) {
++            for (let j = i + 1; j < neighborsArray.length; j++) {
++                const n1 = this.graph.get(neighborsArray[i]);
++                const hasEdge = n1.allEdges.some(e => 
++                    e.source === neighborsArray[j] || e.target === neighborsArray[j]
++                );
++                
++                if (hasEdge) edgesBetweenNeighbors++;
++            }
++        }
++        
++        const k = neighbors.size;
++        const maxEdges = (k * (k - 1)) / 2;
++        
++        return maxEdges > 0 ? edgesBetweenNeighbors / maxEdges : 0;
++    }
++    
++    globalClusteringCoefficient() {
++        const nodes = Array.from(this.graph.keys());
++        let sum = 0;
++        let count = 0;
++        
++        nodes.forEach(nodeId => {
++            const cc = this.localClusteringCoefficient(nodeId);
++            sum += cc;
++            count++;
++        });
++        
++        return count > 0 ? sum / count : 0;
++    }
++    
++    analyzeAll() {
++        const results = [];
++        
++        this.graph.forEach((node, id) => {
++            results.push({
++                id,
++                label: node.label,
++                philosopher: node.philosopher,
++                degree: node.allEdges.length,
++                clustering: this.localClusteringCoefficient(id).toFixed(4)
++            });
++        });
++        
++        return results.sort((a, b) => b.clustering - a.clustering);
++    }
++    
++    transitivity() {
++        let closedTriples = 0;
++        let totalTriples = 0;
++        
++        this.graph.forEach((node, nodeId) => {
++            const neighbors = new Set();
++            node.allEdges.forEach(edge => {
++                const neighbor = edge.source === nodeId ? edge.target : edge.source;
++                neighbors.add(neighbor);
++            });
++            
++            const k = neighbors.size;
++            if (k >= 2) {
++                totalTriples += (k * (k - 1)) / 2;
++                
++                const neighborsArray = Array.from(neighbors);
++                for (let i = 0; i < neighborsArray.length; i++) {
++                    for (let j = i + 1; j < neighborsArray.length; j++) {
++                        const n1 = this.graph.get(neighborsArray[i]);
++                        const hasEdge = n1.allEdges.some(e => 
++                            e.source === neighborsArray[j] || e.target === neighborsArray[j]
++                        );
++                        
++                        if (hasEdge) closedTriples++;
++                    }
++                }
++            }
++        });
++        
++        return totalTriples > 0 ? closedTriples / totalTriples : 0;
++    }
++}
++```

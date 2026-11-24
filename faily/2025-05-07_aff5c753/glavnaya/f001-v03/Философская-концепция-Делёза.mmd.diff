@@ -1,0 +1,63 @@
+--- предыдущая/Философская-концепция-Делёза.mmd
++++ текущая/Философская-концепция-Делёза.mmd
+@@ -154,7 +154,7 @@
+     A <-->|FOUNDATIONAL| C
+     A <-->|FOUNDATIONAL| D
+     B -->|IMPLEMENTATION| C
+-    A -->|REFLEXIVE| A
++    A -->|CONCEPTUAL:REFLEXIVE| A
+     
+     %% Ключевые работы и их отношение к различию
+     A <-->|IMPLEMENTATION| E
+@@ -189,8 +189,8 @@
+     
+     %% Виртуальное и актуальное
+     Q <-->|DIALECTICAL| R
+-    Q <-->|CIRCULAR| R
+-    R <-->|CIRCULAR| Q
++    Q <-->|TEMPORAL:CIRCULAR| R
++    R <-->|TEMPORAL:CIRCULAR| Q
+     S -->|HIERARCHICAL| Q
+     T -->|HIERARCHICAL| R
+     A -->|MANIFESTATION| Q
+@@ -205,8 +205,8 @@
+     
+     %% Территориальность
+     Y <-->|DIALECTICAL| Z
+-    Z <-->|CIRCULAR| AA
+-    AA <-->|CIRCULAR| Z
++    Z <-->|DEVELOPMENT:CIRCULAR| AA
++    AA <-->|DEVELOPMENT:CIRCULAR| Z
+     W -->|IMPLEMENTATION| Z
+     P -->|IMPLEMENTATION| Z
+     
+@@ -248,16 +248,16 @@
+     AQ -->|PART_WHOLE| AR
+     AQ -->|PART_WHOLE| AS
+     AQ -->|MANIFESTATION| A
+-    AQ -->|REFLEXIVE| AQ
++    AQ -->|PART_WHOLE:REFLEXIVE| AQ
+     
+     %% Политическое
+     AT -->|IMPLEMENTATION| C
+     AU <-->|CONTRADICTION| AV
+     AW -->|MEANS_END| Z
+     AT -->|PART_WHOLE| AV
+-    AU <-->|CIRCULAR| AV
+-    AV <-->|CIRCULAR| AW
+-    AW <-->|CIRCULAR| AU
++    AU <-->|DEVELOPMENT:CIRCULAR| AV
++    AV <-->|DEVELOPMENT:CIRCULAR| AW
++    AW <-->|DEVELOPMENT:CIRCULAR| AU
+     
+     %% Философские влияния
+     AX -->|CAUSAL| A
+@@ -297,7 +297,7 @@
+     BU -->|MANIFESTATION| A
+     BV -->|CONCEPTUAL| A
+     BW -->|NECESSARY_CONDITION| A
+-    BS -->|REFLEXIVE| BS
++    BS -->|EMERGENCE:REFLEXIVE| BS
+     
+     %% Кино-концепции
+     BX <-->|DIALECTICAL| BY

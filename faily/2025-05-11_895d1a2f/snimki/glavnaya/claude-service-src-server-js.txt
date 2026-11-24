@@ -1,0 +1,141 @@
+/**
+ * Claude Service - Server entry point
+ * Provides AI-powered analysis and generation capabilities for the Philosophy Service platform
+ */
+
+require('dotenv').config();
+
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const compression = require('compression');
+const { createLogger } = require('../../shared/lib/logging/logger');
+const { errorHandler } = require('../../shared/lib/middleware/errorHandler');
+const { rabbitMQConnection } = require('./messaging/rabbitMQClient');
+const { client: pgClient } = require('../../shared/lib/db/postgres/client');
+const { mongoClient } = require('../../shared/lib/db/mongodb/client');
+const queueConsumer = require('./messaging/queueConsumer');
+
+// Import routes
+const claudeRoutes = require('./routes/claudeRoutes');
+const taskRoutes = require('./routes/taskRoutes');
+const templateRoutes = require('./routes/templateRoutes');
+
+// Create logger instance
+const logger = createLogger({
+  serviceName: 'claude-service',
+  logLevel: process.env.LOG_LEVEL || 'info'
+});
+
+// Create Express app
+const app = express();
+const port = process.env.PORT || 3004;
+
+// Middleware
+app.use(helmet());
+app.use(cors());
+app.use(compression());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    service: 'claude-service',
+    version: process.env.npm_package_version || '1.0.0'
+  });
+});
+
+// API routes
+app.use('/api/claude', claudeRoutes);
+app.use('/api/claude/tasks', taskRoutes);
+app.use('/api/claude/templates', templateRoutes);
+
+// Error handling
+app.use(errorHandler);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: {
+      code: 'NOT_FOUND',
+      message: 'Endpoint not found'
+    }
+  });
+});
+
+// Start server
+const startServer = async () => {
+  try {
+    // Connect to databases
+    await pgClient.connect();
+    logger.info('Connected to PostgreSQL');
+    
+    await mongoClient.connect();
+    logger.info('Connected to MongoDB');
+    
+    // Connect to RabbitMQ
+    await rabbitMQConnection.connect();
+    logger.info('Connected to RabbitMQ');
+    
+    // Start queue consumer
+    await queueConsumer.start();
+    logger.info('Queue consumer started');
+    
+    // Start Express server
+    app.listen(port, () => {
+      logger.info(`Claude service listening on port ${port}`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+// Graceful shutdown
+const gracefulShutdown = async (signal) => {
+  logger.info(`Received ${signal}, starting graceful shutdown...`);
+  
+  try {
+    // Stop accepting new requests
+    await new Promise((resolve) => {
+      app.close(resolve);
+    });
+    
+    // Close database connections
+    await pgClient.end();
+    await mongoClient.close();
+    
+    // Close RabbitMQ connection
+    await rabbitMQConnection.close();
+    
+    logger.info('Graceful shutdown completed');
+    process.exit(0);
+  } catch (error) {
+    logger.error('Error during graceful shutdown:', error);
+    process.exit(1);
+  }
+};
+
+// Handle shutdown signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught exception:', error);
+  gracefulShutdown('uncaughtException');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled rejection at:', promise, 'reason:', reason);
+  gracefulShutdown('unhandledRejection');
+});
+
+// Start the server
+startServer();

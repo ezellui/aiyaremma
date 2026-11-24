@@ -1,0 +1,60 @@
+--- предыдущая/Философская-концепция-Делёза.mmd
++++ текущая/Философская-концепция-Делёза.mmd
+@@ -297,7 +297,7 @@
+     N <-->|CORRELATIONAL| P
+     
+     %% Связь с шизоанализом
+-    U -->|CAUSAL| C
++    U <-->|CORRELATIONAL| C
+     X -->|NECESSARY_CONDITION| C
+     
+     %% Связь раннего и позднего Делёза
+@@ -309,8 +309,16 @@
+     N <-->|CORRELATIONAL| O
+     O <-->|CORRELATIONAL| A
+     
++    %% Имманентность и трансцендентальный эмпиризм
++    M <-->|FOUNDATIONAL| B
++    
+     %% Имманентность и событие
+     M <-->|NECESSARY_CONDITION| AM
++    
++    %% Рефлексивные связи (самоссылки)
++    A -->|REFLEXIVE| A
++    AQ -->|REFLEXIVE| AQ
++    P -->|REFLEXIVE| P
+     
+     %% Складка и виртуальное
+     AQ <-->|CONCEPTUAL| Q
+@@ -323,15 +331,31 @@
+     V -->|PART_WHOLE| G
+     V <-->|NECESSARY_CONDITION| AT
+     
++    %% Ризома и становление
++    P -->|MANIFESTATION| N
++    
+     %% Ризома и номадология
+     P <-->|MEANS_END| AD
+     AD <-->|CONCEPTUAL| AW
++    
++    %% Ризома и время
++    P -->|CONCEPTUAL| AF
+     
+     %% Сложные связи с философскими влияниями
+     AX -->|NECESSARY_CONDITION| M
+     AY -->|NECESSARY_CONDITION| BW
+     AZ -->|NECESSARY_CONDITION| N
+     BA -->|NECESSARY_CONDITION| AQ
++    
++    %% Событие и множественность
++    AM <-->|CONCEPTUAL| O
++    
++    %% Перцепт, аффект и их связи
++    AK -->|MANIFESTATION| AQ
++    AL -->|MANIFESTATION| U
++    
++    %% Гваттари и шизоанализ
++    BM <-->|IMPLEMENTATION| C
+     
+     %% Применение стилей к узлам
+     class A,M,Q,R,AM metaphysical;

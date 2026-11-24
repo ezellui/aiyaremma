@@ -1,0 +1,22 @@
+Use this prompt exactly as written. Do not expand, reinterpret or embellish it.
+
+Style: mid-1990s Japanese anime key visual (circa 1995–1997): hand-inked cel animation, clean thin ink lines, flat cel shading with one hard shadow tone, limited palette, soft analog color, slight film grain, looks like a scanned production cel. Dynamic key-visual composition, NOT a character model sheet. NOT modern digital illustration, NOT glossy.
+
+Concept: she does not stand in front of an information system — she IS one: a living star map of ideas, a dense, cold, perfectly ordered network of thought in the shape of a young woman. The viewer should feel density, vastness and quiet rigor, as if looking at a whole atlas of connections at once.
+
+The one place where the network appears is her HAIR:
+- Extremely long straight blue-black hair that spreads outward from her in every direction and fills most of the frame.
+- The hair separates into thousands of fine, thin strands that branch, fork, cross and re-join, forming a dense web of clusters and long connecting lines — like a network graph drawn in hair.
+- At many of the crossing points sit tiny points of saturated colored light (red, blue, yellow, green, violet, cyan). Each color gathers into its own cluster or region, so the colors read as categories, not decoration. Points of light only — not beads, not gems, not metal, not jewelry.
+- Some strands are heavier and more opaque, most are hair-thin and faint, creating hierarchy through line weight and opacity.
+- The hair web must be organized, not chaotic: clear clusters, clear bridges between clusters.
+
+Figure: full body, head to feet visible, floating or half-reclining in darkness, body slightly turned, calm composed pose. Calm, measuring, slightly tired gaze toward the viewer through thin square-framed glasses. Pale skin.
+
+Costume: severe tailored near-black charcoal coat to the ankles over a high-collared tunic, built from square-cut panels in slightly different shades of charcoal, separated by very thin cool-gray piping; fine pintucks, narrow pleats, rows of small flat buttons. Strictly neutral colors — the costume contains NO saturated color at all. All color in the image belongs to the network in her hair.
+
+Background: near-black charcoal, filled by the spreading hair-network rather than empty. No other elements.
+
+Composition: the figure plus the hair-network fill the frame densely, with little empty space.
+
+Strictly avoid: network lines or patterns printed on the clothing; separate diagrams, screens, holograms, HUD, UI panels, text, symbols, sigils; stars or constellations as a separate background; gold, jewelry, gemstones, beads, chains, pendants, hanging cards, tags, talismans, tarot, astrology, occult or witch imagery; lace, ruffles, flowing robes, ornate costume; neon cyberpunk glow; modern glossy anime rendering.

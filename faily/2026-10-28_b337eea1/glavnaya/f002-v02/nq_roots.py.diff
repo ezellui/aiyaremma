@@ -1,0 +1,141 @@
+--- предыдущая/nq_roots.py
++++ текущая/nq_roots.py
+@@ -49,10 +49,17 @@
+ from collections import defaultdict
+ 
+ SITE = 'https://eldamo.org/content/words/word-{}.html'
+-NQ_GROUP = ('nq', 'q', 'mq', 'eq')
++# the languages of each vocabulary page (c:lang-words) and the ones the page filters out
++GROUPS = {
++    'nq': {'langs': ('nq', 'q', 'mq', 'eq'), 'name': 'Neo-Quenya'},
++    'ns': {'langs': ('ns', 's', 'n', 'en', 'g'), 'name': 'Neo-Sindarin'},
++}
++FILTERED_LANGS = ('eq', 'en', 'g', 'ep')
++SINDARIN_LIKE = ('ns', 's', 'n', 'en', 'g', 'on', 'os', 'norths', 'ilk', 'eilk', 'dan', 'nan')
+ PRIMITIVE = ('p', 'mp', 'ep', 'np')
+ QUENYA_LIKE = ('nq', 'q', 'mq', 'eq', 'aq', 'maq', 'eaq', 'van', 'mt', 't', 'et')
+-LANG_NAMES = {'nq': 'Neo-Quenya', 'q': 'Quenya', 'mq': 'Middle Quenya', 'eq': 'Early Quenya'}
++LANG_NAMES = {'nq': 'Neo-Quenya', 'q': 'Quenya', 'mq': 'Middle Quenya', 'eq': 'Early Quenya',
++              'ns': 'Neo-Sindarin', 's': 'Sindarin', 'n': 'Noldorin', 'en': 'Early Noldorin', 'g': 'Gnomish'}
+ MAX_DEPTH = 9
+ WEAK_RULES = ('deprecated', 'cognate')
+ 
+@@ -427,7 +434,8 @@
+         res = []
+         for g in parts:
+             real = _real(g)
+-            ok = [a for a in real if consonants_match(w.get('v'), self.d.by_id[a['id']].get('v'))]
++            sind = is_sindarin(self.d.lang(w))
++            ok = [a for a in real if consonants_match(w.get('v'), self.d.by_id[a['id']].get('v'), sind)]
+             if ok:
+                 res.append([dict(a, via=[step] + a['via']) for a in ok])
+             elif real and strict:
+@@ -479,15 +487,26 @@
+     return s
+ 
+ 
+-def _classes(s):
+-    s = _norm(s).replace('kh', 'x').replace('th', 'θ').replace('ph', 'f').replace('qu', 'q') \
+-        .replace('kw', 'q').replace('gw', 'g').replace('ng', 'ŋ').replace('hy', 'h').replace('hl', 'l').replace('hr', 'r')
++def _classes(s, sindarin=False):
++    """Consonant classes of a form, a repeated class once. Sindarin (sindarin=True):
++    ch, dh, lh, rh, mh are single sounds, and m joins the labials (lenition m > v)."""
++    s = _norm(s)
++    if sindarin:
++        s = s.replace('ch', 'x').replace('dh', 'ð').replace('lh', 'l').replace('rh', 'r').replace('mh', 'v')
++    s = s.replace('kh', 'x').replace('th', 'θ').replace('ph', 'f').replace('qu', 'q') \
++        .replace('kw', 'q').replace('gw', 'w').replace('ng', 'ŋ').replace('hy', 'h').replace('hl', 'l').replace('hr', 'r')
+     out = []
+     for ch in s:
+         k = next((i for i, c in enumerate(_CLS) if ch in c), None)
++        if k == 3 and sindarin:
++            k = 2
+         if k is not None and (not out or out[-1] != k):
+             out.append(k)
+     return out
++
++
++def is_sindarin(lang):
++    return lang in SINDARIN_LIKE
+ 
+ 
+ def same_onset(a, b):
+@@ -505,42 +524,67 @@
+     return first in (0, 2)
+ 
+ 
+-def consonants_match(word, root_form):
++def _found(r, wc, skippable):
++    """How many classes of r are found in order in wc when the classes in `skippable`
++    may be missing from the word; None if some other class is not found."""
++    best = None
++
++    def go(i, j, n):
++        nonlocal best
++        if i == len(r):
++            best = n if best is None else max(best, n)
++            return
++        for k in range(j, len(wc)):
++            if wc[k] == r[i]:
++                go(i + 1, k + 1, n + 1)
++                break
++        if r[i] in skippable:
++            go(i + 1, j, n)
++    go(0, 0, 0)
++    return best
++
++
++def consonants_match(word, root_form, sindarin=False):
+     """The consonants of the root, in order, among the word's. At least two must be
+     found, unless root and word both have a single consonant (Q. se < √S); a lost
+-    initial g-/w- of the root is allowed when the word begins with a vowel."""
+-    wc = _classes(word)
+-    initial_vowel = bool(re.match(r'[aeiouáéíóúäëïöü]', _norm(word)))
++    initial g-/w- of the root is allowed when the word begins with a vowel. In
++    Sindarin a velar or y of the root may be missing anywhere (medial g lost, y > i),
++    but the two consonants found are still required."""
++    wc = _classes(word, sindarin)
++    initial_vowel = bool(re.match(r'[aeiouáéíóúâêîôûäëïöüy]', _norm(word)))
++    skippable = {0, 7} if sindarin else set()
+     for variant in (root_form or '').split('/'):
+-        rc = _classes(variant)
++        rc = _classes(variant, sindarin)
+         if not rc:
+             continue
+         tries = [rc]
+         if initial_vowel and rc[0] in (0, 2) and len(rc) > 1:
+             tries.append(rc[1:])
+         for r in tries:
+-            if len(r) < 2 and not (len(rc) == 1 and len(wc) == 1):
++            n = _found(r, wc, skippable)
++            if n is None:
+                 continue
+-            it = iter(wc)
+-            if all(any(c == k for c in it) for k in r):
++            if n >= 2 or (len(rc) == 1 and len(wc) == 1 and n == 1):
+                 return True
+     return False
+ 
+ 
+ # -- the word list and the output --------------------------------------------
+ 
+-def nq_words(d: Data):
++def group_words(d: Data, group: str):
++    """The words vocabulary-index.xq lists for a group (id=nq or id=ns)."""
++    langs = GROUPS[group]['langs']
+     out = []
+     for w in d.words:
+         lang = d.lang(w)
+-        if lang not in NQ_GROUP or w.find('combine') is not None:
++        if lang not in langs or w.find('combine') is not None:
+             continue
+         sp = d.speech(w) or ''
+         if sp.endswith('-name') or sp in ('text', 'phrase', 'grammar', 'root') or sp.startswith('phone'):
+             continue
+         if w.find('deprecated') is not None or w.find('see') is not None:
+             continue
+-        if w.get('gloss') == '[unglossed]' or lang in ('eq', 'en', 'g', 'ep'):
++        if w.get('gloss') == '[unglossed]' or lang in FILTERED_LANGS:
+             continue
+         m = w.get('mark') or ''
+         if '-' in m or '|' in m:

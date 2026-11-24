@@ -1,0 +1,145 @@
+--- предыдущая/Стратегия-разработки-Фазы-2.md
++++ текущая/Стратегия-разработки-Фазы-2.md
+@@ -64,7 +64,14 @@
+ - `shared/lib/validation/*` - валидаторы
+ - `shared/lib/errors/*` - обработка ошибок
+ - `shared/lib/logging/*` - логирование
+-- `templates/backend/*` - шаблоны для ускорения разработки
++- `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
++- `templates/backend/controllers/specialized-controller-template.js` - шаблон специализированного контроллера
++- `templates/backend/services/crud-service-template.js` - шаблон CRUD-сервиса
++- `templates/backend/services/specialized-service-template.js` - шаблон специализированного сервиса
++- `templates/backend/repositories/postgres-repository-template.js` - шаблон репозитория PostgreSQL
++- `templates/backend/tests/unit-test-template.js` - шаблон юнит-теста
++- `templates/backend/tests/integration-test-template.js` - шаблон интеграционного теста
++- `templates/docs/api-documentation-template.md` - шаблон документации API
+ - `db/postgres/migrations/*users*` - миграции для таблиц пользователей
+ 
+ ### 2. Claude Service
+@@ -111,12 +118,14 @@
+ - `shared/lib/db/postgres/*` - для хранения истории взаимодействий
+ - `shared/lib/errors/*` - обработка ошибок
+ - `shared/lib/logging/*` - логирование
++- `templates/backend/controllers/specialized-controller-template.js` - шаблон специализированного контроллера
++- `templates/backend/services/specialized-service-template.js` - шаблон специализированного сервиса
++- `templates/backend/repositories/postgres-repository-template.js` - шаблон репозитория PostgreSQL
++- `templates/backend/clients/service-client-template.js` - шаблон клиента сервиса
++- `templates/backend/tests/unit-test-template.js` - шаблон юнит-теста
++- `templates/backend/tests/integration-test-template.js` - шаблон интеграционного теста
++- `templates/docs/api-documentation-template.md` - шаблон документации API
+ - `db/postgres/migrations/*claude*` - миграции для таблиц claude_interactions
+-- `templates/backend/controllers/*-controller-template.js` - шаблоны контроллеров
+-- `templates/backend/services/*-service-template.js` - шаблоны сервисов
+-- `templates/backend/repositories/postgres-repository-template.js` - шаблон репозитория
+-- `templates/backend/clients/service-client-template.js` - шаблон клиента
+-- `templates/backend/tests/*-test-template.js` - шаблоны тестов
+ 
+ ### 3. Graph Service
+ 
+@@ -154,7 +163,15 @@
+ - `shared/models/Graph.js` - базовая модель графа
+ - `shared/lib/db/neo4j/*` - утилиты для работы с Neo4j
+ - `shared/lib/validation/schemas/graphSchemas.js` - схемы валидации
+-- `templates/backend/repositories/neo4j-repository-template.js` - шаблон репозитория
++- `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
++- `templates/backend/controllers/specialized-controller-template.js` - шаблон специализированного контроллера
++- `templates/backend/services/crud-service-template.js` - шаблон CRUD-сервиса
++- `templates/backend/services/specialized-service-template.js` - шаблон специализированного сервиса
++- `templates/backend/repositories/neo4j-repository-template.js` - шаблон репозитория Neo4j
++- `templates/backend/clients/service-client-template.js` - шаблон клиента сервиса
++- `templates/backend/tests/unit-test-template.js` - шаблон юнит-теста
++- `templates/backend/tests/integration-test-template.js` - шаблон интеграционного теста
++- `templates/docs/api-documentation-template.md` - шаблон документации API
+ - `db/neo4j/migrations/*` - миграции для Neo4j
+ - `shared/constants/philosophyConstants.js` - константы философских понятий
+ 
+@@ -192,7 +209,15 @@
+ - `shared/models/Thesis.js` - базовая модель тезиса
+ - `shared/lib/db/mongodb/*` - утилиты для работы с MongoDB
+ - `shared/lib/validation/schemas/thesisSchemas.js` - схемы валидации
+-- `templates/backend/repositories/mongodb-repository-template.js` - шаблон репозитория
++- `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
++- `templates/backend/controllers/specialized-controller-template.js` - шаблон специализированного контроллера
++- `templates/backend/services/crud-service-template.js` - шаблон CRUD-сервиса
++- `templates/backend/services/specialized-service-template.js` - шаблон специализированного сервиса
++- `templates/backend/repositories/mongodb-repository-template.js` - шаблон репозитория MongoDB
++- `templates/backend/clients/service-client-template.js` - шаблон клиента сервиса
++- `templates/backend/tests/unit-test-template.js` - шаблон юнит-теста
++- `templates/backend/tests/integration-test-template.js` - шаблон интеграционного теста
++- `templates/docs/api-documentation-template.md` - шаблон документации API
+ - `db/mongodb/schemas/theses.js` - схема тезисов
+ - `db/mongodb/migrations/*` - миграции для MongoDB
+ 
+@@ -228,13 +253,16 @@
+ - `shared/models/Concept.js` - базовая модель концепции
+ - `shared/lib/db/postgres/*` - утилиты для работы с PostgreSQL
+ - `shared/lib/validation/schemas/conceptSchemas.js` - схемы валидации
++- `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
++- `templates/backend/services/crud-service-template.js` - шаблон CRUD-сервиса
++- `templates/backend/services/specialized-service-template.js` - шаблон специализированного сервиса
++- `templates/backend/repositories/postgres-repository-template.js` - шаблон репозитория PostgreSQL
++- `templates/backend/clients/service-client-template.js` - шаблон клиента сервиса
++- `templates/backend/tests/unit-test-template.js` - шаблон юнит-теста
++- `templates/backend/tests/integration-test-template.js` - шаблон интеграционного теста
++- `templates/docs/api-documentation-template.md` - шаблон документации API
+ - `db/postgres/migrations/*concepts*` - миграции для таблиц концепций
+ - `db/postgres/seeds/*philosophers*`, `db/postgres/seeds/*traditions*` - начальные данные
+-- `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
+-- `templates/backend/services/crud-service-template.js` - шаблон CRUD-сервиса
+-- `templates/backend/repositories/postgres-repository-template.js` - шаблон репозитория
+-- `templates/backend/clients/service-client-template.js` - шаблон клиента сервиса
+-- `templates/backend/tests/*-test-template.js` - шаблоны тестов
+ 
+ ### 6. API Gateway
+ 
+@@ -267,7 +295,8 @@
+ - `shared/lib/errors/*` - для обработки ошибок
+ - `shared/lib/logging/*` - для логирования
+ - `shared/lib/http/*` - HTTP-утилиты
+-- `templates/backend/tests/*-test-template.js` - шаблоны тестов
++- `templates/backend/tests/unit-test-template.js` - шаблон юнит-теста
++- `templates/backend/tests/integration-test-template.js` - шаблон интеграционного теста
+ - `templates/api-tests/api-test-template.js` - шаблон для тестирования API
+ - `templates/docs/api-documentation-template.md` - шаблон документации API
+ 
+@@ -314,7 +343,13 @@
+    - Базовые тесты
+ 
+ #### Контекст из Фазы 1
+-- `templates/frontend/*` - шаблоны компонентов
++- `templates/frontend/components/base-component-template.tsx` - шаблон базового компонента
++- `templates/frontend/components/form-component-template.tsx` - шаблон компонента формы
++- `templates/frontend/components/list-component-template.tsx` - шаблон компонента списка
++- `templates/frontend/hooks/use-api-template.ts` - шаблон хука для работы с API
++- `templates/frontend/hooks/use-form-template.ts` - шаблон хука для работы с формами
++- `templates/frontend/services/api-service-template.ts` - шаблон сервиса API
++- `templates/frontend/services/entity-service-template.ts` - шаблон сервиса для работы с сущностями
+ - `shared/constants/*` - константы для использования в UI
+ - Схемы данных из TypeScript-типов, созданных в процессе разработки
+ 
+@@ -400,6 +435,25 @@
+ - Иметь правильную обработку ошибок согласно шаблону
+ ```
+ 
++#### Пример запроса для разработки контроллеров:
++```
++Разработай контроллеры для User Service.
++Создай:
++1. controllers/userController.js - CRUD операции с пользователями
++2. controllers/authController.js - аутентификация и авторизация
++
++Используй контекст:
++- templates/backend/controllers/crud-controller-template.js - для userController
++- templates/backend/controllers/specialized-controller-template.js - для authController
++- Архитектурная документация с описанием API эндпоинтов
++
++Контроллеры должны:
++- Следовать структуре из шаблонов
++- Реализовывать все API эндпоинты из документации
++- Включать валидацию входных данных
++- Иметь правильную обработку ошибок
++```
++
+ ### 2. Тестирование компонентов
+ 
+ - После каждого этапа разработки сервиса создавать базовые тесты

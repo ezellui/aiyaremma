@@ -1,0 +1,21 @@
+packages/shared/i18n/
+  locales.ts         UI_LOCALES = ["ru","en","de"], UI_TO_GEN, GEN_FALLBACK = "English",
+                     genLangForUi(); типы ключей
+  format.ts          подстановка {name} и плюралы (Intl.PluralRules; для ru — 3 формы)
+  strings.json       мастер-таблица: ключ → {ru, en, de, note?}   ← единственное, что правят руками
+  generated/         ru.json, en.json, de.json — нарезка мастер-таблицы для загрузки
+
+client/src/i18n/
+  i18n-store.ts      текущий язык, загрузка каталога, t(); переключатель в Header
+  useT.ts            хук; смена языка перерисовывает интерфейс без перезагрузки
+
+server/i18n/
+  locale.ts          middleware: язык запроса (пользователь → cookie → Accept-Language),
+                     хранение на время запроса через AsyncLocalStorage
+  t.ts               t() для сообщений сервера
+
+scripts/i18n/
+  codemod.mjs        разовый перевод литералов в вызовы t() — по нынешней описи
+  split.mjs          strings.json → generated/*
+  check.mjs          в приёмку: у каждого ключа есть все языки, нет голой кириллицы
+                     в JSX, подстановки совпадают

@@ -1,0 +1,130 @@
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <!-- ═══════════════════════════════════════════════════════════════
+         INITIAL DEFAULTS — три инстанса фильтра старения. JS-ом
+         переписываются из значений слайдеров мастер-параметров и
+         seeds-блока. Каждый feTurbulence / feDisplacementMap /
+         feColorMatrix имеет id вида `{block}-{el}-{instance}` —
+         именно через этот id updateFilter() обновляет атрибуты
+         в реальном времени для каждого из трёх фильтров.
+
+         Дефолтные значения соответствуют production-dump'у из
+         relatio_aidani_codex-late.html, чтобы playground открывался
+         в той же точке, где сейчас фильтр живёт в кодексе.
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- FRONT carpet — seed'ы (52 / 42 / 11) -->
+    <filter id="illumination-aged-front" x="-3%" y="-3%" width="106%" height="106%"
+            color-interpolation-filters="auto">
+      <feTurbulence id="disp-turb-front" type="turbulence"
+                    baseFrequency="0.230" numOctaves="3" seed="52" result="dispNoise"/>
+      <feDisplacementMap id="disp-map-front" in="SourceGraphic" in2="dispNoise"
+                         xChannelSelector="R" yChannelSelector="G"
+                         scale="0.85" result="displaced"/>
+
+      <feTurbulence id="coarse-turb-front" type="fractalNoise"
+                    baseFrequency="0.030" numOctaves="3" seed="42"
+                    stitchTiles="stitch" result="coarseNoise"/>
+      <feColorMatrix id="coarse-mat-front" in="coarseNoise" type="matrix"
+        values="0 0 0 0 0.080
+                0 0 0 0 0.040
+                0 0 0 0 0.000
+                0 0 0 0.500 -0.070" result="coarseTinted"/>
+      <feComposite in="coarseTinted" in2="displaced"
+                   operator="in" result="coarseOnInk"/>
+
+      <feTurbulence id="fine-turb-front" type="fractalNoise"
+                    baseFrequency="2.000" numOctaves="2" seed="11"
+                    stitchTiles="stitch" result="fineNoise"/>
+      <feColorMatrix id="fine-mat-front" in="fineNoise" type="matrix"
+        values="0 0 0 0 0.060
+                0 0 0 0 0.030
+                0 0 0 0 0.000
+                0 0 0 0.460 0.000" result="fineTinted"/>
+      <feComposite in="fineTinted" in2="displaced"
+                   operator="in" result="fineOnInk"/>
+
+      <feMerge>
+        <feMergeNode in="displaced"/>
+        <feMergeNode in="coarseOnInk"/>
+        <feMergeNode in="fineOnInk"/>
+      </feMerge>
+    </filter>
+
+    <!-- BACK carpet — seed'ы (71 / 89 / 23) -->
+    <filter id="illumination-aged-back" x="-3%" y="-3%" width="106%" height="106%"
+            color-interpolation-filters="auto">
+      <feTurbulence id="disp-turb-back" type="turbulence"
+                    baseFrequency="0.230" numOctaves="3" seed="71" result="dispNoise"/>
+      <feDisplacementMap id="disp-map-back" in="SourceGraphic" in2="dispNoise"
+                         xChannelSelector="R" yChannelSelector="G"
+                         scale="0.85" result="displaced"/>
+
+      <feTurbulence id="coarse-turb-back" type="fractalNoise"
+                    baseFrequency="0.030" numOctaves="3" seed="89"
+                    stitchTiles="stitch" result="coarseNoise"/>
+      <feColorMatrix id="coarse-mat-back" in="coarseNoise" type="matrix"
+        values="0 0 0 0 0.080
+                0 0 0 0 0.040
+                0 0 0 0 0.000
+                0 0 0 0.500 -0.070" result="coarseTinted"/>
+      <feComposite in="coarseTinted" in2="displaced"
+                   operator="in" result="coarseOnInk"/>
+
+      <feTurbulence id="fine-turb-back" type="fractalNoise"
+                    baseFrequency="2.000" numOctaves="2" seed="23"
+                    stitchTiles="stitch" result="fineNoise"/>
+      <feColorMatrix id="fine-mat-back" in="fineNoise" type="matrix"
+        values="0 0 0 0 0.060
+                0 0 0 0 0.030
+                0 0 0 0 0.000
+                0 0 0 0.460 0.000" result="fineTinted"/>
+      <feComposite in="fineTinted" in2="displaced"
+                   operator="in" result="fineOnInk"/>
+
+      <feMerge>
+        <feMergeNode in="displaced"/>
+        <feMergeNode in="coarseOnInk"/>
+        <feMergeNode in="fineOnInk"/>
+      </feMerge>
+    </filter>
+
+    <!-- INITIAL — seed'ы (113 / 67 / 37) -->
+    <filter id="illumination-aged-initial" x="-3%" y="-3%" width="106%" height="106%"
+            color-interpolation-filters="auto">
+      <feTurbulence id="disp-turb-initial" type="turbulence"
+                    baseFrequency="0.230" numOctaves="3" seed="113" result="dispNoise"/>
+      <feDisplacementMap id="disp-map-initial" in="SourceGraphic" in2="dispNoise"
+                         xChannelSelector="R" yChannelSelector="G"
+                         scale="0.85" result="displaced"/>
+
+      <feTurbulence id="coarse-turb-initial" type="fractalNoise"
+                    baseFrequency="0.030" numOctaves="3" seed="67"
+                    stitchTiles="stitch" result="coarseNoise"/>
+      <feColorMatrix id="coarse-mat-initial" in="coarseNoise" type="matrix"
+        values="0 0 0 0 0.080
+                0 0 0 0 0.040
+                0 0 0 0 0.000
+                0 0 0 0.500 -0.070" result="coarseTinted"/>
+      <feComposite in="coarseTinted" in2="displaced"
+                   operator="in" result="coarseOnInk"/>
+
+      <feTurbulence id="fine-turb-initial" type="fractalNoise"
+                    baseFrequency="2.000" numOctaves="2" seed="37"
+                    stitchTiles="stitch" result="fineNoise"/>
+      <feColorMatrix id="fine-mat-initial" in="fineNoise" type="matrix"
+        values="0 0 0 0 0.060
+                0 0 0 0 0.030
+                0 0 0 0 0.000
+                0 0 0 0.460 0.000" result="fineTinted"/>
+      <feComposite in="fineTinted" in2="displaced"
+                   operator="in" result="fineOnInk"/>
+
+      <feMerge>
+        <feMergeNode in="displaced"/>
+        <feMergeNode in="coarseOnInk"/>
+        <feMergeNode in="fineOnInk"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

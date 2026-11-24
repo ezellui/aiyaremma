@@ -1,0 +1,64 @@
+--- предыдущая/Визуализация-функций-комплексного-переменного.html
++++ текущая/Визуализация-функций-комплексного-переменного.html
+@@ -208,17 +208,56 @@
+             let complexFunction;
+             
+             try {
+-                // Преобразуем некоторые распространенные ошибки ввода
+-                let processedFunctionStr = functionStr
+-                    .replace(/\^/g, "**")                 // заменяем ^ на **
+-                    .replace(/([0-9])z/gi, "$1*z")        // заменяем 2z на 2*z
+-                    .replace(/z([0-9])/gi, "z**$1");      // заменяем z2 на z**2
++                // Преобразуем выражение для правильной обработки math.js
++                let processedFunctionStr = preprocessMathExpression(functionStr);
+                 
+                 // Парсинг функции с помощью math.js
+                 complexFunction = math.compile(processedFunctionStr);
+             } catch (error) {
+                 alert("Ошибка в функции: " + error.message);
+                 return;
++            }
++            
++            // Функция для предобработки математического выражения
++            function preprocessMathExpression(str) {
++                // Список математических функций, которые не нужно разбивать
++                const mathFunctions = ['sin', 'cos', 'tan', 'exp', 'log', 'abs', 'sqrt', 'conj'];
++                
++                // Создаем регулярное выражение для защиты имен функций
++                const funcPattern = new RegExp(`\\b(${mathFunctions.join('|')})\\b`, 'g');
++                
++                // Временные маркеры для защиты имен функций
++                const tokens = {};
++                let tokenCount = 0;
++                
++                // Заменяем имена функций на маркеры
++                let processed = str.replace(funcPattern, (match) => {
++                    const token = `__FUNC${tokenCount}__`;
++                    tokens[token] = match;
++                    tokenCount++;
++                    return token;
++                });
++                
++                // Выполняем основные преобразования
++                processed = processed
++                    // Замена возведения в степень
++                    .replace(/\^/g, "**")
++                    
++                    // Добавление умножения
++                    .replace(/([0-9])([a-zA-Z_])/g, "$1*$2")      // 2z -> 2*z
++                    .replace(/\)(\()/g, ")*(")                    // )( -> )*(
++                    .replace(/([a-zA-Z0-9_])(\()/g, "$1*(")       // z( -> z*(
++                    .replace(/\)([a-zA-Z0-9_])/g, ")*$1")         // )z -> )*z
++                    
++                    // Преобразование сокращенной записи возведения в степень
++                    .replace(/([a-zA-Z_])([0-9])/g, "$1**$2");    // z2 -> z**2
++                
++                // Восстанавливаем имена функций
++                Object.keys(tokens).forEach(token => {
++                    processed = processed.replace(token, tokens[token]);
++                });
++                
++                return processed;
+             }
+             
+             // Создание изображения для рисования пикселей

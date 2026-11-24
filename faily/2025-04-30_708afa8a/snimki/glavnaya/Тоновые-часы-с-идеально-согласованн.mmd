@@ -1,0 +1,101 @@
+
+graph TD
+    title[<b>Тоновые часы - строго согласованный нисходящий шаблон</b>]
+    
+    %% Основные ноты
+    B(("B"))
+    E(("E"))
+    A(("A"))
+    D(("D"))
+    G(("G"))
+    C(("C"))
+    F(("F"))
+    Bb(("Bb"))
+    Eb(("Eb"))
+    Ab(("Ab"))
+    Db(("Db"))
+    Gb(("Gb"))
+    
+    %% Квартовые связи между основными нотами
+    B -. "P4" .-> E
+    E -. "P4" .-> A
+    A -. "P4" .-> D
+    D -. "P4" .-> G
+    G -. "P4" .-> C
+    C -. "P4" .-> F
+    F -. "P4" .-> Bb
+    Bb -. "P4" .-> Eb
+    Eb -. "P4" .-> Ab
+    Ab -. "P4" .-> Db
+    Db -. "P4" .-> Gb
+    Gb -. "P4" .-> B
+    
+    %% Целотоновые ряды с единым шаблоном
+    B --> |"T"| B1[/"B1"/] --> |"T"| Db2[/"Db2"/] --> |"T"| Eb2[/"Eb2"/]
+    E --> |"T"| E2[/"E2"/] --> |"T"| Gb2[/"Gb2"/] --> |"T"| Ab2[/"Ab2"/]
+    A --> |"T"| A2[/"A2"/] --> |"T"| B2[/"B2"/] --> |"T"| Db3[/"Db3"/]
+    D --> |"T"| D3[/"D3"/] --> |"T"| E3[/"E3"/] --> |"T"| Gb3[/"Gb3"/]
+    G --> |"T"| G3[/"G3"/] --> |"T"| A3[/"A3"/] --> |"T"| B3[/"B3"/]
+    C --> |"T"| C4[/"C4"/] --> |"T"| D4[/"D4"/] --> |"T"| E4[/"E4"/]
+    F --> |"T"| F4[/"F4"/] --> |"T"| G4[/"G4"/] --> |"T"| A4[/"A4"/]
+    Bb --> |"T"| Bb4[/"Bb4"/] --> |"T"| C5[/"C5"/] --> |"T"| D5[/"D5"/]
+    Eb --> |"T"| Eb5[/"Eb5"/] --> |"T"| F5[/"F5"/] --> |"T"| G5[/"G5"/]
+    Ab --> |"T"| Ab5[/"Ab5"/] --> |"T"| Bb5[/"Bb5"/] --> |"T"| C6[/"C6"/]
+    Db --> |"T"| Db6[/"Db6"/] --> |"T"| Eb6[/"Eb6"/] --> |"T"| F6[/"F6"/]
+    Gb --> |"T"| Gb6[/"Gb6"/] --> |"T"| Ab6[/"Ab6"/] --> |"T"| Bb6[/"Bb6"/]
+
+    %% Дополнительная визуализация квартовой прогрессии между рядами
+    B1 -. "P4" .-> E2
+    E2 -. "P4" .-> A2
+    A2 -. "P4" .-> D3
+    D3 -. "P4" .-> G3
+    G3 -. "P4" .-> C4
+    C4 -. "P4" .-> F4
+    F4 -. "P4" .-> Bb4
+    Bb4 -. "P4" .-> Eb5
+    Eb5 -. "P4" .-> Ab5
+    Ab5 -. "P4" .-> Db6
+    Db6 -. "P4" .-> Gb6
+    Gb6 -. "P4" .-> B1
+    
+    %% Легенда
+    legend[<b>Легенда:</b>]
+    t_legend["T = Целый тон (2 полутона)"]
+    p4_legend["P4 = Чистая кварта (5 полутонов)"]
+    
+    legend --- t_legend
+    legend --- p4_legend
+    
+    %% Стили
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px
+    classDef baseNote fill:#5b9bd5,stroke:#333,stroke-width:2px,color:white
+    classDef row1 fill:#e6194B,stroke:#333,color:white
+    classDef row2 fill:#3cb44b,stroke:#333,color:white
+    classDef row3 fill:#ffe119,stroke:#333,color:black
+    classDef row4 fill:#4363d8,stroke:#333,color:white
+    classDef row5 fill:#f58231,stroke:#333,color:white
+    classDef row6 fill:#911eb4,stroke:#333,color:white
+    classDef row7 fill:#42d4f4,stroke:#333,color:black
+    classDef row8 fill:#f032e6,stroke:#333,color:white
+    classDef row9 fill:#a9a9a9,stroke:#333,color:white
+    classDef row10 fill:#469990,stroke:#333,color:white
+    classDef row11 fill:#e6beff,stroke:#333,color:black
+    classDef row12 fill:#9A6324,stroke:#333,color:white
+    classDef legendStyle fill:#f0f0f0,stroke:#333,stroke-width:1px
+    classDef titleClass fill:#e6f2ff,stroke:#333,stroke-width:2px
+    
+    class B,E,A,D,G,C,F,Bb,Eb,Ab,Db,Gb baseNote
+    class B1,Db2,Eb2 row1
+    class E2,Gb2,Ab2 row2
+    class A2,B2,Db3 row3
+    class D3,E3,Gb3 row4
+    class G3,A3,B3 row5
+    class C4,D4,E4 row6
+    class F4,G4,A4 row7
+    class Bb4,C5,D5 row8
+    class Eb5,F5,G5 row9
+    class Ab5,Bb5,C6 row10
+    class Db6,Eb6,F6 row11
+    class Gb6,Ab6,Bb6 row12
+    class legend,t_legend,p4_legend legendStyle
+    class title titleClass

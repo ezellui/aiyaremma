@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор философских концепций и интерпретаций</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.20/babel.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f7fa;
+        }
+        .max-h-screen {
+            max-height: 80vh;
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #6b46c1 0%, #2c3e50 100%);
+            color: white;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            border-radius: 0.5rem;
+        }
+        .category-panel {
+            transition: all 0.3s ease;
+        }
+        .category-panel:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .paradigm-button {
+            transition: all 0.2s ease;
+        }
+        .paradigm-button:hover {
+            transform: translateY(-2px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .conclusion-item {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+        .quote {
+            border-left: 4px solid #6b46c1;
+            padding-left: 1rem;
+            font-style: italic;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <div class="header-bg">
+            <h1 class="text-3xl font-bold text-center">Конструктор философских концепций и интерпретаций</h1>
+            <p class="text-center mt-2 text-gray-200">Исследуйте взаимосвязи категорий и формируйте философские системы</p>
+        </div>
+        
+        <div id="root"></div>
+        
+        <div class="footer">
+            <p>© 2025 Конструктор философских концепций</p>
+            <p class="text-sm mt-1">Разработано для изучения взаимосвязей философских категорий и формирования концепций</p>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const PhilosophyConceptExplorer = () => {
+          // Состояние для названия концепции
+          const [conceptName, setConceptName] = React.useState("Ваша философская концепция");
+          
+          // Состояние для выбранных категорий
+          const [selectedCategories, setSelectedCategories] = React.useState({
+            // Онтологические категории
+            existence: false,               // Бытие
+            substance: false,               // Субстанция
+            essence: false,                 // Сущность
+            matter: false,                  // Материя
+            form: false,                    // Форма
+            potentiality: false,            // Потенциальность
+            actuality: false,               // Актуальность
+            
+            // Эпистемологические категории
+            knowledge: false,               // Знание
+            belief: false,                  // Вера
+            reason: false,                  // Разум
+            empiricism: false,              // Эмпиризм
+            rationalism: false,             // Рационализм
+            truth: false,                   // Истина
+            justification: false,           // Обоснование
+            
+            // Аксиологические категории
+            value: false,                   // Ценность
+            ethics: false,                  // Этика
+            aesthetics: false,              // Эстетика
+            good: false,                    // Благо
+            beauty: false,                  // Красота
+            virtue: false,                  // Добродетель
+            
+            // Логические категории
+            necessity: false,               // Необходимость
+            possibility: false,             // Возможность
+            universality: false,            // Всеобщность
+            particularity: false,           // Частность
+            causality: false,               // Причинность
+            teleology: false,               // Телеология
+            
+            // Антропологические категории
+            consciousness: false,           // Сознание
+            freedom: false,                 // Свобода
+            will: false,                    // Воля
+            identity: false,                // Идентичность
+            person: false,                  // Личность
+            society: false,                 // Общество
+            history: false,                 // История
+          });
+
+          // Группировка категорий по направлениям для удобства отображения
+          const categoryGroups = [
+            {
+              title: "Онтологические категории",
+              categories: ["existence", "substance", "essence", "matter", "form", "potentiality", "actuality"]
+            },
+            {
+              title: "Эпистемологические категории",
+              categories: ["knowledge", "belief", "reason", "empiricism", "rationalism", "truth", "justification"]
+            },
+            {
+              title: "Аксиологические категории",
+              categories: ["value", "ethics", "aesthetics", "good", "beauty", "virtue"]
+            },
+            {
+              title: "Логические категории",
+              categories: ["necessity", "possibility", "universality", "particularity", "causality", "teleology"]
+            },
+            {
+              title: "Антропологические категории",
+              categories: ["consciousness", "freedom", "will", "identity", "person", "society", "history"]
+            }
+          ];
+
+          // Определения категорий
+          const categoryDefinitions = {
+            // Онтологические категории
+            existence: "Бытие: фундаментальная категория, указывающая на реальность и существование как таковое.",
+            substance: "Субстанция: то, что существует само по себе и не нуждается для своего существования ни в чем другом.",
+            essence: "Сущность: то, что делает вещь именно тем, чем она является, её неотъемлемое качество.",
+            matter: "Материя: физическая субстанция, из которой состоят предметы материального мира.",
+            form: "Форма: структура или организующий принцип, придающий материи конкретные свойства.",
+            potentiality: "Потенциальность: состояние возможности, непроявленные возможности объекта.",
+            actuality: "Актуальность: реализация потенциала, состояние осуществлённости.",
+            
+            // Эпистемологические категории
+            knowledge: "Знание: обоснованное истинное мнение, понимание, основанное на опыте или образовании.",
+            belief: "Вера: принятие чего-либо за истину без непосредственного эмпирического или рационального доказательства.",
+            reason: "Разум: способность логического мышления, познавательная способность человека.",
+            empiricism: "Эмпиризм: направление, утверждающее, что знание основано преимущественно на опыте и чувственном восприятии.",
+            rationalism: "Рационализм: направление, утверждающее, что истинное знание достижимо через разум и логическое мышление.",
+            truth: "Истина: соответствие знания действительности, адекватное отражение реальности.",
+            justification: "Обоснование: процесс или методы подтверждения истинности знания.",
+            
+            // Аксиологические категории
+            value: "Ценность: значимость объекта для субъекта, то, что имеет важность и смысл.",
+            ethics: "Этика: учение о нравственности, о принципах правильного поведения.",
+            aesthetics: "Эстетика: учение о прекрасном, о законах красоты и художественного творчества.",
+            good: "Благо: то, что является положительным, полезным, желательным с моральной точки зрения.",
+            beauty: "Красота: свойство объекта вызывать эстетическое удовлетворение.",
+            virtue: "Добродетель: положительное нравственное качество, моральное совершенство.",
+            
+            // Логические категории
+            necessity: "Необходимость: то, что не может не быть, что с неизбежностью присуще объекту.",
+            possibility: "Возможность: то, что может существовать или произойти при определённых условиях.",
+            universality: "Всеобщность: свойство относиться ко всем объектам определённого класса без исключения.",
+            particularity: "Частность: свойство относиться только к некоторым объектам определённого класса.",
+            causality: "Причинность: отношение причины и следствия, где одно явление порождает другое.",
+            teleology: "Телеология: учение о целесообразности, о целевых причинах явлений.",
+            
+            // Антропологические категории
+            consciousness: "Сознание: высшая форма психического отражения действительности, свойственная человеку.",
+            freedom: "Свобода: способность действовать в соответствии со своими интересами и целями, без внешнего принуждения.",
+            will: "Воля: способность человека к выбору цели деятельности и внутренним усилиям для её достижения.",
+            identity: "Идентичность: сохранение самотождественности, осознание себя как уникальной личности.",
+            person: "Личность: человек как субъект социальных отношений и сознательной деятельности.",
+            society: "Общество: совокупность людей, объединённых общими интересами, традициями, нормами поведения.",
+            history: "История: процесс развития человечества во времени, последовательность событий."
+          };
+
+          // Определение философских парадигм, возникающих при различных наборах категорий
+          const philosophicalParadigms = [
+            {
+              name: "Материализм",
+              requiredCategories: ["matter", "existence"],
+              description: "Философское направление, признающее материю первичной и единственной субстанцией, а сознание — вторичным, производным от материи."
+            },
+            {
+              name: "Идеализм",
+              requiredCategories: ["consciousness", "form", "essence"],
+              description: "Философское направление, признающее идеальное (сознание, мышление, дух) первичным и определяющим по отношению к материальному миру."
+            },
+            {
+              name: "Дуализм",
+              requiredCategories: ["matter", "consciousness"],
+              description: "Философское учение, признающее равноправное существование двух начал — материального и духовного."
+            },
+            {
+              name: "Эмпиризм",
+              requiredCategories: ["empiricism", "knowledge"],
+              description: "Философское направление, признающее опыт и чувственное восприятие единственным источником знания."
+            },
+            {
+              name: "Рационализм",
+              requiredCategories: ["rationalism", "reason", "knowledge"],
+              description: "Философское направление, признающее разум основой познания и деятельности людей."
+            },
+            {
+              name: "Феноменология",
+              requiredCategories: ["consciousness", "essence"],
+              description: "Философское направление, изучающее структуры сознания и явления, которые даны сознанию непосредственно."
+            },
+            {
+              name: "Экзистенциализм",
+              requiredCategories: ["existence", "freedom", "identity"],
+              description: "Философское направление, постулирующее уникальность бытия человека и подчёркивающее свободу и ответственность личности."
+            },
+            {
+              name: "Прагматизм",
+              requiredCategories: ["knowledge", "value"],
+              description: "Философское направление, оценивающее истинность знаний по их практической полезности и эффективности."
+            },
+            {
+              name: "Утилитаризм",
+              requiredCategories: ["ethics", "good", "value"],
+              description: "Этическое учение, согласно которому моральная ценность поведения определяется его полезностью и стремлением к максимальному счастью для наибольшего числа людей."
+            },
+            {
+              name: "Деонтология",
+              requiredCategories: ["ethics", "necessity", "virtue"],
+              description: "Этическое учение, рассматривающее мораль с точки зрения долженствования, обязанности и правильности поступка самого по себе."
+            },
+            {
+              name: "Гедонизм",
+              requiredCategories: ["value", "good"],
+              description: "Этическое учение, согласно которому удовольствие является высшим благом и критерием человеческого поведения."
+            },
+            {
+              name: "Детерминизм",
+              requiredCategories: ["causality", "necessity"],
+              description: "Философская концепция, утверждающая объективную закономерность и причинную обусловленность всех явлений природы и общества."
+            },
+            {
+              name: "Индетерминизм",
+              requiredCategories: ["freedom", "possibility"],
+              description: "Философская концепция, отрицающая всеобщую причинную обусловленность явлений и признающая наличие случайности и свободы воли."
+            },
+            {
+              name: "Социальный конструктивизм",
+              requiredCategories: ["society", "knowledge", "identity"],
+              description: "Социологическая теория познания, изучающая процесс создания социальной реальности отдельными людьми и социальными группами."
+            },
+            {
+              name: "Герменевтика",
+              requiredCategories: ["truth", "understanding", "interpretation"],
+              description: "Направление в философии, изучающее проблемы интерпретации, понимания и толкования текстов и других форм коммуникации."
+            }
+          ];
+
+          // Определение философских школ и течений
+          const philosophicalSchools = [
+            {
+              name: "Античная философия",
+              compatibleWith: ["substance", "form", "essence", "virtue", "good", "beauty"],
+              incompatibleWith: ["empiricism", "rationalism"],
+              description: "Философия Древней Греции и Древнего Рима, заложившая основы западной философской традиции.",
+              representatives: [
+                "Сократ: «Знаю, что ничего не знаю»",
+                "Платон: «Идеи существуют вне материального мира и являются истинной реальностью»",
+                "Аристотель: «Форма есть актуализация материи»"
+              ]
+            },
+            {
+              name: "Средневековая философия",
+              compatibleWith: ["belief", "essence", "virtue", "substance"],
+              incompatibleWith: ["empiricism", "matter"],
+              description: "Философия, развивавшаяся в Европе и на Ближнем Востоке в период Средневековья, тесно связанная с религиозным мировоззрением.",
+              representatives: [
+                "Августин Блаженный: «Верую, чтобы понимать»",
+                "Фома Аквинский: «Бытие и сущность в Боге тождественны»",
+                "Ансельм Кентерберийский: «Вера, ищущая понимания»"
+              ]
+            },
+            {
+              name: "Философия Нового времени",
+              compatibleWith: ["knowledge", "reason", "empiricism", "rationalism", "causality"],
+              incompatibleWith: [],
+              description: "Философия 17-18 веков, характеризующаяся развитием научного метода и разработкой гносеологической проблематики.",
+              representatives: [
+                "Рене Декарт: «Мыслю, следовательно, существую»",
+                "Джон Локк: «В разуме нет ничего, чего прежде не было бы в чувствах»",
+                "Иммануил Кант: «Две вещи наполняют душу удивлением и благоговением: звёздное небо надо мной и моральный закон во мне»"
+              ]
+            },
+            {
+              name: "Немецкая классическая философия",
+              compatibleWith: ["consciousness", "freedom", "reason", "universality", "history"],
+              incompatibleWith: ["empiricism"],
+              description: "Философское направление конца 18 - начала 19 века в Германии, представленное работами Канта, Фихте, Шеллинга, Гегеля и Фейербаха.",
+              representatives: [
+                "Иммануил Кант: «Поступай так, чтобы максима твоей воли могла стать принципом всеобщего законодательства»",
+                "Георг Вильгельм Фридрих Гегель: «Всё действительное разумно, всё разумное действительно»",
+                "Людвиг Фейербах: «Человек человеку — Бог»"
+              ]
+            },
+            {
+              name: "Марксизм",
+              compatibleWith: ["matter", "society", "history", "causality"],
+              incompatibleWith: ["belief", "rationalism"],
+              description: "Философское, экономическое и политическое учение, основанное Карлом Марксом и Фридрихом Энгельсом, рассматривающее развитие общества через призму материалистического понимания истории.",
+              representatives: [
+                "Карл Маркс: «Философы лишь различным образом объясняли мир, но дело заключается в том, чтобы изменить его»",
+                "Фридрих Энгельс: «Свобода есть осознанная необходимость»",
+                "Антонио Грамши: «Пессимизм разума, оптимизм воли»"
+              ]
+            },
+            {
+              name: "Аналитическая философия",
+              compatibleWith: ["knowledge", "truth", "justification", "reason", "language"],
+              incompatibleWith: ["belief"],
+              description: "Направление в философии XX века, занимающееся анализом языка, логической структурой утверждений и прояснением понятий.",
+              representatives: [
+                "Людвиг Витгенштейн: «Границы моего языка означают границы моего мира»",
+                "Бертран Рассел: «Наука есть то, о чем можно спорить; религия же то, о чем спорить нельзя»",
+                "Готлоб Фреге: «Смысл имени — это способ, которым задается его референт»"
+              ]
+            },
+            {
+              name: "Феноменология",
+              compatibleWith: ["consciousness", "essence", "perception", "experience"],
+              incompatibleWith: ["matter", "causality"],
+              description: "Философское направление, исследующее структуры сознания и феномены, непосредственно данные в опыте.",
+              representatives: [
+                "Эдмунд Гуссерль: «Назад к самим вещам!»",
+                "Морис Мерло-Понти: «Тело — это наш общий способ обладания миром»",
+                "Жан-Поль Сартр: «Существование предшествует сущности»"
+              ]
+            },
+            {
+              name: "Экзистенциализм",
+              compatibleWith: ["existence", "freedom", "will", "identity", "consciousness"],
+              incompatibleWith: ["necessity", "universality"],
+              description: "Философское направление, акцентирующее внимание на уникальности человеческого существования, свободе и ответственности.",
+              representatives: [
+                "Жан-Поль Сартр: «Человек осужден быть свободным»",
+                "Альбер Камю: «Есть лишь одна по-настоящему серьезная философская проблема — проблема самоубийства»",
+                "Мартин Хайдеггер: «Язык — дом бытия»"
+              ]
+            },
+            {
+              name: "Постмодернизм",
+              compatibleWith: ["identity", "society", "language", "interpretation"],
+              incompatibleWith: ["universality", "truth", "essence"],
+              description: "Философское направление последней трети XX века, характеризующееся критикой рационализма, универсальных истин и метанарративов.",
+              representatives: [
+                "Жак Деррида: «Нет ничего вне текста»",
+                "Мишель Фуко: «Знание — это власть»",
+                "Жан-Франсуа Лиотар: «Недоверие к метанарративам»"
+              ]
+            }
+          ];
+
+          // Философские дилеммы и проблемы
+          const philosophicalDilemmas = [
+            {
+              name: "Проблема универсалий",
+              relatedCategories: ["universality", "particularity", "substance", "essence"],
+              description: "Вопрос о природе и онтологическом статусе общих понятий (универсалий): существуют ли они независимо от конкретных вещей или являются лишь именами?",
+              positions: [
+                "Реализм: универсалии существуют реально и независимо от вещей и сознания",
+                "Концептуализм: универсалии существуют как концепты в уме",
+                "Номинализм: универсалии — лишь имена, не имеющие самостоятельного существования"
+              ]
+            },
+            {
+              name: "Проблема свободы воли",
+              relatedCategories: ["freedom", "will", "necessity", "causality", "determinism"],
+              description: "Вопрос о том, обладает ли человек свободой выбора или все его действия предопределены внешними причинами.",
+              positions: [
+                "Детерминизм: все события, включая человеческие поступки, предопределены предшествующими причинами",
+                "Либертарианство: человек обладает подлинной свободой воли, независимой от причинно-следственных связей",
+                "Компатибилизм: свобода воли совместима с детерминизмом, если она понимается как отсутствие внешнего принуждения"
+              ]
+            },
+            {
+              name: "Проблема сознания и тела",
+              relatedCategories: ["consciousness", "matter", "substance", "identity"],
+              description: "Вопрос о взаимоотношении сознания (психического) и тела (физического), а также о природе сознания как такового.",
+              positions: [
+                "Дуализм: сознание и тело — две различные субстанции",
+                "Физикализм: сознание сводимо к физическим процессам в мозге",
+                "Функционализм: ментальные состояния определяются их функциональной ролью, а не физической природой"
+              ]
+            },
+            {
+              name: "Проблема обоснования знания",
+              relatedCategories: ["knowledge", "truth", "justification", "belief"],
+              description: "Вопрос о том, как можно обосновать истинность наших знаний и избежать бесконечного регресса в обосновании.",
+              positions: [
+                "Фундаментализм: существуют базовые, самоочевидные истины, не требующие дальнейшего обоснования",
+                "Когерентизм: обоснование знания состоит в его согласованности с другими убеждениями",
+                "Скептицизм: невозможно окончательно обосновать знание, всегда остается место для сомнения"
+              ]
+            },
+            {
+              name: "Этический релятивизм vs. абсолютизм",
+              relatedCategories: ["ethics", "value", "universality", "particularity"],
+              description: "Вопрос о том, существуют ли универсальные моральные принципы или этические нормы зависят от культуры, общества и эпохи.",
+              positions: [
+                "Моральный абсолютизм: существуют универсальные моральные принципы, верные для всех времен и культур",
+                "Культурный релятивизм: моральные нормы относительны и зависят от культуры",
+                "Субъективизм: моральные суждения выражают личные предпочтения и эмоции, а не объективные истины"
+              ]
+            },
+            {
+              name: "Проблема индукции",
+              relatedCategories: ["knowledge", "causality", "necessity", "possibility"],
+              description: "Вопрос о логическом обосновании индуктивных умозаключений: можно ли логически обосновать переход от частных случаев к общему закону?",
+              positions: [
+                "Индуктивизм: индукция оправдана прагматической полезностью и успешностью науки",
+                "Скептицизм относительно индукции: индукция логически не обоснована (проблема Юма)",
+                "Критический рационализм: научные теории не выводятся индуктивно, а создаются как гипотезы и проверяются опытом (Поппер)"
+              ]
+            },
+            {
+              name: "Проблема существования внешнего мира",
+              relatedCategories: ["existence", "knowledge", "consciousness", "truth"],
+              description: "Вопрос о том, существует ли внешний мир независимо от нашего сознания и как можно доказать его существование.",
+              positions: [
+                "Реализм: внешний мир существует независимо от нашего сознания",
+                "Идеализм: внешний мир существует только как идея в сознании",
+                "Скептицизм: невозможно доказать существование внешнего мира"
+              ]
+            }
+          ];
+
+          // Состояние для отображения выводов
+          const [conclusions, setConclusions] = React.useState([]);
+          
+          // Состояние для отображения совместимых парадигм
+          const [compatibleParadigms, setCompatibleParadigms] = React.useState([]);
+          
+          // Состояние для отображения совместимых философских школ
+          const [compatibleSchools, setCompatibleSchools] = React.useState([]);
+          
+          // Состояние для отображения релевантных философских дилемм
+          const [relevantDilemmas, setRelevantDilemmas] = React.useState([]);
+
+          // Обновление выводов и имени концепции при изменении выбранных категорий
+          React.useEffect(() => {
+            updateConclusions();
+            generateConceptName();
+          }, [selectedCategories]);
+
+          // Функция обновления выводов
+          const updateConclusions = () => {
+            const newConclusions = [];
+            
+            // Проверка онтологических положений
+            if (selectedCategories.existence && selectedCategories.substance) {
+              newConclusions.push("Система признает существование субстанции как фундаментальной основы бытия.");
+            }
+            
+            if (selectedCategories.essence && selectedCategories.form) {
+              newConclusions.push("Система делает акцент на эссенциализме, признавая важность форм и сущностей вещей.");
+            }
+            
+            if (selectedCategories.matter && !selectedCategories.form) {
+              newConclusions.push("Система тяготеет к материализму, признавая материю первичной по отношению к форме.");
+            }
+            
+            if (selectedCategories.form && !selectedCategories.matter) {
+              newConclusions.push("Система тяготеет к идеализму, признавая первичность формы и идей по отношению к материи.");
+            }
+            
+            if (selectedCategories.potentiality && selectedCategories.actuality) {
+              newConclusions.push("Система признает диалектику потенциального и актуального как философскую категорию изменения и становления.");
+            }
+            
+            // Проверка эпистемологических положений
+            if (selectedCategories.knowledge && selectedCategories.truth) {
+              newConclusions.push("Система предполагает возможность достижения истинного знания.");
+            }
+            
+            if (selectedCategories.empiricism && !selectedCategories.rationalism) {
+              newConclusions.push("Система тяготеет к эмпиризму, признавая опыт главным источником знания.");
+            }
+            
+            if (selectedCategories.rationalism && !selectedCategories.empiricism) {
+              newConclusions.push("Система тяготеет к рационализму, признавая разум главным источником знания.");
+            }
+            
+            if (selectedCategories.empiricism && selectedCategories.rationalism) {
+              newConclusions.push("Система признает как эмпирический, так и рациональный пути познания, стремясь к их синтезу.");
+            }
+            
+            if (selectedCategories.belief && !selectedCategories.knowledge) {
+              newConclusions.push("Система склоняется к фидеизму, придавая вере приоритет над рациональным знанием.");
+            }
+            
+            if (selectedCategories.knowledge && selectedCategories.justification) {
+              newConclusions.push("Система требует обоснования знания, признавая важность эпистемической рациональности.");
+            }
+            
+            // Проверка аксиологических положений
+            if (selectedCategories.value && selectedCategories.ethics) {
+              newConclusions.push("Система признает моральные ценности и этические принципы важными категориями человеческого существования.");
+            }
+            
+            if (selectedCategories.good && selectedCategories.virtue) {
+              newConclusions.push("Система тяготеет к этике добродетели, связывая благо с нравственным совершенством личности.");
+            }
+            
+            if (selectedCategories.beauty && selectedCategories.aesthetics) {
+              newConclusions.push("Система придает значение эстетическим ценностям, признавая красоту как важную категорию.");
+            }
+            
+            // Проверка логических положений
+            if (selectedCategories.necessity && !selectedCategories.possibility) {
+              newConclusions.push("Система тяготеет к необходимости и детерминизму, минимизируя роль случайности.");
+            }
+            
+            if (selectedCategories.possibility && !selectedCategories.necessity) {
+              newConclusions.push("Система придает большее значение возможности и открытости будущего, чем жесткой необходимости.");
+            }
+            
+            if (selectedCategories.universality && !selectedCategories.particularity) {
+              newConclusions.push("Система ориентирована на универсальные принципы, а не на частные случаи.");
+            }
+            
+            if (selectedCategories.particularity && !selectedCategories.universality) {
+              newConclusions.push("Система ориентирована на уникальность и частность, избегая универсализации.");
+            }
+            
+            if (selectedCategories.causality && !selectedCategories.teleology) {
+              newConclusions.push("Система придерживается причинного объяснения явлений, не прибегая к телеологии.");
+            }
+            
+            if (selectedCategories.teleology && !selectedCategories.causality) {
+              newConclusions.push("Система признает целевые причины явлений, подчеркивая их направленность к определенной цели.");
+            }
+            
+            // Проверка антропологических положений
+            if (selectedCategories.consciousness && !selectedCategories.matter) {
+              newConclusions.push("Система подчеркивает примат сознания над материей, тяготея к идеалистической антропологии.");
+            }
+            
+            if (selectedCategories.freedom && selectedCategories.will) {
+              newConclusions.push("Система признает свободу воли как фундаментальную характеристику человека.");
+            }
+            
+            if (selectedCategories.person && selectedCategories.identity) {
+              newConclusions.push("Система придает значение личности и её идентичности как важным философским категориям.");
+            }
+            
+            if (selectedCategories.society && selectedCategories.history) {
+              newConclusions.push("Система признает историчность и социальную обусловленность человеческого существования.");
+            }
+            
+            // Проверка несовместимостей и противоречий
+            if (selectedCategories.necessity && selectedCategories.freedom) {
+              newConclusions.push("Предупреждение: Система содержит потенциальное противоречие между необходимостью и свободой. Требуется их диалектическое примирение.");
+            }
+            
+            if (selectedCategories.universality && selectedCategories.particularity) {
+              newConclusions.push("Предупреждение: Система содержит диалектическое напряжение между всеобщностью и частностью, требующее разрешения.");
+            }
+            
+            if (selectedCategories.rationalism && selectedCategories.belief) {
+              newConclusions.push("Предупреждение: Система содержит напряжение между рационализмом и верой, которое требует прояснения их взаимоотношения.");
+            }
+            
+            setConclusions(newConclusions);
+            
+            // Определение совместимых философских парадигм
+            findCompatibleParadigms();
+            
+            // Определение совместимых философских школ
+            findCompatibleSchools();
+            
+            // Определение релевантных философских дилемм
+            findRelevantDilemmas();
+          };
+          
+          // Функция определения совместимых философских парадигм
+          const findCompatibleParadigms = () => {
+            const compatible = [];
+            
+            for (const paradigm of philosophicalParadigms) {
+              // Проверка, все ли требуемые категории выбраны
+              const allRequired = paradigm.requiredCategories.every(category => selectedCategories[category]);
+              
+              if (allRequired) {
+                compatible.push(paradigm);
+              }
+            }
+            
+            setCompatibleParadigms(compatible);
+          };
+          
+          // Функция определения совместимых философских школ
+          const findCompatibleSchools = () => {
+            const compatible = [];
+            
+            for (const school of philosophicalSchools) {
+              // Проверка совместимости с выбранными категориями
+              const hasIncompatible = school.incompatibleWith.some(category => selectedCategories[category]);
+              
+              // Если нет несовместимых категорий, проверяем, согласуются ли выбранные категории со школой
+              if (!hasIncompatible) {
+                // Считаем школу совместимой, если выбрана хотя бы одна из совместимых с ней категорий
+                const hasCompatible = school.compatibleWith.some(category => selectedCategories[category]);
+                
+                if (hasCompatible || Object.values(selectedCategories).filter(Boolean).length === 0) {
+                  compatible.push(school);
+                }
+              }
+            }
+            
+            setCompatibleSchools(compatible);
+          };
+          
+          // Функция определения релевантных философских дилемм
+          const findRelevantDilemmas = () => {
+            const relevant = [];
+            
+            for (const dilemma of philosophicalDilemmas) {
+              // Считаем дилемму релевантной, если выбрана хотя бы одна из связанных с ней категорий
+              const isRelevant = dilemma.relatedCategories.some(category => selectedCategories[category]);
+              
+              if (isRelevant) {
+                relevant.push(dilemma);
+              }
+            }
+            
+            setRelevantDilemmas(relevant);
+          };
+          
+          // Обработчик изменения категории
+          const handleCategoryChange = (category) => {
+            setSelectedCategories({
+              ...selectedCategories,
+              [category]: !selectedCategories[category]
+            });
+          };
+          
+          // Обработчик выбора предустановленной парадигмы
+          const selectParadigmCategories = (paradigmName) => {
+            const paradigm = philosophicalParadigms.find(p => p.name === paradigmName);
+            
+            if (paradigm) {
+              const newCategories = {};
+              
+              // Инициализируем все категории как false
+              Object.keys(selectedCategories).forEach(category => {
+                newCategories[category] = false;
+              });
+              
+              // Устанавливаем требуемые категории как true
+              paradigm.requiredCategories.forEach(category => {
+                newCategories[category] = true;
+              });
+              
+              setSelectedCategories(newCategories);
+            }
+          };
+          
+          // Обработчик выбора предустановленной философской школы
+          const selectSchoolCategories = (schoolName) => {
+            const school = philosophicalSchools.find(s => s.name === schoolName);
+            
+            if (school) {
+              const newCategories = {};
+              
+              // Инициализируем все категории как false
+              Object.keys(selectedCategories).forEach(category => {
+                newCategories[category] = false;
+              });
+              
+              // Устанавливаем совместимые категории как true
+              school.compatibleWith.forEach(category => {
+                newCategories[category] = true;
+              });
+              
+              setSelectedCategories(newCategories);
+            }
+          };
+          
+          // Функция для генерации названия концепции на основе выбранных категорий
+          const generateConceptName = () => {
+            // Количество выбранных категорий
+            const selectedCount = Object.values(selectedCategories).filter(Boolean).length;
+            
+            // Если категории не выбраны, устанавливаем базовое название
+            if (selectedCount === 0) {
+              setConceptName("Ваша философская концепция");
+              return;
+            }
+            
+            // Префиксы для названий на основе онтологических категорий с учётом рода
+            const ontologyPrefixes = {
+              existence: {prefix: "Экзистенц", gender: "feminine"},
+              substance: {prefix: "Субстанц", gender: "feminine"},
+              essence: {prefix: "Эссенц", gender: "feminine"},
+              matter: {prefix: "Матер", gender: "feminine"},
+              form: {prefix: "Форм", gender: "feminine"},
+              potentiality: {prefix: "Потенц", gender: "feminine"},
+              actuality: {prefix: "Актуал", gender: "feminine"}
+            };
+            
+            // Суффиксы для названий на основе эпистемологических категорий с учётом рода
+            const epistemologySuffixes = {
+              knowledge: {suffix: "гнозия", gender: "feminine"},
+              belief: {suffix: "пистия", gender: "feminine"},
+              reason: {suffix: "логия", gender: "feminine"},
+              empiricism: {suffix: "эмпирика", gender: "feminine"},
+              rationalism: {suffix: "рационализм", gender: "masculine"},
+              truth: {suffix: "алетейя", gender: "feminine"},
+              justification: {suffix: "верификация", gender: "feminine"}
+            };
+            
+            // Модификаторы на основе аксиологических категорий с учётом рода и падежа
+            const axiologyModifiers = {
+              // Массив [мужской род, женский род, средний род]
+              value: ["ценностный", "ценностная", "ценностное"],
+              ethics: ["этический", "этическая", "этическое"],
+              aesthetics: ["эстетический", "эстетическая", "эстетическое"],
+              good: ["благостный", "благостная", "благостное"],
+              beauty: ["прекрасный", "прекрасная", "прекрасное"],
+              virtue: ["добродетельный", "добродетельная", "добродетельное"]
+            };
+            
+            // Модификаторы на основе логических категорий с учётом рода и падежа
+            const logicModifiers = {
+              necessity: ["необходимостный", "необходимостная", "необходимостное"],
+              possibility: ["возможностный", "возможностная", "возможностное"],
+              universality: ["универсальный", "универсальная", "универсальное"],
+              particularity: ["частный", "частная", "частное"],
+              causality: ["причинный", "причинная", "причинное"],
+              teleology: ["целевой", "целевая", "целевое"]
+            };
+            
+            // Модификаторы на основе антропологических категорий с учётом рода
+            const anthropologyModifiers = {
+              consciousness: ["сознательный", "сознательная", "сознательное"],
+              freedom: ["свободный", "свободная", "свободное"],
+              will: ["волевой", "волевая", "волевое"],
+              identity: ["идентичностный", "идентичностная", "идентичностное"],
+              person: ["личностный", "личностная", "личностное"],
+              society: ["социальный", "социальная", "социальное"],
+              history: ["исторический", "историческая", "историческое"]
+            };
+            
+            // Строим имя концепции
+            let name = "";
+            let genderOfName = "feminine"; // По умолчанию женский род (для "философия")
+            
+            // Выбираем префикс из онтологических категорий
+            let prefix = null;
+            let hasPrefixSelected = false;
+            
+            Object.entries(ontologyPrefixes).forEach(([category, prefixData]) => {
+              if (!hasPrefixSelected && selectedCategories[category]) {
+                prefix = prefixData;
+                hasPrefixSelected = true;
+                genderOfName = prefixData.gender;
+              }
+            });
+            
+            // Если нет онтологического префикса, используем по умолчанию "Филос"
+            if (!hasPrefixSelected) {
+              prefix = { prefix: "Филос", gender: "feminine" };
+            }
+            
+            // Выбираем суффикс из эпистемологических категорий
+            let suffix = null;
+            let hasSuffixSelected = false;
+            
+            Object.entries(epistemologySuffixes).forEach(([category, suffixData]) => {
+              if (!hasSuffixSelected && selectedCategories[category]) {
+                suffix = suffixData;
+                hasSuffixSelected = true;
+                genderOfName = suffixData.gender; // Род определяется последним компонентом
+              }
+            });
+            
+            // Если нет эпистемологического суффикса, используем по умолчанию "офия"
+            if (!hasSuffixSelected) {
+              suffix = { suffix: "офия", gender: "feminine" };
+            }
+            
+            // Добавляем модификаторы, согласованные по роду
+            const modifiers = [];
+            
+            // Определяем индекс рода для модификаторов: 0 - мужской, 1 - женский, 2 - средний
+            const genderIndex = genderOfName === "masculine" ? 0 : genderOfName === "feminine" ? 1 : 2;
+            
+            // Добавляем выбранные модификаторы из аксиологических категорий
+            Object.entries(axiologyModifiers).forEach(([category, modifierForms]) => {
+              if (selectedCategories[category]) {
+                modifiers.push(modifierForms[genderIndex]);
+              }
+            });
+            
+            // Добавляем выбранные модификаторы из логических категорий
+            Object.entries(logicModifiers).forEach(([category, modifierForms]) => {
+              if (selectedCategories[category]) {
+                modifiers.push(modifierForms[genderIndex]);
+              }
+            });
+            
+            // Добавляем выбранные модификаторы из антропологических категорий
+            Object.entries(anthropologyModifiers).forEach(([category, modifierForms]) => {
+              if (selectedCategories[category]) {
+                modifiers.push(modifierForms[genderIndex]);
+              }
+            });
+            
+            // Выбираем 1-2 случайных модификатора, если их больше двух
+            if (modifiers.length > 2) {
+              // Перемешиваем массив
+              for (let i = modifiers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [modifiers[i], modifiers[j]] = [modifiers[j], modifiers[i]];
+              }
+              // Обрезаем до 2 элементов
+              modifiers.length = 2;
+            }
+            
+            // Добавляем выбранные модификаторы в порядке: модификаторы + префикс + суффикс
+            name = modifiers.join(" ") + (modifiers.length > 0 ? " " : "") + prefix.prefix + suffix.suffix;
+            
+            // Добавляем классификатор на основе доминирующей группы
+            let dominantGroup = "";
+            let maxCount = 0;
+            
+            // Подсчитываем количество выбранных категорий в каждой группе
+            const ontologyCount = Object.keys(ontologyPrefixes).filter(category => 
+              selectedCategories[category]).length;
+            const epistemologyCount = Object.keys(epistemologySuffixes).filter(category => 
+              selectedCategories[category]).length;
+            const axiologyCount = Object.keys(axiologyModifiers).filter(category => 
+              selectedCategories[category]).length;
+            const logicCount = Object.keys(logicModifiers).filter(category => 
+              selectedCategories[category]).length;
+            const anthropologyCount = Object.keys(anthropologyModifiers).filter(category => 
+              selectedCategories[category]).length;
+            
+            // Определяем доминирующую группу с учетом рода основного термина
+            if (ontologyCount > maxCount) {
+              maxCount = ontologyCount;
+              dominantGroup = genderOfName === "masculine" ? " (онтологический)" : 
+                             genderOfName === "feminine" ? " (онтологическая)" : " (онтологическое)";
+            }
+            if (epistemologyCount > maxCount) {
+              maxCount = epistemologyCount;
+              dominantGroup = genderOfName === "masculine" ? " (эпистемологический)" : 
+                             genderOfName === "feminine" ? " (эпистемологическая)" : " (эпистемологическое)";
+            }
+            if (axiologyCount > maxCount) {
+              maxCount = axiologyCount;
+              dominantGroup = genderOfName === "masculine" ? " (аксиологический)" : 
+                             genderOfName === "feminine" ? " (аксиологическая)" : " (аксиологическое)";
+            }
+            if (logicCount > maxCount) {
+              maxCount = logicCount;
+              dominantGroup = genderOfName === "masculine" ? " (логический)" : 
+                             genderOfName === "feminine" ? " (логическая)" : " (логическое)";
+            }
+            if (anthropologyCount > maxCount) {
+              maxCount = anthropologyCount;
+              dominantGroup = genderOfName === "masculine" ? " (антропологический)" : 
+                             genderOfName === "feminine" ? " (антропологическая)" : " (антропологическое)";
+            }
+            
+            // Добавляем доминирующую группу к названию
+            name += dominantGroup;
+            
+            // Первая буква заглавная
+            name = name.charAt(0).toUpperCase() + name.slice(1);
+            
+            // Специальные случаи для известных философских направлений
+            if (selectedCategories.matter && !selectedCategories.consciousness && selectedCategories.existence) {
+              name = "Материализм";
+            } else if (!selectedCategories.matter && selectedCategories.consciousness && selectedCategories.form) {
+              name = "Идеализм";
+            } else if (selectedCategories.consciousness && selectedCategories.matter && selectedCategories.existence) {
+              name = "Дуализм";
+            } else if (selectedCategories.empiricism && selectedCategories.knowledge && !selectedCategories.rationalism) {
+              name = "Эмпиризм";
+            } else if (selectedCategories.rationalism && selectedCategories.reason && !selectedCategories.empiricism) {
+              name = "Рационализм";
+            } else if (selectedCategories.consciousness && selectedCategories.freedom && selectedCategories.existence) {
+              name = "Экзистенциализм";
+            } else if (selectedCategories.value && selectedCategories.good && selectedCategories.ethics) {
+              name = "Аксиология";
+            } else if (selectedCategories.causality && selectedCategories.necessity && !selectedCategories.freedom) {
+              name = "Детерминизм";
+            } else if (selectedCategories.value && selectedCategories.society && selectedCategories.history) {
+              name = "Социальная философия";
+            } else if (selectedCategories.beauty && selectedCategories.aesthetics) {
+              name = "Эстетика";
+            } else if (selectedCategories.freedom && selectedCategories.will && !selectedCategories.necessity) {
+              name = "Либертарианство";
+            }
+            
+            setConceptName(name);
+          };
+          
+          // Сброс всех категорий
+          const resetCategories = () => {
+            const resetState = {};
+            
+            Object.keys(selectedCategories).forEach(category => {
+              resetState[category] = false;
+            });
+            
+            setSelectedCategories(resetState);
+            setConceptName("Ваша философская концепция");
+          };
+
+          return (
+            <div className="p-4 max-w-6xl mx-auto bg-gray-50 rounded-lg shadow-md">
+              <div className="mb-6 bg-white p-4 rounded-lg shadow">
+                <h2 className="text-2xl font-bold text-center text-purple-800 mb-2">{conceptName}</h2>
+                <p className="text-center text-gray-600">Ваша уникальная философская концепция, сформированная на основе выбранных категорий</p>
+              </div>              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="col-span-1 bg-white p-4 rounded-lg shadow overflow-y-auto max-h-screen category-panel">
+                  <h2 className="text-xl font-semibold mb-4">Выберите философские категории</h2>
+                  
+                  {categoryGroups.map((group) => (
+                    <div key={group.title} className="mb-6">
+                      <h3 className="text-lg font-medium mb-2">{group.title}</h3>
+                      <div className="space-y-3">
+                        {group.categories.map((category) => (
+                          <div key={category} className="flex items-start">
+                            <input
+                              type="checkbox"
+                              id={category}
+                              checked={selectedCategories[category]}
+                              onChange={() => handleCategoryChange(category)}
+                              className="mt-1 mr-2"
+                            />
+                            <div>
+                              <label htmlFor={category} className="font-medium cursor-pointer">
+                                {category.charAt(0).toUpperCase() + category.slice(1)}
+                              </label>
+                              <p className="text-sm text-gray-600">{categoryDefinitions[category]}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <h2 className="text-xl font-semibold mt-6 mb-4">Предустановленные парадигмы</h2>
+                  <div className="space-y-2 mb-6">
+                    {philosophicalParadigms.map((paradigm) => (
+                      <button
+                        key={paradigm.name}
+                        className="block w-full text-left px-3 py-2 text-sm bg-purple-100 hover:bg-purple-200 rounded paradigm-button"
+                        onClick={() => selectParadigmCategories(paradigm.name)}
+                      >
+                        {paradigm.name}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <h2 className="text-xl font-semibold mt-6 mb-4">Предустановленные философские школы</h2>
+                  <div className="space-y-2 mb-6">
+                    {philosophicalSchools.map((school) => (
+                      <button
+                        key={school.name}
+                        className="block w-full text-left px-3 py-2 text-sm bg-blue-100 hover:bg-blue-200 rounded paradigm-button"
+                        onClick={() => selectSchoolCategories(school.name)}
+                      >
+                        {school.name}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <button
+                    className="w-full mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                    onClick={resetCategories}
+                  >
+                    Сбросить все категории
+                  </button>
+                </div>
+                
+                <div className="col-span-1 md:col-span-2 bg-white p-4 rounded-lg shadow overflow-y-auto max-h-screen">
+                  <h2 className="text-xl font-semibold mb-4">Выводы из выбранных категорий</h2>
+                  
+                  {conclusions.length > 0 ? (
+                    <ul className="list-disc pl-5 space-y-2 mb-6">
+                      {conclusions.map((conclusion, index) => (
+                        <li key={index} className={`conclusion-item ${conclusion.startsWith('Предупреждение') ? 'text-red-600' : 'text-gray-800'}`}>
+                          {conclusion}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500 italic mb-6">Выберите категории, чтобы увидеть философские выводы.</p>
+                  )}
+                  
+                  <h2 className="text-xl font-semibold mt-6 mb-4">Совместимые философские парадигмы</h2>
+                  
+                  {compatibleParadigms.length > 0 ? (
+                    <div className="space-y-4 mb-6">
+                      {compatibleParadigms.map((paradigm) => (
+                        <div key={paradigm.name} className="p-3 bg-green-50 border border-green-200 rounded conclusion-item">
+                          <h3 className="font-medium text-green-700">{paradigm.name}</h3>
+                          <p className="text-sm text-gray-700">{paradigm.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic mb-6">Нет совместимых философских парадигм для выбранных категорий.</p>
+                  )}
+                  
+                  <h2 className="text-xl font-semibold mt-6 mb-4">Философские традиции и школы</h2>
+                  
+                  {compatibleSchools.length > 0 ? (
+                    <div className="space-y-4 mb-6">
+                      {compatibleSchools.map((school) => (
+                        <div key={school.name} className="p-3 bg-blue-50 border border-blue-200 rounded conclusion-item">
+                          <h3 className="font-medium text-blue-700">{school.name}</h3>
+                          <p className="text-sm text-gray-700">{school.description}</p>
+                          <div className="mt-2">
+                            <h4 className="text-sm font-medium text-gray-700">Представители и ключевые идеи:</h4>
+                            <ul className="list-disc pl-5 text-sm text-gray-600">
+                              {school.representatives.map((representative, index) => (
+                                <li key={index}>
+                                  <span className="quote">{representative}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic mb-6">Нет совместимых философских школ для выбранных категорий.</p>
+                  )}
+                  
+                  <h2 className="text-xl font-semibold mt-6 mb-4">Релевантные философские дилеммы</h2>
+                  
+                  {relevantDilemmas.length > 0 ? (
+                    <div className="space-y-4 mb-6">
+                      {relevantDilemmas.map((dilemma) => (
+                        <div key={dilemma.name} className="p-3 bg-yellow-50 border border-yellow-200 rounded conclusion-item">
+                          <h3 className="font-medium text-yellow-700">{dilemma.name}</h3>
+                          <p className="text-sm text-gray-700">{dilemma.description}</p>
+                          <div className="mt-2">
+                            <h4 className="text-sm font-medium text-gray-700">Основные позиции:</h4>
+                            <ul className="list-disc pl-5 text-sm text-gray-600">
+                              {dilemma.positions.map((position, index) => (
+                                <li key={index}>{position}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic mb-6">Нет релевантных философских дилемм для выбранных категорий.</p>
+                  )}
+                  
+                  <div className="mt-6 p-4 bg-gray-100 rounded">
+                    <h2 className="text-lg font-medium mb-4">Философские следствия выбранных категорий</h2>
+                    {(() => {
+                      const implications = [];
+                      
+                      // Выводим философские следствия на основе выбранных категорий
+                      if (selectedCategories.existence && selectedCategories.consciousness && selectedCategories.freedom) {
+                        implications.push("Экзистенциальное следствие: Бытие человека характеризуется сознанием и свободой, что делает его ответственным за свои выборы и проект своего существования.");
+                      }
+                      
+                      if (selectedCategories.knowledge && selectedCategories.truth && selectedCategories.justification) {
+                        implications.push("Эпистемологическое следствие: Знание представляет собой обоснованное истинное мнение, что требует надежных методов его получения и проверки.");
+                      }
+                      
+                      if (selectedCategories.ethics && selectedCategories.good && selectedCategories.value) {
+                        implications.push("Этическое следствие: Морально правильные действия должны основываться на понимании блага и системе ценностей, что предполагает разработку нормативной этики.");
+                      }
+                      
+                      if (selectedCategories.causality && selectedCategories.necessity) {
+                        implications.push("Метафизическое следствие: Мир управляется причинно-следственными связями и необходимыми законами, что создает основу для научного детерминизма.");
+                      }
+                      
+                      if (selectedCategories.identity && selectedCategories.person && selectedCategories.society) {
+                        implications.push("Социально-философское следствие: Идентичность личности формируется в социальном контексте, что указывает на диалектическую связь индивидуального и общественного.");
+                      }
+                      
+                      if (selectedCategories.matter && selectedCategories.form && selectedCategories.causality) {
+                        implications.push("Натурфилософское следствие: Природа представляет собой единство материи и формы, подчиненное причинным законам, что созвучно аристотелевской онтологии.");
+                      }
+                      
+                      if (selectedCategories.history && selectedCategories.teleology) {
+                        implications.push("Историософское следствие: История имеет внутреннюю цель и направленность, что предполагает её телеологическое понимание.");
+                      }
+                      
+                      return implications.length > 0 ? (
+                        <ul className="list-disc pl-5 space-y-2">
+                          {implications.map((implication, index) => (
+                            <li key={index} className="conclusion-item">{implication}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-gray-500 italic">Выберите больше категорий, чтобы увидеть философские следствия вашей концепции.</p>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(
+            <PhilosophyConceptExplorer />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>

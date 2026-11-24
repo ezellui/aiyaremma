@@ -1,0 +1,13 @@
+shared/
+├── package.json
+├── src/
+│   ├── constants/
+│   │   ├── category-types.js           # Типы категорий
+│   │   ├── relationship-types.js       # Типы связей
+│   │   └── innovation-levels.js        # Уровни инновационности
+│   ├── utils/
+│   │   ├── logger.js                   # Логирование
+│   │   ├── validators.js               # Валидаторы
+│   │   └── errors.js                   # Классы ошибок
+│   └── middleware/
+│       └── async-handler.js            # Обработчик async/await

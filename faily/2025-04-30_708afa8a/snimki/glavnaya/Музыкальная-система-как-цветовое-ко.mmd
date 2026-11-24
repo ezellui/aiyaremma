@@ -1,0 +1,253 @@
+
+graph TB
+    title["Музыкальная система как цветовое колесо"]
+    
+    %% Основные ноты по квартовому кругу
+    subgraph КвартовыйКруг["Основные ноты - Квартовый круг"]
+        B("B")
+        E("E")
+        A("A")
+        D("D")
+        G("G")
+        C("C")
+        F("F")
+        Bb("Bb")
+        Eb("Eb")
+        Ab("Ab")
+        Db("Db")
+        Gb("Gb")
+        
+        %% Квартовые связи
+        B -. "P4" .-> E
+        E -. "P4" .-> A
+        A -. "P4" .-> D
+        D -. "P4" .-> G
+        G -. "P4" .-> C
+        C -. "P4" .-> F
+        F -. "P4" .-> Bb
+        Bb -. "P4" .-> Eb
+        Eb -. "P4" .-> Ab
+        Ab -. "P4" .-> Db
+        Db -. "P4" .-> Gb
+        Gb -. "P4" .-> B
+    end
+    
+    %% Ноты по октавам и их целотоновые связи
+    %% Октава 1-2
+    subgraph Октава1и2["Октавы 1-2"]
+        B1[/"B1"/]
+        Db2[/"Db2"/]
+        Eb2[/"Eb2"/]
+        E2[/"E2"/]
+        Gb2[/"Gb2"/]
+        Ab2[/"Ab2"/]
+        A2[/"A2"/]
+        B2[/"B2"/]
+        Db3[/"Db3"/]
+        
+        %% Ряд 1
+        B1 -- "T" --> Db2 -- "T" --> Eb2
+        
+        %% Ряд 2
+        E2 -- "T" --> Gb2 -- "T" --> Ab2
+        
+        %% Ряд 3
+        A2 -- "T" --> B2 -- "T" --> Db3
+    end
+    
+    %% Октава 3-4
+    subgraph Октава3и4["Октавы 3-4"]
+        D3[/"D3"/]
+        E3[/"E3"/]
+        Gb3[/"Gb3"/]
+        G3[/"G3"/]
+        A3[/"A3"/]
+        B3[/"B3"/]
+        C4[/"C4"/]
+        D4[/"D4"/]
+        E4[/"E4"/]
+        F4[/"F4"/]
+        G4[/"G4"/]
+        A4[/"A4"/]
+        
+        %% Ряд 4
+        D3 -- "T" --> E3 -- "T" --> Gb3
+        
+        %% Ряд 5
+        G3 -- "T" --> A3 -- "T" --> B3
+        
+        %% Ряд 6
+        C4 -- "T" --> D4 -- "T" --> E4
+        
+        %% Ряд 7
+        F4 -- "T" --> G4 -- "T" --> A4
+    end
+    
+    %% Октава 5-6
+    subgraph Октава5и6["Октавы 5-6"]
+        Bb4[/"Bb4"/]
+        C5[/"C5"/]
+        D5[/"D5"/]
+        Eb5[/"Eb5"/]
+        F5[/"F5"/]
+        G5[/"G5"/]
+        Ab5[/"Ab5"/]
+        Bb5[/"Bb5"/]
+        C6[/"C6"/]
+        Db6[/"Db6"/]
+        Eb6[/"Eb6"/]
+        F6[/"F6"/]
+        Gb6[/"Gb6"/]
+        Ab6[/"Ab6"/]
+        Bb6[/"Bb6"/]
+        
+        %% Ряд 8
+        Bb4 -- "T" --> C5 -- "T" --> D5
+        
+        %% Ряд 9
+        Eb5 -- "T" --> F5 -- "T" --> G5
+        
+        %% Ряд 10
+        Ab5 -- "T" --> Bb5 -- "T" --> C6
+        
+        %% Ряд 11
+        Db6 -- "T" --> Eb6 -- "T" --> F6
+        
+        %% Ряд 12
+        Gb6 -- "T" --> Ab6 -- "T" --> Bb6
+    end
+    
+    %% Связи между основными нотами и трезвучиями
+    B --- B1
+    E --- E2
+    A --- A2
+    D --- D3
+    G --- G3
+    C --- C4
+    F --- F4
+    Bb --- Bb4
+    Eb --- Eb5
+    Ab --- Ab5
+    Db --- Db6
+    Gb --- Gb6
+    
+    %% Квартовые отношения между рядами
+    B1 -. "P4" .-> E2
+    E2 -. "P4" .-> A2
+    A2 -. "P4" .-> D3
+    D3 -. "P4" .-> G3
+    G3 -. "P4" .-> C4
+    C4 -. "P4" .-> F4
+    F4 -. "P4" .-> Bb4
+    Bb4 -. "P4" .-> Eb5
+    Eb5 -. "P4" .-> Ab5
+    Ab5 -. "P4" .-> Db6
+    Db6 -. "P4" .-> Gb6
+    Gb6 -. "P4" .-> B1
+    
+    %% Цветовой спектр HSL
+    subgraph ЦветовойСпектр["Цветовой спектр HSL"]
+        B_hsl[B: 0° HSL]
+        E_hsl[E: 30° HSL]
+        A_hsl[A: 60° HSL]
+        D_hsl[D: 90° HSL]
+        G_hsl[G: 120° HSL]
+        C_hsl[C: 150° HSL]
+        F_hsl[F: 180° HSL]
+        Bb_hsl[Bb: 210° HSL]
+        Eb_hsl[Eb: 240° HSL]
+        Ab_hsl[Ab: 270° HSL]
+        Db_hsl[Db: 300° HSL]
+        Gb_hsl[Gb: 330° HSL]
+    end
+    
+    %% Связь с основными цветами HSL
+    B --- B_hsl
+    E --- E_hsl
+    A --- A_hsl
+    D --- D_hsl
+    G --- G_hsl
+    C --- C_hsl
+    F --- F_hsl
+    Bb --- Bb_hsl
+    Eb --- Eb_hsl
+    Ab --- Ab_hsl
+    Db --- Db_hsl
+    Gb --- Gb_hsl
+    
+    %% Легенда
+    subgraph legend[Легенда]
+        L1["T = Целый тон (2 полутона)"]
+        L2["P4 = Чистая кварта (5 полутонов)"]
+        L3["Высота тона растет от центра к периферии (как Saturation в HSL)"]
+        L4["12 основных нот расположены по кругу (как Hue в HSL)"]
+    end
+    
+    %% Стили
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px
+    classDef titleClass fill:#e6f2ff,stroke:#333,stroke-width:2px
+    
+    %% HSL цветовая гамма для нот
+    classDef B_color fill:#6600cc,color:white,stroke:#333
+    classDef E_color fill:#8800cc,color:white,stroke:#333
+    classDef A_color fill:#aa00cc,color:white,stroke:#333
+    classDef D_color fill:#cc00cc,color:white,stroke:#333
+    classDef G_color fill:#cc0099,color:white,stroke:#333
+    classDef C_color fill:#cc0066,color:white,stroke:#333
+    classDef F_color fill:#cc0033,color:white,stroke:#333
+    classDef Bb_color fill:#cc0000,color:white,stroke:#333
+    classDef Eb_color fill:#cc3300,color:white,stroke:#333
+    classDef Ab_color fill:#cc6600,color:white,stroke:#333
+    classDef Db_color fill:#cc9900,color:white,stroke:#333
+    classDef Gb_color fill:#90cc00,color:black,stroke:#333
+    
+    %% Класс для HSL текста
+    classDef hsl_text fill:#f0f0f0,stroke:#333,stroke-width:1px
+    
+    %% Стили для рядов нот
+    classDef row1 fill:#e6194B,color:white,stroke:#333
+    classDef row2 fill:#3cb44b,color:white,stroke:#333
+    classDef row3 fill:#ffe119,color:black,stroke:#333
+    classDef row4 fill:#4363d8,color:white,stroke:#333
+    classDef row5 fill:#f58231,color:white,stroke:#333
+    classDef row6 fill:#911eb4,color:white,stroke:#333
+    classDef row7 fill:#42d4f4,color:black,stroke:#333
+    classDef row8 fill:#f032e6,color:white,stroke:#333
+    classDef row9 fill:#a9a9a9,color:white,stroke:#333
+    classDef row10 fill:#469990,color:white,stroke:#333
+    classDef row11 fill:#e6beff,color:black,stroke:#333
+    classDef row12 fill:#9A6324,color:white,stroke:#333
+    
+    %% Применение стилей
+    class title titleClass
+    
+    %% Цвета для основных нот
+    class B B_color
+    class E E_color
+    class A A_color
+    class D D_color
+    class G G_color
+    class C C_color
+    class F F_color
+    class Bb Bb_color
+    class Eb Eb_color
+    class Ab Ab_color
+    class Db Db_color
+    class Gb Gb_color
+    
+    %% Цвета для HSL текста
+    class B_hsl,E_hsl,A_hsl,D_hsl,G_hsl,C_hsl,F_hsl,Bb_hsl,Eb_hsl,Ab_hsl,Db_hsl,Gb_hsl hsl_text
+    
+    %% Стили для рядов нот
+    class B1,Db2,Eb2 row1
+    class E2,Gb2,Ab2 row2
+    class A2,B2,Db3 row3
+    class D3,E3,Gb3 row4
+    class G3,A3,B3 row5
+    class C4,D4,E4 row6
+    class F4,G4,A4 row7
+    class Bb4,C5,D5 row8
+    class Eb5,F5,G5 row9
+    class Ab5,Bb5,C6 row10
+    class Db6,Eb6,F6 row11
+    class Gb6,Ab6,Bb6 row12

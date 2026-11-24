@@ -1,0 +1,74 @@
+/* Wittgenstein's Nachlass (BEE 2000) — site styles. Colours follow the edition's legend:
+   blue text, red editorial marks, dark last undecided alternative, grey coded text (diplomatic). */
+:root{--ink:#1b1b6e;--ed:#c62828;--bg:#fbfaf7;--line:#ddd;--ui:14px system-ui,sans-serif;--text-font:Georgia,'Times New Roman',serif;--text-size:17px;--lh:1.6}
+*{box-sizing:border-box}
+body{margin:0;font:var(--text-size)/var(--lh) var(--text-font);color:var(--ink);background:var(--bg)}
+a{color:var(--ink)}
+header.top{position:sticky;top:0;z-index:5;background:#fbfaf7f2;border-bottom:1px solid var(--line);font:var(--ui);color:#444;padding:.35em 1em;display:flex;flex-wrap:wrap;gap:.3em 1em;align-items:center}
+header.top .brand{font-weight:600;text-decoration:none;margin-right:.5em}
+header.top nav a{margin-right:.9em;text-decoration:none} header.top nav a:hover{text-decoration:underline}
+header.top .sp{flex:1}
+header.top form{display:inline-flex;gap:.3em} header.top input[type=search]{font:var(--ui);width:14em;padding:.15em .4em}
+.langs button,.tb button,.tb select,.tb input{font:13px system-ui,sans-serif}
+.langs button{border:0;background:none;color:#666;cursor:pointer;padding:0 .2em} .langs button.on{color:var(--ink);font-weight:700}
+.tb{position:sticky;top:2.3em;z-index:4;background:#f4f2ecf2;border-bottom:1px solid var(--line);font:13px system-ui,sans-serif;padding:.3em 1em;display:flex;flex-wrap:wrap;gap:.3em 1em;align-items:center}
+.tb label{white-space:nowrap} .tb .grp{display:inline-flex;gap:.4em;align-items:center}
+.tb .hits{display:none} body.has-hits .tb .hits{display:inline-flex}
+main{max-width:46em;margin:1.5em auto 4em;padding:0 1.2em}
+body.wide main{max-width:62em}
+body.justify main p{text-align:justify;hyphens:auto}
+h1{font:600 22px system-ui,sans-serif;color:var(--ink);margin:.2em 0 .6em}
+h1.series{font-size:28px}
+h2{font:600 17px system-ui,sans-serif;margin:1.4em 0 .5em}
+.about,.resp{font:13px/1.5 system-ui,sans-serif;color:#666}
+.resp{margin:-.3em 0 1.4em}
+nav.toc{font:14px system-ui,sans-serif;margin:.5em 0 2em}
+.rec{position:relative;margin:.15em 0}
+.rec .meta{position:absolute;left:-7.5em;width:7em;text-align:right;font:11px system-ui,sans-serif;color:var(--ed);opacity:.75;top:.35em}
+body.nohidden .rec .meta,body.nohidden .dt,body.nohidden .pb{display:none}
+p{margin:.25em 0} p.right{text-align:right} p.center{text-align:center}
+.ed{color:var(--ed)} .alt{color:#111}
+.pb{display:inline-block;font:600 11px system-ui,sans-serif;color:var(--ed);border:1px solid #f0b6b6;border-radius:3px;padding:0 .35em;margin:0 .3em;vertical-align:.15em}
+a.pbx{text-decoration:none} .pbl{margin:1.1em 0 .2em}
+.app .rdg{display:none;color:#777;text-decoration:line-through} body.alts .app .rdg{display:inline}
+.app .lem{color:#111;border-bottom:1px dotted #999}
+.person{display:none;font:11px system-ui,sans-serif;color:var(--ed);margin-left:.2em} body.persons .person{display:inline}
+.person a{color:var(--ed)}
+.notation{display:none;font:11px system-ui,sans-serif;color:var(--ed)} body.descr .notation{display:inline}
+code.f{font:.88em 'DejaVu Sans Mono',monospace;color:var(--ink);background:#eef}
+.num{font-weight:600;margin-right:.4em}
+del{color:#777}
+img.fig{max-width:100%;vertical-align:middle}
+.figmiss{display:inline-block;font:12px system-ui,sans-serif;color:#666;border:1px dashed #aaa;padding:.2em .5em;margin:0 .2em;background:#f3f3f3}
+.subst del{color:#888}
+.add.interlinear{vertical-align:.3em;font-size:.9em}
+span.code{background:#e6e6e6;border-radius:2px;padding:0 .1em}
+span.coded{border-bottom:2px solid #bbb}
+.foreign{font-style:italic} body.langs-on .foreign[lang]::after{content:" [" attr(lang) "]";font:10px system-ui,sans-serif;color:#999;font-style:normal}
+a.xref{text-decoration:underline dotted}
+.wavy{text-decoration:underline wavy #999}
+.mono{font-family:'DejaVu Sans Mono',monospace;font-size:.9em}
+.notes{margin-top:2.5em;border-top:1px solid var(--line);font:14px/1.5 system-ui,sans-serif;color:#555}
+.notes h2{font:600 15px system-ui,sans-serif}
+body.diplo main{font-family:'DejaVu Sans Mono',monospace;font-size:calc(var(--text-size) - 2px)}
+body.diplo.nolb main br.lb{display:none}
+.dt{float:right;clear:right;font:11px system-ui,sans-serif;color:var(--ed);margin-right:-8em;width:7.5em}
+mark{background:#ffe27a;color:inherit} mark.cur{outline:2px solid #e0a000}
+mark.f1{background:#ffd6d6} mark.f2{background:#d6f0d6} mark.f3{background:#d6e4ff} mark.f4{background:#f0d6ff}
+.hl1{background:#fff176} .hl2{background:#b9f6ca} .hl3{background:#b3e5fc} .hl4{background:#f8bbd0}
+.hl1,.hl2,.hl3,.hl4{cursor:pointer}
+table.doc{border-collapse:collapse;margin:.8em 0;font-size:.92em} table.doc td{border-bottom:1px solid #e5e2da;padding:.25em .6em;vertical-align:top}
+.toctree{font:15px/1.5 system-ui,sans-serif} .toctree details{margin:.1em 0} .toctree summary{cursor:pointer;font-weight:600}
+.toctree .it{margin-left:1.2em} .toctree .it a{margin-left:.4em} .toctree .n{display:inline-block;min-width:3.5em;font-weight:600}
+.toctree .ttl{color:#333} .muted,.miss{color:#999}
+.filter{font:15px system-ui,sans-serif;width:22em;padding:.25em .5em;margin:.5em 0}
+.panel{position:fixed;right:1em;top:5em;z-index:9;background:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:0 4px 18px #0002;padding:.8em 1em;font:13px system-ui,sans-serif;display:none;max-width:26em}
+.panel.open{display:block} .panel h3{font:600 14px system-ui,sans-serif;margin:.2em 0 .5em} .panel .row{margin:.35em 0}
+#selbar{position:absolute;z-index:10;display:none;background:#222;color:#fff;border-radius:5px;padding:.2em .3em;font:13px system-ui,sans-serif}
+#selbar button{background:none;border:0;color:#fff;cursor:pointer;padding:.1em .35em;font:13px system-ui,sans-serif}
+#selbar .c{display:inline-block;width:1em;height:1em;border-radius:50%;vertical-align:middle}
+.ui{font:14px/1.5 system-ui,sans-serif} .ui table{border-collapse:collapse} .ui td,.ui th{padding:.2em .6em;border-bottom:1px solid #eee;text-align:left;vertical-align:top}
+.kwic td.l{text-align:right;white-space:nowrap;overflow:hidden;max-width:22em;color:#555} .kwic td.r{white-space:nowrap;overflow:hidden;max-width:22em;color:#555}
+.kwic td.k{font-weight:600}
+@media (max-width:900px){.rec .meta{position:static;display:block;text-align:left}.dt{float:none;margin:0}}
+@media print{header.top,.tb,.panel,#selbar{display:none!important} body{background:#fff} main{max-width:none}}

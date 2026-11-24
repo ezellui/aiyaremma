@@ -1,0 +1,95 @@
+--- предыдущая/Философская-концепция-Делёза.mmd
++++ текущая/Философская-концепция-Делёза.mmd
+@@ -154,6 +154,7 @@
+     A <-->|FOUNDATIONAL| C
+     A <-->|FOUNDATIONAL| D
+     B -->|IMPLEMENTATION| C
++    A -->|REFLEXIVE| A
+     
+     %% Ключевые работы и их отношение к различию
+     A <-->|IMPLEMENTATION| E
+@@ -168,8 +169,10 @@
+     %% Эволюция мысли Делёза
+     E -->|CAUSAL| F
+     F -->|CAUSAL| G
+-    G -->|CAUSAL| H
++    G <-->|DIALECTICAL| H
+     I -->|CAUSAL| J
++    F -->|PART_WHOLE| BU
++    H -->|PART_WHOLE| P
+     
+     %% Имманентность и основные концепции
+     M <-->|IDENTITY| A
+@@ -186,6 +189,8 @@
+     
+     %% Виртуальное и актуальное
+     Q <-->|DIALECTICAL| R
++    Q <-->|CIRCULAR| R
++    R <-->|CIRCULAR| Q
+     S -->|HIERARCHICAL| Q
+     T -->|HIERARCHICAL| R
+     A -->|MANIFESTATION| Q
+@@ -196,10 +201,12 @@
+     V -->|IMPLEMENTATION| W
+     W -->|CORRELATIONAL| X
+     X <-->|DIALECTICAL| V
++    U <-->|CORRELATIONAL| AT
+     
+     %% Территориальность
+     Y <-->|DIALECTICAL| Z
+-    Z <-->|DIALECTICAL| AA
++    Z <-->|CIRCULAR| AA
++    AA <-->|CIRCULAR| Z
+     W -->|IMPLEMENTATION| Z
+     P -->|IMPLEMENTATION| Z
+     
+@@ -225,6 +232,10 @@
+     AJ <-->|CONCEPTUAL| A
+     AK <-->|CONCEPTUAL| A
+     AL <-->|CONCEPTUAL| A
++    AI <-->|CORRELATIONAL| BV
++    AI <-->|CORRELATIONAL| AK
++    AK <-->|CORRELATIONAL| AL
++    AL <-->|CORRELATIONAL| AI
+     
+     %% События и смысл
+     AM <-->|IDENTITY| A
+@@ -237,12 +248,16 @@
+     AQ -->|PART_WHOLE| AR
+     AQ -->|PART_WHOLE| AS
+     AQ -->|MANIFESTATION| A
++    AQ -->|REFLEXIVE| AQ
+     
+     %% Политическое
+     AT -->|IMPLEMENTATION| C
+     AU <-->|CONTRADICTION| AV
+     AW -->|MEANS_END| Z
+     AT -->|PART_WHOLE| AV
++    AU <-->|CIRCULAR| AV
++    AV <-->|CIRCULAR| AW
++    AW <-->|CIRCULAR| AU
+     
+     %% Философские влияния
+     AX -->|CAUSAL| A
+@@ -267,6 +282,7 @@
+     
+     %% Ключевые последователи
+     BM <-->|IMPLEMENTATION| A
++    BM -->|CAUSAL| C
+     BN -->|IMPLEMENTATION| A
+     BO -->|IMPLEMENTATION| A
+     
+@@ -276,11 +292,12 @@
+     BR <-->|CONTRADICTION| A
+     
+     %% Дополнительные связи концепций
+-    BS <-->|DIALECTICAL| A
++    BS <-->|IDENTITY| A
+     BT -->|CONCEPTUAL| BS
+     BU -->|MANIFESTATION| A
+     BV -->|CONCEPTUAL| A
+     BW -->|NECESSARY_CONDITION| A
++    BS -->|REFLEXIVE| BS
+     
+     %% Кино-концепции
+     BX <-->|DIALECTICAL| BY

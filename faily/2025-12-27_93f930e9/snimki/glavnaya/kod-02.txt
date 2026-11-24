@@ -1,0 +1,31 @@
+api-gateway/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js                        # Точка входа
+│   ├── config/
+│   │   └── config.js                   # Конфигурация
+│   ├── middleware/
+│   │   ├── auth.js                     # Middleware аутентификации
+│   │   ├── error-handler.js            # Обработка ошибок
+│   │   ├── rate-limiter.js             # Rate limiting
+│   │   └── logger.js                   # Логирование
+│   ├── routes/
+│   │   ├── index.js                    # Маршруты
+│   │   ├── auth.js                     # Маршруты аутентификации
+│   │   ├── concepts.js                 # Маршруты концепций
+│   │   ├── graphs.js                   # Маршруты графов
+│   │   ├── theses.js                   # Маршруты тезисов
+│   │   ├── synthesis.js                # Маршруты синтеза
+│   │   ├── claude.js                   # Маршруты Claude
+│   │   ├── name-analysis.js            # Маршруты анализа названий
+│   │   ├── origin.js                   # Маршруты происхождения
+│   │   ├── historical.js               # Маршруты исторического контекста
+│   │   ├── practical.js                # Маршруты практического применения
+│   │   ├── dialogue.js                 # Маршруты диалогов
+│   │   └── evolution.js                # Маршруты эволюции
+│   └── services/
+│       └── proxy.js                    # Прокси к микросервисам
+└── tests/
+    └── integration/                    # Интеграционные тесты

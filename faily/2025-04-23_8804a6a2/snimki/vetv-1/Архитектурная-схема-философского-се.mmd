@@ -1,0 +1,85 @@
+
+flowchart TD
+    %% Определение стилей
+    classDef database fill:#f5f5f5,stroke:#bbb,stroke-width:1px
+    classDef service fill:#e3f2fd,stroke:#90caf9,stroke-width:1px
+    classDef claudeAPI fill:#e8f5e9,stroke:#66bb6a,stroke-width:2px
+    classDef ui fill:#fff3e0,stroke:#ffb74d,stroke-width:2px
+    classDef user fill:#f5f5f5,stroke:#bdbdbd,stroke-width:2px
+    
+    %% Узлы - Claude API
+    Claude[Claude 3.7 API]
+    
+    %% Узлы - Базы данных
+    subgraph DB[Базы данных]
+        UserDB[(База пользователей)]
+        CategoryDB[(База философских\nкатегорий)]
+        RelationDB[(База связей)]
+        GraphDB[(База графов\nконцепций)]
+        ThesisDB[(База тезисов)]
+        SynthesisDB[(База синтезов)]
+        HistoricalDB[(База исторических\nконцепций)]
+    end
+    
+    %% Узлы - Сервисные модули
+    subgraph Services[Сервисные модули]
+        IntegrationService[Модуль интеграции\nс Claude]
+        GraphService[Сервис управления\nграфами]
+        ThesisService[Сервис генерации\nтезисов]
+        AnalyticsService[Сервис аналитики]
+        CacheService[Сервис кэширования]
+        SynthesisService[Сервис синтеза\nконцепций]
+        WeightService[Сервис управления\nвесами]
+        APIService[API сервис]
+    end
+    
+    %% Узлы - Пользовательский интерфейс и пользователь
+    UI[Пользовательский интерфейс]
+    User([Пользователь])
+    
+    %% Связи между базами данных и сервисами
+    UserDB --> IntegrationService
+    CategoryDB --> IntegrationService
+    RelationDB --> GraphService
+    GraphDB --> GraphService
+    ThesisDB --> ThesisService
+    SynthesisDB --> SynthesisService
+    HistoricalDB --> SynthesisService
+    
+    %% Связи между сервисами и Claude API
+    IntegrationService <--> Claude
+    ThesisService <--> Claude
+    SynthesisService <--> Claude
+    CacheService <--> Claude
+    
+    %% Связи между сервисами
+    IntegrationService --> GraphService
+    IntegrationService --> ThesisService
+    IntegrationService --> SynthesisService
+    GraphService --> ThesisService
+    GraphService --> SynthesisService
+    GraphService --> WeightService
+    ThesisService --> AnalyticsService
+    SynthesisService --> AnalyticsService
+    WeightService --> GraphService
+    WeightService --> SynthesisService
+    CacheService --> IntegrationService
+    APIService --> IntegrationService
+    APIService --> GraphService
+    APIService --> ThesisService
+    APIService --> SynthesisService
+    
+    %% Связи с пользовательским интерфейсом
+    APIService --> UI
+    UI <--> User
+    
+    %% Применение стилей
+    class UserDB,CategoryDB,RelationDB,GraphDB,ThesisDB,SynthesisDB,HistoricalDB database
+    class IntegrationService,GraphService,ThesisService,AnalyticsService,CacheService,SynthesisService,WeightService,APIService service
+    class Claude claudeAPI
+    class UI ui
+    class User user
+    
+    %% Определение названий для подграфов
+    DB:::database
+    Services:::service

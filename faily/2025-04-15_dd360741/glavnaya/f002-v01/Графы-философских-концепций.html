@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Графы философских концепций</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-data/7.1.4/vis-data.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .concept-container {
+            margin-bottom: 40px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .concept-title {
+            margin-top: 0;
+            color: #2c3e50;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .network {
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .legend {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 15px;
+            margin-bottom: 5px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            vertical-align: middle;
+            border-radius: 3px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            font-weight: bold;
+        }
+        .concept-container {
+            display: none;
+        }
+        .concept-container.active {
+            display: block;
+        }
+        .description {
+            margin: 15px 0;
+            line-height: 1.5;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Графы философских концепций</h1>
+        
+        <div class="tabs" id="conceptTabs">
+            <div class="tab active" data-concept="plato">Платон</div>
+            <div class="tab" data-concept="aristotle">Аристотель</div>
+            <div class="tab" data-concept="kant">Кант</div>
+            <div class="tab" data-concept="hegel">Гегель</div>
+            <div class="tab" data-concept="existentialism">Экзистенциализм</div>
+            <div class="tab" data-concept="phenomenology">Феноменология</div>
+            <div class="tab" data-concept="pragmatism">Прагматизм</div>
+            <div class="tab" data-concept="analytic">Аналитическая философия</div>
+            <div class="tab" data-concept="postmodern">Постмодернизм</div>
+        </div>
+        
+        <!-- Платон -->
+        <div class="concept-container active" id="plato">
+            <h2 class="concept-title">Платоновская концепция идей</h2>
+            <div class="description">
+                <p>Линейная структура с ответвлениями. В центре находится понятие Формы/Идеи как основание Бытия. Формы образуют иерархическую связь с Сущностью, которая связана с триадой: Истина, Красота, Благо. Материя противопоставлена Форме.</p>
+            </div>
+            <div id="platoNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #97C2FC;"></span>Онтологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #FB7E81;"></span>Эпистемологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #7BE141;"></span>Аксиологические категории</div>
+            </div>
+        </div>
+        
+        <!-- Аристотель -->
+        <div class="concept-container" id="aristotle">
+            <h2 class="concept-title">Аристотелевская концепция</h2>
+            <div class="description">
+                <p>Разветвленная структура, где Субстанция представляет единство Формы и Материи. Диалектическое единство Актуальности и Потенциальности. Сущность имеет иерархическую связь с Телеологией и причинную связь с Причинностью, которая связана с Необходимостью.</p>
+            </div>
+            <div id="aristotleNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #97C2FC;"></span>Онтологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #FFCA3A;"></span>Логические категории</div>
+            </div>
+        </div>
+        
+        <!-- Кант -->
+        <div class="concept-container" id="kant">
+            <h2 class="concept-title">Кантианская концепция</h2>
+            <div class="description">
+                <p>Разделение и синтез. Разум как основание для Знания и Этики. Эмпиризм и Рационализм дополняют друг друга через Интерпретацию, которая ведет к Знанию. Знание связано с понятиями Необходимости и Всеобщности. Свобода противопоставлена Необходимости.</p>
+            </div>
+            <div id="kantNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #FB7E81;"></span>Эпистемологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #7BE141;"></span>Аксиологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #FFCA3A;"></span>Логические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #6E6EFD;"></span>Антропологические категории</div>
+            </div>
+        </div>
+        
+        <!-- Гегель -->
+        <div class="concept-container" id="hegel">
+            <h2 class="concept-title">Гегелевская диалектика</h2>
+            <div class="description">
+                <p>Циклическая структура с триадой: Бытие → Ничто → Становление → Бытие. Диалектика как основной принцип, связанный с Разумом. История и Свобода эмерджентно возникают из диалектического процесса.</p>
+            </div>
+            <div id="hegelNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #97C2FC;"></span>Онтологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #FB7E81;"></span>Эпистемологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #FFCA3A;"></span>Логические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #6E6EFD;"></span>Антропологические категории</div>
+            </div>
+        </div>
+        
+        <!-- Экзистенциализм -->
+        <div class="concept-container" id="existentialism">
+            <h2 class="concept-title">Экзистенциализм</h2>
+            <div class="description">
+                <p>Сложная структура с центром в Свободе. Свобода как основание Бытия, связанная с Сознанием. Выбор (Воля) порождает Идентичность и Ответственность. Личность противопоставлена Обществу. Взаимосвязь Идентичности, Интерпретации и Свободы образует смысловое ядро экзистенциальной философии.</p>
+            </div>
+            <div id="existentialismNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #97C2FC;"></span>Онтологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #7BE141;"></span>Аксиологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #6E6EFD;"></span>Антропологические категории</div>
+            </div>
+        </div>
+        
+        <!-- Феноменология -->
+        <div class="concept-container" id="phenomenology">
+            <h2 class="concept-title">Феноменология</h2>
+            <div class="description">
+                <p>Радиальная структура с Сознанием и его интенциональностью в центре. Опыт порождает Интерпретацию и Понимание, которые дополняют друг друга. Язык — основа Интерпретации. Замкнутый круг между Интерпретацией и Сознанием.</p>
+            </div>
+            <div id="phenomenologyNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #97C2FC;"></span>Онтологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #FB7E81;"></span>Эпистемологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #6E6EFD;"></span>Антропологические категории</div>
+            </div>
+        </div>
+        
+        <!-- Прагматизм -->
+        <div class="concept-container" id="pragmatism">
+            <h2 class="concept-title">Прагматизм</h2>
+            <div class="description">
+                <p>Функциональная структура, где Опыт является основанием Истины. Истина связана с понятием Полезности и редуцируется к Верификации, которая ведет к Знанию. Циклическая связь: Знание → Действие → Опыт завершает прагматическую концепцию.</p>
+            </div>
+            <div id="pragmatismNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #FB7E81;"></span>Эпистемологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #7BE141;"></span>Аксиологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #6E6EFD;"></span>Антропологические категории</div>
+            </div>
+        </div>
+        
+        <!-- Аналитическая философия -->
+        <div class="concept-container" id="analytic">
+            <h2 class="concept-title">Аналитическая философия</h2>
+            <div class="description">
+                <p>Структурная сеть с Языком как основанием для Знания, Смысла и Истины. Логика — база для Языка, связанная с понятиями Необходимости и Возможности. Взаимосвязь между Истиной, Обоснованием и Знанием создает эпистемологическое ядро.</p>
+            </div>
+            <div id="analyticNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #FB7E81;"></span>Эпистемологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #FFCA3A;"></span>Логические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #6E6EFD;"></span>Антропологические категории</div>
+            </div>
+        </div>
+        
+        <!-- Постмодернизм -->
+        <div class="concept-container" id="postmodern">
+            <h2 class="concept-title">Постмодернизм</h2>
+            <div class="description">
+                <p>Децентрализованная сеть с переплетением Языка, Власти и Дискурса. Циклическая зависимость между Властью и Знанием. Плюрализм противопоставлен Всеобщности и является основанием для Дискурса. Деконструкция как диалектический инструмент связана с Языком.</p>
+            </div>
+            <div id="postmodernNetwork" class="network"></div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background-color: #FB7E81;"></span>Эпистемологические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #FFCA3A;"></span>Логические категории</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: #6E6EFD;"></span>Антропологические категории</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функция для создания графа
+        function createNetwork(container, nodes, edges) {
+            const data = {
+                nodes: nodes,
+                edges: edges
+            };
+            const options = {
+                nodes: {
+                    shape: 'box',
+                    margin: 10,
+                    widthConstraint: {
+                        maximum: 120
+                    },
+                    font: {
+                        size: 14
+                    }
+                },
+                edges: {
+                    arrows: {
+                        to: { enabled: true, scaleFactor: 1 }
+                    },
+                    font: {
+                        size: 12,
+                        align: 'middle'
+                    },
+                    length: 200
+                },
+                physics: {
+                    stabilization: true,
+                    barnesHut: {
+                        gravitationalConstant: -5000,
+                        springLength: 130,
+                        springConstant: 0.04
+                    }
+                },
+                layout: {
+                    improvedLayout: true
+                }
+            };
+            return new vis.Network(document.getElementById(container), data, options);
+        }
+
+        // Переключение вкладок
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Убрать активный класс со всех вкладок
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                // Добавить активный класс к текущей вкладке
+                tab.classList.add('active');
+                
+                // Скрыть все контейнеры концепций
+                document.querySelectorAll('.concept-container').forEach(c => c.classList.remove('active'));
+                // Показать контейнер, соответствующий выбранной вкладке
+                document.getElementById(tab.dataset.concept).classList.add('active');
+            });
+        });
+
+        // Категории по цветам
+        const categoryColors = {
+            ontological: "#97C2FC",    // Синий
+            epistemological: "#FB7E81", // Красный
+            axiological: "#7BE141",    // Зеленый
+            logical: "#FFCA3A",        // Желтый
+            anthropological: "#6E6EFD"  // Фиолетовый
+        };
+
+        // Платоновская концепция
+        const platoNodes = new vis.DataSet([
+            { id: 1, label: "Форма/Идея", color: categoryColors.ontological },
+            { id: 2, label: "Бытие", color: categoryColors.ontological },
+            { id: 3, label: "Сущность", color: categoryColors.ontological },
+            { id: 4, label: "Истина", color: categoryColors.epistemological },
+            { id: 5, label: "Красота", color: categoryColors.axiological },
+            { id: 6, label: "Благо", color: categoryColors.axiological },
+            { id: 7, label: "Материя", color: categoryColors.ontological },
+            { id: 8, label: "Природа", color: categoryColors.ontological },
+            { id: 9, label: "Знание", color: categoryColors.epistemological },
+            { id: 10, label: "Разум", color: categoryColors.epistemological }
+        ]);
+        
+        const platoEdges = new vis.DataSet([
+            { from: 1, to: 2, label: "Основание" },
+            { from: 1, to: 3, label: "Иерархия" },
+            { from: 3, to: 4, label: "Понятийная связь" },
+            { from: 3, to: 5, label: "Понятийная связь" },
+            { from: 3, to: 6, label: "Понятийная связь" },
+            { from: 7, to: 1, label: "Противоположность" },
+            { from: 7, to: 8, label: "Иерархия" },
+            { from: 9, to: 1, label: "Основание" },
+            { from: 10, to: 9, label: "Причинность" }
+        ]);
+        
+        createNetwork("platoNetwork", platoNodes, platoEdges);
+
+        // Аристотелевская концепция
+        const aristotleNodes = new vis.DataSet([
+            { id: 1, label: "Субстанция", color: categoryColors.ontological },
+            { id: 2, label: "Форма", color: categoryColors.ontological },
+            { id: 3, label: "Материя", color: categoryColors.ontological },
+            { id: 4, label: "Актуальность", color: categoryColors.ontological },
+            { id: 5, label: "Потенциальность", color: categoryColors.ontological },
+            { id: 6, label: "Сущность", color: categoryColors.ontological },
+            { id: 7, label: "Телеология", color: categoryColors.logical },
+            { id: 8, label: "Причинность", color: categoryColors.logical },
+            { id: 9, label: "Необходимость", color: categoryColors.logical }
+        ]);
+        
+        const aristotleEdges = new vis.DataSet([
+            { from: 1, to: 2, label: "Единство" },
+            { from: 1, to: 3, label: "Единство" },
+            { from: 2, to: 4, label: "Причинность" },
+            { from: 3, to: 5, label: "Причинность" },
+            { from: 4, to: 5, label: "Диалектическое единство" },
+            { from: 2, to: 6, label: "Основание" },
+            { from: 6, to: 7, label: "Иерархия" },
+            { from: 6, to: 8, label: "Причинность" },
+            { from: 8, to: 9, label: "Понятийная связь" }
+        ]);
+        
+        createNetwork("aristotleNetwork", aristotleNodes, aristotleEdges);
+
+        // Кантианская концепция
+        const kantNodes = new vis.DataSet([
+            { id: 1, label: "Разум", color: categoryColors.epistemological },
+            { id: 2, label: "Знание", color: categoryColors.epistemological },
+            { id: 3, label: "Этика", color: categoryColors.axiological },
+            { id: 4, label: "Эмпиризм", color: categoryColors.epistemological },
+            { id: 5, label: "Рационализм", color: categoryColors.epistemological },
+            { id: 6, label: "Интерпретация", color: categoryColors.anthropological },
+            { id: 7, label: "Необходимость", color: categoryColors.logical },
+            { id: 8, label: "Всеобщность", color: categoryColors.logical },
+            { id: 9, label: "Свобода", color: categoryColors.anthropological }
+        ]);
+        
+        const kantEdges = new vis.DataSet([
+            { from: 1, to: 2, label: "Основание" },
+            { from: 1, to: 3, label: "Основание" },
+            { from: 4, to: 5, label: "Дополнительность" },
+            { from: 4, to: 6, label: "Понятийная связь" },
+            { from: 5, to: 6, label: "Понятийная связь" },
+            { from: 6, to: 2, label: "Причинность" },
+            { from: 2, to: 7, label: "Понятийная связь" },
+            { from: 2, to: 8, label: "Понятийная связь" },
+            { from: 9, to: 3, label: "Основание" },
+            { from: 9, to: 7, label: "Противоположность" }
+        ]);
+        
+        createNetwork("kantNetwork", kantNodes, kantEdges);
+
+        // Гегелевская диалектика
+        const hegelNodes = new vis.DataSet([
+            { id: 1, label: "Бытие", color: categoryColors.ontological },
+            { id: 2, label: "Ничто", color: categoryColors.ontological },
+            { id: 3, label: "Становление", color: categoryColors.ontological },
+            { id: 4, label: "Диалектика", color: categoryColors.logical },
+            { id: 5, label: "Разум", color: categoryColors.epistemological },
+            { id: 6, label: "История", color: categoryColors.anthropological },
+            { id: 7, label: "Свобода", color: categoryColors.anthropological }
+        ]);
+        
+        const hegelEdges = new vis.DataSet([
+            { from: 1, to: 2, label: "Диалектическое единство" },
+            { from: 2, to: 3, label: "Диалектическое единство" },
+            { from: 3, to: 1, label: "Диалектическое единство" },
+            { from: 4, to: 1, label: "Основание" },
+            { from: 4, to: 2, label: "Основание" },
+            { from: 4, to: 3, label: "Основание" },
+            { from: 5, to: 4, label: "Причинность" },
+            { from: 6, to: 4, label: "Эмерджентность" },
+            { from: 7, to: 6, label: "Эмерджентность" }
+        ]);
+        
+        createNetwork("hegelNetwork", hegelNodes, hegelEdges);
+
+        // Экзистенциализм
+        const existentialismNodes = new vis.DataSet([
+            { id: 1, label: "Свобода", color: categoryColors.anthropological },
+            { id: 2, label: "Бытие", color: categoryColors.ontological },
+            { id: 3, label: "Сознание", color: categoryColors.anthropological },
+            { id: 4, label: "Выбор (Воля)", color: categoryColors.anthropological },
+            { id: 5, label: "Идентичность", color: categoryColors.anthropological },
+            { id: 6, label: "Ответственность (Этика)", color: categoryColors.axiological },
+            { id: 7, label: "Общество", color: categoryColors.anthropological },
+            { id: 8, label: "Личность", color: categoryColors.anthropological },
+            { id: 9, label: "Интерпретация", color: categoryColors.anthropological }
+        ]);
+        
+        const existentialismEdges = new vis.DataSet([
+            { from: 1, to: 2, label: "Основание" },
+            { from: 3, to: 1, label: "Основание" },
+            { from: 1, to: 4, label: "Причинность" },
+            { from: 4, to: 5, label: "Причинность" },
+            { from: 4, to: 6, label: "Причинность" },
+            { from: 7, to: 8, label: "Противоположность" },
+            { from: 8, to: 5, label: "Понятийная связь" },
+            { from: 5, to: 9, label: "Понятийная связь" },
+            { from: 5, to: 1, label: "Понятийная связь" }
+        ]);
+        
+        createNetwork("existentialismNetwork", existentialismNodes, existentialismEdges);
+
+        // Феноменология
+        const phenomenologyNodes = new vis.DataSet([
+            { id: 1, label: "Сознание", color: categoryColors.anthropological },
+            { id: 2, label: "Интенциональность", color: categoryColors.anthropological },
+            { id: 3, label: "Опыт (Эмпиризм)", color: categoryColors.epistemological },
+            { id: 4, label: "Интерпретация", color: categoryColors.anthropological },
+            { id: 5, label: "Понимание", color: categoryColors.epistemological },
+            { id: 6, label: "Язык", color: categoryColors.anthropological },
+            { id: 7, label: "Сущность", color: categoryColors.ontological }
+        ]);
+        
+        const phenomenologyEdges = new vis.DataSet([
+            { from: 1, to: 2, label: "Основание" },
+            { from: 2, to: 3, label: "Причинность" },
+            { from: 3, to: 4, label: "Причинность" },
+            { from: 3, to: 5, label: "Причинность" },
+            { from: 6, to: 4, label: "Основание" },
+            { from: 4, to: 5, label: "Дополнительность" },
+            { from: 7, to: 3, label: "Эмерджентность" },
+            { from: 4, to: 1, label: "Понятийная связь" }
+        ]);
+        
+        createNetwork("phenomenologyNetwork", phenomenologyNodes, phenomenologyEdges);
+
+        // Прагматизм
+        const pragmatismNodes = new vis.DataSet([
+            { id: 1, label: "Опыт (Эмпиризм)", color: categoryColors.epistemological },
+            { id: 2, label: "Истина", color: categoryColors.epistemological },
+            { id: 3, label: "Полезность (Ценность)", color: categoryColors.axiological },
+            { id: 4, label: "Верификация (Обоснование)", color: categoryColors.epistemological },
+            { id: 5, label: "Знание", color: categoryColors.epistemological },
+            { id: 6, label: "Действие (Воля)", color: categoryColors.anthropological },
+            { id: 7, label: "Благо", color: categoryColors.axiological }
+        ]);
+        
+        const pragmatismEdges = new vis.DataSet([
+            { from: 1, to: 2, label: "Основание" },
+            { from: 2, to: 3, label: "Понятийная связь" },
+            { from: 2, to: 4, label: "Редукция" },
+            { from: 4, to: 5, label: "Причинность" },
+            { from: 5, to: 6, label: "Причинность" },
+            { from: 6, to: 1, label: "Причинность" },
+            { from: 6, to: 3, label: "Причинность" },

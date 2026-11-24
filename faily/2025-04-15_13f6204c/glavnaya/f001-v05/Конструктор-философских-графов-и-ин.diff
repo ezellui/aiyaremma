@@ -1,0 +1,108 @@
+--- предыдущая/Конструктор-философских-графов-и-интерпретаций.html
++++ текущая/Конструктор-философских-графов-и-интерпретаций.html
+@@ -436,9 +436,17 @@
+               .attr("width", containerWidth)
+               .attr("height", containerHeight);
+             
++            // Создаем копию массивов узлов и связей для D3
++            const nodesCopy = JSON.parse(JSON.stringify(nodes));
++            const linksCopy = JSON.parse(JSON.stringify(links)).map(link => ({
++              source: link.source,
++              target: link.target,
++              type: link.type
++            }));
++            
+             // Создаем симуляцию сил для графа
+-            const simulation = d3.forceSimulation(nodes)
+-              .force("link", d3.forceLink(links).id(d => d.id).distance(150))
++            const simulation = d3.forceSimulation(nodesCopy)
++              .force("link", d3.forceLink(linksCopy).id(d => d.id).distance(150))
+               .force("charge", d3.forceManyBody().strength(-200))
+               .force("center", d3.forceCenter(containerWidth / 2, containerHeight / 2))
+               .force("collision", d3.forceCollide().radius(60));
+@@ -446,7 +454,7 @@
+             // Создаем группу для ссылок
+             const link = svg.append("g")
+               .selectAll("line")
+-              .data(links)
++              .data(linksCopy)
+               .join("line")
+               .attr("class", "link")
+               .attr("stroke", d => connectionTypeDict[d.type].color)
+@@ -458,7 +466,7 @@
+             // Создаем метки для ссылок (типов связей)
+             const linkLabels = svg.append("g")
+               .selectAll("text")
+-              .data(links)
++              .data(linksCopy)
+               .join("text")
+               .attr("class", "link-label")
+               .text(d => connectionTypeDict[d.type].name.substring(0, 12) + (connectionTypeDict[d.type].name.length > 12 ? "..." : ""))
+@@ -468,7 +476,7 @@
+             // Создаем группу для узлов
+             const node = svg.append("g")
+               .selectAll(".node")
+-              .data(nodes)
++              .data(nodesCopy)
+               .join("g")
+               .attr("class", d => "node" + (d.id === (selectedNode && selectedNode.id) ? " selected" : ""))
+               .on("click", handleNodeClick)
+@@ -495,7 +503,7 @@
+             // Обновляем позиции при движении симуляции
+             simulation.on("tick", () => {
+               // Ограничиваем перемещение узлов в пределах SVG
+-              nodes.forEach(d => {
++              nodesCopy.forEach(d => {
+                 d.x = Math.max(30, Math.min(containerWidth - 30, d.x));
+                 d.y = Math.max(30, Math.min(containerHeight - 30, d.y));
+               });
+@@ -890,8 +898,11 @@
+           // Функция для проверки наличия связи определенного типа между узлами
+           const hasLinkOfType = (nodeId1, nodeId2, linkType) => {
+             return links.some(link => 
+-              (link.source === nodeId1 && link.target === nodeId2 && link.type === linkType) ||
+-              (link.source === nodeId2 && link.target === nodeId1 && link.type === linkType)
++              ((link.source === nodeId1 && link.target === nodeId2) || 
++               (link.source === nodeId2 && link.target === nodeId1) ||
++               (link.source.id === nodeId1 && link.target.id === nodeId2) ||
++               (link.source.id === nodeId2 && link.target.id === nodeId1)) && 
++               link.type === linkType
+             );
+           };
+           
+@@ -1138,24 +1149,30 @@
+             if (!paradigm) return;
+             
+             // Очищаем текущий граф
+-            setNodes([]);
+-            setLinks([]);
+-            
+-            // Добавляем узлы парадигмы
++            setSelectedNode(null);
++            
++            // Создаем новые узлы на основе парадигмы
+             const newNodes = paradigm.nodes.map(nodeId => ({
+               id: nodeId,
+               name: categoryDict[nodeId].name
+             }));
+             
+-            // Добавляем связи парадигмы
++            // Создаем новые связи на основе парадигмы
+             const newLinks = paradigm.links.map(link => ({
+               source: link.source,
+               target: link.target,
+               type: link.type
+             }));
+             
++            // Обновляем состояние
+             setNodes(newNodes);
+             setLinks(newLinks);
++            
++            // Сразу обновляем выводы и название концепции
++            setTimeout(() => {
++              updateConclusions();
++              generateConceptName();
++            }, 100);
+           };
+           
+           // Функция для сброса графа

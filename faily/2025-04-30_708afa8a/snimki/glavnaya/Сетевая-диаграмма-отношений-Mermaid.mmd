@@ -1,0 +1,71 @@
+
+graph TB
+    title[<b>Сетевая диаграмма тоновых отношений</b>]
+    
+    %% 12 нот хроматической гаммы
+    C(("C"))
+    Db(("Db"))
+    D(("D"))
+    Eb(("Eb"))
+    E(("E"))
+    F(("F"))
+    Gb(("Gb"))
+    G(("G"))
+    Ab(("Ab"))
+    A(("A"))
+    Bb(("Bb"))
+    B(("B"))
+    
+    %% Целотоновые связи (2 полутона)
+    C -- "T" --> D
+    D -- "T" --> E
+    E -- "T" --> Gb
+    Gb -- "T" --> Ab
+    Ab -- "T" --> Bb
+    Bb -- "T" --> C
+    
+    Db -- "T" --> Eb
+    Eb -- "T" --> F
+    F -- "T" --> G
+    G -- "T" --> A
+    A -- "T" --> B
+    B -- "T" --> Db
+    
+    %% Квартовые связи (5 полутонов)
+    C -. "P4" .-> F
+    F -. "P4" .-> Bb
+    Bb -. "P4" .-> Eb
+    Eb -. "P4" .-> Ab
+    Ab -. "P4" .-> Db
+    Db -. "P4" .-> Gb
+    Gb -. "P4" .-> B
+    B -. "P4" .-> E
+    E -. "P4" .-> A
+    A -. "P4" .-> D
+    D -. "P4" .-> G
+    G -. "P4" .-> C
+    
+    %% Отображаем несколько примеров рядов
+    subgraph "Ряд 1: B1-Db2-Eb2"
+        B --- Db --- Eb
+    end
+    
+    subgraph "Ряд 6: C4-D4-E4"
+        C --- D --- E
+    end
+    
+    subgraph "Ряд 11: Db6-Eb6-F6"
+        Db --- Eb --- F
+    end
+    
+    style title fill:#f9f9f9,stroke:#333,stroke-width:1px
+    
+    classDef note fill:#f0f0f0,stroke:#333,stroke-width:2px,color:black
+    classDef row1 fill:#e6194B,color:white,stroke:#333
+    classDef row6 fill:#911eb4,color:white,stroke:#333
+    classDef row11 fill:#e6beff,color:black,stroke:#333
+    
+    class C,Db,D,Eb,E,F,Gb,G,Ab,A,Bb,B note
+    class B,Db,Eb row1
+    class C,D,E row6
+    class Db,Eb,F row11

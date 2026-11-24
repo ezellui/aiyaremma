@@ -1,0 +1,36 @@
+--- предыдущая/convert.py
++++ текущая/convert.py
+@@ -33,6 +33,9 @@
+ 
+ # статьи, у которых библиографию начинаем с новой страницы (она не влезает чуть-чуть)
+ BIBLIO_NEWPAGE = {'derrida', 'leibniz', 'levinas'}
++
++# статьи, у которых примечания начинаем с новой страницы
++NOTES_NEWPAGE = {'derrida'}
+ 
+ # ----- экранирование текста -----
+ UNI = {'\u00a0': '~', '§': r'\S{}', '↔': r'\(\leftrightarrow\)',
+@@ -164,11 +167,12 @@
+             out.append(render_children(c).strip() + '\\par\n')
+     return ''.join(out)
+ 
+-def render_notes(div):
++def render_notes(div, newpage=False):
+     h3 = div.find('h3')
+     label = h3.get_text().strip() if h3 else 'Примечания'
+     ol = div.find('ol')
+-    s = ['\\notessection{%s}\n\\begin{notelist}\n' % esc(label)]
++    s = (['\\clearpage\n'] if newpage else [])
++    s.append('\\notessection{%s}\n\\begin{notelist}\n' % esc(label))
+     for li in ol.find_all('li', recursive=False):
+         s.append('\\item ' + render_children(li).strip() + '\n')
+     s.append('\\end{notelist}\n')
+@@ -227,7 +231,7 @@
+         elif nm == 'div' and 'divider' in cls:
+             out.append(divider())
+         elif nm == 'div' and 'notes' in cls:
+-            out.append(render_notes(c))
++            out.append(render_notes(c, newpage=(key in NOTES_NEWPAGE)))
+         elif nm == 'div' and 'biblio' in cls:
+             out.append(render_biblio(c, newpage=(key in BIBLIO_NEWPAGE)))
+         elif nm == 'p' and 'colophon' in cls:

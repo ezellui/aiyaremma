@@ -1,0 +1,13 @@
+Connections {
+    string connection_id PK
+    string concept_id FK
+    string source_category_id FK
+    string target_category_id FK
+    string connection_type
+    string direction
+    string description
+    json tradition_concepts  -- Добавлено
+    json philosophers        -- Добавлено
+    datetime created_at
+    datetime last_modified
+}

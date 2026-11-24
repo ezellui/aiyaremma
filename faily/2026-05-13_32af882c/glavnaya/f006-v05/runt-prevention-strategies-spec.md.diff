@@ -1,0 +1,169 @@
+--- предыдущая/runt-prevention-strategies-spec.md
++++ текущая/runt-prevention-strategies-spec.md
+@@ -304,10 +304,28 @@
+ const COMPRESS_MIN_WS = 3;
+ 
+ function compressPenultimateLine(p, runt, measurerContent) {
++  // Инициализация общего лога фазы 0.5.
++  if (!window.__runtPreventionLog) window.__runtPreventionLog = [];
++
++  const logEntry = {
++    strategy: 'B',
++    pPreview: (p.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60),
++    lineCount: runt.lineCount,
++    lastLineWidth: Math.round(runt.lastLineWidth),
++    penultLineWidth: Math.round(runt.penultLineWidth),
++    widthFraction: +(runt.lastLineWidth / runt.penultLineWidth).toFixed(3),
++  };
++
+   // p должен быть в measurerContent (или элементе с layout'ом).
+   // Найдём все .ws на предпоследней строке.
+   const allWs = p.querySelectorAll('.ws');
+-  if (allWs.length < COMPRESS_MIN_WS) return false;
++  if (allWs.length < COMPRESS_MIN_WS) {
++    logEntry.result = 'refused';
++    logEntry.reason = 'too_few_ws_in_paragraph';
++    logEntry.wsTotalInP = allWs.length;
++    window.__runtPreventionLog.push(logEntry);
++    return false;
++  }
+ 
+   const targetY = runt.penultLineY;
+   const candidates = [];
+@@ -320,7 +338,14 @@
+     }
+   }
+ 
+-  if (candidates.length < COMPRESS_MIN_WS) return false;
++  logEntry.wsCandidates = candidates.length;
++
++  if (candidates.length < COMPRESS_MIN_WS) {
++    logEntry.result = 'refused';
++    logEntry.reason = 'too_few_ws_on_penult_line';
++    window.__runtPreventionLog.push(logEntry);
++    return false;
++  }
+ 
+   // Сохранить исходные --w (для отката) и переписать.
+   for (let i = 0; i < candidates.length; i++) {
+@@ -336,8 +361,11 @@
+ 
+   // Перемерим — runt исчез?
+   const lineCountAfter = countVisualLines(p);
++  logEntry.newLineCount = lineCountAfter;
+ 
+   if (lineCountAfter < runt.lineCount) {
++    logEntry.result = 'success';
++    window.__runtPreventionLog.push(logEntry);
+     return true;
+   }
+ 
+@@ -349,6 +377,9 @@
+       delete ws.dataset.w0;
+     }
+   }
++  logEntry.result = 'refused';
++  logEntry.reason = 'no_improvement';
++  window.__runtPreventionLog.push(logEntry);
+   return false;
+ }
+ 
+@@ -467,21 +498,43 @@
+ const HANG_SAFETY_PX = 4;
+ 
+ function applyRuntHang(p, runt, measurerContent) {
++  // Инициализация общего лога фазы 0.5 (доступен через window).
++  if (!window.__runtPreventionLog) window.__runtPreventionLog = [];
++
++  const logEntry = {
++    strategy: 'C',
++    pPreview: (p.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60),
++    lineCount: runt.lineCount,
++    lastLineWidth: Math.round(runt.lastLineWidth),
++    penultLineWidth: Math.round(runt.penultLineWidth),
++    widthFraction: +(runt.lastLineWidth / runt.penultLineWidth).toFixed(3),
++  };
++
+   // Найти DOM-range от начала runt-слова до конца <p>.
+   const tail = findRuntTailRange(p);
+-  if (!tail) return false;
+-
+-  // Шрифт-адаптивный лимит: определяем, в каком шрифте лежит runt-
+-  // строка, через computed font-family первого text-node-а внутри
+-  // tail-range.
++  if (!tail) {
++    logEntry.result = 'refused';
++    logEntry.reason = 'no_tail_target';
++    window.__runtPreventionLog.push(logEntry);
++    return false;
++  }
++
++  // Шрифт-адаптивный лимит.
+   const limit = getRuntHangLimit(tail);
++  logEntry.font = tail.fontHint;
++  logEntry.limit = limit;
+ 
+   const xPx = Math.round(runt.lastLineWidth + HANG_SAFETY_PX);
++  logEntry.xPx = xPx;
++
+   if (xPx > limit) {
++    logEntry.result = 'refused';
++    logEntry.reason = 'over_limit';
++    window.__runtPreventionLog.push(logEntry);
+     if (window.console) {
+       console.log('[runt-hang] refused: xPx=' + xPx +
+                   ' > limit=' + limit +
+-                  ' (font: ' + (tail.fontHint || '?') + ')');
++                  ' (font: ' + tail.fontHint + ')');
+     }
+     return false;
+   }
+@@ -493,22 +546,48 @@
+ 
+   try {
+     tail.range.surroundContents(span);
++    logEntry.wrapMethod = 'surround';
+   } catch (e) {
+     // Fallback: extract → wrap → reinsert.
+     const fragment = tail.range.extractContents();
+     span.appendChild(fragment);
+     tail.range.insertNode(span);
++    logEntry.wrapMethod = 'extract_fallback';
++  }
++
++  // Измеряем фактическую ширину runt-target (того, что попало в span).
++  // Это полезно для диагностики: если targetWidth заметно меньше
++  // lastLineWidth — значит, на runt-строке было не одно слово, и
++  // margin влияет только на финальный фрагмент.
++  const spanRects = Array.from(span.getClientRects()).filter(r => r.width > 0);
++  if (spanRects.length > 0) {
++    let maxW = 0;
++    for (const r of spanRects) if (r.width > maxW) maxW = r.width;
++    logEntry.targetWidth = Math.round(maxW);
+   }
+ 
+   // Перемерим (p всё ещё в measurer'е).
+   const newLineCount = countVisualLines(p);
++  logEntry.newLineCount = newLineCount;
+ 
+   if (newLineCount >= runt.lineCount) {
+     // Откат: развернуть span.
+     unwrapElement(span);
++    logEntry.result = 'refused';
++    logEntry.reason = 'no_improvement';
++    window.__runtPreventionLog.push(logEntry);
++    if (window.console) {
++      console.log('[runt-hang] refused: no_improvement' +
++                  ' (xPx=' + xPx +
++                  ', targetWidth=' + (logEntry.targetWidth || '?') +
++                  ', lineCount stayed at ' + newLineCount +
++                  ', font: ' + tail.fontHint + ')');
++    }
+     return false;
+   }
+ 
++  logEntry.result = 'success';
++  window.__runtPreventionLog.push(logEntry);
+   return true;
+ }
+ 

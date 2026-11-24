@@ -1,0 +1,15 @@
+[Runt Diagnostic]
+  Сводка:
+    Всего <p>: 87
+    Пропущено (skip): 12 [marginalia 8, rubric 2, theological 1, dropcap 1, no-runt-hang 0]
+    Eligible: 75
+    
+    ├─ Стратегия A (lastword-no-wbr): 62 слов помечено
+    ├─ Стратегия B (compression):    9 абзацев
+    ├─ Стратегия C (runt-hang):      4 абзацев
+    ├─ Без runt'а изначально:        58
+    └─ Остались runt'ы:              4 абзацев
+    
+  ▶ ✓ Стратегия C (runt-hang) — 4
+  ▶ ✓ Стратегия B (compression) — 9
+  ▶ ✗ Остались runt'ы — 4

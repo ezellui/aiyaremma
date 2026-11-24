@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Исследование функций комплексного переменного</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .template-section {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .visualization-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .visualization-tab {
+            flex-grow: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #eee;
+            border: 1px solid #ddd;
+        }
+        
+        .visualization-tab.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #canvas-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        .controls-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        
+        .control-group label {
+            margin-right: 5px;
+        }
+        
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        input[type="range"] {
+            width: 150px;
+        }
+        
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+        }
+        
+        .info-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #666;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Исследование функций комплексного переменного</h1>
+        
+        <div class="input-section">
+            <h2>Ввод функции</h2>
+            <div>
+                <input type="text" id="function-input" placeholder="Введите функцию комплексного переменного z, например: z^2, sin(z), e^z...">
+                <button id="visualize-btn">Визуализировать</button>
+            </div>
+            
+            <div class="template-section">
+                <h3>Шаблоны функций</h3>
+                <select id="function-templates" onchange="applyTemplate()">
+                    <option value="">Выберите шаблон...</option>
+                    <option value="z^2">z^2 (квадратичная функция)</option>
+                    <option value="z^3">z^3 (кубическая функция)</option>
+                    <option value="1/z">1/z (обратная функция)</option>
+                    <option value="e^z">e^z (экспонента)</option>
+                    <option value="sin(z)">sin(z) (синус)</option>
+                    <option value="cos(z)">cos(z) (косинус)</option>
+                    <option value="z^2 - 1">z^2 - 1</option>
+                    <option value="1/(z^2 + 1)">1/(z^2 + 1)</option>
+                    <option value="log(z)">log(z) (натуральный логарифм)</option>
+                    <option value="sqrt(z)">sqrt(z) (квадратный корень)</option>
+                    <option value="z^4 - 1">z^4 - 1 (полином 4 степени)</option>
+                    <option value="z/(z^2+1)">z/(z^2+1)</option>
+                    <option value="tan(z)">tan(z) (тангенс)</option>
+                </select>
+            </div>
+            
+            <div class="controls-container">
+                <div class="control-group">
+                    <label for="zoom-range">Масштаб:</label>
+                    <input type="range" id="zoom-range" min="0.5" max="5" step="0.1" value="1">
+                    <span id="zoom-value">1.0</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="center-x">Центр X:</label>
+                    <input type="number" id="center-x" value="0" step="0.5">
+                </div>
+                
+                <div class="control-group">
+                    <label for="center-y">Центр Y:</label>
+                    <input type="number" id="center-y" value="0" step="0.5">
+                </div>
+                
+                <div class="control-group">
+                    <button id="reset-view-btn">Сбросить вид</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="visualization-controls">
+            <div class="visualization-tab active" data-method="domain-coloring">Domain Coloring</div>
+            <div class="visualization-tab" data-method="conformal-mapping">Конформные отображения</div>
+            <div class="visualization-tab" data-method="vector-field">Векторные поля</div>
+            <div class="visualization-tab" data-method="real-imag">Действительная и мнимая части</div>
+        </div>
+        
+        <div id="canvas-container">
+            <canvas id="visualization-canvas"></canvas>
+            <div class="loading" id="loading-indicator">Визуализация...</div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>Информация о текущей визуализации</h3>
+            <p id="visualization-info">
+                Выберите функцию и метод визуализации чтобы увидеть результат.
+            </p>
+            <div id="method-info">
+                <h4>Domain Coloring</h4>
+                <p>
+                    Метод Domain Coloring использует цвет для представления значений комплексной функции f(z).
+                    Оттенок (hue) представляет аргумент числа (угол в полярной форме), а яркость представляет модуль.
+                    Раскраска происходит на комплексной плоскости, где оси X и Y соответствуют действительной и мнимой частям переменной z.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/math.js/11.8.0/math.min.js"></script>
+    <script>
+        // Устанавливаем размер холста по размеру контейнера
+        const canvas = document.getElementById('visualization-canvas');
+        const container = document.getElementById('canvas-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        
+        // Контекст для рисования
+        const ctx = canvas.getContext('2d');
+        
+        // Параметры отображения
+        let zoomLevel = 1;
+        let centerX = 0;
+        let centerY = 0;
+        let currentFunction = null;
+        
+        function resizeCanvas() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // Перерисовываем после изменения размера, если функция уже задана
+            if (currentFunction) {
+                visualizeFunction();
+            }
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // Обновление информации о масштабе
+        document.getElementById('zoom-range').addEventListener('input', function() {
+            zoomLevel = parseFloat(this.value);
+            document.getElementById('zoom-value').textContent = zoomLevel.toFixed(1);
+            
+            if (currentFunction) {
+                visualizeFunction();
+            }
+        });
+        
+        // Обновление центра X
+        document.getElementById('center-x').addEventListener('change', function() {
+            centerX = parseFloat(this.value) || 0;
+            if (currentFunction) {
+                visualizeFunction();
+            }
+        });
+        
+        // Обновление центра Y
+        document.getElementById('center-y').addEventListener('change', function() {
+            centerY = parseFloat(this.value) || 0;
+            if (currentFunction) {
+                visualizeFunction();
+            }
+        });
+        
+        // Сброс представления
+        document.getElementById('reset-view-btn').addEventListener('click', function() {
+            zoomLevel = 1;
+            centerX = 0;
+            centerY = 0;
+            
+            document.getElementById('zoom-range').value = zoomLevel;
+            document.getElementById('zoom-value').textContent = zoomLevel.toFixed(1);
+            document.getElementById('center-x').value = centerX;
+            document.getElementById('center-y').value = centerY;
+            
+            if (currentFunction) {
+                visualizeFunction();
+            }
+        });
+        
+        // Применение выбранного шаблона
+        function applyTemplate() {
+            const selectElement = document.getElementById('function-templates');
+            const functionInput = document.getElementById('function-input');
+            
+            if (selectElement.value) {
+                functionInput.value = selectElement.value;
+            }
+        }
+        
+        // Выбор метода визуализации
+        const tabs = document.querySelectorAll('.visualization-tab');
+        let currentMethod = 'domain-coloring';
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentMethod = this.getAttribute('data-method');
+                
+                // Обновляем описание метода
+                updateMethodInfo(currentMethod);
+                
+                // Если функция уже введена, перерисовываем с новым методом
+                if (currentFunction) {
+                    visualizeFunction();
+                }
+            });
+        });
+        
+        // Обновление информации о методе
+        function updateMethodInfo(method) {
+            const methodInfoElement = document.getElementById('method-info');
+            let content = '';
+            
+            switch (method) {
+                case 'domain-coloring':
+                    content = `
+                        <h4>Domain Coloring</h4>
+                        <p>
+                            Метод Domain Coloring использует цвет для представления значений комплексной функции f(z).
+                            Оттенок (hue) представляет аргумент числа (угол в полярной форме), а яркость представляет модуль.
+                            Раскраска происходит на комплексной плоскости, где оси X и Y соответствуют действительной и мнимой частям переменной z.
+                        </p>
+                    `;
+                    break;
+                case 'conformal-mapping':
+                    content = `
+                        <h4>Конформные отображения</h4>
+                        <p>
+                            Визуализация конформных отображений показывает, как функция трансформирует регулярную сетку на исходной плоскости.
+                            Это помогает увидеть, как функция искажает пространство, сохраняя при этом углы между пересекающимися кривыми.
+                        </p>
+                    `;
+                    break;
+                case 'vector-field':
+                    content = `
+                        <h4>Векторные поля</h4>
+                        <p>
+                            Представление комплексной функции как векторного поля, где каждая точка комплексной плоскости 
+                            порождает вектор, соответствующий значению функции в этой точке. Направление вектора соответствует
+                            аргументу, а длина - модулю комплексного числа.
+                        </p>
+                    `;
+                    break;
+                case 'real-imag':
+                    content = `
+                        <h4>Действительная и мнимая части</h4>
+                        <p>
+                            Раздельное отображение действительной (Re) и мнимой (Im) частей комплексной функции f(z).
+                            Обычно используется цветовая карта, где положительные значения представлены красным,
+                            а отрицательные - синим, с интенсивностью, зависящей от абсолютного значения.
+                        </p>
+                    `;
+                    break;
+            }
+            
+            methodInfoElement.innerHTML = content;
+        }
+        
+        // Обработка нажатия на кнопку визуализации
+        document.getElementById('visualize-btn').addEventListener('click', function() {
+            const functionExpression = document.getElementById('function-input').value.trim();
+            if (!functionExpression) {
+                alert('Пожалуйста, введите функцию комплексного переменного.');
+                return;
+            }
+            
+            try {
+                // Тестовый парсинг для проверки корректности
+                const testExpr = functionExpression.replace(/z/g, '(1+1i)');
+                math.evaluate(testExpr);
+                
+                // Если дошли до этой точки без ошибок, значит функция корректна
+                currentFunction = functionExpression;
+                visualizeFunction();
+            }
+            catch (e) {
+                alert('Ошибка в выражении функции: ' + e.message);
+            }
+        });
+        
+        // Функция визуализации
+        function visualizeFunction() {
+            if (!currentFunction) return;
+            
+            const infoElement = document.getElementById('visualization-info');
+            infoElement.textContent = `Визуализация функции f(z) = ${currentFunction} методом: ${currentMethod}`;
+            
+            // Показываем индикатор загрузки
+            loadingIndicator.style.display = 'block';
+            
+            // Используем setTimeout, чтобы дать браузеру время отобразить индикатор загрузки
+            setTimeout(() => {
+                try {
+                    switch (currentMethod) {
+                        case 'domain-coloring':
+                            visualizeDomainColoring(currentFunction);
+                            break;
+                        case 'conformal-mapping':
+                            // Функция будет добавлена позже
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.font = '20px Arial';
+                            ctx.fillStyle = '#333';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('Конформные отображения (будет реализовано)', canvas.width / 2, canvas.height / 2);
+                            break;
+                        case 'vector-field':
+                            // Функция будет добавлена позже
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.font = '20px Arial';
+                            ctx.fillStyle = '#333';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('Векторные поля (будет реализовано)', canvas.width / 2, canvas.height / 2);
+                            break;
+                        case 'real-imag':
+                            // Функция будет добавлена позже
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.font = '20px Arial';
+                            ctx.fillStyle = '#333';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('Действительная и мнимая части (будет реализовано)', canvas.width / 2, canvas.height / 2);
+                            break;
+                    }
+                }
+                catch (e) {
+                    alert('Ошибка при визуализации: ' + e.message);
+                    console.error(e);
+                }
+                finally {
+                    // Скрываем индикатор загрузки
+                    loadingIndicator.style.display = 'none';
+                }
+            }, 50);
+        }
+        
+        // Парсинг и вычисление комплексной функции
+        function evaluateComplexFunction(funcExpr, z) {
+            try {
+                // Заменяем переменную z на комплексное число
+                const expr = funcExpr.replace(/z/g, `(${z.re}+${z.im}i)`);
+                return math.evaluate(expr);
+            }
+            catch (e) {
+                console.error('Ошибка вычисления функции:', e);
+                return math.complex(0, 0);
+            }
+        }
+        
+        // Функция для преобразования HSL в RGB
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l; // оттенок серого
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+        
+        // Визуализация методом Domain Coloring
+        function visualizeDomainColoring(funcExpr) {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Создаем буфер для данных изображения
+            const imageData = ctx.createImageData(width, height);
+            const data = imageData.data;
+            
+            // Параметры области отображения
+            const aspectRatio = width / height;
+            const rangeY = 4 / zoomLevel;
+            const rangeX = rangeY * aspectRatio;
+            
+            // Масштабирование и центрирование
+            const minX = centerX - rangeX / 2;
+            const maxX = centerX + rangeX / 2;
+            const minY = centerY - rangeY / 2;
+            const maxY = centerY + rangeY / 2;
+            
+            // Шаг между пикселями в координатах комплексной плоскости
+            const stepX = (maxX - minX) / width;
+            const stepY = (maxY - minY) / height;
+            
+            // Заполняем данные изображения
+            for (let y = 0; y < height; y++) {
+                const imag = maxY - y * stepY; // инвертируем Y для правильной ориентации
+                
+                for (let x = 0; x < width; x++) {
+                    const real = minX + x * stepX;
+                    
+                    // Создаем комплексное число z = x + yi
+                    const z = math.complex(real, imag);
+                    
+                    // Вычисляем значение функции f(z)
+                    const result = evaluateComplexFunction(funcExpr, z);
+                    
+                    // Получаем аргумент (угол) и модуль
+                    const arg = Math.atan2(result.im, result.re);
+                    const magnitude = Math.sqrt(result.re * result.re + result.im * result.im);
+                    
+                    // Нормализуем аргумент для HSL (0-1 вместо -PI до PI)
+                    const hue = (arg + Math.PI) / (2 * Math.PI);
+                    
+                    // Преобразуем модуль для насыщенности и яркости
+                    // Используем логарифмическую шкалу для лучшего отображения
+                    const logMagnitude = Math.log(1 + magnitude) / Math.log(100);
+                    const scaledMagnitude = Math.min(logMagnitude, 1);
+                    
+                    // Яркость зависит от модуля (с периодическими кольцами)
+                    let lightness = 0.5 + 0.4 * Math.sin(Math.PI * scaledMagnitude * 10) * Math.exp(-scaledMagnitude);
+                    
+                    // Добавляем кольца по модулю для лучшей визуализации
+                    const rings = 0.1 * Math.sin(Math.PI * 2 * magnitude);
+                    lightness += rings;
+                    
+                    // Конвертируем HSL в RGB
+                    const [r, g, b] = hslToRgb(hue, 1.0, lightness);
+                    
+                    // Индекс для текущего пикселя в буфере данных (4 байта на пиксель: R,G,B,A)
+                    const index = (y * width + x) * 4;
+                    
+                    // Заполняем данные цвета
+                    data[index] = r;     // R
+                    data[index + 1] = g; // G
+                    data[index + 2] = b; // B
+                    data[index + 3] = 255; // A (полная непрозрачность)
+                }
+            }
+            
+            // Отображаем результат
+            ctx.putImageData(imageData, 0, 0);
+            
+            // Добавляем оси координат
+            drawAxes(minX, maxX, minY, maxY);
+        }
+        
+        // Функция для отображения осей координат
+        function drawAxes(minX, maxX, minY, maxY) {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Находим положение осей
+            const xAxisY = height - (0 - minY) * height / (maxY - minY);
+            const yAxisX = (0 - minX) * width / (maxX - minX);
+            
+            ctx.save();
+            
+            // Рисуем оси
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 1;
+            
+            // Ось X
+            if (xAxisY >= 0 && xAxisY <= height) {
+                ctx.beginPath();
+                ctx.moveTo(0, xAxisY);
+                ctx.lineTo(width, xAxisY);
+                ctx.stroke();
+            }
+            
+            // Ось Y
+            if (yAxisX >= 0 && yAxisX <= width) {
+                ctx.beginPath();
+                ctx.moveTo(yAxisX, 0);
+                ctx.lineTo(yAxisX, height);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+        
+        // Инициализация интерфейса
+        updateMethodInfo(currentMethod);
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+ "_note": "Serien des Nachlasses: Zusammenstellung nach den Titeln der Einheiten in der BEE und nach ihrer Einleitung (Nachlass structure and editing). Entwurf — Reihenfolge und Umfang bitte prüfen. 'items' in Lesereihenfolge; 'ranges' (optional) legt für ineinander verschachtelte Texte Seitenfolgen fest.",
+ "series": [
+  {"id": "kriegstagebuecher", "title": "Notizbücher 1914–1916", "items": ["101", "102", "103"],
+   "about": "Die drei Notizbücher der Kriegszeit; Bemerkungen (recto) und verschlüsseltes Tagebuch (verso)."},
+  {"id": "prototractatus", "title": "Prototractatus", "items": ["104"]},
+  {"id": "tractatus-ts", "title": "Logisch-Philosophische Abhandlung, Typoskripte", "items": ["202", "203", "204"]},
+  {"id": "notes-on-logic", "title": "Notes on Logic; Diktat für Moore", "items": ["201a1", "201a2", "301"]},
+  {"id": "baende-i-xviii", "title": "Bände I–XVIII", "items": ["105", "106", "107", "108", "109", "110", "111", "112", "113", "114", "115", "116", "117", "118", "119", "120", "121", "122"],
+   "about": "Von Wittgenstein mit römischen Ziffern gezählte Bände. MS 105/106: der Text läuft durch die Recto-Seiten von 105 und 106, dann durch die Verso-Seiten von 106 und 105; MS 107 und 108 sind ineinander verschränkt (siehe Einleitung der BEE)."},
+  {"id": "baende-a-s", "title": "Bände der Reihe A–S", "items": ["123", "124", "125", "126", "127", "128", "129", "130", "131", "132", "133", "134", "135", "136", "137", "138"],
+   "about": "Laut Einleitung der BEE: MSS 123–138, Reste einer alphabetisch gezählten Reihe."},
+  {"id": "philosophische-bemerkungen-ts", "title": "Typoskripte der frühen 1930er Jahre", "items": ["208", "209", "210", "211", "212", "213", "214a", "214b", "214c", "215a", "215b", "215c", "216", "217", "218", "219"],
+   "about": "TS 208 (aus 105–108), 210 (zweite Hälfte von 108), 211/212 (aus 109–114) und das „Big Typescript“ 213 mit den Aufsätzen 214–218."},
+  {"id": "blue-brown", "title": "Blaues und Braunes Buch", "items": ["309", "310", "141"]},
+  {"id": "untersuchungen", "title": "Philosophische Untersuchungen: Fassungen", "items": ["142", "220", "221", "225", "226", "239", "237", "238", "240", "242", "227a", "227b", "243", "144"],
+   "about": "Vorkriegsfassung (142, 220, 221, Vorwort 225, Übersetzung 226, Bearbeitungen 237–240), Zwischenfassung (242), Endfassung (227a/b, Vorwort 243), Reinschrift des II. Teils (144)."},
+  {"id": "bemerkungen-i-ii", "title": "Bemerkungen I und II", "items": ["228", "229", "230", "231", "244", "245", "182"]},
+  {"id": "zettel", "title": "Zettel", "items": ["233a", "233b"]},
+  {"id": "grosse-notizbuecher", "title": "Große Notizbücher C1–C8", "items": ["145", "146", "147", "148", "149", "150", "151", "152"]},
+  {"id": "ethik", "title": "Vortrag über Ethik", "items": ["139a", "139b", "207"]},
+  {"id": "schlick", "title": "Diktate für Schlick", "items": ["302", "303", "304", "305", "306"]}
+ ]
+}

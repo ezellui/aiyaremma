@@ -1,0 +1,26 @@
+claude-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── postgres-connection.js
+│   │   └── migrations/
+│   │       └── 001_create_interactions.sql
+│   ├── models/
+│   │   └── ClaudeInteraction.js
+│   ├── controllers/
+│   │   └── claude.controller.js
+│   ├── services/
+│   │   ├── claude.service.js
+│   │   ├── request-formatter.service.js  # Из claude-requests.js
+│   │   ├── queue.service.js              # RabbitMQ
+│   │   └── api-key-resolver.service.js   # Определение ключа API
+│   ├── routes/
+│   │   └── claude.routes.js
+│   └── workers/
+│       └── claude.worker.js              # Обработчик очереди
+└── tests/

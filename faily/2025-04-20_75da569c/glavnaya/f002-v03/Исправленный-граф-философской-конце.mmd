@@ -1,0 +1,84 @@
+
+graph TD
+    %% Определение узлов (категорий)
+    Sing["Сингулярность"]
+    Mult["Множественность"]
+    Dif["Различие"]
+    Rep["Повторение"]
+    Virt["Виртуальное"]
+    Act["Актуальное"]
+    Becom["Становление"]
+    
+    %% Второстепенные категории
+    Pot["Потенция"]
+    Ent["Энтелехия"]
+    Whole["Целое"]
+    One["Единое"]
+    Time["Время"]
+    Space["Пространство"]
+    Int["Интенсивность"]
+    Cont["Контингентность"]
+    Imm["Имманентное"]
+    Trans["Трансцендентное"]
+    Rhiz["Ризома"]
+    Struct["Структура"]
+    Sign["Знак"]
+    Mean["Значение"]
+    
+    %% Связи центральных категорий
+    Mult <-->|"Диалектическое противоречие"| Sing
+    
+    Dif -->|"Конституирующая"| Mult
+    Mult -->|"Конституирующая"| Rep
+    
+    Dif -->|"Дополнение"| Sing
+    Rep -->|"Дополнение"| Sing
+    
+    Virt <-->|"Становление"| Sing
+    Act <-->|"Становление"| Sing
+    
+    Virt -->|"Причинность"| Becom
+    Act -->|"Причинность"| Becom
+    
+    Sing -->|"Репрезентационная"| Becom
+    
+    Dif -->|"Эволюционная"| Virt
+    Rep -->|"Эволюционная"| Act
+    
+    %% Связи второстепенных категорий
+    Pot -->|"Телеологическая"| Virt
+    Ent -->|"Телеологическая"| Act
+    
+    Int -->|"Феноменологическая"| Imm
+    Cont -->|"Феноменологическая"| Trans
+    
+    Whole -->|"Конституирующая"| Time
+    One -->|"Конституирующая"| Space
+    
+    Rhiz -->|"Герменевтическая"| Whole
+    Struct -->|"Иерархическая"| One
+    
+    Time <-->|"Дополнение"| Space
+    
+    Sign -->|"Репрезентационная"| Time
+    Mean -->|"Репрезентационная"| Space
+    
+    Sign -->|"Аксиологическая"| Whole
+    
+    Imm -->|"Причинность"| Becom
+    Trans -->|"Причинность"| Becom
+    
+    Becom <-->|"Диалектическое противоречие"| Imm
+    Becom <-->|"Диалектическое противоречие"| Trans
+    
+    %% Определение стилей через class (вместо :::)
+    class Sing central
+    class Mult,Dif,Rep,Virt,Act,Becom primary
+    class Pot,Ent,Whole,One,Int,Cont secondary
+    class Time,Space,Imm,Trans,Rhiz,Struct,Sign,Mean tertiary
+    
+    %% Стили для категорий
+    classDef central fill:#FFD700,stroke:#000,stroke-width:2px,font-weight:bold
+    classDef primary fill:#FF9966,stroke:#000,stroke-width:1.5px
+    classDef secondary fill:#DDDDDD,stroke:#000
+    classDef tertiary fill:#CCFFFF,stroke:#000

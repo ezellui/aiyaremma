@@ -2,12 +2,9 @@
 
 const select = id => document.getElementById(id);
 const root = document.body.dataset.root;
+const cacheKey = document.body.dataset.build;
+const assetUrl = path => root + path + (cacheKey ? '?v=' + cacheKey : '');
 const normalize = text => text.toLocaleLowerCase('ru').replace(/ё/g, 'е');
-const loadedBlobs = new Map();
-const blobRequests = new Map();
-
-window.storeArchiveBlob = (key, encoded) => loadedBlobs.set(key, encoded);
-
 function loadScript(url) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
@@ -18,21 +15,34 @@ function loadScript(url) {
   });
 }
 
-function loadBlob(key) {
-  if (!blobRequests.has(key)) {
-    blobRequests.set(key, loadScript(root + 'data/blobs/' + key + '.js').then(() => {
-      const encoded = loadedBlobs.get(key);
-      if (encoded === undefined) throw new Error('Файл данных повреждён');
-      return Uint8Array.from(atob(encoded), char => char.charCodeAt(0));
-    }).catch(error => { blobRequests.delete(key); throw error; }));
-  }
-  return blobRequests.get(key);
-}
-
 function setupCatalog() {
   const data = window.catalogData;
   const list = select('catalog');
-  const rows = new Map([...list.children].map(item => [item.dataset.id,item]));
+  const rows = new Map();
+  for (const row of data) {
+    const item = document.createElement('li');
+    item.className = 'catalog-row';
+    item.dataset.id = row.id;
+    const date = document.createElement('time');
+    date.textContent = row.date;
+    const text = document.createElement('div');
+    const link = document.createElement('a');
+    link.className = 'chat-title';
+    link.href = row.url;
+    link.textContent = row.title;
+    text.append(link);
+    if (row.preview) {
+      const snippet = document.createElement('p');
+      snippet.className = 'snippet';
+      snippet.textContent = row.preview;
+      text.append(snippet);
+    }
+    const count = document.createElement('span');
+    count.className = 'row-count';
+    count.textContent = row.branches + ' в. · ' + row.files + ' ф.';
+    item.append(date,text,count);
+    rows.set(row.id,item);
+  }
   const query = select('query');
   const month = select('month');
   const sort = select('sort');
@@ -59,7 +69,7 @@ function setupCatalog() {
     range.sort((a,b) => sort.value==='old' ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date));
     if (!term) { render(range); return; }
     if (!searchPromise) {
-      searchPromise = loadScript('data/search.js').then(() => {
+      searchPromise = loadScript(assetUrl('data/search.js')).then(() => {
         const corpus = new Map();
         for (const row of data) corpus.set(row.id,normalize(window.archiveSearch[row.id] || ''));
         delete window.archiveSearch;
@@ -79,8 +89,7 @@ function setupCatalog() {
   refresh();
 }
 
-function setupConversation() {
-  const data = window.conversationData;
+function setupConversation(data) {
   const picker = select('branch');
   const messages = select('messages');
   const nodes = new Map([...messages.children].map(node => [node.id.slice(2),node]));
@@ -94,58 +103,163 @@ function setupConversation() {
   const showDiff = select('show-diff');
   const code = select('viewer-code');
   const state = select('viewer-state');
+  const download = select('download-file');
+  const showRaw = select('show-raw');
+  let previewRequest;
+  let imageUrl;
+  let markdownPromise;
   let active = data.branches[0];
   let versions = [];
   let mode = 'source';
-  let viewRequest = 0;
   const extension = name => name.split('.').length > 1 ? name.split('.').pop().toUpperCase() : 'ФАЙЛ';
   const formatSize = value => new Intl.NumberFormat('ru',{maximumFractionDigits:1}).format(value/1024) + ' КБ';
   const branchName = id => id ? 'Ветвь ' + id : 'Главная ветвь';
 
+  const escapeHtml = text => text.replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[ch]);
+
+  async function renderMarkdown(text) {
+    markdownPromise ??= loadScript(assetUrl('assets/marked.js')).catch(() => null);
+    await markdownPromise;
+    const library = window.marked;
+    if (!library) return null;
+    const renderer = new library.Renderer();
+    renderer.html = ({text}) => escapeHtml(text);
+    renderer.image = ({text}) => '<span>[Изображение: ' + escapeHtml(text || 'без подписи') + ']</span>';
+    renderer.link = function ({href,tokens}) {
+      const caption = this.parser.parseInline(tokens);
+      return /^https?:\/\//i.test(href)
+        ? '<a target="_blank" rel="noopener noreferrer" href="' + escapeHtml(href) + '">' + caption + '</a>'
+        : caption;
+    };
+    return library.marked.parse(text,{renderer,gfm:true});
+  }
+
   function setMode(value) {
-    mode=value;
-    showSource.setAttribute('aria-pressed',String(value==='source'));
-    showDiff.setAttribute('aria-pressed',String(value==='diff'));
+    mode = value;
     renderVersion();
   }
 
-  async function renderVersion() {
-    const v = versions[Number(pickerVersion.value)];
-    const current = ++viewRequest;
-    if (!v) return;
-    select('viewer-title').textContent=v.name;
-    select('viewer-info').textContent=v.source + ' · ' + formatSize(v.size);
-    showDiff.disabled = !v.previous;
-    if (mode==='diff' && !v.previous) {
-      mode='source';
-      showSource.setAttribute('aria-pressed','true');
-      showDiff.setAttribute('aria-pressed','false');
-    }
-    code.classList.toggle('diff',mode==='diff');
+  function clearPreview() {
     code.replaceChildren();
-    if (mode==='diff' && !v.diff) {
-      state.textContent='Предпросмотр изменений для этой версии недоступен. Обе версии можно скачать.';
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
+    imageUrl = undefined;
+  }
+
+  function insertText(text, diff) {
+    const pre = document.createElement('pre');
+    if (!diff) pre.textContent = text;
+    else {
+      const classes = {'+':'diff-add','-':'diff-remove','@':'diff-hunk'};
+      const lines = document.createDocumentFragment();
+      for (const line of text.split('\n')) {
+        const span = document.createElement('span');
+        span.className = classes[line[0]] || '';
+        span.textContent = line + '\n';
+        lines.append(span);
+      }
+      pre.append(lines);
+    }
+    code.append(pre);
+  }
+
+  async function readText(response) {
+    const cap = 500_000;
+    if (!response.body || typeof response.body.getReader !== 'function') {
+      const data = new Uint8Array(await response.arrayBuffer());
+      return {bytes:data.subarray(0,cap),limited:data.length > cap};
+    }
+    const reader = response.body.getReader();
+    const bytes = new Uint8Array(cap);
+    let count = 0;
+    while (true) {
+      const {done,value} = await reader.read();
+      if (done) break;
+      const used = Math.min(value.length, cap-count);
+      bytes.set(value.subarray(0,used),count);
+      count += used;
+      if (used < value.length) {
+        await reader.cancel();
+        return {bytes,limited:true};
+      }
+    }
+    return {bytes:bytes.subarray(0,count),limited:false};
+  }
+
+  async function renderVersion() {
+    const version = versions[Number(pickerVersion.value)];
+    if (!version) return;
+    if (previewRequest) previewRequest.abort();
+    const request = new AbortController();
+    previewRequest = request;
+    clearPreview();
+    const format = extension(version.name);
+    const markdown = /^(MD|MARKDOWN)$/.test(format);
+    if ((mode === 'diff' && !version.previous) || (mode === 'raw' && !markdown)) mode = 'source';
+    showSource.setAttribute('aria-pressed',String(mode === 'source'));
+    showRaw.setAttribute('aria-pressed',String(mode === 'raw'));
+    showRaw.hidden = !markdown;
+    showDiff.setAttribute('aria-pressed',String(mode === 'diff'));
+    showDiff.disabled = !version.previous;
+    select('viewer-title').textContent = version.name;
+    select('viewer-info').textContent = version.source + ' · ' + formatSize(version.size);
+    download.href = root + version.file;
+    download.download = version.name;
+    const preview = mode === 'diff' ? version.diff : version.file;
+    code.hidden = true;
+    if (!preview) {
+      state.textContent = 'Предпросмотр изменений для этой версии недоступен. Обе версии можно скачать.';
       return;
     }
-    state.textContent='Загрузка…';
+    if (location.protocol === 'file:') {
+      state.textContent = 'Для предпросмотра откройте архив через start.cmd или python start.py.';
+      return;
+    }
+    state.textContent = 'Загрузка…';
     try {
-      const bytes=await loadBlob(mode==='diff'?v.diff:v.blob);
-      if (current!==viewRequest) return;
-      const limited=bytes.length>500_000;
-      const text=new TextDecoder().decode(limited?bytes.subarray(0,500_000):bytes);
-      state.textContent=limited?'Показано начало файла. Кнопка «Скачать» сохраняет полную версию.':'';
-      if (mode==='diff') {
-        const lines=document.createDocumentFragment();
-        for (const line of text.split('\n')) {
-          const node=document.createElement('span');
-          node.className=line.startsWith('+')?'diff-add':line.startsWith('-')?'diff-remove':line.startsWith('@@')?'diff-hunk':'';
-          node.textContent=line+'\n';
-          lines.append(node);
+      const response = await fetch(root + preview,{signal:request.signal,cache:'no-cache'});
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const images = {PNG:'image/png',JPG:'image/jpeg',JPEG:'image/jpeg',GIF:'image/gif',WEBP:'image/webp',AVIF:'image/avif'};
+      if (mode === 'source' && Object.prototype.hasOwnProperty.call(images,format)) {
+        const bytes = await response.arrayBuffer();
+        if (request.signal.aborted) return;
+        imageUrl = URL.createObjectURL(new Blob([bytes],{type:images[format]}));
+        const image = document.createElement('img');
+        image.src = imageUrl;
+        image.alt = version.name;
+        code.append(image);
+        code.hidden = false;
+        state.textContent = '';
+        return;
+      }
+      const {bytes,limited} = await readText(response);
+      if (request.signal.aborted) return;
+      let text;
+      try {
+        text = new TextDecoder('utf-8',{fatal:true}).decode(bytes,{stream:limited});
+      } catch {
+        text = null;
+      }
+      if (text === null || text.includes('\u0000')) {
+        state.textContent = 'Предпросмотр этого формата недоступен. Файл можно скачать.';
+        return;
+      }
+      state.textContent = limited ? 'Показано начало файла. Можно скачать полную версию.' : '';
+      if (markdown && mode === 'source' && !limited) {
+        const rendered = await renderMarkdown(text);
+        if (request.signal.aborted) return;
+        if (rendered === null) insertText(text,false);
+        else {
+          const article = document.createElement('div');
+          article.className = 'prose markdown-preview';
+          article.innerHTML = rendered;
+          code.append(article);
         }
-        code.append(lines);
-      } else code.textContent=text;
+      } else insertText(text,mode === 'diff');
+      code.hidden = false;
     } catch (error) {
-      if (current===viewRequest) state.textContent=error.message;
+      if (!request.signal.aborted) state.textContent = 'Не удалось загрузить предпросмотр · ' + error.message;
     }
   }
 
@@ -182,12 +296,83 @@ function setupConversation() {
     return button;
   }
 
+  const forkControls = [];
+
+  function mountForkControls() {
+    const groups = new Map();
+    for (const branch of data.branches.slice(1)) {
+      if (!groups.has(branch.origin)) groups.set(branch.origin, []);
+      groups.get(branch.origin).push(branch);
+    }
+    for (const [origin, alternatives] of groups) {
+      const owner = data.branches.find(branch => branch.id === (alternatives[0].parent ?? 0));
+      const continuation = branch => origin
+        ? branch.chain[branch.chain.indexOf(origin) + 1]
+        : branch.chain[0];
+      const options = [owner, ...alternatives].filter(branch => branch && continuation(branch));
+      if (options.length < 2) continue;
+      const anchor = origin ? nodes.get(origin) : messages;
+      if (!anchor) continue;
+
+      const controls = document.createElement('div');
+      controls.className = 'fork-controls';
+      const title = document.createElement('span');
+      title.textContent = origin ? 'Продолжение' : 'Начало беседы';
+      const previous = document.createElement('button');
+      const next = document.createElement('button');
+      for (const [button, symbol, label] of [
+        [previous, '←', 'Предыдущий вариант'],
+        [next, '→', 'Следующий вариант'],
+      ]) {
+        button.type = 'button';
+        button.textContent = symbol;
+        button.setAttribute('aria-label', label);
+      }
+      const choice = document.createElement('select');
+      choice.setAttribute('aria-label', origin ? 'Вариант продолжения' : 'Вариант начала беседы');
+      options.forEach((branch, index) => choice.add(new Option(
+        (index + 1) + ' / ' + options.length + ' · ' +
+        branchName(branch.id),
+        String(index)
+      )));
+      controls.append(title, previous, choice, next);
+      if (origin) anchor.querySelector('.prose').before(controls);
+      else messages.before(controls);
+
+      function choose(index, button) {
+        const branch = options[index];
+        if (!branch) return;
+        const y = anchor.getBoundingClientRect().top;
+        showBranch(branch.id);
+        history.replaceState(null, '', '#b-' + branch.id);
+        window.scrollBy(0, anchor.getBoundingClientRect().top - y);
+        if (button?.disabled) choice.focus({preventScroll: true});
+      }
+      previous.addEventListener('click', () => choose(Number(choice.value) - 1, previous));
+      next.addEventListener('click', () => choose(Number(choice.value) + 1, next));
+      choice.addEventListener('change', () => choose(Number(choice.value)));
+      forkControls.push(branch => {
+        if (origin && !branch.chain.includes(origin)) return;
+        const index = options.findIndex(option => continuation(option) === continuation(branch));
+        if (index < 0) {
+          controls.hidden = true;
+          return;
+        }
+        controls.hidden = false;
+        choice.value = String(index);
+        previous.disabled = index === 0;
+        next.disabled = index === options.length - 1;
+      });
+    }
+  }
+
   function showBranch(value) {
     active=data.branches.find(branch => branch.id===Number(value)) || data.branches[0];
     picker.value=String(active.id);
     const chain = new Set(active.chain);
     for (const [id,node] of nodes) node.hidden=!chain.has(id);
     for (const id of chain) messages.append(nodes.get(id));
+    for (const sync of forkControls) sync(active);
     fork.hidden=!active.origin;
     if (active.origin) fork.href='#m-'+active.origin;
     summary.textContent=active.id
@@ -211,6 +396,11 @@ function setupConversation() {
   }
 
   function jumpToHash() {
+    const branchLink = /^#b-(\d+)$/.exec(location.hash);
+    if (branchLink) {
+      showBranch(branchLink[1]);
+      return;
+    }
     if (!location.hash.startsWith('#m-')) return;
     const id=location.hash.slice(3);
     if (!nodes.has(id)) return;
@@ -221,32 +411,26 @@ function setupConversation() {
     requestAnimationFrame(()=>nodes.get(id).scrollIntoView({block:'start'}));
   }
 
-  picker.addEventListener('change',()=>showBranch(picker.value));
+  picker.addEventListener('change', () => {
+    showBranch(picker.value);
+    history.replaceState(null, '', '#b-' + active.id);
+  });
   window.addEventListener('hashchange',jumpToHash);
   pickerVersion.addEventListener('change',renderVersion);
   select('viewer-close').addEventListener('click',()=>pane.close());
   select('back-to-messages').addEventListener('click',()=>picker.scrollIntoView({block:'center'}));
   showDiff.addEventListener('click',()=>setMode('diff'));
   showSource.addEventListener('click',()=>setMode('source'));
-  select('download-file').addEventListener('click',async () => {
-    const v=versions[Number(pickerVersion.value)];
-    try {
-      const bytes=await loadBlob(v.blob);
-      const url=URL.createObjectURL(new Blob([bytes],{type:'application/octet-stream'}));
-      const link=document.createElement('a');
-      link.href=url;
-      link.download=v.name;
-      document.body.append(link);
-      link.click();
-      link.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),1000);
-    } catch (error) {
-      state.textContent=error.message;
-    }
+  showRaw.addEventListener('click',()=>setMode('raw'));
+  pane.addEventListener('close',() => {
+    if (previewRequest) previewRequest.abort();
+    clearPreview();
   });
+  mountForkControls();
   showBranch(0);
   jumpToHash();
 }
 
 if (window.catalogData) setupCatalog();
-if (window.conversationData) setupConversation();
+const conversationData = select('conversation-data');
+if (conversationData) setupConversation(JSON.parse(conversationData.textContent));

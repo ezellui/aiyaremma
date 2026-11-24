@@ -1,0 +1,19 @@
+practical-application-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   └── mongo-connection.js
+│   ├── models/
+│   │   └── PracticalApplication.js
+│   ├── controllers/
+│   │   └── practical.controller.js
+│   ├── services/
+│   │   └── practical.service.js
+│   └── routes/
+│       └── practical.routes.js
+└── tests/

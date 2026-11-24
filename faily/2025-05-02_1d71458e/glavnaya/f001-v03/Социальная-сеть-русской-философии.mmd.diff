@@ -1,0 +1,154 @@
+--- предыдущая/Социальная-сеть-русской-философии.mmd
++++ текущая/Социальная-сеть-русской-философии.mmd
+@@ -165,13 +165,20 @@
+     IvanG <-.-> AndKurb
+     FedorK --> IvanP
+     FedorK --> IvanG
++    %% Знакомство
++    NilS ---o IosifV
++    FedorK ---o IvanG
++    AndKurb ---o IvanG
++    %% Ложно приписываемые связи
++    KlimS -.-x Ilarion
++    IvanP -.-x FedorK
+ 
+     %% Связи древнерусских философов с зарубежными
+-    Platon --> Ilarion
+-    Aristotle --> MaksimG
++    Platon -.-o Ilarion
++    Aristotle -.-o MaksimG
+     Plotin --> NilS
+     JohnDamascus --> IosifV
+-    ThomasAquin --> MaksimG
++    ThomasAquin -.-o MaksimG
+ 
+     %% Просвещение
+     Voltaire --> Lomonosov
+@@ -183,9 +190,17 @@
+     Novikov --> Gamalei
+     Novikov --> Lopukhin
+     Lopukhin --> Labzin
+-    Skovoroda --> Lomonosov
+-    NilS --> Skovoroda
+-    IosifV --> Lomonosov
++    Skovoroda -.-o Lomonosov
++    NilS -.-o Skovoroda
++    IosifV -.-o Lomonosov
++    %% Знакомство
++    Novikov ---o Radishchev
++    Novikov ---o Gamalei
++    Novikov ---o Lopukhin
++    Lopukhin ---o Labzin
++    %% Ложно приписываемые связи
++    Voltaire -.-x Radishchev
++    Rousseau -.-x Skovoroda
+ 
+     %% Славянофилы и западники
+     Schelling --> Khomyakov
+@@ -214,6 +229,18 @@
+     Tyutchev --> IvanAksakov
+     Tyutchev --> Dostoyevsky
+     Hilferding --> Danilevsky
++    %% Знакомство
++    Khomyakov ---o Kireevsky
++    Khomyakov ---o YuriSamarin
++    KonstAksakov ---o IvanAksakov
++    Dostoyevsky ---o MDostoyevsky
++    Dostoyevsky ---o Strakhov
++    Dostoyevsky ---o Leontiev
++    Tyutchev ---o IvanAksakov
++    %% Ложно приписываемые связи
++    Dostoyevsky -.-x Khomyakov
++    Tyutchev -.-x Khomyakov
++    Tyutchev -.-x Kireevsky
+ 
+     %% Западники связи
+     Chaadaev --> Belinsky
+@@ -241,6 +268,16 @@
+     Feuerbach --> Hertzen
+     Hegel --> Granovsky
+     Kant --> Chicherin
++    %% Знакомство  
++    Belinsky ---o Hertzen
++    Hertzen ---o Ogarev
++    Belinsky ---o Turgenev
++    Hertzen ---o Turgenev
++    Belinsky ---o Botkin
++    Granovsky ---o Chicherin
++    %% Ложно приписываемые связи
++    Chaadaev -.-x Hegel
++    Belinsky -.-x Feuerbach
+ 
+     %% Славянофилы и Западники между собой
+     Chaadaev --> Khomyakov
+@@ -252,6 +289,12 @@
+     Dostoyevsky -.-> Belinsky
+     Strakhov -.-> Chernyshevsky
+     Leontiev -.-> Chernyshevsky
++    %% Знакомство
++    Khomyakov ---o Chaadaev
++    Hertzen ---o Khomyakov
++    %% Ложно приписываемые связи
++    Hertzen -.-x Dostoyevsky
++    Belinsky -.-x Dostoyevsky
+ 
+     %% Религиозная философия
+     Khomyakov --> Solovyov
+@@ -296,6 +339,21 @@
+     Bergson --> Lossky
+     Husserl --> Shpet
+     Husserl --> Frank
++    %% Знакомство
++    Solovyov ---o Trubetskoy_S
++    Solovyov ---o Trubetskoy_E
++    Solovyov ---o FedorovN
++    FedorovN ---o Dostoyevsky
++    Berdyaev ---o Bulgakov
++    Berdyaev ---o Frank
++    Berdyaev ---o Shestov
++    Bulgakov ---o Florensky
++    Lossky ---o Frank
++    Merezhkovsky ---o Rozanov
++    %% Ложно приписываемые связи
++    Solovyov -.-x Dostoyevsky
++    FedorovN -.-x Tolstoy
++    Shestov -.-x Husserl
+ 
+     %% Космисты
+     FedorovN --> Tsiolkovsky
+@@ -305,6 +363,12 @@
+     Vernadsky_I -.-> Vernadsky
+     Umov --> Tsiolkovsky
+     Umov --> Vernadsky
++    %% Знакомство
++    Tsiolkovsky ---o Chizhevsky
++    Vernadsky ---o Chizhevsky
++    %% Ложно приписываемые связи
++    FedorovN -.-x Tsiolkovsky
++    FedorovN -.-x Vernadsky
+ 
+     %% Советские философы
+     Marx --> Plekhanov
+@@ -318,6 +382,14 @@
+     Ilyenkov <--> Mamardashvili
+     Hegel --> Ilyenkov
+     Feuerbach --> Plekhanov
++    %% Знакомство
++    Plekhanov ---o Lenin
++    Lenin ---o Lunacharsky
++    Lenin ---o Bogdanov
++    Ilyenkov ---o Mamardashvili
++    %% Ложно приписываемые связи
++    Marx -.-x Lenin
++    Plekhanov -.-x Berdyaev
+ 
+     %% Современная философия
+     Berdyaev --> Contemporary1
+@@ -339,4 +411,7 @@
+         A2[A] <-->|взаимное влияние| B2[B]
+         A3[A] -.->|критика| B3[B]
+         A4[A] <-.->|полемика| B4[B]
++        A5[A] ---o|личное знакомство| B5[B]
++        A6[A] -.-x|ложно приписываемая связь| B6[B]
++        A7[A] -.-o|опосредованное<br>влияние| B7[B]
+     end

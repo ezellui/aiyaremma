@@ -1,0 +1,127 @@
+/* ============================================ */
+/* СТИЛИ ДЛЯ ИНДЕКСА НАПРЯЖЕНИЯ */
+/* ============================================ */
+
+/* Иконка типа напряжения */
+.tension-type-icon {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* Визуальная шкала напряжения */
+.tension-breakdown-bar {
+    display: flex;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 12px 0 10px 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.tension-segment {
+    transition: all 0.3s ease;
+}
+
+.tension-segment:hover {
+    filter: brightness(1.2);
+}
+
+.tension-segment.tension-immanent {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.tension-segment.tension-polemical {
+    background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+.tension-segment.tension-dialectical {
+    background: linear-gradient(90deg, #9b59b6, #8e44ad);
+}
+
+/* Бейджи типов напряжения */
+.tension-badge-immanent {
+    background: rgba(231, 76, 60, 0.25) !important;
+    border: 1px solid rgba(231, 76, 60, 0.4);
+}
+
+.tension-badge-polemical {
+    background: rgba(243, 156, 18, 0.25) !important;
+    border: 1px solid rgba(243, 156, 18, 0.4);
+}
+
+.tension-badge-dialectical {
+    background: rgba(155, 89, 182, 0.25) !important;
+    border: 1px solid rgba(155, 89, 182, 0.4);
+}
+
+/* Доминирующий тип */
+.tension-dominant-type {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(108, 92, 231, 0.15);
+    border-radius: 8px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    border: 1px solid rgba(108, 92, 231, 0.25);
+}
+
+/* Индикатор баланса напряжения/разрешения */
+.tension-resolution-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding: 6px 10px;
+    background: rgba(46, 204, 113, 0.15);
+    border-radius: 6px;
+    border: 1px solid rgba(46, 204, 113, 0.25);
+}
+
+.tension-resolution-label {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.tension-resolution-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2ecc71;
+}
+
+/* Описание концепции */
+.tension-description {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(108, 92, 231, 0.2);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+}
+
+/* Курсор для интерактивных карточек */
+.tension-card {
+    cursor: pointer;
+}
+
+.tension-card:hover .tension-type-icon {
+    transform: scale(1.2);
+    transition: transform 0.3s ease;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 600px) {
+    .tension-breakdown-bar {
+        height: 8px;
+    }
+    
+    .metric-result-details {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .tension-resolution-indicator {
+        font-size: 10px;
+    }
+}

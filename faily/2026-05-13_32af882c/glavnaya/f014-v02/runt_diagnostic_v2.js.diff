@@ -1,0 +1,39 @@
+--- предыдущая/runt_diagnostic_v2.js
++++ текущая/runt_diagnostic_v2.js
+@@ -43,7 +43,7 @@
+     const folios = Array.from(document.querySelectorAll('.folio'));
+     const folio = p.closest('.folio');
+     const folioIdx = folio ? folios.indexOf(folio) + 1 : '?';
+-    const text = (p.textContent || '').replace(/\s+/g, ' ').trim();
++    const text = visibleText(p);
+     const preview = text.length > 60 ? text.slice(0, 60) + '…' : text;
+     const tail = p.querySelector('.runt-hang') || p;
+     const fam = ((getComputedStyle(tail).fontFamily) || '').toLowerCase();
+@@ -53,6 +53,18 @@
+     else if (fam.indexOf('beda') !== -1) font = 'Beda';
+     else if (fam.indexOf('kells') !== -1) font = 'Kells';
+     return { folio: folioIdx, preview, font };
++  }
++
++  // Возвращает видимый текст элемента, учитывая CSS-скрытие.
++  // Это убирает дубликаты от word-source/word-render (один из двух
++  // display:none в зависимости от translate-режима) и аналогичных
++  // парных обёрток для abbreviations / маргиналий.
++  function visibleText(el) {
++    if (!el) return '';
++    const t = (typeof el.innerText === 'string')
++      ? el.innerText
++      : (el.textContent || '');
++    return t.replace(/\s+/g, ' ').trim();
+   }
+ 
+   // ── Часть 1. Анализ через DOM (как и раньше) ──
+@@ -84,7 +96,7 @@
+       result.fixedC.push({
+         ...label,
+         hangX: runtHangSpan.style.getPropertyValue('--runt-hang-x') || '?',
+-        word: (runtHangSpan.textContent || '').trim().slice(0, 30),
++        word: visibleText(runtHangSpan).slice(0, 30),
+         el: p
+       });
+     } else if (compressedWs.length > 0) {

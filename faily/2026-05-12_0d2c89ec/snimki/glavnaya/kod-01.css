@@ -1,0 +1,23 @@
+.folio.page-verso .aging-edges-layer::after {
+  display: block;
+  left: 3px; bottom: 3px;
+  width: 18px; height: 18px;
+  /* Треугольник: вершины (0% 0%) и (100% 100%) — концы линии сгиба, 
+     (100% 0%) — отражённая точка, "вершина" поднятого уголка. */
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+  background: linear-gradient(225deg, #e0cca0 0%, #c5b07c 60%, #a89366 100%);
+  filter:
+    drop-shadow(-1.5px 1.5px 2px rgba(40,20,5,0.45))
+    drop-shadow(-0.5px 0.5px 1px rgba(40,20,5,0.3));
+}
+.folio.page-recto .aging-edges-layer::after {
+  display: block;
+  right: 3px; bottom: 3px;
+  width: 18px; height: 18px;
+  /* Зеркально: гипотенуза от (100% 0%) к (0% 100%), отражённая точка в (0% 0%). */
+  clip-path: polygon(100% 0%, 0% 100%, 0% 0%);
+  background: linear-gradient(135deg, #e0cca0 0%, #c5b07c 60%, #a89366 100%);
+  filter:
+    drop-shadow(1.5px 1.5px 2px rgba(40,20,5,0.45))
+    drop-shadow(0.5px 0.5px 1px rgba(40,20,5,0.3));
+}

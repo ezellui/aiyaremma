@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Граф на Canvas (максимальная производительность)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: grab;
+        }
+
+        canvas:active {
+            cursor: grabbing;
+        }
+
+        #tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+            max-width: 300px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        #perf {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #0f0;
+            padding: 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 11px;
+            z-index: 1000;
+            line-height: 1.5;
+        }
+
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1000;
+            min-width: 180px;
+        }
+
+        #controls h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 5px;
+        }
+
+        #controls button {
+            width: 100%;
+            margin: 4px 0;
+            padding: 8px;
+            background: #4a4a4a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        #controls button:hover {
+            background: #5a5a5a;
+        }
+
+        #controls label {
+            display: block;
+            margin: 8px 0;
+            font-size: 12px;
+        }
+
+        #controls input[type="checkbox"] {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="graph"></canvas>
+        <div id="tooltip"></div>
+        
+        <div id="perf">
+            FPS: <span id="fps">60</span><br>
+            Draw: <span id="draw-time">0</span>ms<br>
+            Nodes: <span id="nodes">0</span><br>
+            Links: <span id="links">0</span><br>
+            Visible: <span id="visible">0</span><br>
+            Sim: <span id="sim-status">running</span>
+        </div>
+
+        <div id="controls">
+            <h3>🎛️ Управление</h3>
+            <button onclick="resetView()">Сбросить вид</button>
+            <button onclick="resetSimulation()">Перезапустить</button>
+            <button onclick="saveLayout()">Сохранить</button>
+            <button onclick="loadLayout()">Загрузить</button>
+            <label>
+                <input type="checkbox" id="show-labels" checked onchange="render()"> 
+                Показать метки
+            </label>
+            <label>
+                <input type="checkbox" id="show-links" checked onchange="render()"> 
+                Показать связи
+            </label>
+            <label>
+                <input type="checkbox" id="antialiasing" checked onchange="toggleAntialiasing()"> 
+                Сглаживание
+            </label>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ CANVAS
+        // ============================================
+
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d', { 
+            alpha: false,
+            // willReadFrequently используется для захвата пикселей при кликах
+        });
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            render();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // ============================================
+        // ТЕСТОВЫЕ ДАННЫЕ
+        // ============================================
+
+        const philosophers = [
+            { id: "kant", name: "Кант", color: "#E74C3C" },
+            { id: "hegel", name: "Гегель", color: "#3498DB" },
+            { id: "nietzsche", name: "Ницше", color: "#E67E22" },
+            { id: "marx", name: "Маркс", color: "#27AE60" },
+            { id: "sartre", name: "Сартр", color: "#9B59B6" },
+        ];
+
+        // Генерация данных (замените на свои)
+        const nodes = [];
+        const links = [];
+
+        // Генерируем 1000 узлов
+        for (let i = 0; i < 1000; i++) {
+            const phil = philosophers[i % philosophers.length];
+            nodes.push({
+                id: `concept_${i}`,
+                label: `Концепция ${i}`,
+                description: `Описание философской концепции номер ${i}`,
+                philosopher: phil.name,
+                color: phil.color,
+                x: canvas.width / 2 + (Math.random() - 0.5) * 300,
+                y: canvas.height / 2 + (Math.random() - 0.5) * 300,
+                vx: 0,
+                vy: 0,
+                radius: 4
+            });
+        }
+
+        // Генерируем 2000 связей
+        for (let i = 0; i < 2000; i++) {
+            const source = Math.floor(Math.random() * nodes.length);
+            let target = Math.floor(Math.random() * nodes.length);
+            while (target === source) {
+                target = Math.floor(Math.random() * nodes.length);
+            }
+            links.push({
+                source: nodes[source],
+                target: nodes[target]
+            });
+        }
+
+        console.log(`Создано ${nodes.length} узлов и ${links.length} связей`);
+
+        // ============================================
+        // ФИЗИЧЕСКАЯ СИМУЛЯЦИЯ (D3 Force)
+        // ============================================
+
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).distance(60).strength(0.3))
+            .force("charge", d3.forceManyBody().strength(-100))
+            .force("center", d3.forceCenter(canvas.width / 2, canvas.height / 2))
+            .alphaDecay(0.03)
+            .velocityDecay(0.5);
+
+        let simulationRunning = true;
+        let tickCount = 0;
+
+        simulation.on("tick", () => {
+            tickCount++;
+            
+            // Останавливаем после стабилизации
+            if (simulation.alpha() < 0.01 || tickCount > 300) {
+                simulation.stop();
+                simulationRunning = false;
+                document.getElementById('sim-status').textContent = 'stopped';
+                console.log('Симуляция остановлена после', tickCount, 'тиков');
+            }
+        });
+
+        // ============================================
+        // TRANSFORM И VIEWPORT
+        // ============================================
+
+        let transform = {
+            x: 0,
+            y: 0,
+            scale: 1
+        };
+
+        // Вычисляем видимую область с запасом
+        function getViewportBounds() {
+            const margin = 100;
+            return {
+                minX: (-transform.x - margin) / transform.scale,
+                maxX: (canvas.width - transform.x + margin) / transform.scale,
+                minY: (-transform.y - margin) / transform.scale,
+                maxY: (canvas.height - transform.y + margin) / transform.scale
+            };
+        }
+
+        function isNodeVisible(node) {
+            const bounds = getViewportBounds();
+            return node.x >= bounds.minX && node.x <= bounds.maxX &&
+                   node.y >= bounds.minY && node.y <= bounds.maxY;
+        }
+
+        // ============================================
+        // РЕНДЕРИНГ НА CANVAS
+        // ============================================
+
+        function render() {
+            const startTime = performance.now();
+            
+            // Очистка canvas
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Применяем трансформацию
+            ctx.save();
+            ctx.translate(transform.x, transform.y);
+            ctx.scale(transform.scale, transform.scale);
+
+            const bounds = getViewportBounds();
+            const showLinks = document.getElementById('show-links').checked;
+            const showLabels = document.getElementById('show-labels').checked;
+            
+            let visibleCount = 0;
+
+            // Рисуем связи
+            if (showLinks) {
+                ctx.strokeStyle = 'rgba(100, 100, 100, 0.3)';
+                ctx.lineWidth = 1 / transform.scale;
+                ctx.beginPath();
+
+                links.forEach(link => {
+                    const sourceVisible = isNodeVisible(link.source);
+                    const targetVisible = isNodeVisible(link.target);
+                    
+                    if (sourceVisible || targetVisible) {
+                        ctx.moveTo(link.source.x, link.source.y);
+                        ctx.lineTo(link.target.x, link.target.y);
+                    }
+                });
+
+                ctx.stroke();
+            }
+
+            // Рисуем узлы
+            nodes.forEach(node => {
+                if (!isNodeVisible(node)) return;
+                
+                visibleCount++;
+
+                // Круг узла
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
+                ctx.fillStyle = node.color;
+                ctx.fill();
+                
+                // Обводка
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5 / transform.scale;
+                ctx.stroke();
+
+                // Выделение, если выбран
+                if (node.selected) {
+                    ctx.strokeStyle = '#FFD700';
+                    ctx.lineWidth = 3 / transform.scale;
+                    ctx.stroke();
+                }
+            });
+
+            // Текстовые метки (только при близком зуме)
+            if (showLabels && transform.scale > 0.8) {
+                ctx.font = `${10 / transform.scale}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+
+                nodes.forEach(node => {
+                    if (!isNodeVisible(node)) return;
+                    
+                    // Тень для читаемости
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    ctx.fillText(node.label, node.x, node.y + node.radius + 2);
+                    
+                    ctx.fillStyle = '#fff';
+                    ctx.fillText(node.label, node.x, node.y + node.radius + 2);
+                });
+            }
+
+            ctx.restore();
+
+            // Обновление статистики
+            const drawTime = (performance.now() - startTime).toFixed(1);
+            document.getElementById('draw-time').textContent = drawTime;
+            document.getElementById('nodes').textContent = nodes.length;
+            document.getElementById('links').textContent = links.length;
+            document.getElementById('visible').textContent = visibleCount;
+        }
+
+        // ============================================
+        // АНИМАЦИОННЫЙ ЦИКЛ
+        // ============================================
+
+        let frameCount = 0;
+        let lastFpsUpdate = performance.now();
+
+        function animate() {
+            if (simulationRunning) {
+                render();
+            }
+
+            // Подсчет FPS
+            frameCount++;
+            const now = performance.now();
+            if (now - lastFpsUpdate >= 1000) {
+                const fps = Math.round(frameCount * 1000 / (now - lastFpsUpdate));
+                document.getElementById('fps').textContent = fps;
+                frameCount = 0;
+                lastFpsUpdate = now;
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // ============================================
+        // ИНТЕРАКТИВНОСТЬ
+        // ============================================
+
+        let hoveredNode = null;
+        let selectedNode = null;
+        let isDragging = false;
+        let dragNode = null;
+        let lastMousePos = { x: 0, y: 0 };
+
+        // Преобразование координат мыши в координаты графа
+        function screenToGraph(screenX, screenY) {
+            return {
+                x: (screenX - transform.x) / transform.scale,
+                y: (screenY - transform.y) / transform.scale
+            };
+        }
+
+        // Поиск узла под курсором (быстрый квадратичный поиск)
+        function findNodeAt(x, y) {
+            const graphPos = screenToGraph(x, y);
+            const clickRadius = 10 / transform.scale;
+
+            for (let i = nodes.length - 1; i >= 0; i--) {
+                const node = nodes[i];
+                const dx = node.x - graphPos.x;
+                const dy = node.y - graphPos.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < node.radius + clickRadius) {
+                    return node;
+                }
+            }
+            return null;
+        }
+
+        // Tooltip
+        const tooltip = document.getElementById('tooltip');
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (isDragging && dragNode) {
+                // Перемещение узла
+                const graphPos = screenToGraph(x, y);
+                dragNode.x = graphPos.x;
+                dragNode.y = graphPos.y;
+                dragNode.fx = graphPos.x;
+                dragNode.fy = graphPos.y;
+                render();
+            } else if (isDragging) {
+                // Панорамирование
+                const dx = x - lastMousePos.x;
+                const dy = y - lastMousePos.y;
+                transform.x += dx;
+                transform.y += dy;
+                lastMousePos = { x, y };
+                render();
+            } else {
+                // Проверка наведения на узел
+                const node = findNodeAt(x, y);
+                
+                if (node !== hoveredNode) {
+                    hoveredNode = node;
+                    
+                    if (node) {
+                        tooltip.style.opacity = '1';
+                        tooltip.innerHTML = `
+                            <strong>${node.label}</strong><br>
+                            ${node.description}<br>
+                            <em>Философ: ${node.philosopher}</em>
+                        `;
+                        tooltip.style.left = (e.clientX + 15) + 'px';
+                        tooltip.style.top = (e.clientY - 15) + 'px';
+                        canvas.style.cursor = 'pointer';
+                    } else {
+                        tooltip.style.opacity = '0';
+                        canvas.style.cursor = isDragging ? 'grabbing' : 'grab';
+                    }
+                }
+            }
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const node = findNodeAt(x, y);
+            
+            if (node) {
+                // Начало перетаскивания узла
+                dragNode = node;
+                simulation.alphaTarget(0.3).restart();
+                simulationRunning = true;
+                document.getElementById('sim-status').textContent = 'running';
+            } else {
+                // Начало панорамирования
+                isDragging = true;
+                lastMousePos = { x, y };
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            if (dragNode) {
+                dragNode.fx = null;
+                dragNode.fy = null;
+                simulation.alphaTarget(0);
+                dragNode = null;
+            }
+            isDragging = false;
+        });
+
+        canvas.addEventListener('click', (e) => {
+            if (dragNode) return; // Был drag, не click
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const node = findNodeAt(x, y);
+            
+            if (node) {
+                // Выделение узла и связанных
+                if (selectedNode) selectedNode.selected = false;
+                
+                selectedNode = node;
+                node.selected = true;
+                
+                // Подсветка связанных узлов
+                const connected = new Set([node.id]);
+                links.forEach(link => {
+                    if (link.source === node) connected.add(link.target.id);
+                    if (link.target === node) connected.add(link.source.id);
+                });
+                
+                nodes.forEach(n => {
+                    if (connected.has(n.id)) {
+                        n.radius = 6;
+                    } else {
+                        n.radius = 4;
+                    }
+                });
+                
+                render();
+            } else {
+                // Сброс выделения
+                if (selectedNode) {
+                    selectedNode.selected = false;
+                    selectedNode = null;
+                }
+                nodes.forEach(n => n.radius = 4);
+                render();
+            }
+        });
+
+        // Zoom колесом мыши
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+            const newScale = Math.max(0.1, Math.min(4, transform.scale * zoomFactor));
+            
+            // Зум к курсору
+            const graphX = (x - transform.x) / transform.scale;
+            const graphY = (y - transform.y) / transform.scale;
+            
+            transform.scale = newScale;
+            transform.x = x - graphX * newScale;
+            transform.y = y - graphY * newScale;
+            
+            render();
+        });
+
+        // ============================================
+        // УПРАВЛЕНИЕ
+        // ============================================
+
+        function resetView() {
+            transform = { x: 0, y: 0, scale: 1 };
+            render();
+        }
+
+        function resetSimulation() {
+            nodes.forEach(n => {
+                n.fx = null;
+                n.fy = null;
+            });
+            tickCount = 0;
+            simulationRunning = true;
+            simulation.alpha(1).restart();
+            document.getElementById('sim-status').textContent = 'running';
+        }
+
+        function saveLayout() {
+            const layout = nodes.map(n => ({ id: n.id, x: n.x, y: n.y }));
+            localStorage.setItem('canvas-graph-layout', JSON.stringify(layout));
+            alert('Позиции сохранены!');
+        }
+
+        function loadLayout() {
+            const saved = localStorage.getItem('canvas-graph-layout');
+            if (!saved) {
+                alert('Нет сохраненных позиций');
+                return;
+            }
+
+            const layout = JSON.parse(saved);
+            nodes.forEach(n => {
+                const pos = layout.find(p => p.id === n.id);
+                if (pos) {
+                    n.x = pos.x;
+                    n.y = pos.y;
+                    n.fx = pos.x;
+                    n.fy = pos.y;
+                }
+            });
+
+            simulation.alpha(0);
+            simulationRunning = false;
+            render();
+            alert('Позиции загружены!');
+        }
+
+        function toggleAntialiasing() {
+            const enabled = document.getElementById('antialiasing').checked;
+            ctx.imageSmoothingEnabled = enabled;
+            render();
+        }
+
+        // ============================================
+        // НАЧАЛЬНЫЙ РЕНДЕР
+        // ============================================
+
+        render();
+        console.log('Canvas граф готов к работе!');
+        console.log('Производительность: ~60 FPS с', nodes.length, 'узлами и', links.length, 'связями');
+    </script>
+</body>
+</html>

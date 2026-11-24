@@ -1,0 +1,15 @@
+--- предыдущая/Исправленный-граф-философской-концепции-Множествен.svg
++++ текущая/Исправленный-граф-философской-концепции-Множествен.svg
+@@ -96,10 +96,10 @@
+   <text x="620" y="330" text-anchor="middle" font-size="10">Дополнение</text>
+   
+   <line x1="310" y1="465" x2="470" y2="410" stroke="#8844CC" stroke-width="2.5" marker-end="url(#doublearrow)" marker-start="url(#doublearrow)"/>
+-  <text x="360" y="455" text-anchor="middle" font-size="10" fill="#8844CC">Становление</text>
++  <text x="360" y="455" text-anchor="middle" font-size="10" fill="#8844CC">Феноменологическая</text>
+   
+   <line x1="690" y1="465" x2="530" y2="410" stroke="#8844CC" stroke-width="2.5" marker-end="url(#doublearrow)" marker-start="url(#doublearrow)"/>
+-  <text x="640" y="455" text-anchor="middle" font-size="10" fill="#8844CC">Становление</text>
++  <text x="640" y="455" text-anchor="middle" font-size="10" fill="#8844CC">Феноменологическая</text>
+   
+   <line x1="330" y1="535" x2="475" y2="580" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+   <text x="390" y="570" text-anchor="middle" font-size="10">Причинность</text>

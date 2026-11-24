@@ -1,0 +1,191 @@
+
+<svg viewBox="0 0 800 650" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background and Title -->
+  <rect width="800" height="650" fill="#f9f9f9"/>
+  <text x="400" y="40" font-size="24" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Сетевая диаграмма отношений тонов</text>
+  <text x="400" y="70" font-size="16" text-anchor="middle" font-family="Arial, sans-serif">Визуализация связей между тонами в музыкальной структуре</text>
+  
+  <!-- Network Nodes -->
+  <g transform="translate(400, 350)">
+    <!-- 12 Tone Nodes (positioned in a modified circle for clarity) -->
+    
+    <!-- C -->
+    <circle cx="0" cy="-150" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="0" y="-145" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">C</text>
+    
+    <!-- C# / Db -->
+    <circle cx="80" cy="-130" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="80" y="-125" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Db</text>
+    
+    <!-- D -->
+    <circle cx="130" cy="-80" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="130" y="-75" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">D</text>
+    
+    <!-- D# / Eb -->
+    <circle cx="150" cy="-10" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="150" y="-5" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Eb</text>
+    
+    <!-- E -->
+    <circle cx="130" cy="60" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="130" y="65" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">E</text>
+    
+    <!-- F -->
+    <circle cx="80" cy="120" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="80" y="125" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">F</text>
+    
+    <!-- F# / Gb -->
+    <circle cx="0" cy="150" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="0" y="155" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Gb</text>
+    
+    <!-- G -->
+    <circle cx="-80" cy="120" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="-80" y="125" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">G</text>
+    
+    <!-- G# / Ab -->
+    <circle cx="-130" cy="60" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="-130" y="65" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Ab</text>
+    
+    <!-- A -->
+    <circle cx="-150" cy="-10" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="-150" y="-5" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">A</text>
+    
+    <!-- A# / Bb -->
+    <circle cx="-130" cy="-80" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="-130" y="-75" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Bb</text>
+    
+    <!-- B -->
+    <circle cx="-80" cy="-130" r="25" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+    <text x="-80" y="-125" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">B</text>
+    
+    <!-- Whole Tone Connections (M2 intervals) -->
+    <g stroke="#ff9999" stroke-width="2.5" opacity="0.7">
+      <!-- C to D -->
+      <line x1="0" y1="-150" x2="130" y2="-80" />
+      
+      <!-- D to E -->
+      <line x1="130" y1="-80" x2="130" y2="60" />
+      
+      <!-- E to Gb -->
+      <line x1="130" y1="60" x2="0" y2="150" />
+      
+      <!-- Gb to Ab -->
+      <line x1="0" y1="150" x2="-130" y2="60" />
+      
+      <!-- Ab to Bb -->
+      <line x1="-130" y1="60" x2="-130" y2="-80" />
+      
+      <!-- Bb to C -->
+      <line x1="-130" y1="-80" x2="0" y2="-150" />
+      
+      <!-- Db to Eb -->
+      <line x1="80" y1="-130" x2="150" y2="-10" />
+      
+      <!-- Eb to F -->
+      <line x1="150" y1="-10" x2="80" y2="120" />
+      
+      <!-- F to G -->
+      <line x1="80" y1="120" x2="-80" y2="120" />
+      
+      <!-- G to A -->
+      <line x1="-80" y1="120" x2="-150" y2="-10" />
+      
+      <!-- A to B -->
+      <line x1="-150" y1="-10" x2="-80" y2="-130" />
+      
+      <!-- B to Db -->
+      <line x1="-80" y1="-130" x2="80" y2="-130" />
+    </g>
+    
+    <!-- Perfect Fourth Connections (P4 intervals) -->
+    <g stroke="#5b9bd5" stroke-width="2" stroke-dasharray="5,3" opacity="0.7">
+      <!-- C to F -->
+      <path d="M 0,-150 Q 50,-20 80,120" fill="none" />
+      
+      <!-- F to Bb -->
+      <path d="M 80,120 Q -40,80 -130,-80" fill="none" />
+      
+      <!-- Bb to Eb -->
+      <path d="M -130,-80 Q 10,-80 150,-10" fill="none" />
+      
+      <!-- Eb to Ab -->
+      <path d="M 150,-10 Q 0,80 -130,60" fill="none" />
+      
+      <!-- Ab to Db -->
+      <path d="M -130,60 Q -40,-10 80,-130" fill="none" />
+      
+      <!-- Db to Gb -->
+      <path d="M 80,-130 Q 80,10 0,150" fill="none" />
+      
+      <!-- Gb to B -->
+      <path d="M 0,150 Q -80,20 -80,-130" fill="none" />
+      
+      <!-- B to E -->
+      <path d="M -80,-130 Q 30,-80 130,60" fill="none" />
+      
+      <!-- E to A -->
+      <path d="M 130,60 Q -10,40 -150,-10" fill="none" />
+      
+      <!-- A to D -->
+      <path d="M -150,-10 Q -30,-80 130,-80" fill="none" />
+      
+      <!-- D to G -->
+      <path d="M 130,-80 Q 50,50 -80,120" fill="none" />
+      
+      <!-- G to C -->
+      <path d="M -80,120 Q -80,-30 0,-150" fill="none" />
+    </g>
+    
+    <!-- Row Groupings -->
+    <g>
+      <!-- Row 1: B1 Db2 Eb2 -->
+      <path d="M -80,-130 Q 0,-155 80,-130 Q 115,-70 150,-10" stroke="#e6194B" stroke-width="4" fill="none"/>
+      
+      <!-- Row 2: E2 Gb2 Ab2 -->
+      <path d="M 130,60 Q 65,105 0,150 Q -65,105 -130,60" stroke="#3cb44b" stroke-width="4" fill="none"/>
+      
+      <!-- Row 3: A2 B2 Db3 -->
+      <path d="M -150,-10 Q -115,-70 -80,-130 Q 0,-155 80,-130" stroke="#ffe119" stroke-width="4" fill="none"/>
+      
+      <!-- Row 4: D3 E3 Gb3 -->
+      <path d="M 130,-80 Q 130,-10 130,60 Q 65,105 0,150" stroke="#4363d8" stroke-width="4" fill="none"/>
+      
+      <!-- Row 5: G3 A3 B3 -->
+      <path d="M -80,120 Q -115,55 -150,-10 Q -115,-70 -80,-130" stroke="#f58231" stroke-width="4" fill="none"/>
+      
+      <!-- Row 6: C4 D4 E4 -->
+      <path d="M 0,-150 Q 65,-115 130,-80 Q 130,-10 130,60" stroke="#911eb4" stroke-width="4" fill="none"/>
+      
+      <!-- Row 7: F4 G4 A4 -->
+      <path d="M 80,120 Q 0,120 -80,120 Q -115,55 -150,-10" stroke="#42d4f4" stroke-width="4" fill="none"/>
+      
+      <!-- Row 8: Bb4 C5 D5 -->
+      <path d="M -130,-80 Q -65,-115 0,-150 Q 65,-115 130,-80" stroke="#f032e6" stroke-width="4" fill="none"/>
+      
+      <!-- Row 9: Eb5 F5 G5 -->
+      <path d="M 150,-10 Q 115,55 80,120 Q 0,120 -80,120" stroke="#a9a9a9" stroke-width="4" fill="none"/>
+      
+      <!-- Row 10: Ab5 Bb5 C6 -->
+      <path d="M -130,60 Q -130,-10 -130,-80 Q -65,-115 0,-150" stroke="#469990" stroke-width="4" fill="none"/>
+      
+      <!-- Row 11: Db6 Eb6 F6 -->
+      <path d="M 80,-130 Q 115,-70 150,-10 Q 115,55 80,120" stroke="#e6beff" stroke-width="4" fill="none"/>
+      
+      <!-- Row 12: Gb6 Ab6 Bb6 -->
+      <path d="M 0,150 Q -65,105 -130,60 Q -130,-10 -130,-80" stroke="#9A6324" stroke-width="4" fill="none"/>
+    </g>
+  </g>
+  
+  <!-- Legend -->
+  <g transform="translate(400, 610)">
+    <text x="0" y="0" font-size="16" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">Легенда:</text>
+    
+    <line x1="-300" y1="20" x2="-240" y2="20" stroke="#ff9999" stroke-width="2.5"/>
+    <text x="-230" y="25" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Целотоновые связи (интервал 2 полутона)</text>
+    
+    <line x1="20" y1="20" x2="80" y2="20" stroke="#5b9bd5" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="90" y="25" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Квартовые связи (интервал 5 полутонов)</text>
+    
+    <path d="M -300,45 Q -270,45 -240,45" stroke="#911eb4" stroke-width="4" fill="none"/>
+    <text x="-230" y="50" font-size="14" text-anchor="start" font-family="Arial, sans-serif">Ряды трезвучий (целотоновые группы)</text>
+  </g>
+</svg>

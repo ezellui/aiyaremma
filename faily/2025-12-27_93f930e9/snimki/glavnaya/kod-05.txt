@@ -1,0 +1,36 @@
+graph-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── neo4j-connection.js
+│   │   ├── postgres-connection.js
+│   │   └── migrations/
+│   │       ├── 001_create_category_templates.sql
+│   │       └── 002_create_relationship_templates.sql
+│   ├── models/
+│   │   ├── Category.js
+│   │   ├── Relationship.js
+│   │   ├── CategoryTemplate.js
+│   │   └── RelationshipTypeTemplate.js
+│   ├── controllers/
+│   │   ├── graph.controller.js
+│   │   ├── category.controller.js
+│   │   ├── relationship.controller.js
+│   │   └── validation.controller.js
+│   ├── services/
+│   │   ├── graph.service.js
+│   │   ├── category.service.js
+│   │   ├── relationship.service.js
+│   │   ├── validation.service.js
+│   │   ├── element-validation.service.js  # Валидация новых элементов
+│   │   └── transformation.service.js      # Тезисы → граф
+│   └── routes/
+│       ├── graph.routes.js
+│       ├── category.routes.js
+│       └── relationship.routes.js
+└── tests/

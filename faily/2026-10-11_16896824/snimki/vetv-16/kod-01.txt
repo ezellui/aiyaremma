@@ -1,0 +1,24 @@
+A black-and-white forensic photograph from 1967, mounted on an aged archival card from a secret case file. Vertical format, 4:5.
+
+WORLD CONTEXT (needed to get the details right):
+This is a fictional alternate-history state, the R.S.F.G.R. — a Soviet-style union in which the Communist Party merged with the cult of Cthulhu and with a vast fungal organism called the Great Mycelium (Великая Грибница). Citizens are "dissolved" into the Mycelium and replaced by a single spore on paper; individual reason is treated as private property and is stored outside the head in glass vessels (сосуды) — plain glass jars that people wear over their heads. Lenin, in this world, did not die in 1924: he "sleeps", like Cthulhu, beneath the Mausoleum, which is built as a stepped ziggurat. The capital is the city of R'lyeh on the Kara Sea. Official slogans end with "Ктулху фхтагнъ — Ленинъ фхтагнъ". The state's visual language: a red five-pointed star with a spiral instead of a hammer and sickle; purple ink stamps with an octopus emblem; documents in pre-1918 Russian spelling (letters ъ, ѣ, і), while typewritten text lacks ѣ and ъ because the typewriters have no such keys. In 1967, during a reconstruction of the Mausoleum, investigators found a hidden chamber beneath the sarcophagus. This image is the third photograph taken of it.
+
+THE PHOTOGRAPH (the main image inside the card):
+A low, cramped stone chamber lit by a single harsh photographic flash from the camera position: hard shadows, a sharp falloff into black at the edges, slight vignetting, visible film grain, a faint scratch across the emulsion. The walls are dressed granite blocks, black and dark red, like the Mausoleum's cladding, wet with condensation. Fine pale white threads of fungal mycelium creep out of the joints between the blocks and fan across the floor toward the camera.
+In the back wall is a rectangular niche. In it stands a large old laboratory glass vessel, the size of a person's torso, sealed with a ground-glass lid and wax. Its glass is fogged from the inside, and its contents are hidden by condensation and a dense white felt of mycelium growing inside the glass, so that only an indistinct pale shape is suggested — nothing recognisable, nothing anatomical, no face, no tentacles. A small enamel plate on the vessel reads "№ 1". A spiral is carved into the stone above the niche.
+Forensic details in the foreground: a wooden folding ruler laid on the floor for scale; a white rectangular evidence placard on a little stand with black printed text "Снимокъ № 3"; two small numbered triangular markers "1" and "2"; the edge of a workman's lamp and a coil of cable entering from the left frame edge. No people in the shot.
+
+THE CARD (the mount around the photograph):
+The photograph is glued onto a thick yellowed archival card with a wide margin, slightly warped, corners worn, two punched filing holes at the top edge, a rusty paperclip mark.
+Under the photo, a typewritten caption in two lines (exactly, in modern spelling, typewriter font, slightly uneven inking):
+"Камера под саркофагом. Снимок № 3."
+"Реконструкция Мавзолея, 1967 г. Дело № 7-М."
+In the lower right corner, a round purple ink stamp with an octopus in the centre and the circular inscription "НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ".
+In the upper right corner, a rectangular red stamp "СЕКРЕТНО", slightly crooked.
+Across the lower left margin, a handwritten note in faded blue fountain-pen ink, old-fashioned cursive: "Сосудъ не вскрывать".
+Along the bottom edge, small printed line: "Ктулху фхтагнъ — Ленинъ фхтагнъ".
+
+STYLE AND CONSTRAINTS:
+Photorealistic scan of a real archival object photographed flat under even light on a dark grey surface, like the other documents in a museum archive. The inner photograph is genuine 1960s silver-gelatin black-and-white with a slight warm sepia tone from age; the card is the only element with colour (yellowed paper, purple and red stamps, blue ink).
+Render every inscription exactly as written above, letter for letter, including the old letters ъ and і; do not add any other text, do not translate, do not replace ъ or і.
+No modern objects, no color in the inner photo, no gore, no visible monster, no cartoon or illustration style.

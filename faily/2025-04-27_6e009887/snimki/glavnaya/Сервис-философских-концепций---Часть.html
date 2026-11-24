@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сервис философских концепций</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #f5f6fa;
+            --text-color: #2c3e50;
+            --border-color: #dcdde1;
+            --hover-color: #e8f0fe;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: var(--hover-color);
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button.secondary {
+            background-color: #95a5a6;
+        }
+        
+        button.secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .graph-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 400px;
+            background-color: #fafafa;
+        }
+        
+        .card {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .db-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .api-key-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .api-key-input {
+            width: 300px;
+            margin-right: 10px;
+        }
+        
+        .relationship-type {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        
+        .relationship-properties {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .quantitative-metrics {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .metric-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .metric-value {
+            text-align: center;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .traditions-list, .philosophers-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .tag {
+            background-color: #e8f0fe;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Сервис философских концепций</h1>
+            <p>Создание, анализ и синтез философских концепций с помощью Claude</p>
+        </header>
+        
+        <div class="api-key-section">
+            <label for="apiKey">API ключ Claude:</label>
+            <input type="password" id="apiKey" class="api-key-input" placeholder="Введите ваш API ключ">
+            <button onclick="saveApiKey()">Сохранить</button>
+            <button onclick="testApiConnection()">Тест соединения</button>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('graph')">Граф концепции</div>
+            <div class="tab" onclick="switchTab('theses')">Генерация тезисов</div>
+            <div class="tab" onclick="switchTab('synthesis')">Синтез концепций</div>
+            <div class="tab" onclick="switchTab('analysis')">Анализ и контекст</div>
+        </div>
+        
+        <!-- Уровень 1: Составление графа концепции -->
+        <div id="graph" class="tab-content active">
+            <div class="grid-2">
+                <div>
+                    <div class="section">
+                        <div class="section-header">Создание категорий</div>
+                        <div class="form-group">
+                            <label for="categoryName">Название категории:</label>
+                            <input type="text" id="categoryName" placeholder="Введите название">
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryDefinition">Определение:</label>
+                            <textarea id="categoryDefinition" placeholder="Краткое определение категории"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="categorySource">Источник:</label>
+                            <input type="text" id="categorySource" placeholder="Автор, произведение, традиция">
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryTraditions">Традиции/концепции (через запятую):</label>
+                            <input type="text" id="categoryTraditions" placeholder="Например: платонизм, гегельянство">
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryPhilosophers">Философы (через запятую):</label>
+                            <input type="text" id="categoryPhilosophers" placeholder="Например: Платон, Гегель">
+                        </div>
+                        <button onclick="createCategory()">Создать категорию</button>
+                        <button onclick="requestCategoryDescription()" class="secondary">Предложить описание через Claude</button>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-header">Установление связей</div>
+                        <div class="form-group">
+                            <label for="relationFrom">От категории:</label>
+                            <select id="relationFrom"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="relationType">Тип связи:</label>
+                            <select id="relationType">
+                                <option value="hierarchical">Иерархическая</option>
+                                <option value="causal">Причинно-следственная</option>
+                                <option value="dialectical">Диалектическая</option>
+                                <option value="functional">Функциональная</option>
+                                <option value="derivative">Производная</option>
+                                <option value="associative">Ассоциативная</option>
+                                <option value="custom">Пользовательская</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customRelationTypeGroup" style="display: none;">
+                            <label for="customRelationType">Название нового типа связи:</label>
+                            <input type="text" id="customRelationType" placeholder="Введите название">
+                        </div>
+                        <div class="form-group">
+                            <label for="relationTo">К категории:</label>
+                            <select id="relationTo"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="bidirectional"> Двунаправленная связь
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="relationTraditions">Традиции для связи (через запятую):</label>
+                            <input type="text" id="relationTraditions" placeholder="Например: феноменология, экзистенциализм">
+                        </div>
+                        <div class="form-group">
+                            <label for="relationPhilosophers">Философы (через запятую):</label>
+                            <input type="text" id="relationPhilosophers" placeholder="Например: Гуссерль, Хайдеггер">
+                        </div>
+                        <button onclick="createRelation()">Создать связь</button>
+                        <button onclick="requestRelationAnalysis()" class="secondary">Анализ связи через Claude</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="section">
+                        <div class="section-header">Граф концепции</div>
+                        <div class="graph-container" id="graphContainer">
+                            <!-- Здесь будет визуализация графа -->
+                        </div>
+                        <button onclick="validateGraph()">Валидация графа через Claude</button>
+                        <button onclick="exportGraph()" class="secondary">Экспорт графа</button>
+                        <button onclick="importGraph()" class="secondary">Импорт графа</button>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-header">Количественные характеристики</div>
+                        <div class="quantitative-metrics">
+                            <div class="form-group">
+                                <label for="selectedCategory">Выберите категорию:</label>
+                                <select id="selectedCategory" onchange="updateMetricsDisplay()"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Центральность: <span class="metric-value" id="centralityValue">5</span></label>
+                                <input type="range" min="1" max="10" value="5" class="metric-slider" id="centrality" onchange="updateMetric('centrality')">
+                            </div>
+                            <div class="form-group">
+                                <label>Определённость: <span class="metric-value" id="definitionValue">5</span></label>
+                                <input type="range" min="1" max="10" value="5" class="metric-slider" id="definition" onchange="updateMetric('definition')">
+                            </div>
+                            <div class="form-group">
+                                <label>Историческая значимость: <span class="metric-value" id="historicalValue">5</span></label>
+                                <input type="range" min="1" max="10" value="5" class="metric-slider" id="historical" onchange="updateMetric('historical')">
+                            </div>
+                            <button onclick="requestMetricsAnalysis()">Анализ характеристик через Claude</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Уровень 2: Составление тезисов по графу -->
+        <div id="theses" class="tab-content">
+            <div class="grid-2">
+                <div>
+                    <div class="section">
+                        <div class="section-header">Параметры генерации тезисов</div>
+                        <div class="form-group">
+                            <label for="conceptSelect">Выберите концепцию:</label>
+                            <select id="conceptSelect"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="thesisType">Тип тезисов:</label>
+                            <select id="thesisType">
+                                <option value="ontological">Онтологические</option>
+                                <option value="epistemological">Эпистемологические</option>
+                                <option value="ethical">Этические</option>
+                                <option value="aesthetic">Эстетические</option>
+                                <option value="political">Политико-философские</option>
+                                <option value="metaphysical">Метафизические</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="thesisCount">Количество тезисов:</label>
+                            <input type="number" id="thesisCount" min="1" max="10" value="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="detailLevel">Уровень детализации:</label>
+                            <select id="detailLevel">
+                                <option value="concise">Краткий</option>
+                                <option value="moderate">Умеренный</option>
+                                <option value="detailed">Подробный</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="thesisStyle">Стиль изложения:</label>
+                            <select id="thesisStyle">
+                                <option value="academic">Академический</option>
+                                <option value="popular">Популярный</option>
+                                <option value="aphoristic">Афористичный</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="useMetrics"> Учитывать количественные характеристики
+                            </label>
+                        </div>
+                        <button onclick="generateTheses()">Сгенерировать тезисы</button>
+                        <button onclick="compareThesesVersions()" class="secondary">Сравнить версии</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="section">
+                        <div class="section-header">Сгенерированные тезисы</div>
+                        <div id="thesesContainer" class="card">
+                            <p>Здесь будут отображаться сгенерированные тезисы</p>
+                        </div>
+                        <button onclick="requestThesisDevelopment()" class="secondary">Развить выбранный тезис</button>
+                        <button onclick="exportTheses()" class="secondary">Экспорт тезисов</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Уровень 3: Синтезирование новых концепций -->
+        <div id="synthesis" class="tab-content">
+            <div class="grid-2">
+                <div>
+                    <div class="section">
+                        <div class="section-header">Выбор концепций для синтеза</div>
+                        <div class="form-group">
+                            <label for="concept1">Первая концепция:</label>
+                            <select id="concept1"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="concept2">Вторая концепция:</label>
+                            <select id="concept2"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="synthesisMethod">Метод синтеза:</label>
+                            <select id="synthesisMethod">
+                                <option value="dialectical">Диалектический</option>
+                                <option value="integrative">Интегративный</option>
+                                <option value="transformational">Трансформационный</option>
+                                <option value="complementary">Дополнительный</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="synthesisFocus">Фокус синтеза:</label>
+                            <select id="synthesisFocus">
+                                <option value="ontological">Онтологический</option>
+                                <option value="ethical">Этический</option>
+                                <option value="political">Политический</option>
+                                <option value="epistemological">Эпистемологический</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="innovationLevel">Степень инновационности:</label>
+                            <select id="innovationLevel">
+                                <option value="conservative">Консервативная</option>
+                                <option value="moderate">Умеренная</option>
+                                <option value="radical">Радикальная</option>
+                            </select>
+                        </div>
+                        <button onclick="analyzeCompatibility()">Анализ совместимости</button>
+                        <button onclick="synthesizeConcepts()">Синтезировать концепции</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="section">
+                        <div class="section-header">Результат синтеза</div>
+                        <div id="synthesisResult" class="card">
+                            <p>Здесь будет отображаться синтезированная концепция</p>
+                        </div>
+                        <button onclick="generateSynthesisTheses()">Сгенерировать тезисы</button>
+                        <button onclick="criticalAnalysis()" class="secondary">Критический анализ</button>
+                        <button onclick="exportSynthesis()" class="secondary">Экспорт синтеза</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Дополнительные взаимодействия -->
+        <div id="analysis" class="tab-content">
+            <div class="grid-2">
+                <div>
+                    <div class="section">
+                        <div class="section-header">Анализ концепции</div>
+                        <div class="form-group">
+                            <label for="analysisConceptSelect">Выберите концепцию:</label>
+                            <select id="analysisConceptSelect"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="analysisType">Тип анализа:</label>
+                            <select id="analysisType">
+                                <option value="historical">Историческая контекстуализация</option>
+                                <option value="practical">Практическое применение</option>
+                                <option value="dialogical">Диалогическая интерпретация</option>
+                                <option value="evolution">Эволюция концепции</option>
+                            </select>
+                        </div>
+                        <div id="dialogicalOptions" style="display: none;">
+                            <div class="form-group">
+                                <label for="dialoguePartner">Концепция для диалога:</label>
+                                <select id="dialoguePartner"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="dialogueTopic">Тема диалога:</label>
+                                <input type="text" id="dialogueTopic" placeholder="Философский вопрос">
+                            </div>
+                        </div>
+                        <button onclick="performAnalysis()">Выполнить анализ</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="section">
+                        <div class="section-header">Результаты анализа</div>
+                        <div id="analysisResult" class="card">
+                            <p>Здесь будут отображаться результаты анализа</p>
+                        </div>
+                        <button onclick="exportAnalysis()" class="secondary">Экспорт анализа</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для отображения результатов Claude -->
+    <div id="claudeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Результат анализа Claude</h2>
+                <button class="close-button" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    
+    <div class="db-controls">
+        <button onclick="exportDatabase()">Экспорт базы данных</button>
+        <button onclick="importDatabase()">Импорт базы данных</button>
+    </div>
+    <script>
+        // Часть 1: Основные структуры данных и функции для работы с графом
+        
+        // Глобальные переменные для хранения данных
+        let concepts = [];
+        let currentConcept = null;
+        let categories = [];
+        let relations = [];
+        let relationTypes = [
+            { id: 'hierarchical', name: 'Иерархическая' },
+            { id: 'causal', name: 'Причинно-следственная' },
+            { id: 'dialectical', name: 'Диалектическая' },
+            { id: 'functional', name: 'Функциональная' },
+            { id: 'derivative', name: 'Производная' },
+            { id: 'associative', name: 'Ассоциативная' }
+        ];
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDatabase();
+            setupEventListeners();
+            updateUI();
+        });
+        
+        // Переключение вкладок
+        function switchTab(tabId) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            
+            // Обновить UI для выбранной вкладки
+            updateUI();
+        }
+        
+        // Создание категории
+        function createCategory() {
+            const name = document.getElementById('categoryName').value;
+            const definition = document.getElementById('categoryDefinition').value;
+            const source = document.getElementById('categorySource').value;
+            const traditions = document.getElementById('categoryTraditions').value.split(',').map(t => t.trim()).filter(t => t);
+            const philosophers = document.getElementById('categoryPhilosophers').value.split(',').map(p => p.trim()).filter(p => p);
+            
+            if (!name || !definition) {
+                alert('Пожалуйста, заполните название и определение категории');
+                return;
+            }
+            
+            const category = {
+                id: generateId(),
+                name,
+                definition,
+                source,
+                traditions,
+                philosophers,
+                metrics: {
+                    centrality: 5,
+                    definition: 5,
+                    historical: 5
+                }
+            };
+            
+            categories.push(category);
+            saveDatabase();
+            updateUI();
+            clearCategoryForm();
+        }
+        
+        // Создание связи
+        function createRelation() {
+            const fromId = document.getElementById('relationFrom').value;
+            const toId = document.getElementById('relationTo').value;
+            let type = document.getElementById('relationType').value;
+            const bidirectional = document.getElementById('bidirectional').checked;
+            const traditions = document.getElementById('relationTraditions').value.split(',').map(t => t.trim()).filter(t => t);
+            const philosophers = document.getElementById('relationPhilosophers').value.split(',').map(p => p.trim()).filter(p => p);
+            
+            if (type === 'custom') {
+                const customType = document.getElementById('customRelationType').value;
+                if (!customType) {
+                    alert('Пожалуйста, введите название пользовательского типа связи');
+                    return;
+                }
+                type = generateId();
+                relationTypes.push({ id: type, name: customType });
+            }
+            
+            if (!fromId || !toId || fromId === toId) {
+                alert('Пожалуйста, выберите разные категории для связи');
+                return;
+            }
+            
+            const relation = {
+                id: generateId(),
+                from: fromId,
+                to: toId,
+                type,
+                bidirectional,
+                traditions,
+                philosophers,
+                strength: 5,
+                certainty: 5
+            };
+            
+            relations.push(relation);
+            saveDatabase();
+            updateUI();
+            clearRelationForm();
+        }
+        
+        // Генерация уникального ID
+        function generateId() {
+            return 'id_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Очистка форм
+        function clearCategoryForm() {
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryDefinition').value = '';
+            document.getElementById('categorySource').value = '';
+            document.getElementById('categoryTraditions').value = '';
+            document.getElementById('categoryPhilosophers').value = '';
+        }
+        
+        function clearRelationForm() {
+            document.getElementById('relationType').value = 'hierarchical';
+            document.getElementById('customRelationType').value = '';
+            document.getElementById('bidirectional').checked = false;
+            document.getElementById('relationTraditions').value = '';
+            document.getElementById('relationPhilosophers').value = '';
+            document.getElementById('customRelationTypeGroup').style.display = 'none';
+        }
+        
+        // Обновление UI
+        function updateUI() {
+            updateCategorySelects();
+            updateConceptSelects();
+            updateRelationTypeSelect();
+            updateGraphVisualization();
+            updateMetricsDisplay();
+        }
+        
+        function updateCategorySelects() {
+            const selects = ['relationFrom', 'relationTo', 'selectedCategory'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '';
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+        
+        function updateConceptSelects() {
+            const selects = ['conceptSelect', 'concept1', 'concept2', 'analysisConceptSelect', 'dialoguePartner'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '';
+                    concepts.forEach(concept => {
+                        const option = document.createElement('option');
+                        option.value = concept.id;
+                        option.textContent = concept.name;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+        
+        function updateRelationTypeSelect() {
+            const select = document.getElementById('relationType');
+            if (select) {
+                select.innerHTML = '';
+                relationTypes.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.id;
+                    option.textContent = type.name;
+                    select.appendChild(option);
+                });
+                const customOption = document.createElement('option');
+                customOption.value = 'custom';
+                customOption.textContent = 'Пользовательская';
+                select.appendChild(customOption);
+            }
+        }
+        
+        // Обработчики событий
+        function setupEventListeners() {
+            document.getElementById('relationType').addEventListener('change', function() {
+                const customGroup = document.getElementById('customRelationTypeGroup');
+                customGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+            });
+            
+            document.getElementById('analysisType').addEventListener('change', function() {
+                const dialogicalOptions = document.getElementById('dialogicalOptions');
+                dialogicalOptions.style.display = this.value === 'dialogical' ? 'block' : 'none';
+            });
+        }
+        
+        // Управление модальным окном
+        function showModal(title, content) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = content;
+            document.getElementById('claudeModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('claudeModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('claudeModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Функции для работы с базой данных и API будут в следующей части
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+/**
+ * Main configuration for Claude Service
+ */
+
+module.exports = {
+  // Server configuration
+  server: {
+    port: process.env.PORT || 3004,
+    nodeEnv: process.env.NODE_ENV || 'development',
+    serviceName: 'claude-service',
+  },
+  
+  // Database configurations
+  postgres: {
+    connectionString: process.env.DATABASE_URL,
+    host: process.env.POSTGRES_HOST || 'localhost',
+    port: parseInt(process.env.POSTGRES_PORT || '5432', 10),
+    database: process.env.POSTGRES_DB || 'philosophy',
+    user: process.env.POSTGRES_USER || 'postgres',
+    password: process.env.POSTGRES_PASSWORD || 'postgres',
+    poolSize: parseInt(process.env.POSTGRES_POOL_SIZE || '10', 10),
+  },
+  
+  mongodb: {
+    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/philosophy',
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      maxPoolSize: parseInt(process.env.MONGODB_POOL_SIZE || '10', 10),
+    },
+  },
+  
+  redis: {
+    url: process.env.REDIS_URL || 'redis://localhost:6379',
+    ttl: {
+      default: 3600, // 1 hour
+      template: 86400, // 24 hours
+      task: 3600, // 1 hour
+    },
+  },
+  
+  // RabbitMQ configuration
+  rabbitmq: {
+    url: process.env.RABBITMQ_URL || 'amqp://localhost:5672',
+    options: {
+      heartbeat: 60,
+    },
+  },
+  
+  // Claude API configuration
+  claude: {
+    apiKey: process.env.CLAUDE_API_KEY,
+    apiUrl: process.env.CLAUDE_API_URL || 'https://api.anthropic.com',
+    model: process.env.CLAUDE_MODEL || 'claude-3-opus-20240229',
+    maxTokens: parseInt(process.env.CLAUDE_MAX_TOKENS || '4000', 10),
+    temperature: parseFloat(process.env.CLAUDE_TEMPERATURE || '0.7'),
+    timeout: parseInt(process.env.CLAUDE_TIMEOUT || '30000', 10), // 30 seconds
+  },
+  
+  // Queues configuration
+  queues: {
+    claude: {
+      name: 'claude_tasks',
+      options: {
+        durable: true,
+        arguments: {
+          'x-max-priority': 10,
+        },
+      },
+    },
+    priority: {
+      high: 10,
+      normal: 5,
+      low: 1,
+    },
+  },
+  
+  // Rate limiting
+  rateLimit: {
+    windowMs: 60 * 1000, // 1 minute
+    max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
+    message: 'Too many requests, please try again later',
+  },
+  
+  // Logging configuration
+  logging: {
+    level: process.env.LOG_LEVEL || 'info',
+    format: process.env.LOG_FORMAT || 'json',
+  },
+  
+  // Task processing
+  tasks: {
+    maxRetries: parseInt(process.env.MAX_RETRIES || '3', 10),
+    retryDelay: parseInt(process.env.RETRY_DELAY || '5000', 10), // 5 seconds
+    batchSize: parseInt(process.env.BATCH_SIZE || '10', 10),
+    timeout: parseInt(process.env.TASK_TIMEOUT || '300000', 10), // 5 minutes
+  },
+  
+  // Security
+  security: {
+    jwtSecret: process.env.JWT_SECRET || 'your-jwt-secret',
+    jwtExpiration: process.env.JWT_EXPIRATION || '1h',
+    apiKeyHeader: 'x-api-key',
+  },
+};

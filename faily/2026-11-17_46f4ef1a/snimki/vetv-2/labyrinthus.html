@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Labyrinthus Crystallinus</title>
+<style>
+  html,body{margin:0;height:100%;background:#04020b;overflow:hidden}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #vig{position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(0,0,0,0) 42%,rgba(4,0,14,.55) 78%,rgba(2,0,8,.92) 100%)}
+  #ui{position:fixed;right:14px;bottom:14px;display:flex;gap:8px;align-items:center;opacity:0;transition:opacity .6s;
+    font:15px Georgia,"Times New Roman",serif;z-index:5}
+  #ui.show{opacity:1}
+  #ui button{background:rgba(8,4,22,.78);color:#8fe9ff;border:1px solid rgba(120,200,255,.45);font:inherit;padding:4px 11px;cursor:pointer}
+  #ui button:hover{background:rgba(40,16,70,.9);color:#ffd36e;border-color:rgba(255,200,110,.6)}
+  #ui span{color:rgba(150,210,255,.55);margin-left:4px;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vig"></div>
+<div id="ui">
+  <button data-a="law" title="C">Перемена закона</button>
+  <button data-a="cascade" title="K">Каскад</button>
+  <button data-a="eye" title="O">Око</button>
+  <button data-a="pause" title="P">Пауза</button>
+  <button data-a="fs" title="F">Во весь экран</button>
+  <span>C · K · O · P · F</span>
+</div>
+<script>
+'use strict';
+/* Labyrinthus Crystallinus — квазикристалл как узор Изменяющего Пути.
+   Мозаика де Брёйна из n семейств прямых (n = 9 — число Тзинча; 9-кратная симметрия невозможна для периодической
+   мозаики — порядок есть, а повтора нет). Сдвиги семейств (фазоны) перестраивают мозаику скачками-перевертышами, оставляя
+   её законной. Каскад сдвигает одно семейство ровно на период: всё перевернулось — и вернулось в точности к прежнему. */
+const TAU = Math.PI * 2;
+const rnd = (a = 1, b) => b === undefined ? Math.random() * a : a + Math.random() * (b - a);
+const pick = a => a[(Math.random() * a.length) | 0];
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeIO = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+function mk(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return c; }
+
+const disp = document.getElementById('c'), dctx = disp.getContext('2d');
+const bloomC = mk(1, 1), bctx = bloomC.getContext('2d');
+let W, H, DPR, CX, CY, A, RAD, neb;
+
+/* ---------- законы: число семейств, способ видеть, сдвиг красок ---------- */
+const LAWS = [
+  { n: 9, fill: 1, arcs: 0, hue: 0, name: 'vitrum' },
+  { n: 9, fill: .25, arcs: 1, hue: 0, name: 'labyrinthus' },
+  { n: 7, fill: .8, arcs: .6, hue: 40, name: 'septem' },
+  { n: 9, fill: 1, arcs: .35, hue: 150, name: 'vitrum alterum' },
+  { n: 11, fill: .3, arcs: 1, hue: 260, name: 'undecim' },
+  { n: 9, fill: .55, arcs: .8, hue: 80, name: 'novem' },
+  { n: 5, fill: .9, arcs: .5, hue: 200, name: 'quinque' }
+];
+let law = LAWS[0], lawIdx = 0, trans = null, nextLaw = 42;
+
+/* ---------- фазоны: сдвиги семейств прямых ---------- */
+const NMAX = 11;
+const gam0 = Array.from({ length: NMAX }, () => rnd(-.5, .5));
+const gW = Array.from({ length: NMAX }, () => rnd(.015, .045)), gP = Array.from({ length: NMAX }, () => rnd(TAU));
+const gCasc = new Float64Array(NMAX);
+let cascades = [], nextCascade = 18;
+const gam = new Float64Array(NMAX);
+function updGamma() {
+  for (let j = 0; j < NMAX; j++) gam[j] = gam0[j] + .22 * Math.sin(t * gW[j] + gP[j]) + gCasc[j];
+}
+
+/* ---------- мозаика де Брёйна (структура массивов, без лишних объектов на кадр) ---------- */
+const CAP = 60000;
+function makeTiling(n) {
+  const E = Array.from({ length: n }, (_, j) => [Math.cos(TAU * j / n - Math.PI / 2), Math.sin(TAU * j / n - Math.PI / 2)]);
+  const pairs = [];
+  for (let r = 0; r < n; r++) for (let s = r + 1; s < n; s++) {
+    const er = E[r], es = E[s], d = s - r, cosv = er[0] * es[0] + er[1] * es[1];
+    const ang = (x, y) => Math.atan2(y, x), norm = x => { while (x > Math.PI) x -= TAU; while (x <= -Math.PI) x += TAU; return x; };
+    // дуги лабиринта: в острых углах ромба, радиус a/2, от середины ребра к середине ребра
+    const acuteBase = cosv > 0;
+    const arcs = acuteBase
+      ? [[0, 0, ang(er[0], er[1]), norm(ang(es[0], es[1]) - ang(er[0], er[1]))],
+         [1, 1, ang(-er[0], -er[1]), norm(ang(-es[0], -es[1]) - ang(-er[0], -er[1]))]]
+      : [[1, 0, ang(-er[0], -er[1]), norm(ang(es[0], es[1]) - ang(-er[0], -er[1]))],
+         [0, 1, ang(er[0], er[1]), norm(ang(-es[0], -es[1]) - ang(er[0], er[1]))]];
+    pairs.push({ r, s, type: Math.min(d, n - d), det: er[0] * es[1] - er[1] * es[0], arcs });
+  }
+  return { n, E, pairs, cnt: 0,
+    X: new Float32Array(CAP), Y: new Float32Array(CAP), P: new Uint16Array(CAP), KR: new Int16Array(CAP), KS: new Int16Array(CAP),
+    KEY: new Float64Array(CAP), prev: new Map(), flash: new Map() };
+}
+const tilings = {};
+const tilingFor = n => tilings[n] || (tilings[n] = makeTiling(n));
+
+function build(T, a, rad, detect) {
+  const { n, E, pairs } = T, pR = rad / (a * n / 2) + 2;
+  let c = 0;
+  for (let pi = 0; pi < pairs.length; pi++) {
+    const { r, s, det } = pairs[pi], er = E[r], es = E[s], gr = gam[r], gs = gam[s];
+    const k0r = Math.floor(-pR - gr), k1r = Math.ceil(pR - gr), k0s = Math.floor(-pR - gs), k1s = Math.ceil(pR - gs);
+    for (let kr = k0r; kr <= k1r; kr++) {
+      const cr = kr + gr;
+      for (let ks = k0s; ks <= k1s; ks++) {
+        const cs = ks + gs, px = (cr * es[1] - cs * er[1]) / det, py = (er[0] * cs - es[0] * cr) / det;
+        if (px * px + py * py > pR * pR) continue;
+        let bx = 0, by = 0;
+        for (let j = 0; j < n; j++) {
+          const K = j === r ? kr : j === s ? ks : Math.ceil(px * E[j][0] + py * E[j][1] - gam[j]);
+          bx += K * E[j][0]; by += K * E[j][1];
+        }
+        bx *= a; by *= a;
+        const mx = bx + (er[0] + es[0]) * a / 2, my = by + (er[1] + es[1]) * a / 2;
+        if (mx * mx + my * my > rad * rad || c >= CAP) continue;
+        const key = (pi * 4096 + (kr + 2048)) * 4096 + (ks + 2048);
+        T.X[c] = bx; T.Y[c] = by; T.P[c] = pi; T.KR[c] = kr; T.KS[c] = ks; T.KEY[c] = key;
+        if (detect) {   // перевёртыш: тот же ромб (та же пара прямых) встал на новое место
+          const h = Math.round(bx / a * 7) * 131 + Math.round(by / a * 7), p = T.prev.get(key);
+          if (p !== undefined && p !== h) T.flash.set(key, t);
+          T.prev.set(key, h);
+        }
+        c++;
+      }
+    }
+  }
+  T.cnt = c;
+  if (T.prev.size > 3 * c + 5000) T.prev.clear();
+}
+
+/* ---------- краски ---------- */
+const BASEHUE = [196, 172, 300, 44, 262, 220];   // синий, бирюза, пурпур, золото, фиалка, лазурь
+const LEV = 10;
+function tileColor(type, lev, hueRot, alpha) {
+  const h = BASEHUE[(type - 1) % BASEHUE.length] + hueRot + (lev / (LEV - 1) - .5) * 70;
+  const L = type === 4 ? 46 : type === 3 ? 38 : 30;
+  return `hsla(${h.toFixed(1)},88%,${L + (lev % 3) * 4}%,${alpha})`;
+}
+const buckets = Array.from({ length: 6 * LEV }, () => []);
+
+/* ---------- рисование мозаики под законом ---------- */
+function drawTiling(x, T, L, a, alphaMul) {
+  const { pairs, E, cnt } = T;
+  // заливка — пачками по цвету
+  if (L.fill > .01) {
+    for (const b of buckets) b.length = 0;
+    const ph = t * .25;
+    for (let i = 0; i < cnt; i++) {
+      const pr = pairs[T.P[i]], cx = T.X[i], cy = T.Y[i];
+      const v = Math.sin((cx * .0021 + cy * .0013) / DPR + ph) * .5 + Math.sin((cx * -.0009 + cy * .0024) / DPR - ph * .7) * .5;
+      const lev = clamp(Math.floor((v * .5 + .5) * LEV), 0, LEV - 1);
+      buckets[(pr.type - 1) * LEV + lev].push(i);
+    }
+    for (let bi = 0; bi < buckets.length; bi++) {
+      const b = buckets[bi]; if (!b.length) continue;
+      x.beginPath();
+      for (const i of b) {
+        const pr = pairs[T.P[i]], er = E[pr.r], es = E[pr.s], bx = T.X[i], by = T.Y[i];
+        const ux = er[0] * a, uy = er[1] * a, vx = es[0] * a, vy = es[1] * a;
+        x.moveTo(bx, by); x.lineTo(bx + ux, by + uy); x.lineTo(bx + ux + vx, by + uy + vy); x.lineTo(bx + vx, by + vy); x.closePath();
+      }
+      x.fillStyle = tileColor(Math.floor(bi / LEV) + 1, bi % LEV, L.hue, (.62 * L.fill * alphaMul).toFixed(3)); x.fill();
+    }
+  }
+  // рёбра
+  x.beginPath();
+  for (let i = 0; i < cnt; i++) {
+    const pr = pairs[T.P[i]], er = E[pr.r], es = E[pr.s], bx = T.X[i], by = T.Y[i];
+    x.moveTo(bx, by); x.lineTo(bx + er[0] * a, by + er[1] * a); x.lineTo(bx + (er[0] + es[0]) * a, by + (er[1] + es[1]) * a);
+    x.lineTo(bx + es[0] * a, by + es[1] * a); x.closePath();
+  }
+  x.lineWidth = Math.max(1, .9 * DPR); x.strokeStyle = `rgba(170,225,255,${(.13 + .17 * L.fill) * alphaMul})`; x.stroke();
+  // дуги лабиринта: каждое ребро ромба соединяет острый угол с тупым, поэтому дуги сходятся в сплошные кривые
+  if (L.arcs > .01) {
+    x.beginPath(); const ra = a / 2;
+    for (let i = 0; i < cnt; i++) {
+      const pr = pairs[T.P[i]], er = E[pr.r], es = E[pr.s], bx = T.X[i], by = T.Y[i];
+      for (const [cu, cv, a0, sw] of pr.arcs) {
+        const vx0 = bx + (cu * er[0] + cv * es[0]) * a, vy0 = by + (cu * er[1] + cv * es[1]) * a;
+        x.moveTo(vx0 + Math.cos(a0) * ra, vy0 + Math.sin(a0) * ra); x.arc(vx0, vy0, ra, a0, a0 + sw, sw < 0);
+      }
+    }
+    x.save(); x.globalCompositeOperation = 'lighter'; x.lineCap = 'round';
+    x.lineWidth = Math.max(1.2, 1.7 * DPR); x.strokeStyle = `hsla(${44 + L.hue * .15},100%,64%,${.55 * L.arcs * alphaMul})`; x.stroke();
+    x.restore();
+  }
+  // вспышки перевёртышей
+  x.save(); x.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < cnt; i++) {
+    const ft = T.flash.get(T.KEY[i]); if (ft === undefined) continue;
+    const age = t - ft; if (age > 1.1) { T.flash.delete(T.KEY[i]); continue; }
+    const pr = pairs[T.P[i]], er = E[pr.r], es = E[pr.s], bx = T.X[i], by = T.Y[i], q = 1 - age / 1.1;
+    x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + er[0] * a, by + er[1] * a); x.lineTo(bx + (er[0] + es[0]) * a, by + (er[1] + es[1]) * a);
+    x.lineTo(bx + es[0] * a, by + es[1] * a); x.closePath();
+    x.fillStyle = `hsla(${pr.type === 4 ? 46 : 185 + 60 * Math.sin(T.KEY[i])},100%,72%,${.55 * q * q * alphaMul})`; x.fill();
+  }
+  x.restore();
+}
+
+/* ---------- нити судьбы: ленты де Брёйна — каждая проходит через весь лабиринт ---------- */
+let threads = [], nextThread = 3;
+function spawnThread() {
+  const T = tilingFor(law.n), j = Math.floor(Math.random() * T.n);
+  threads.push({ n: T.n, j, k: Math.round(-gam[j]) + Math.floor(rnd(-5, 6)), born: t, life: rnd(14, 24), hue: pick([44, 44, 185, 300]),
+    speed: rnd(.06, .12), off: rnd(1) });
+}
+function drawThreads(x, T, a) {
+  x.save(); x.globalCompositeOperation = 'lighter'; x.lineJoin = 'round'; x.lineCap = 'round';
+  for (const th of threads) {
+    if (th.n !== T.n) continue;
+    const age = t - th.born, env = smooth(0, 2, age) * (1 - smooth(th.life - 2.5, th.life, age));
+    if (env <= 0) continue;
+    const e = T.E[th.j], dx = -e[1], dy = e[0], pts = [];
+    for (let i = 0; i < T.cnt; i++) {
+      const pr = T.pairs[T.P[i]];
+      if (!((pr.r === th.j && T.KR[i] === th.k) || (pr.s === th.j && T.KS[i] === th.k))) continue;
+      const er = T.E[pr.r], es = T.E[pr.s], cx = T.X[i] + (er[0] + es[0]) * a / 2, cy = T.Y[i] + (er[1] + es[1]) * a / 2;
+      pts.push([cx * dx + cy * dy, cx, cy]);
+    }
+    if (pts.length < 2) continue;
+    pts.sort((p, q) => p[0] - q[0]);
+    x.beginPath(); x.moveTo(pts[0][1], pts[0][2]); for (const p of pts) x.lineTo(p[1], p[2]);
+    x.strokeStyle = `hsla(${th.hue},100%,62%,${.22 * env})`; x.lineWidth = 7 * DPR; x.stroke();
+    x.strokeStyle = `hsla(${th.hue},100%,72%,${.75 * env})`; x.lineWidth = 1.6 * DPR; x.stroke();
+    // бегущие огни по нити
+    const N = pts.length;
+    for (let m = 0; m < 3; m++) {
+      const f = ((t * th.speed + th.off + m / 3) % 1) * (N - 1), i0 = Math.floor(f), q = f - i0;
+      const px = lerp(pts[i0][1], pts[Math.min(N - 1, i0 + 1)][1], q), py = lerp(pts[i0][2], pts[Math.min(N - 1, i0 + 1)][2], q);
+      const g = x.createRadialGradient(px, py, 0, px, py, 14 * DPR);
+      g.addColorStop(0, `hsla(${th.hue},100%,88%,${env})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(px, py, 14 * DPR, 0, TAU); x.fill();
+    }
+  }
+  x.restore();
+}
+
+/* ---------- очи ---------- */
+let eyes = [], nextEye = 26, mouse = null, lastMove = -99;
+function vertexNear(T, a, x0, y0) {
+  let best = null, bd = 1e18;
+  for (let i = 0; i < T.cnt; i += 3) { const d = (T.X[i] - x0) ** 2 + (T.Y[i] - y0) ** 2; if (d < bd) { bd = d; best = [T.X[i], T.Y[i]]; } }
+  return best || [x0, y0];
+}
+function spawnEyes() {
+  const T = tilingFor(law.n), R0 = Math.min(W, H) * .32, ang = rnd(TAU), d = rnd(0, R0);
+  const [x0, y0] = vertexNear(T, A, Math.cos(ang) * d, Math.sin(ang) * d);
+  eyes.push({ x: x0, y: y0, s: A * rnd(2.6, 3.4), born: t, dur: rnd(7, 10), big: true, blink: rnd(2.5, 5) });
+  for (let i = 0, n = 4 + (Math.random() * 5 | 0); i < n; i++) {
+    const a2 = rnd(TAU), d2 = rnd(A * 5, R0 * 1.6), [xs, ys] = vertexNear(T, A, x0 + Math.cos(a2) * d2, y0 + Math.sin(a2) * d2);
+    eyes.push({ x: xs, y: ys, s: A * rnd(.75, 1.15), born: t + rnd(.3, 2.5), dur: rnd(4, 7), big: false, blink: rnd(1.5, 3.5) });
+  }
+}
+function drawEyes(x, rot) {
+  // куда смотрят: на зрителя (курсор) или, если он давно не двигался, — блуждающий взгляд
+  let gx, gy;
+  if (mouse && t - lastMove < 6) { const mx = mouse[0] - CX, my = mouse[1] - CY, c = Math.cos(-rot), s = Math.sin(-rot); gx = mx * c - my * s; gy = mx * s + my * c; }
+  else { gx = Math.cos(t * .23) * W * .4; gy = Math.sin(t * .31) * H * .35; }
+  for (const e of eyes) {
+    const age = t - e.born; if (age < 0) continue;
+    let o = smooth(0, .9, age) * (1 - smooth(e.dur - .7, e.dur, age));
+    const bp = (age % e.blink) / e.blink; if (age > 1.2 && bp > .93) o *= Math.abs(bp - .965) / .035;  // моргание
+    if (o <= .01) continue;
+    const s = e.s, h = s * .62 * o;
+    x.save(); x.translate(e.x, e.y);
+    x.beginPath(); x.moveTo(-s, 0); x.quadraticCurveTo(0, -h * 1.6, s, 0); x.quadraticCurveTo(0, h * 1.6, -s, 0); x.closePath();
+    x.fillStyle = 'rgba(6,2,18,.88)'; x.fill();
+    x.save(); x.clip();
+    let dx = gx - e.x, dy = gy - e.y; const dl = Math.hypot(dx, dy) || 1, look = Math.min(1, dl / (s * 6)) * s * .32;
+    dx = dx / dl * look; dy = dy / dl * look * .6;
+    const ir = s * .5, g = x.createRadialGradient(dx, dy, 0, dx, dy, ir);
+    g.addColorStop(0, '#fff3c0'); g.addColorStop(.35, '#ffc54a'); g.addColorStop(.7, '#1fc6d8'); g.addColorStop(1, '#2a0b55');
+    x.fillStyle = g; x.beginPath(); x.arc(dx, dy, ir, 0, TAU); x.fill();
+    x.strokeStyle = 'rgba(40,10,70,.8)'; x.lineWidth = Math.max(1, .9 * DPR);
+    for (const k of [.62, .82]) {   // девятиугольные кольца радужки
+      x.beginPath();
+      for (let m = 0; m <= 9; m++) { const q = m / 9 * TAU + t * (e.big ? .3 : -.5); const px = dx + Math.cos(q) * ir * k, py = dy + Math.sin(q) * ir * k; m ? x.lineTo(px, py) : x.moveTo(px, py); }
+      x.stroke();
+    }
+    x.fillStyle = '#05010c'; x.beginPath(); x.ellipse(dx, dy, ir * .14, ir * .62, 0, 0, TAU); x.fill();
+    x.restore();
+    x.globalCompositeOperation = 'lighter';
+    x.beginPath(); x.moveTo(-s, 0); x.quadraticCurveTo(0, -h * 1.6, s, 0); x.quadraticCurveTo(0, h * 1.6, -s, 0); x.closePath();
+    x.strokeStyle = `rgba(255,80,220,${.75 * o})`; x.lineWidth = (e.big ? 2.2 : 1.4) * DPR; x.stroke();
+    x.restore();
+  }
+  eyes = eyes.filter(e => t - e.born < e.dur + .1);
+}
+
+/* ---------- туманность Варпа ---------- */
+function makeNebula() {
+  const S = Math.ceil(Math.hypot(W, H) / 3); neb = mk(S, S); const x = neb.getContext('2d');
+  x.fillStyle = '#04020b'; x.fillRect(0, 0, S, S);
+  const cols = ['rgba(90,30,170,', 'rgba(20,80,200,', 'rgba(200,30,170,', 'rgba(10,140,160,', 'rgba(60,20,120,'];
+  for (let i = 0; i < 70; i++) {
+    const cx = rnd(S), cy = rnd(S), r = rnd(.06, .3) * S, g = x.createRadialGradient(cx, cy, 0, cx, cy, r), c = pick(cols);
+    g.addColorStop(0, c + rnd(.05, .16) + ')'); g.addColorStop(1, c + '0)'); x.fillStyle = g; x.fillRect(0, 0, S, S);
+  }
+}
+
+/* ---------- события: каскад, перемена закона ---------- */
+function startCascade() {
+  const n = law.n, j = Math.floor(Math.random() * n);
+  cascades.push({ j, t0: t, dur: rnd(3.2, 4.5), dir: Math.random() < .5 ? -1 : 1, base: gCasc[j] });
+}
+function updCascades() {
+  for (const c of cascades) { const q = clamp((t - c.t0) / c.dur); gCasc[c.j] = c.base + c.dir * easeIO(q); }
+  // сдвиг ровно на период: мозаика вернулась в точности к прежней
+  cascades = cascades.filter(c => { if (t - c.t0 >= c.dur) { gCasc[c.j] = c.base + c.dir; return false; } return true; });
+}
+function changeLaw() {
+  if (trans) return;
+  let k; do { k = Math.floor(Math.random() * LAWS.length); } while (k === lawIdx);
+  const R0 = Math.min(W, H) * .3, ang = rnd(TAU);
+  trans = { to: k, t0: t, dur: 4.2, x: Math.cos(ang) * rnd(0, R0), y: Math.sin(ang) * rnd(0, R0) };
+  if (LAWS[k].n !== law.n) threads.forEach(th => th.life = Math.min(th.life, t - th.born + 2.5));
+}
+
+/* ---------- кадр ---------- */
+let t = 0, last = performance.now(), paused = false;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  W = disp.width = Math.floor(innerWidth * DPR); H = disp.height = Math.floor(innerHeight * DPR);
+  bloomC.width = Math.ceil(W / 4); bloomC.height = Math.ceil(H / 4);
+  CX = W / 2; CY = H / 2; A = clamp(Math.min(W, H) / 24, 16 * DPR, 46 * DPR); RAD = Math.hypot(W, H) / 2 + A * 2;
+  makeNebula(); for (const k in tilings) { tilings[k].prev.clear(); tilings[k].flash.clear(); }
+}
+function update(dt) {
+  if (t >= nextCascade) { startCascade(); nextCascade = t + rnd(16, 30); }
+  if (t >= nextLaw) { changeLaw(); nextLaw = t + rnd(38, 58); }
+  if (t >= nextEye) { spawnEyes(); nextEye = t + rnd(20, 34); }
+  if (t >= nextThread) { if (threads.length < 3) spawnThread(); nextThread = t + rnd(4, 9); }
+  threads = threads.filter(th => t - th.born < th.life);
+  updCascades(); updGamma();
+  if (trans && t - trans.t0 >= trans.dur) { lawIdx = trans.to; law = LAWS[lawIdx]; trans = null; }
+}
+function render() {
+  const x = dctx, rot = t * .006;
+  x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
+  x.fillStyle = '#04020b'; x.fillRect(0, 0, W, H);
+  x.save(); x.translate(CX, CY); x.rotate(-t * .004); x.globalAlpha = .9; x.drawImage(neb, -neb.width * 1.6, -neb.height * 1.6, neb.width * 3.2, neb.height * 3.2); x.restore();
+  x.globalAlpha = 1;
+  x.save(); x.translate(CX, CY); x.rotate(rot);
+  const T = tilingFor(law.n); build(T, A, RAD, true);
+  drawTiling(x, T, law, A, 1);
+  drawThreads(x, T, A);
+  if (trans) {   // новый закон расходится волной: внутри круга — уже другая мозаика
+    const L2 = LAWS[trans.to], T2 = tilingFor(L2.n), q = easeIO(clamp((t - trans.t0) / trans.dur));
+    const rr = q * (RAD + Math.hypot(trans.x, trans.y)) + 1;
+    build(T2, A, RAD, L2.n === law.n);
+    x.save(); x.beginPath(); x.arc(trans.x, trans.y, rr, 0, TAU); x.clip();
+    x.fillStyle = 'rgba(4,2,11,.94)'; x.fillRect(-RAD, -RAD, RAD * 2, RAD * 2);
+    drawTiling(x, T2, L2, A, 1);
+    x.restore();
+    // фронт: пламя Варпа — пурпур и бирюза
+    x.save(); x.globalCompositeOperation = 'lighter';
+    for (const [w, c] of [[26, 'rgba(255,60,210,.18)'], [10, 'rgba(80,230,255,.45)'], [2.5, 'rgba(255,240,255,.9)']]) {
+      x.beginPath(); x.arc(trans.x, trans.y, rr, 0, TAU); x.lineWidth = w * DPR; x.strokeStyle = c; x.stroke();
+    }
+    x.restore();
+  }
+  drawEyes(x, rot);
+  x.restore();
+  // свечение
+  bctx.clearRect(0, 0, bloomC.width, bloomC.height); bctx.filter = `blur(${Math.max(2, 3 * DPR)}px)`;
+  bctx.drawImage(disp, 0, 0, bloomC.width, bloomC.height); bctx.filter = 'none';
+  x.globalCompositeOperation = 'lighter'; x.globalAlpha = .55; x.drawImage(bloomC, 0, 0, W, H);
+  x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (paused) return;
+  t += dt; update(dt); render();
+}
+
+/* ---------- управление ---------- */
+const ui = document.getElementById('ui'); let uiTimer = 0;
+function showUI() { ui.classList.add('show'); clearTimeout(uiTimer); uiTimer = setTimeout(() => ui.classList.remove('show'), 2800); }
+addEventListener('mousemove', e => { mouse = [e.clientX * DPR, e.clientY * DPR]; lastMove = t; showUI(); });
+addEventListener('touchstart', e => { const p = e.touches[0]; mouse = [p.clientX * DPR, p.clientY * DPR]; lastMove = t; showUI(); }, { passive: true });
+function act(a) {
+  if (a === 'law') { changeLaw(); nextLaw = t + rnd(38, 58); }
+  else if (a === 'cascade') startCascade();
+  else if (a === 'eye') spawnEyes();
+  else if (a === 'pause') paused = !paused;
+  else if (a === 'fs') { const d = document; (d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+}
+ui.addEventListener('click', e => { const b = e.target.closest('button'); if (b) act(b.dataset.a); });
+addEventListener('keydown', e => {
+  const m = { c: 'law', 'с': 'law', k: 'cascade', 'л': 'cascade', o: 'eye', 'щ': 'eye', p: 'pause', 'з': 'pause', f: 'fs', 'а': 'fs' }[e.key.toLowerCase()];
+  if (m) act(m);
+});
+let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(resize, 150); });
+resize(); updGamma();
+window.__lab = { act, get t() { return t; }, set t(v) { t = v; }, update, render };
+requestAnimationFrame(n => { last = n; requestAnimationFrame(frame); });
+</script>
+</body>
+</html>

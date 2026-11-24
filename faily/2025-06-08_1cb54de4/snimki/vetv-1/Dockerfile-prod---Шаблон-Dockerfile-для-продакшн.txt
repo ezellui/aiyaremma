@@ -1,0 +1,66 @@
+# Production Dockerfile template for Node.js services
+# Multi-stage build for optimal image size and security
+
+# Stage 1: Build stage
+FROM node:18-alpine AS builder
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including devDependencies for build)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build the application (if needed)
+# RUN npm run build
+
+# Remove devDependencies
+RUN npm prune --production
+
+# Stage 2: Production stage
+FROM node:18-alpine
+
+# Install production dependencies only
+RUN apk add --no-cache \
+    dumb-init \
+    && rm -rf /var/cache/apk/*
+
+# Create app directory
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Copy built application from builder stage
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
+
+# Copy application code
+COPY --chown=nodejs:nodejs . .
+
+# Copy shared libraries if needed
+RUN mkdir -p /shared && chown -R nodejs:nodejs /shared
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3000
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD node healthcheck.js || exit 1
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["node", "src/server.js"]

@@ -1,0 +1,167 @@
+--- предыдущая/Исследователь-абстрактных-аксиом-теории-чисел.html
++++ текущая/Исследователь-абстрактных-аксиом-теории-чисел.html
+@@ -549,4 +549,163 @@
+                             />
+                             <div>
+                               <label htmlFor={axiom} className="font-medium cursor-pointer">
+-                                {
++                                {axiom.charAt(0).toUpperCase() + axiom.slice(1)}
++                              </label>
++                              <p className="text-sm text-gray-600">{axiomDefinitions[axiom]}</p>
++                            </div>
++                          </div>
++                        ))}
++                      </div>
++                    </div>
++                  ))}
++                  
++                  <h2 className="text-xl font-semibold mt-6 mb-4">Предустановленные структуры</h2>
++                  <div className="space-y-2 mb-6">
++                    {structures.map((structure) => (
++                      <button
++                        key={structure.name}
++                        className="block w-full text-left px-3 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded structure-button"
++                        onClick={() => selectStructureAxioms(structure.name)}
++                      >
++                        {structure.name}
++                      </button>
++                    ))}
++                  </div>
++                  
++                  <h2 className="text-xl font-semibold mt-6 mb-4">Предустановленные числовые системы</h2>
++                  <div className="space-y-2 mb-6">
++                    {numberSystems.map((system) => (
++                      <button
++                        key={system.name}
++                        className="block w-full text-left px-3 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded structure-button"
++                        onClick={() => selectNumberSystemAxioms(system.name)}
++                      >
++                        {system.name}
++                      </button>
++                    ))}
++                  </div>
++                  
++                  <button
++                    className="w-full mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
++                    onClick={resetAxioms}
++                  >
++                    Сбросить все аксиомы
++                  </button>
++                </div>
++                
++                <div className="col-span-1 md:col-span-2 bg-white p-4 rounded-lg shadow overflow-y-auto max-h-screen">
++                  <h2 className="text-xl font-semibold mb-4">Выводы из выбранных аксиом</h2>
++                  
++                  {conclusions.length > 0 ? (
++                    <ul className="list-disc pl-5 space-y-2 mb-6">
++                      {conclusions.map((conclusion, index) => (
++                        <li key={index} className={`conclusion-item ${conclusion.startsWith('Предупреждение') ? 'text-red-600' : 'text-gray-800'}`}>
++                          {conclusion}
++                        </li>
++                      ))}
++                    </ul>
++                  ) : (
++                    <p className="text-gray-500 italic mb-6">Выберите аксиомы, чтобы увидеть выводы.</p>
++                  )}
++                  
++                  <h2 className="text-xl font-semibold mt-6 mb-4">Совместимые алгебраические структуры</h2>
++                  
++                  {compatibleStructures.length > 0 ? (
++                    <div className="space-y-4 mb-6">
++                      {compatibleStructures.map((structure) => (
++                        <div key={structure.name} className="p-3 bg-green-50 border border-green-200 rounded conclusion-item">
++                          <h3 className="font-medium text-green-700">{structure.name}</h3>
++                          <p className="text-sm text-gray-700">{structure.description}</p>
++                        </div>
++                      ))}
++                    </div>
++                  ) : (
++                    <p className="text-gray-500 italic mb-6">Нет совместимых структур для выбранных аксиом.</p>
++                  )}
++                  
++                  <h2 className="text-xl font-semibold mt-6 mb-4">Возможные числовые системы</h2>
++                  
++                  {compatibleSystems.length > 0 ? (
++                    <div className="space-y-4 mb-6">
++                      {compatibleSystems.map((system) => (
++                        <div key={system.name} className="p-3 bg-blue-50 border border-blue-200 rounded conclusion-item">
++                          <h3 className="font-medium text-blue-700">{system.name}</h3>
++                          <p className="text-sm text-gray-700">{system.description}</p>
++                          <div className="mt-2">
++                            <h4 className="text-sm font-medium text-gray-700">Свойства:</h4>
++                            <ul className="list-disc pl-5 text-sm text-gray-600">
++                              {system.properties.map((property, index) => (
++                                <li key={index}>{property}</li>
++                              ))}
++                            </ul>
++                          </div>
++                        </div>
++                      ))}
++                    </div>
++                  ) : (
++                    <p className="text-gray-500 italic mb-6">Нет совместимых числовых систем для выбранных аксиом.</p>
++                  )}
++                  
++                  <div className="mt-6 p-4 bg-gray-100 rounded">
++                    <h2 className="text-lg font-medium mb-4">Теоремы, следующие из выбранных аксиом</h2>
++                    {(() => {
++                      const theorems = [];
++                      
++                      // Основные теоремы, следующие из выбранных аксиом
++                      if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.commutativity && 
++                          selectedAxioms.distributivity && selectedAxioms.identity && selectedAxioms.inverse) {
++                        theorems.push("Теорема об обратных: В поле для любого элемента a ≠ 0 существует единственный обратный элемент a⁻¹.");
++                      }
++                      
++                      if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.identity && 
++                          selectedAxioms.inverse && selectedAxioms.commutativity) {
++                        theorems.push("Теорема о единственности нейтрального элемента: В группе нейтральный элемент единственен.");
++                      }
++                      
++                      if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.commutativity && 
++                          selectedAxioms.distributivity && selectedAxioms.identity && selectedAxioms.inverse && 
++                          selectedAxioms.totality && selectedAxioms.antisymmetry && selectedAxioms.transitivity && 
++                          selectedAxioms.compatibility) {
++                        theorems.push("Теорема о положительных элементах: В упорядоченном поле произведение положительных элементов положительно.");
++                      }
++                      
++                      if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.commutativity && 
++                          selectedAxioms.distributivity && selectedAxioms.identity && selectedAxioms.inverse && 
++                          selectedAxioms.leastUpperBound) {
++                        theorems.push("Теорема Больцано-Вейерштрасса: Любая ограниченная последовательность имеет сходящуюся подпоследовательность.");
++                      }
++                      
++                      if (selectedAxioms.closure && selectedAxioms.associativity && selectedAxioms.commutativity && 
++                          selectedAxioms.distributivity && selectedAxioms.identity && selectedAxioms.inverse && 
++                          selectedAxioms.algebraicClosedness) {
++                        theorems.push("Основная теорема алгебры: Любой многочлен степени n ≥ 1 имеет ровно n корней (с учетом кратности).");
++                      }
++                      
++                      if (selectedAxioms.discreteness && selectedAxioms.induction) {
++                        theorems.push("Теорема о делении с остатком: Для любых целых чисел a и b > 0 существуют однозначно определенные целые числа q и r такие, что a = bq + r и 0 ≤ r < b.");
++                      }
++                      
++                      return theorems.length > 0 ? (
++                        <ul className="list-disc pl-5 space-y-2">
++                          {theorems.map((theorem, index) => (
++                            <li key={index} className="conclusion-item">{theorem}</li>
++                          ))}
++                        </ul>
++                      ) : (
++                        <p className="text-gray-500 italic">Выберите больше аксиом, чтобы увидеть следующие из них теоремы.</p>
++                      );
++                    })()}
++                  </div>
++                </div>
++              </div>
++            </div>
++          );
++        };
++
++        ReactDOM.render(
++            <AbstractNumberTheoryExplorer />,
++            document.getElementById('root')
++        );
++    </script>
++</body>
++</html>

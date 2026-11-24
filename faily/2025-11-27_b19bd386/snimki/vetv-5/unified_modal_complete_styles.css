@@ -1,0 +1,1218 @@
+/* ============================================================================ */
+/* ИСЧЕРПЫВАЮЩАЯ СЕКЦИЯ СТИЛЕЙ ДЛЯ УНИФИЦИРОВАННОЙ СИСТЕМЫ МОДАЛЬНЫХ ОКОН */
+/* ============================================================================ */
+/* Версия: 1.0 */
+/* Описание: Полная коллекция стилей для универсального модального окна,
+   поддерживающего режимы просмотра и редактирования для всех типов сущностей
+   (философов, концепций, связей) */
+/* ============================================================================ */
+
+/* ============================================================================ */
+/* 1. БАЗОВЫЕ СТИЛИ МОДАЛЬНОГО ОКНА */
+/* ============================================================================ */
+
+/* Основной контейнер модального окна */
+.detail-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.92);
+    color: white;
+    padding: 25px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    max-width: 650px;
+    max-height: 90vh; /* Увеличено с 85vh до 90vh */
+    overflow-y: auto;
+    z-index: 2000;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* КРИТИЧЕСКИ ВАЖНО: padding входит в max-height */
+}
+
+/* Универсальное правило для всех элементов внутри модального окна */
+.detail-modal *,
+.detail-modal *::before,
+.detail-modal *::after {
+    box-sizing: border-box;
+}
+
+/* Контейнер модального контента */
+.modal-content {
+    box-sizing: border-box;
+    padding-bottom: 10px; /* Небольшой отступ внизу для визуального комфорта */
+}
+
+/* Показать модальное окно */
+.detail-modal.show {
+    display: block;
+    animation: modalFadeIn 0.3s ease;
+}
+
+/* Анимация появления */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Оверлей (затемнение фона) */
+#modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1999;
+    transition: opacity 0.3s ease;
+}
+
+#modalOverlay.show {
+    display: block;
+}
+
+/* ============================================================================ */
+/* 2. РЕЖИМ РЕДАКТИРОВАНИЯ */
+/* ============================================================================ */
+
+/* Индикатор режима редактирования */
+.detail-modal.edit-mode {
+    border-color: #a29bfe;
+    box-shadow: 0 10px 40px rgba(162, 155, 254, 0.4);
+}
+
+/* Метка "Режим редактирования" */
+.detail-modal.edit-mode::before {
+    content: '✏️ Режим редактирования';
+    position: absolute;
+    top: 15px;
+    left: 25px;
+    font-size: 11px;
+    color: #a29bfe;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Заголовки в режиме редактирования сдвигаем вниз, но меньше */
+.detail-modal.edit-mode h2 {
+    margin-top: 12px; /* Уменьшено с 20px до 12px */
+}
+
+/* ============================================================================ */
+/* 3. ЭЛЕМЕНТЫ КОНТЕНТА (ОБЩИЕ) */
+/* ============================================================================ */
+
+/* Заголовок */
+.detail-modal h2 {
+    margin: 0 0 8px 0;
+    color: #a29bfe;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* Подзаголовок */
+.detail-modal h3 {
+    margin: 18px 0 10px 0;
+    color: #a29bfe;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Тег философа */
+.detail-modal .philosopher-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 12px;
+    opacity: 0.9;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.detail-modal .philosopher-tag:hover {
+    opacity: 1;
+}
+
+/* Описание/текст */
+.detail-modal .description {
+    color: #e0e0e0;
+    margin-bottom: 18px;
+    line-height: 1.6;
+    font-size: 13px;
+}
+
+/* ============================================================================ */
+/* 4. КНОПКИ УПРАВЛЕНИЯ МОДАЛЬНЫМ ОКНОМ */
+/* ============================================================================ */
+
+/* Кнопка закрытия */
+.detail-modal .modal-close,
+.detail-modal .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.detail-modal .modal-close:hover,
+.detail-modal .close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg);
+}
+
+/* Кнопка переключения режима (view ↔ edit) */
+.mode-switch-btn {
+    position: absolute;
+    top: 12px;
+    right: 50px;
+    padding: 6px 12px;
+    background: rgba(162, 155, 254, 0.2);
+    border: 1px solid #a29bfe;
+    border-radius: 6px;
+    color: #a29bfe;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.mode-switch-btn:hover {
+    background: rgba(162, 155, 254, 0.3);
+    transform: translateY(-2px);
+}
+
+/* ============================================================================ */
+/* 5. SCROLLBAR (КАСТОМНАЯ ПРОКРУТКА) */
+/* ============================================================================ */
+
+.detail-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.detail-modal::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.detail-modal::-webkit-scrollbar-thumb {
+    background: #a29bfe;
+    border-radius: 10px;
+}
+
+.detail-modal::-webkit-scrollbar-thumb:hover {
+    background: #8b7fe6;
+}
+
+/* ============================================================================ */
+/* 6. РУБРИКИ (RUBRICS) */
+/* ============================================================================ */
+
+/* Контейнер рубрики */
+.detail-modal .rubric-section {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 18px;
+    border-radius: 10px;
+    border-left: 3px solid #a29bfe;
+    margin-bottom: 15px;
+}
+
+/* Заголовок рубрики */
+.detail-modal .rubric-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #a29bfe;
+    margin-bottom: 6px;
+}
+
+/* Описание рубрики */
+.detail-modal .rubric-description {
+    font-size: 12px;
+    color: #b0b0b0;
+    margin-bottom: 14px;
+    font-style: italic;
+}
+
+/* Подсказка названия рубрики */
+.rubric-name-tooltip {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dotted #a29bfe;
+    display: inline-block;
+}
+
+.rubric-tooltip-text {
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.95);
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 2001;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: normal;
+    max-width: 300px;
+    font-size: 11px;
+    line-height: 1.4;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.rubric-name-tooltip:hover .rubric-tooltip-text {
+    visibility: visible;
+}
+
+/* ============================================================================ */
+/* 7. СПИСКИ КОНЦЕПЦИЙ */
+/* ============================================================================ */
+
+/* Контейнер списка связанных концепций */
+.detail-modal .related-concepts {
+    margin-top: 12px;
+}
+
+/* Заголовок списка */
+.detail-modal .related-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e0e0e0;
+    margin-bottom: 8px;
+}
+
+/* Элемент концепции */
+.detail-modal .concept-item {
+    display: flex;
+    align-items: center;
+    padding: 7px 10px;
+    margin: 4px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-modal .concept-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+    border-color: rgba(162, 155, 254, 0.4);
+}
+
+/* Цветовой индикатор концепции */
+.detail-modal .concept-color {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px currentColor;
+}
+
+/* Название концепции */
+.detail-modal .concept-name {
+    font-size: 13px;
+    color: #e0e0e0;
+    flex-grow: 1;
+}
+
+/* Философ концепции */
+.detail-modal .concept-philosopher {
+    font-size: 10px;
+    color: #a0a0a0;
+    font-style: italic;
+}
+
+/* ============================================================================ */
+/* 8. СЕКЦИЯ КОНЦЕПЦИЙ ФИЛОСОФА (в окне философа) */
+/* ============================================================================ */
+
+/* Контейнер секции концепций */
+.philosopher-concepts-section {
+    margin-top: 20px;
+}
+
+/* Элемент концепции с деталями */
+.concept-details-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 3px solid #a29bfe;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.concept-details-item:hover {
+    background: rgba(162, 155, 254, 0.1);
+    border-left-color: #6c5ce7;
+}
+
+/* Заголовок концепции */
+.concept-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+/* Название концепции */
+.concept-details-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: #a29bfe;
+}
+
+/* Краткое описание */
+.concept-short-desc {
+    font-size: 12px;
+    color: #b0b0b0;
+    line-height: 1.5;
+    margin: 8px 0;
+}
+
+/* Развернутое описание */
+.concept-extended-desc {
+    font-size: 12px;
+    color: #e0e0e0;
+    line-height: 1.6;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+}
+
+.concept-extended-desc.show {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+/* Кнопка раскрытия описания */
+.toggle-concept-desc-btn {
+    background: none;
+    border: none;
+    color: #a29bfe;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    transition: transform 0.3s;
+}
+
+.toggle-concept-desc-btn.expanded {
+    transform: rotate(180deg);
+}
+
+/* Кнопка "Развернуть все описания" */
+.toggle-all-descriptions-btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: rgba(162, 155, 254, 0.15);
+    border: 1px solid rgba(162, 155, 254, 0.3);
+    color: #a29bfe;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.toggle-all-descriptions-btn:hover {
+    background: rgba(162, 155, 254, 0.25);
+}
+
+/* ============================================================================ */
+/* 8A. ВЗАИМОДЕЙСТВИЕ ФИЛОСОФОВ */
+/* ============================================================================ */
+
+/* Контейнер секции взаимодействия */
+.interaction-section {
+    margin-bottom: 15px;
+    padding: 12px;
+    background: rgba(108, 92, 231, 0.08);
+    border-radius: 8px;
+    border-left: 3px solid #a29bfe;
+}
+
+/* Тип взаимодействия (заголовок) */
+.interaction-type {
+    font-weight: 700;
+    color: #a29bfe;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+/* Направление взаимодействия */
+.interaction-direction {
+    margin: 6px 0;
+    padding-left: 10px;
+    font-size: 12px;
+    color: #e0e0e0;
+}
+
+/* Метка направления (влиял на / был под влиянием) */
+.interaction-direction-label {
+    font-weight: 600;
+    color: #b0b0b0;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+/* Список философов */
+.philosopher-list {
+    display: inline;
+    margin-left: 5px;
+}
+
+/* Кликабельная ссылка на философа */
+.philosopher-link {
+    cursor: pointer;
+    color: #a29bfe;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.philosopher-link:hover {
+    color: #6c5ce7;
+    text-decoration: underline;
+}
+
+/* ============================================================================ */
+/* 9. СВЯЗИ (CONNECTIONS) */
+/* ============================================================================ */
+
+/* Основной контейнер всех связей */
+.connections-section {
+    margin-top: 15px;
+}
+
+/* Подсекция (внутренние/внешние связи) */
+.connections-subsection {
+    margin-bottom: 15px;
+}
+
+/* Заголовок подсекции (кликабельный для сворачивания) */
+.subsection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(162, 155, 254, 0.15);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+}
+
+.subsection-header:hover {
+    background: rgba(162, 155, 254, 0.25);
+}
+
+/* Название подсекции */
+.subsection-title {
+    font-weight: 700;
+    color: #a29bfe;
+    font-size: 14px;
+}
+
+/* Стрелка сворачивания/разворачивания */
+.subsection-toggle {
+    font-size: 14px;
+    color: #a29bfe;
+    transition: transform 0.3s;
+}
+
+.subsection-toggle.collapsed {
+    transform: rotate(-90deg);
+}
+
+/* Контент подсекции */
+.subsection-content {
+    padding-left: 10px;
+}
+
+.subsection-content.collapsed {
+    display: none;
+}
+
+/* Элемент связи */
+.connection-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 8px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+    gap: 10px;
+}
+
+.connection-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(162, 155, 254, 0.3);
+}
+
+/* Стрелка связи с типом */
+.connection-arrow {
+    position: relative;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: help;
+}
+
+/* Подсказка типа связи */
+.connection-arrow-tooltip {
+    visibility: hidden;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 1000;
+    border: 1px solid currentColor;
+    font-weight: 600;
+}
+
+.connection-arrow:hover .connection-arrow-tooltip {
+    visibility: visible;
+}
+
+/* Кнопка раскрытия описания связи */
+.connection-toggle {
+    background: rgba(162, 155, 254, 0.2);
+    border: 1px solid rgba(162, 155, 254, 0.4);
+    color: #a29bfe;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.connection-toggle:hover {
+    background: rgba(162, 155, 254, 0.3);
+}
+
+.connection-toggle.expanded {
+    background: #a29bfe;
+    color: white;
+}
+
+/* Описание связи */
+.connection-description {
+    margin: 8px 0 0 0;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid #a29bfe;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #d0d0d0;
+    line-height: 1.6;
+    display: none;
+}
+
+.connection-description.show {
+    display: block;
+}
+
+/* Кнопка "Развернуть все описания связей" */
+.toggle-all-connections-btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: rgba(162, 155, 254, 0.15);
+    border: 1px solid rgba(162, 155, 254, 0.3);
+    color: #a29bfe;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.toggle-all-connections-btn:hover {
+    background: rgba(162, 155, 254, 0.25);
+}
+
+/* ============================================================================ */
+/* 10. ФОРМЫ РЕДАКТИРОВАНИЯ */
+/* ============================================================================ */
+
+/* Группа формы */
+.modal-form-group {
+    margin-bottom: 20px;
+}
+
+/* Метка поля */
+.modal-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #a29bfe;
+    font-size: 14px;
+}
+
+/* Поля ввода */
+.modal-form-group input[type="text"],
+.modal-form-group input[type="number"],
+.modal-form-group input[type="color"],
+.modal-form-group select,
+.modal-form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 14px;
+    color: #e0e0e0;
+    box-sizing: border-box;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+/* Фокус на поле */
+.modal-form-group input:focus,
+.modal-form-group select:focus,
+.modal-form-group textarea:focus {
+    outline: none;
+    border-color: #a29bfe;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Textarea */
+.modal-form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* Placeholder */
+.modal-form-group input::placeholder,
+.modal-form-group textarea::placeholder {
+    color: rgba(224, 224, 224, 0.5);
+}
+
+/* Color picker */
+.modal-form-group input[type="color"] {
+    width: 60px;
+    height: 40px;
+    cursor: pointer;
+}
+
+/* Чекбоксы */
+.modal-form-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.modal-form-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #a29bfe;
+}
+
+.modal-form-checkbox label {
+    color: #e0e0e0;
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Инлайн формы (например, год рождения/смерти) */
+.modal-form-inline {
+    display: flex;
+    gap: 15px;
+}
+
+.modal-form-inline > div {
+    flex: 1;
+}
+
+/* ============================================================================ */
+/* 11. КНОПКИ ДЕЙСТВИЙ */
+/* ============================================================================ */
+
+/* Контейнер кнопок действий */
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Базовая кнопка */
+.modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* Основная кнопка (Сохранить) */
+.modal-btn-primary {
+    background: #a29bfe;
+    color: white;
+}
+
+.modal-btn-primary:hover {
+    background: #8b7fe6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(162, 155, 254, 0.4);
+}
+
+/* Вторичная кнопка (Отмена) */
+.modal-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+}
+
+.modal-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Опасная кнопка (Удалить) */
+.modal-btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.modal-btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+/* ============================================================================ */
+/* 12. СПИСКИ В РЕЖИМЕ РЕДАКТИРОВАНИЯ */
+/* ============================================================================ */
+
+/* Контейнер списка */
+.modal-edit-list {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Заголовок списка */
+.modal-edit-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.modal-edit-list-title {
+    font-weight: 700;
+    color: #a29bfe;
+    font-size: 14px;
+}
+
+/* Элемент списка */
+.modal-edit-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin: 8px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Контент элемента */
+.modal-edit-list-item-content {
+    flex: 1;
+    font-size: 13px;
+    color: #e0e0e0;
+}
+
+/* Кнопка редактирования/удаления в списке */
+.modal-edit-list-btn {
+    padding: 6px 12px;
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid #e74c3c;
+    border-radius: 5px;
+    color: #e74c3c;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.modal-edit-list-btn:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+/* Кнопка добавления элемента */
+.modal-edit-list-btn-add {
+    width: 100%;
+    padding: 10px;
+    background: rgba(46, 204, 113, 0.2);
+    border: 1px solid #2ecc71;
+    border-radius: 6px;
+    color: #2ecc71;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+}
+
+.modal-edit-list-btn-add:hover {
+    background: #2ecc71;
+    color: white;
+}
+
+/* ============================================================================ */
+/* 13. ПОИСК КОНЦЕПЦИЙ (в формах редактирования связей) */
+/* ============================================================================ */
+
+/* Контейнер поиска */
+.modal-concept-search {
+    position: relative;
+    margin: 10px 0;
+}
+
+/* Поле ввода поиска */
+.modal-concept-search input {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.modal-concept-search input:focus {
+    outline: none;
+    border-color: #a29bfe;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Результаты поиска */
+.modal-concept-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(42, 42, 62, 0.98);
+    border: 2px solid #a29bfe;
+    border-radius: 8px;
+    margin-top: 5px;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal-concept-search-results.show {
+    display: block;
+}
+
+/* Элемент результата поиска */
+.modal-concept-search-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-concept-search-item:hover {
+    background: rgba(162, 155, 254, 0.2);
+}
+
+.modal-concept-search-item:last-child {
+    border-bottom: none;
+}
+
+/* Scrollbar для результатов */
+.modal-concept-search-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-concept-search-results::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.modal-concept-search-results::-webkit-scrollbar-thumb {
+    background: #a29bfe;
+    border-radius: 10px;
+}
+
+/* ============================================================================ */
+/* 14. СЕКЦИЯ ЗАГОЛОВКОВ И РАЗДЕЛИТЕЛЕЙ */
+/* ============================================================================ */
+
+/* Заголовок секции */
+.modal-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #a29bfe;
+    margin: 20px 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(162, 155, 254, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Заголовок секции с подсчётом */
+.section-title-with-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.section-title-with-count h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #a29bfe;
+}
+
+.section-count {
+    background: rgba(162, 155, 254, 0.2);
+    color: #a29bfe;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ============================================================================ */
+/* 15. РЕЖИМ ВЫБОРА КОНЦЕПЦИЙ НА ГРАФЕ */
+/* ============================================================================ */
+
+/* Индикатор режима выбора */
+.graph-selection-mode {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    z-index: 1000;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.graph-selection-mode h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+
+.graph-selection-mode p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+/* Кнопка отмены выбора */
+.graph-selection-cancel {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+.graph-selection-cancel:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================================================ */
+/* 16. ПРЕДУПРЕЖДАЮЩИЕ СООБЩЕНИЯ */
+/* ============================================================================ */
+
+/* Контейнер предупреждения */
+.warning-message {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.warning-message h4 {
+    margin: 0 0 8px 0;
+    color: #856404;
+    font-size: 15px;
+}
+
+.warning-message p {
+    margin: 0;
+    color: #856404;
+    font-size: 13px;
+}
+
+.warning-list {
+    margin: 10px 0 0 20px;
+    color: #856404;
+}
+
+.warning-list li {
+    margin: 5px 0;
+}
+
+/* ============================================================================ */
+/* 17. АДАПТИВНОСТЬ */
+/* ============================================================================ */
+
+/* Для мобильных устройств и планшетов */
+@media (max-width: 768px) {
+    .detail-modal {
+        max-width: 95%;
+        max-height: 90vh;
+        padding: 20px;
+    }
+    
+    .mode-switch-btn {
+        position: static;
+        display: block;
+        margin-bottom: 15px;
+    }
+    
+    .detail-modal.edit-mode::before {
+        display: none;
+    }
+    
+    .modal-form-inline {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+/* ============================================================================ */
+/* 18. ДОПОЛНИТЕЛЬНЫЕ УТИЛИТАРНЫЕ КЛАССЫ */
+/* ============================================================================ */
+
+/* Скрыть элемент */
+.hidden {
+    display: none !important;
+}
+
+/* Текст с многоточием при переполнении */
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Разделитель */
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+}
+
+/* Жирный текст */
+.font-bold {
+    font-weight: 700;
+}
+
+/* Курсив */
+.font-italic {
+    font-style: italic;
+}
+
+/* Текст меньшего размера */
+.text-small {
+    font-size: 12px;
+}
+
+/* Приглушенный текст */
+.text-muted {
+    color: #b0b0b0;
+}
+
+/* Flex контейнер с gap */
+.flex-gap-10 {
+    display: flex;
+    gap: 10px;
+}
+
+/* Центрирование */
+.text-center {
+    text-align: center;
+}
+
+/* Отступы */
+.mt-10 { margin-top: 10px; }
+.mt-15 { margin-top: 15px; }
+.mt-20 { margin-top: 20px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-15 { margin-bottom: 15px; }
+.mb-20 { margin-bottom: 20px; }
+
+/* ============================================================================ */
+/* КОНЕЦ СТИЛЕЙ */
+/* ============================================================================ */

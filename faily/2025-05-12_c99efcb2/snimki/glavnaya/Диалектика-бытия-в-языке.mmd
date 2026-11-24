@@ -1,0 +1,38 @@
+flowchart TB
+    subgraph "Фундаментальная онтология"
+    A[Бытие-в-языке] --> B[Символическое присутствие]
+    A --> C[Языковые игры]
+    A --> D[Событийная темпоральность]
+    end
+    
+    subgraph "Диалектическая структура"
+    B --> E[Явное]
+    B --> F[Неявное]
+    E <--> F
+    
+    C --> G[Правила]
+    C --> H[Формы жизни]
+    G <--> H
+    
+    D --> I[Прошлое]
+    D --> J[Настоящее]
+    D --> K[Будущее]
+    I <--> J
+    J <--> K
+    K -.-> I
+    end
+    
+    subgraph "Герменевтический круг"
+    L[Понимание] --> M[Толкование]
+    M --> N[Новое понимание]
+    N --> O[Новое толкование]
+    O -.-> L
+    end
+    
+    A <--> L
+    
+    style A fill:#f9d5e5,stroke:#333,stroke-width:3px
+    style B fill:#eeeeee,stroke:#333,stroke-width:2px
+    style C fill:#eeeeee,stroke:#333,stroke-width:2px
+    style D fill:#eeeeee,stroke:#333,stroke-width:2px
+    style L fill:#d5f9e5,stroke:#333,stroke-width:3px

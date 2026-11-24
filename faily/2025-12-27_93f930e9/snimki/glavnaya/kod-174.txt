@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Устанавливаем nodemon глобально
+RUN npm install -g nodemon
+
+# Копируем shared модуль
+COPY shared /app/shared
+WORKDIR /app/shared
+RUN npm install
+
+# Копируем Concept Service
+WORKDIR /app/concept-service
+COPY concept-service/package*.json ./
+RUN npm install
+
+COPY concept-service .
+
+EXPOSE 4002
+
+CMD ["npm", "run", "dev"]

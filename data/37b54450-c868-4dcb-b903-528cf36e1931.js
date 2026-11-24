@@ -1,1 +1,0 @@
-window.conversationData={"branches":[{"id":0,"parent":null,"origin":null,"originLabel":"","chain":["019e06e8-612b-79dd-937f-07de214fab0d","019e06e8-612c-733f-a952-04d41c88e291"],"tail":["019e06e8-612b-79dd-937f-07de214fab0d","019e06e8-612c-733f-a952-04d41c88e291"],"events":[],"missed":0}],"events":[],"archive":[]};

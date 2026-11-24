@@ -1,0 +1,11 @@
+monitoring/
+├── prometheus/
+│   └── prometheus.yml
+├── grafana/
+│   └── dashboards/
+│       └── service-metrics.json
+└── logstash/
+    ├── config/
+    │   └── logstash.yml
+    └── pipeline/
+        └── logstash.conf

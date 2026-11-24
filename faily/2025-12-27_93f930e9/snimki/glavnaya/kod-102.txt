@@ -1,0 +1,183 @@
+// Инициализация Neo4j для платформы философских концепций
+
+// ==========================================
+// СОЗДАНИЕ ОГРАНИЧЕНИЙ (CONSTRAINTS)
+// ==========================================
+
+// Уникальность для Концепций
+CREATE CONSTRAINT concept_id_unique IF NOT EXISTS
+FOR (c:Concept) REQUIRE c.concept_id IS UNIQUE;
+
+// Уникальность для Категорий
+CREATE CONSTRAINT category_id_unique IF NOT EXISTS
+FOR (c:Category) REQUIRE c.category_id IS UNIQUE;
+
+// Уникальность для Связей
+CREATE CONSTRAINT relationship_id_unique IF NOT EXISTS
+FOR ()-[r:RELATED_TO]-() REQUIRE r.relationship_id IS UNIQUE;
+
+// ==========================================
+// СОЗДАНИЕ ИНДЕКСОВ
+// ==========================================
+
+// Индексы для Концепций
+CREATE INDEX concept_name IF NOT EXISTS
+FOR (c:Concept) ON (c.name);
+
+// Индексы для Категорий
+CREATE INDEX category_name IF NOT EXISTS
+FOR (c:Category) ON (c.name);
+
+CREATE INDEX category_type IF NOT EXISTS
+FOR (c:Category) ON (c.type);
+
+CREATE INDEX category_concept IF NOT EXISTS
+FOR (c:Category) ON (c.concept_id);
+
+CREATE INDEX category_innovation IF NOT EXISTS
+FOR (c:Category) ON (c.innovation_degree);
+
+CREATE INDEX category_centrality IF NOT EXISTS
+FOR (c:Category) ON (c.centrality);
+
+// Индексы для связей
+CREATE INDEX relationship_type IF NOT EXISTS
+FOR ()-[r:RELATED_TO]-() ON (r.type);
+
+CREATE INDEX relationship_strength IF NOT EXISTS
+FOR ()-[r:RELATED_TO]-() ON (r.strength);
+
+CREATE INDEX relationship_innovation IF NOT EXISTS
+FOR ()-[r:RELATED_TO]-() ON (r.innovation_degree);
+
+// Полнотекстовый индекс для поиска по категориям
+CALL db.index.fulltext.createNodeIndex(
+  'categoryFulltext',
+  ['Category'],
+  ['name', 'definition']
+) IF NOT EXISTS;
+
+// Полнотекстовый индекс для поиска по концепциям
+CALL db.index.fulltext.createNodeIndex(
+  'conceptFulltext',
+  ['Concept'],
+  ['name']
+) IF NOT EXISTS;
+
+// ==========================================
+// ВСПОМОГАТЕЛЬНЫЕ ПРОЦЕДУРЫ
+// ==========================================
+
+// Процедура для получения статистики графа концепции
+// CALL getConceptGraphStats('concept-uuid')
+CALL apoc.custom.asProcedure(
+  'getConceptGraphStats',
+  'MATCH (c:Concept {concept_id: $conceptId})-[:INCLUDES]->(cat:Category)
+   OPTIONAL MATCH (cat)-[r:RELATED_TO]-(other:Category)
+   WITH c, count(DISTINCT cat) as categoryCount, count(DISTINCT r) as relationshipCount,
+        avg(cat.centrality) as avgCentrality, avg(r.strength) as avgStrength
+   RETURN categoryCount, relationshipCount, avgCentrality, avgStrength',
+  'read',
+  [['categoryCount', 'long'], ['relationshipCount', 'long'], 
+   ['avgCentrality', 'double'], ['avgStrength', 'double']],
+  [['conceptId', 'string']]
+);
+
+// ==========================================
+// ПРИМЕРЫ ДАННЫХ ДЛЯ ТЕСТИРОВАНИЯ
+// ==========================================
+
+// Создание примера концепции "Диалектика"
+MERGE (c:Concept {concept_id: '00000000-0000-0000-0000-000000000001'})
+SET c.name = 'Диалектика';
+
+// Создание категорий для примера
+MERGE (thesis:Category {category_id: '00000000-0000-0000-0001-000000000001'})
+SET thesis.concept_id = '00000000-0000-0000-0000-000000000001',
+    thesis.name = 'Тезис',
+    thesis.type = 'logical',
+    thesis.definition = 'Исходное положение',
+    thesis.centrality = 0.9,
+    thesis.certainty = 0.8,
+    thesis.innovation_degree = 1;
+
+MERGE (antithesis:Category {category_id = '00000000-0000-0000-0001-000000000002'})
+SET antithesis.concept_id = '00000000-0000-0000-0000-000000000001',
+    antithesis.name = 'Антитезис',
+    antithesis.type = 'logical',
+    antithesis.definition = 'Противоположное положение',
+    antithesis.centrality = 0.9,
+    antithesis.certainty = 0.8,
+    antithesis.innovation_degree = 1;
+
+MERGE (synthesis:Category {category_id: '00000000-0000-0000-0001-000000000003'})
+SET synthesis.concept_id = '00000000-0000-0000-0000-000000000001',
+    synthesis.name = 'Синтез',
+    synthesis.type = 'logical',
+    synthesis.definition = 'Объединение противоположностей на новом уровне',
+    synthesis.centrality = 1.0,
+    synthesis.certainty = 0.9,
+    synthesis.innovation_degree = 2;
+
+// Создание связей концепция -> категории
+MERGE (c)-[:INCLUDES]->(thesis);
+MERGE (c)-[:INCLUDES]->(antithesis);
+MERGE (c)-[:INCLUDES]->(synthesis);
+
+// Создание связей между категориями
+MERGE (thesis)-[r1:RELATED_TO]->(antithesis)
+SET r1.relationship_id = '00000000-0000-0000-0002-000000000001',
+    r1.type = 'contradiction',
+    r1.direction = 'bidirectional',
+    r1.strength = 1.0,
+    r1.certainty = 1.0,
+    r1.source = 'Гегель',
+    r1.innovation_degree = 1;
+
+MERGE (thesis)-[r2:RELATED_TO]->(synthesis)
+SET r2.relationship_id = '00000000-0000-0000-0002-000000000002',
+    r2.type = 'development',
+    r2.direction = 'unidirectional',
+    r2.strength = 0.8,
+    r2.certainty = 0.9,
+    r2.source = 'Гегель',
+    r2.innovation_degree = 2;
+
+MERGE (antithesis)-[r3:RELATED_TO]->(synthesis)
+SET r3.relationship_id = '00000000-0000-0000-0002-000000000003',
+    r3.type = 'development',
+    r3.direction = 'unidirectional',
+    r3.strength = 0.8,
+    r3.certainty = 0.9,
+    r3.source = 'Гегель',
+    r3.innovation_degree = 2;
+
+// ==========================================
+// ВСПОМОГАТЕЛЬНЫЕ ЗАПРОСЫ
+// ==========================================
+
+// Примеры полезных запросов (закомментированы)
+
+// Получить все категории концепции
+// MATCH (c:Concept {concept_id: $conceptId})-[:INCLUDES]->(cat:Category)
+// RETURN cat;
+
+// Получить граф концепции со всеми связями
+// MATCH (c:Concept {concept_id: $conceptId})-[:INCLUDES]->(cat:Category)
+// OPTIONAL MATCH (cat)-[r:RELATED_TO]-(other:Category)
+// RETURN c, cat, r, other;
+
+// Найти центральные категории (с высокой центральностью)
+// MATCH (cat:Category)
+// WHERE cat.centrality > 0.7
+// RETURN cat
+// ORDER BY cat.centrality DESC;
+
+// Найти категории с диалектическими связями
+// MATCH (cat1:Category)-[r:RELATED_TO {type: 'dialectical'}]-(cat2:Category)
+// RETURN cat1, r, cat2;
+
+// Получить статистику по типам связей в концепции
+// MATCH (c:Concept {concept_id: $conceptId})-[:INCLUDES]->(:Category)-[r:RELATED_TO]-()
+// RETURN r.type as relationshipType, count(*) as count
+// ORDER BY count DESC;

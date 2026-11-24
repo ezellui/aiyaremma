@@ -1,14 +1,14 @@
 ---
 name: philosphaira-repo
-description: Репозиторий github.com/Ranatar/philosphaira — что выложено, как поднять с нуля, чем расходится документация; читать вместе с philosphaira
+description: Репозиторий github.com/USER/philosphaira — что выложено, как поднять с нуля, чем расходится документация; читать вместе с philosphaira
 sources: [chat]
-aliases: [Ranatar/philosphaira, репозиторий philosphaira, клон philosphaira]
+aliases: [USER/philosphaira, репозиторий philosphaira, клон philosphaira]
 ---
 
 Основная заметка проекта: [[philosphaira]] (там устройство и правила).
 
 ## ЧТО ВЫЛОЖЕНО (проверено клоном 2026-08-20)
-- [stated] Пользователь дал ссылку https://github.com/Ranatar/philosphaira и просил
+- [stated] Пользователь дал ссылку https://github.com/USER/philosphaira и просил
   склонировать и ознакомиться (файловая структура, readme целиком, далее)
 - Выложено ВСЁ дерево реформы: app/ (порождаемое, 113 модулей + boot + main),
   source/philosophy_graph_v3.html (31 404 строки), decisions/ (assign_names 764 имени

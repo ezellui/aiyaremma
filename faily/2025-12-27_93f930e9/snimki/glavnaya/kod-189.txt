@@ -1,0 +1,37 @@
+# Service Configuration
+NODE_ENV=development
+PORT=4003
+SERVICE_NAME=graph-service
+
+# Database Configuration
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=philos_concepts
+POSTGRES_USER=philos
+POSTGRES_PASSWORD=password
+
+# MongoDB
+MONGO_URL=mongodb://philos:password@localhost:27017/philos_concepts
+
+# Neo4j
+NEO4J_URL=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=password
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# External Services
+CLAUDE_SERVICE_URL=http://localhost:4006
+CONCEPT_SERVICE_URL=http://localhost:4002
+
+# Logging
+LOG_LEVEL=debug
+
+# CORS
+CORS_ORIGIN=*
+
+# Graph Configuration
+MAX_CATEGORIES_PER_CONCEPT=100
+MAX_RELATIONSHIPS_PER_CATEGORY=50
+DEFAULT_CENTRALITY_ALGORITHM=pagerank

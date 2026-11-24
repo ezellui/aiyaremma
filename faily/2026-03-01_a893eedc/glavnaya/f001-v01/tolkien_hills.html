@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Справочник по эльфийским холмам — Том I</title>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cormorant+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --ink-faded: #3d2e1a;
+    --ink-ghost: #7a6248;
+    --page: #f5f0e4;
+    --page-dark: #ede4ce;
+    --page-edge: #d9cdb0;
+    --red: #8b1a1a;
+    --red-light: #a03030;
+    --ornament: #5c3d1e;
+    --margin-line: #c8bda0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #2a2015;
+    background-image: 
+      radial-gradient(ellipse at 20% 50%, #3d2e10 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 50%, #1a1208 0%, transparent 60%);
+    min-height: 100vh;
+    font-family: 'IM Fell English', 'Cormorant Garamond', Georgia, serif;
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+  }
+
+  .book-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 780px;
+    width: 100%;
+  }
+
+  /* Book spine effect */
+  .book-page {
+    background: var(--page);
+    background-image: 
+      linear-gradient(to right, rgba(0,0,0,0.08) 0%, transparent 4%, transparent 96%, rgba(0,0,0,0.06) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    box-shadow: 
+      0 2px 4px rgba(0,0,0,0.1),
+      0 8px 32px rgba(0,0,0,0.4),
+      inset 0 0 80px rgba(0,0,0,0.03);
+    padding: 64px 72px 80px 80px;
+    position: relative;
+    line-height: 1.65;
+  }
+
+  .book-page + .book-page {
+    border-top: 1px solid var(--page-edge);
+    margin-top: 2px;
+  }
+
+  /* Running header */
+  .running-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 36px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--margin-line);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-ghost);
+    font-family: 'Cormorant SC', serif;
+  }
+
+  .page-number {
+    font-family: 'IM Fell English', serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  /* Cover page */
+  .cover-page {
+    background: var(--page-dark);
+    background-image: 
+      radial-gradient(ellipse at 50% 0%, rgba(139,26,26,0.06) 0%, transparent 60%),
+      linear-gradient(to right, rgba(0,0,0,0.08) 0%, transparent 4%, transparent 96%, rgba(0,0,0,0.06) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    padding: 80px 72px 80px 80px;
+    text-align: center;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+  }
+
+  .cover-border {
+    border: 1.5px solid var(--ornament);
+    padding: 48px 40px;
+    position: relative;
+  }
+  .cover-border::before, .cover-border::after {
+    content: '';
+    position: absolute;
+    border: 0.5px solid var(--ornament);
+    opacity: 0.5;
+  }
+  .cover-border::before { top: 5px; left: 5px; right: 5px; bottom: 5px; }
+
+  .corner-ornament {
+    position: absolute;
+    width: 20px; height: 20px;
+    border-color: var(--ornament);
+    border-style: solid;
+    opacity: 0.7;
+  }
+  .corner-ornament.tl { top: 12px; left: 12px; border-width: 1.5px 0 0 1.5px; }
+  .corner-ornament.tr { top: 12px; right: 12px; border-width: 1.5px 1.5px 0 0; }
+  .corner-ornament.bl { bottom: 12px; left: 12px; border-width: 0 0 1.5px 1.5px; }
+  .corner-ornament.br { bottom: 12px; right: 12px; border-width: 0 1.5px 1.5px 0; }
+
+  .cover-series {
+    font-family: 'Cormorant SC', serif;
+    font-size: 9.5px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-ghost);
+    margin-bottom: 32px;
+  }
+
+  .cover-title {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 28px;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: 0.03em;
+  }
+
+  .cover-volume {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-faded);
+    margin-bottom: 36px;
+    letter-spacing: 0.08em;
+  }
+
+  .cover-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    color: var(--ornament);
+    font-size: 14px;
+  }
+  .cover-divider::before, .cover-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ornament);
+    opacity: 0.5;
+  }
+
+  .cover-author {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .cover-editor-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--ink-ghost);
+    letter-spacing: 0.06em;
+    margin: 4px 0;
+  }
+
+  .cover-publisher-block {
+    margin-top: 40px;
+    font-family: 'Cormorant SC', serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--ink-ghost);
+    line-height: 2;
+    text-transform: uppercase;
+  }
+
+  /* Section headings */
+  h1.section-head {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 18px;
+    text-align: center;
+    color: var(--ink);
+    margin-bottom: 28px;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+  }
+
+  h2.chapter-head {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 14px;
+    text-align: center;
+    color: var(--ink);
+    margin: 36px 0 20px;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+  }
+
+  h3.subsection {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-faded);
+    margin: 24px 0 12px;
+    letter-spacing: 0.06em;
+  }
+
+  /* Body text */
+  p {
+    font-size: 11.5px;
+    text-align: justify;
+    hyphens: auto;
+    margin-bottom: 0;
+    line-height: 1.75;
+  }
+
+  p + p {
+    text-indent: 2em;
+  }
+
+  p.first { text-indent: 0; }
+
+  /* Drop cap */
+  .dropcap::first-letter {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 52px;
+    line-height: 0.8;
+    float: left;
+    margin: 4px 8px -4px 0;
+    color: var(--red);
+  }
+
+  /* Ornamental dividers */
+  .ornament {
+    text-align: center;
+    margin: 28px 0;
+    color: var(--ornament);
+    font-size: 16px;
+    opacity: 0.7;
+    letter-spacing: 0.3em;
+  }
+
+  .rule-thin {
+    border: none;
+    border-top: 0.5px solid var(--margin-line);
+    margin: 24px 0;
+  }
+
+  /* Quenya/Sindarin text */
+  .quenya {
+    font-style: italic;
+    color: var(--ink-faded);
+    letter-spacing: 0.03em;
+  }
+
+  /* Block quotes */
+  blockquote {
+    margin: 20px 32px;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--ink-faded);
+    position: relative;
+    line-height: 1.8;
+  }
+  blockquote::before {
+    content: '\201C';
+    font-size: 40px;
+    line-height: 0;
+    position: absolute;
+    left: -18px;
+    top: 14px;
+    color: var(--ornament);
+    opacity: 0.4;
+    font-family: 'IM Fell English', serif;
+  }
+
+  .blockquote-source {
+    display: block;
+    text-align: right;
+    font-style: normal;
+    font-size: 9.5px;
+    color: var(--ink-ghost);
+    letter-spacing: 0.06em;
+    margin-top: 6px;
+  }
+
+  /* Footnotes */
+  .footnote-section {
+    margin-top: 36px;
+    padding-top: 12px;
+    border-top: 0.75px solid var(--margin-line);
+    max-width: 70%;
+  }
+
+  .footnote {
+    font-size: 9px;
+    color: var(--ink-faded);
+    line-height: 1.6;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 4px;
+    text-align: left;
+  }
+
+  .footnote-mark {
+    color: var(--red);
+    font-size: 8px;
+    vertical-align: super;
+    line-height: 0;
+  }
+
+  sup.fn {
+    color: var(--red);
+    font-size: 8px;
+    cursor: default;
+  }
+
+  /* Editor / Translator notes */
+  .editorial-note {
+    background: rgba(139,26,26,0.04);
+    border-left: 1.5px solid var(--red);
+    margin: 18px 0 18px 24px;
+    padding: 10px 14px;
+    font-size: 10px;
+    font-style: italic;
+    color: var(--ink-faded);
+    line-height: 1.7;
+  }
+
+  .editorial-note .note-label {
+    font-style: normal;
+    font-family: 'Cormorant SC', serif;
+    font-size: 8.5px;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Marginalia */
+  .margin-note {
+    position: absolute;
+    right: 12px;
+    width: 52px;
+    font-size: 8px;
+    color: var(--ink-ghost);
+    font-style: italic;
+    line-height: 1.5;
+    text-align: right;
+    opacity: 0.8;
+  }
+
+  /* Table */
+  .lexicon-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    margin: 20px 0;
+    color: var(--ink-faded);
+  }
+
+  .lexicon-table th {
+    font-family: 'Cormorant SC', serif;
+    font-size: 8.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-ghost);
+    border-bottom: 1px solid var(--margin-line);
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 400;
+  }
+
+  .lexicon-table td {
+    padding: 6px 8px;
+    border-bottom: 0.5px solid rgba(200,189,160,0.4);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .lexicon-table tr:last-child td { border-bottom: none; }
+
+  .lexicon-table .quenya-cell {
+    font-style: italic;
+    color: var(--ink-faded);
+    white-space: nowrap;
+  }
+
+  .lexicon-table .comment-cell {
+    font-style: italic;
+    font-size: 9.5px;
+  }
+
+  /* Red initial for new section */
+  .red { color: var(--red); }
+
+  /* Colophon */
+  .colophon {
+    text-align: center;
+    font-size: 9px;
+    color: var(--ink-ghost);
+    letter-spacing: 0.1em;
+    line-height: 2;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 0.5px solid var(--margin-line);
+    font-family: 'Cormorant SC', serif;
+    font-size: 8.5px;
+    text-transform: uppercase;
+  }
+
+  .stamp {
+    display: inline-block;
+    border: 1px solid var(--red);
+    color: var(--red);
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    padding: 3px 8px;
+    margin-top: 8px;
+    opacity: 0.6;
+    font-family: 'Cormorant SC', serif;
+    text-transform: uppercase;
+  }
+
+  /* Star ornament */
+  .star-row {
+    text-align: center;
+    color: var(--ornament);
+    letter-spacing: 0.8em;
+    font-size: 10px;
+    margin: 20px 0;
+    opacity: 0.6;
+  }
+
+  /* Highlighted term definition */
+  .term-def {
+    border: 0.5px solid var(--margin-line);
+    padding: 12px 16px;
+    margin: 16px 0;
+    background: rgba(255,255,255,0.2);
+    font-size: 10.5px;
+    line-height: 1.7;
+  }
+  .term-def .term {
+    font-family: 'Cormorant SC', serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .book-page { padding: 40px 28px 50px 32px; }
+    .cover-page { padding: 48px 28px; }
+    .cover-title { font-size: 22px; }
+    .margin-note { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="book-container">
+
+  <!-- COVER PAGE -->
+  <div class="book-page cover-page">
+    <div class="cover-border">
+      <div class="corner-ornament tl"></div>
+      <div class="corner-ornament tr"></div>
+      <div class="corner-ornament bl"></div>
+      <div class="corner-ornament br"></div>
+
+      <div class="cover-series">Библиотека Средиземья · Серия «Учёные труды» · Том I</div>
+
+      <div class="cover-divider">✦</div>
+
+      <div class="cover-title">Справочник<br>по эльфийским холмам</div>
+      <div class="cover-volume">Том первый: Классификация, терминология<br>и историко-лингвистический комментарий</div>
+
+      <div class="cover-divider">· · ·</div>
+
+      <div class="cover-author">Дж. Р. Р. Толкин</div>
+      <div class="cover-editor-line">Под редакцией Анджея Сапковского</div>
+      <div class="cover-editor-line">Перевод с английского: Ник Перумов</div>
+      <div class="cover-editor-line">С приложением критических замечаний и глоссариев</div>
+
+      <div class="cover-divider">✦</div>
+
+      <div class="cover-publisher-block">
+        Издательство «Просвещение»<br>
+        Москва · MMI<br>
+        <br>
+        <span style="font-size:8px; opacity:0.7;">16+&nbsp;&nbsp;·&nbsp;&nbsp;Тираж 50 000 экз.&nbsp;&nbsp;·&nbsp;&nbsp;УДК 82-311.9</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREFATORY PAGE -->
+  <div class="book-page">
+    <div class="running-header">
+      <span>Справочник по эльфийским холмам</span>
+      <span class="page-number">ii</span>
+    </div>
+
+    <h1 class="section-head" style="margin-top:20px;">От редактора</h1>
+    <div class="ornament">— ✦ —</div>
+
+    <p class="first dropcap">Когда председатель редакционного совета издательства «Просвещение», человек по всем признакам вполне добропорядочный, позвонил мне поздним февральским вечером и осторожным голосом поинтересовался, не соглашусь ли я взяться за редактуру «одного академического труда о топографии Средиземья», я ответил согласием — из вежливости, а не из интереса.</p>
+
+    <p>Первые сорок страниц рукописи я читал с выражением человека, добросовестно разбирающего чужую почту. Топография. Лингвистические комментарии. Перекрёстные ссылки на синдаринские первоисточники. Список сокращений на полторы страницы. Всё приличия ради. Но где-то в районе страницы сорок третьей — там, где профессор впервые вводит различие между «холмом-в-покое» (<span class="quenya">ambar-sére</span>) и «холмом-в-движении» (<span class="quenya">ambar-lúmë</span>) и сопровождает это различие трёхстраничным этимологическим разбором с цитатами из «Ламмас» и «Квента Сильмариллион», — я остановился.</p>
+
+    <p>Я перечитал абзац.</p>
+
+    <p>Потом ещё раз.</p>
+
+    <p>Потом встал, подошёл к окну, посмотрел на февральский Краков, вернулся, сел и перечитал снова. Сомнений не осталось. Профессор Толкин — человек, которого добрая половина академического мира числила по ведомству детской словесности и безобидных лингвистических фантазий, — написал труд такого рода, что мне, Анджею Сапковскому, автору романов с репутацией весьма определённого свойства, стало несколько не по себе. Именно несколько — я человек опытный. Но всё же.</p>
+
+    <p>Что читатель держит в руках? Перед вами — образцовое академическое исследование. Аппарат безупречен. Сноски исчерпывающи до такой степени, что иные из них снабжены собственными сносками, а одна — на странице 214 — образует замкнутый цикл ссылок, выбраться из которого удалось лишь на третьи сутки. Библиография занимает семнадцать страниц убористого шрифта. Профессор не позволил себе ни единой скабрёзности. Ни намёка. Ни подмигивания читателю.</p>
+
+    <p>В этом-то всё и дело. Именно отсутствие намёков и создаёт впечатление такой сокрушительной — пардон — наглядности.</p>
+
+    <p>Редактировать эту книгу было странно. Не тяжело — странно. Как будто помогаешь убелённому сединами профессору с невозмутимым лицом читать лекцию, содержание которой он сам отлично сознаёт, но никогда, ни при каких обстоятельствах, не признает.</p>
+
+    <p>Читайте внимательно. Профессор заслуживает внимательного чтения.</p>
+
+    <div style="text-align:right; margin-top:28px; font-style:italic; font-size:10.5px; color:var(--ink-faded);">
+      <em>Анджей Сапковский</em><br>
+      <span style="font-size:9.5px;">Краков, ноябрь 2001 года</span>
+    </div>
+
+    <div class="footnote-section">
+      <div class="footnote"><span class="footnote-mark">*</span><span>Редактор выражает благодарность пану Яцеку за бутылку выдержанной сливовицы, без которой работа над главой VII была бы значительно более мучительной.</span></div>
+    </div>
+  </div>
+
+  <!-- TRANSLATOR'S NOTE -->
+  <div class="book-page">
+    <div class="running-header">
+      <span>Примечания редактора и переводчика</span>
+      <span class="page-number">iv</span>
+    </div>
+
+    <h1 class="section-head">От переводчика</h1>
+    <div class="ornament">— ✦ —</div>
+
+    <p class="first dropcap">Переводить Толкина — задача, известная своею коварностью. Одни переводят «Властелина колец» годами, в поте лица выверяя каждый эльфийский корень. Я готов засвидетельствовать: работа над настоящим справочником потребовала иного рода напряжения. Не лингвистического. Скорее — философского. Переводчик ведь не просто переносит слова из одного языка в другой: он принимает решения. Интерпретирует. Расставляет акценты.</p>
+
+    <p>Возьмём уже первый значимый термин, с которым я столкнулся в этой рукописи, — <span class="quenya">hilya-ambë</span>. Буквально: «следовать за холмом», «двигаться вслед за возвышенностью». В контексте ранних эльфийских поэтических текстов, на которые ссылается профессор, данный глагольный комплекс употребляется исключительно как формула преследования или страстного домогательства. Академический комментарий Толкина к этому месту занимает три страницы и содержит восемнадцать сносок. Ни в одной из них предмет домогательства прямо не назван. Я потратил на размышления о том, как передать это по-русски, лучшую часть одного воскресенья и в итоге решил, что буквальный перевод здесь точнее всего.</p>
+
+    <p>Главу VII («Северные склоны и сезонная динамика») я переводил в три приёма, с перерывами. После первого приёма я закурил. Я не курю с 1994 года. После второго — позвонил другу. После третьего понял, что друг читал исходный текст, и мы просто молчали в трубку минут пять.</p>
+
+    <p>Должен признаться: некоторые пассажи из части третьей («Морфология и типология») я перевёл намеренно сдержанно. Не из пуританства — таковым я никогда не страдал, что подтвердит любой читатель «Ведьмака». Из уважения к профессору. Он сам выстроил эту книгу как ряд последовательно открываемых дверей, за каждой из которых — следующая. Было бы невежливо распахивать их все разом.</p>
+
+    <p>Несколько замечаний по технике перевода. Там, где Толкин употребляет латинские термины, оставшиеся без квэнийского эквивалента, я сохранил их в оригинальном написании и снабдил собственными примечаниями, помеченными инициалами <em>Н. П.</em> Примечания редактора изданы инициалами <em>А. С.</em> Примечания автора — <em>Авт.</em> Примечания редакции издательства — <em>Изд.</em> Читатель, которому удастся прочесть исключительно примечания, без основного текста, получит вполне связное, хотя и несколько более откровенное изложение.</p>
+
+    <div style="text-align:right; margin-top:28px; font-style:italic; font-size:10.5px; color:var(--ink-faded);">
+      <em>Ник Перумов</em><br>
+      <span style="font-size:9.5px;">Москва, октябрь 2001 года</span>
+    </div>
+
+    <div class="footnote-section">
+      <div class="footnote"><span class="footnote-mark">1</span><span>Примечание издательства: переводчику было выплачено дополнительное вознаграждение за главу VII. Переводчик поначалу отказывался, затем согласился, объяснив это «соображениями историзма». Мы решили не уточнять. — <em>Изд.</em></span></div>
+      <div class="footnote"><span class="footnote-mark">2</span><span>Настоящий справочник не связан с иными проектами переводчика, касающимися Средиземья, хотя определённые тематические пересечения с «Кольцом Тьмы» внимательный читатель, несомненно, обнаружит. — <em>Н. П.</em></span></div>
+    </div>
+  </div>
+
+  <!-- AUTHOR PREFACE -->
+  <div class="book-page">
+    <div class="running-header">
+      <span>Предисловие автора</span>
+      <span class="page-number">vii</span>
+    </div>
+
+    <h1 class="section-head">Предисловие автора</h1>
+    <div class="star-row">✧ ✧ ✧</div>
+
+    <p class="first dropcap">Настоящий справочник суть плод многолетних изысканий — кропотливых, требовательных к исследователю и, осмелюсь утверждать, лишённых прецедента в современной академической литературе. Первые наблюдения были сделаны мною в 1930 году при обстоятельствах, которые я опускаю из соображений, не требующих объяснений. Систематическую работу над рукописью я начал в 1938-м, прервал в 1942-м ввиду военного времени, возобновил в 1946-м и завершил в редакционном смысле в 1957 году — хотя собственно полевые наблюдения, питавшие текст, продолжались до значительно более позднего срока.<sup class="fn">3</sup></p>
+
+    <p>Необходимо с самого начала обозначить границы предмета, ибо именно здесь исследователь рискует сбиться с пути. Словосочетание «эльфийский холм» (<span class="quenya">Eldarin ambë</span>, сокр. <span class="quenya">el-ambë</span>) восходит в своём нынешнем употреблении к традиции, заложенной в корпусе текстов, именуемых мной Великими Преданиями, однако глубинные его корни уходят в протоязыковые пласты, которые лингвисты обозначают термином «Общеэльдаринский» (<span class="quenya">Quenderin</span>). На данном уровне реконструкции корень <span class="quenya">*AM-</span> со значением «подниматься вверх, возноситься» неотделим от аффективно-оценочного компонента, который в дальнейшем разовьётся в богатейший семантический кластер, описание которого составляет основной предмет главы II настоящего труда.</p>
+
+    <p>Здесь я должен сделать признание, несколько необычное для академического предисловия. Написание этой книги сопровождалось определённым внутренним борением — не нравственного, но эпистемологического характера. Моя наука требует точности. Точность требует называть вещи своими именами. Называние же вещей своими именами в данном конкретном случае привело бы к тому, что труд этот не был бы принят ни одним академическим издательством Британии, а также, я полагаю, Ирландии, Шотландии и значительной части материковой Европы. Отсюда — избранная мной стратегия: строгость понятийного аппарата при намеренно классической нейтральности изложения. Читатель достаточно проницательный оценит, читатель недостаточно проницательный — получит превосходный курс эльфийской топонимики.<sup class="fn">4</sup></p>
+
+    <p>О структуре книги. Том первый охватывает общую классификацию, историю термина, лингвистический комментарий и сравнительную типологию. Том второй — «Южные предгорья и смежные регионы» — посвящён специфике отдельных географических зон и снабжён иллюстративными материалами, из которых при подготовке к изданию было изъято приблизительно сорок процентов.<sup class="fn">5</sup></p>
+
+    <div class="ornament" style="margin-top:28px;">— ✦ —</div>
+    <div style="text-align:right; font-style:italic; font-size:10.5px; color:var(--ink-faded); margin-top:12px;">
+      <em>Дж. Р. Р. Толкин</em><br>
+      <span style="font-size:9.5px;">Оксфорд, январь 1957 года</span>
+    </div>
+
+    <div class="footnote-section">
+      <div class="footnote"><span class="footnote-mark">3</span><span>Автор не уточняет, до какого именно срока. Последняя дата, фигурирующая в полевых журналах, доступных исследователям в архиве Бодлианской библиотеки, — октябрь 1966 года. Профессору было в тот момент семьдесят четыре года. Мы не стали делать выводов. — <em>А. С.</em></span></div>
+      <div class="footnote"><span class="footnote-mark">4</span><span>Читатель второго типа существует и составляет, по данным нашей редакционной почты, меньшинство. Небольшое. — <em>А. С.</em></span></div>
+      <div class="footnote"><span class="footnote-mark">5</span><span>Из оставшихся шестидесяти процентов иллюстративных материалов редакцией дополнительно изъято ещё двадцать три процента. — <em>Изд.</em></span></div>
+    </div>
+  </div>
+
+  <!-- CHAPTER I -->
+  <div class="book-page" style="position:relative;">
+    <div class="running-header">
+      <span>Глава I · Общая классификация</span>
+      <span class="page-number">3</span>
+    </div>
+
+    <h2 class="chapter-head">Глава Первая<br>Общая классификация и исторический очерк</h2>
+    <div class="ornament">— ✦ —</div>
+
+    <p class="first dropcap">Прежде чем приступать к классификации, необходимо разобраться с самим понятием, ибо слово «холм», несмотря на кажущуюся очевидность, несёт в контексте эльфийской культуры смысловую нагрузку, резко отличающуюся от той, которую вкладывают в него современные словари. Это различие не частность и не терминологическая условность — это принципиальный методологический водораздел, разделяющий компетентного исследователя от исследователя поверхностного.</p>
+
+    <p>Рассмотрим прежде всего квэнийскую традицию. В корпусе текстов, известных под общим названием «Предания Валинора», слово <span class="quenya">ambë</span> встречается в трёх семантически различных окружениях. Первое — нейтральное топографическое: <em>ambaressë orya i aurë</em>, «на холме восходит день». Второе — поэтически-возвышенное, с явным аллюзивным содержанием. Третье, наиболее интересное для нас, — в тех контекстах, где предметом высказывания служит не сам холм, но то, что <em>находится на</em> холме или <em>скрыто под</em> ним — с соответствующими семантическими последствиями.<sup class="fn">6</sup></p>
+
+    <div class="editorial-note">
+      <span class="note-label">Примечание редактора — А. С.</span>
+      Автор здесь с подкупающей невозмутимостью обозначает словом «семантические последствия» то, что мы с коллегами в приватной переписке именовали иначе. Сохраняю авторский термин. Читатель додумает остальное.
+    </div>
+
+    <p>Синдаринская ветвь представляет сходную картину, однако осложнённую рядом дополнительных коннотаций, уходящих корнями в дохолмовую эпоху — термин мой, в научный оборот ещё не вошедший. В синдарине бытует устойчивое словосочетание <span class="quenya">dol-vren</span>, которое в позднейших текстах означает буквально «закрытую вершину», хотя ранние употребления этой формулы недвусмысленно указывают на нечто принципиально другое, также закрытое, однако никоим образом не являющееся вершиной в топографическом смысле. Берен Однорукий, по свидетельству «Лэ о Лэйтиан», употреблял данное выражение именно в позднейшем значении — не в раннем. Что, впрочем, мало кого удивит.</p>
+
+    <h3 class="subsection">§ 1. Таксономическая схема: три великих разряда</h3>
+
+    <p class="first">На основании анализа источников предлагается следующая трёхчастная классификация эльфийских холмов:</p>
+
+    <div class="term-def">
+      <span class="term">I. Холмы Высших эльфов (Калаквэнди)</span>
+      <span class="quenya">Calaquendi ambi · Quenyarin: ambor Calaquendion</span><br><br>
+      Называются также «осверённые» — от <span class="quenya">cala</span>, «свет». В источниках описываются с таким неизменным единодушием восторженных эпитетов, что академическому исследователю поначалу трудно сохранять необходимую дистанцию. Тексты прибегают к формулам вроде <span class="quenya">fanyarë calimë</span> («лучезарная округлость»), <span class="quenya">lómëa mírë</span> («мерцающее сокровище») и — в особо патетических пассажах — <span class="quenya">voryë lúmëassë meneldë</span>, что допускает перевод как «вечный, подобный небесному своду, в своей совершенности».<sup class="fn">7</sup> Полевые наблюдения автора в полной мере подтверждают репутацию, закреплённую за данным разрядом в письменной традиции.
+    </div>
+
+    <div class="term-def">
+      <span class="term">II. Холмы Серых эльфов (Синдар)</span>
+      <span class="quenya">Sindar ambi · Sindarin: gronn dol-vryn</span><br><br>
+      Менее прославлены в поэтических источниках, однако привязанность к ним, засвидетельствованная рядом исторических персон первой величины, говорит сама за себя. Помимо уже упомянутого Берена, следует назвать Туора, чьи хроники — там, где они сохранились неотредактированными позднейшими переписчиками — содержат описания, не оставляющие сомнений в искренности его предпочтений. Синдаринский образец отличается тем, что исследователи обозначают термином <em>húrë</em> («природная неприглаженность»), и это качество, по всей видимости, и обусловило особое к нему расположение персонажей с авантюрным складом характера.
+    </div>
+
+    <div class="term-def">
+      <span class="term">III. Холмы Лесных эльфов (Авари / Нандор)</span>
+      <span class="quenya">Avari ambi · также: tyeller nandorwa</span><br><br>
+      Наименее изученный разряд — частично вследствие труднодоступности источников, частично по причинам, которые становятся очевидны всякому, кто предпринял соответствующие полевые исследования. Авари в принципе не склонны к тому, чтобы пришелец — тем более вооружённый записной книжкой — беспрепятственно производил классификацию их достояния. Сведения, которыми располагает автор, получены окольным путём и не все могут быть преданы огласке.<sup class="fn">8</sup>
+    </div>
+
+    <div class="footnote-section">
+      <div class="footnote"><span class="footnote-mark">6</span><span>Автор использует слово «под» курсивом. Это единственный курсив на данной странице. Полагаю, намеренный. — <em>Н. П.</em></span></div>
+      <div class="footnote"><span class="footnote-mark">7</span><span>Перевод переводчика. Альтернативный перевод, предложенный редактором, был признан редакционным советом «избыточно прямолинейным». — <em>Изд.</em></span></div>
+      <div class="footnote"><span class="footnote-mark">8</span><span>Полевые журналы автора за 1948–1950 гг., освещающие экспедицию в леса к востоку от Ируэнзанды, хранятся под замком в Бодлианской библиотеке и будут открыты для исследователей в 2073 году. — <em>А. С.</em></span></div>
+    </div>
+  </div>
+
+  <!-- CHAPTER III -->
+  <div class="book-page" style="position:relative;">
+    <div class="running-header">
+      <span>Глава III · Терминология и семантика</span>
+      <span class="page-number">47</span>
+    </div>
+
+    <h2 class="chapter-head">Глава Третья<br>Терминология: что имели в виду древние —<br>опыт семантической реконструкции</h2>
+    <div class="ornament">— ✦ —</div>
+
+    <p class="first dropcap">Одна из главных трудностей при изучении предмета — намеренная туманность источников, восходящая не к авторской беспечности, но к вполне осознанной культурной конвенции. Эльфийская поэтическая традиция — в особенности та её ветвь, которая сложилась при дворе Финголфина в Нарготронде, а также более поздние тексты, связанные с именами Даэрона и Маглора, — прибегает к системе устойчивых эвфемизмов, сложившейся, по всей видимости, под влиянием Запретов Манвэ о недопустимости прямого именования определённых предметов в торжественных собраниях.<sup class="fn">11</sup> Следствием этих Запретов стала богатейшая традиция иносказания, в рамках которой «холм» превратился в универсальный элемент поэтического кода.</p>
+
+    <p>Рассмотрим несколько ключевых формул, без понимания которых работа с источниками невозможна.</p>
+
+    <h3 class="subsection">§ 1. «Восходить на холм» — <span class="quenya">orta i ambë</span></h3>
+
+    <p class="first">Выражение встречается в корпусе семьдесят три раза — столь часто, что его первоначальный смысл почти полностью вытеснен переносным. Буквальное значение: подниматься, взбираться на возвышенность. Актуальное значение в подавляющем большинстве контекстов: см. Приложение Б, колонку «Что имеется в виду», строку I.</p>
+
+    <blockquote>
+      <span class="quenya">Á orta i ambë, Finrod, ar care tielyar rimbë lossë!</span><br>
+      «Взойди на холм, Финрод, и пути твои будут многочисленны и белоснежны!»
+      <span class="blockquote-source">— Песнь из «Лэ о Финроде», рукопись C, строфа 17.
+      <br>(Примечание пер.: «пути» в данном контексте — очевидная множественная метафора. — <em>Н. П.</em>)</span>
+    </blockquote>
+
+    <p>Показательно, что в той же рукописи, строфой ниже, Финрод описан как «тот, кто легко обретает дорогу среди холмов» (<span class="quenya">i tirno ambessen haiya</span>). Это характеристика не навигационная.</p>
+
+    <div class="editorial-note">
+      <span class="note-label">Примечание редактора — А. С.</span>
+      Для сравнения: в старопольской балладной традиции аналогичную функцию выполняет формула «перейти через брод». Польский читатель понимает её правильно без дополнительных разъяснений. Что говорит либо в пользу балладной традиции, либо в пользу польского читателя, либо в пользу обоих.
+    </div>
+
+    <h3 class="subsection">§ 2. «Холм в тумане» — <span class="quenya">ambë hísierwa</span></h3>
+
+    <p class="first">Устойчивый образ, встречающийся в трёх различных текстах совершенно независимого происхождения, что само по себе свидетельствует об укоренённости формулы. Во всех трёх случаях «туман» (<span class="quenya">hísiё</span>) описывает состояние созерцателя, а не атмосферные условия. «Холм, окутанный туманом, прекраснее холма, открытого всем ветрам», — гласит одна из глосс на полях Кормаринен, рукопись которой хранится в Гондоре и датируется Третьей эпохой. Глосса написана другим почерком, нежели основной текст, и явно позднее — что свидетельствует о том, что позднейший читатель понял автора правильно и решил выразить согласие письменно.</p>
+
+    <h3 class="subsection">§ 3. «Любоваться холмами на рассвете» — <span class="quenya">cenya i ambi oiariessë</span></h3>
+
+    <p class="first">Данное выражение представляет особый интерес, поскольку его включение в контекст «рассвета» (<span class="quenya">oiarë</span>, первосвет, начало нового) создаёт устойчивую темпоральную метафору. «Рассвет» в эльфийской поэзии — почти неизменно начало чего-то нового, первое приближение, первый взгляд. «Любоваться холмами на рассвете», следовательно, означает — в терминах, которые я позволю себе избегать, — определённый начальный момент в хронологии событий, предметом которых является сам холм. Источники в этом последовательны: я не нашёл ни одного случая, где «рассвет» и «холм» в соседних строфах означали бы буквально то, что означают.<sup class="fn">12</sup></p>
+
+    <h3 class="subsection">§ 4. Сводный лексикон ключевых формул</h3>
+
+    <table class="lexicon-table">
+      <thead>
+        <tr>
+          <th>Квэнийская форма</th>
+          <th>Буквальный перевод</th>
+          <th>Актуальное значение</th>
+          <th>Примечание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="quenya-cell">orta i ambë</td>
+          <td>восходить на холм</td>
+          <td>—</td>
+          <td class="comment-cell">См. Прил. Б, стр. I. Переводчик отказался дать дефиницию письменно.</td>
+        </tr>
+        <tr>
+          <td class="quenya-cell">ambë caita</td>
+          <td>холм лежит</td>
+          <td>—</td>
+          <td class="comment-cell">Редактор рекомендует не читать эту строку после ужина.</td>
+        </tr>
+        <tr>
+          <td class="quenya-cell">i ambor mírë</td>
+          <td>холмы-сокровища</td>
+          <td>—</td>
+          <td class="comment-cell">Берен употреблял эту форму в обращении к Лютиэн. Семь раз в одном письме.</td>
+        </tr>
+        <tr>
+          <td class="quenya-cell">lómëa ambë</td>
+          <td>тёмный / сумеречный холм</td>
+          <td>—</td>
+          <td class="comment-cell">«Тёмный» здесь — эпитет не угрозы, но противопоставления свету. Контраст принципиален.</td>
+        </tr>
+        <tr>
+          <td class="quenya-cell">alassëa ambor</td>
+          <td>радостные возвышенности</td>
+          <td>—</td>
+          <td class="comment-cell">Поэт Маглор. Адресат неизвестен. Контекст очевиден.</td>
+        </tr>
+        <tr>
+          <td class="quenya-cell">nér amba-tirno</td>
+          <td>муж-наблюдатель-холмов</td>
+          <td>—</td>
+          <td class="comment-cell">Прозвище Берена в нандоринских источниках. Что характерно — прозвище уважительное.</td>
+        </tr>
+        <tr>
+          <td class="quenya-cell">yávë ambo</td>
+          <td>плод холмов</td>
+          <td>—</td>
+          <td class="comment-cell">Встречается в контексте, который Толкин описывает как «ритуальный». Редактор оставляет это без комментария из уважения к ритуалу.</td>
+        </tr>
+        <tr>
+          <td class="quenya-cell">ambë rimbë</td>
+          <td>множество холмов</td>
+          <td>—</td>
+          <td class="comment-cell">Данная форма в источниках — без единого исключения — стоит в контексте изобилия, благодати, удачного стечения обстоятельств. Автор разбирает этот случай в § 7 главы IV, к которому читателю следует переходить отдохнувшим.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="editorial-note">
+      <span class="note-label">Примечание переводчика — Н. П.</span>
+      Первоначальная версия данной таблицы содержала сорок восемь строк и колонку «Иллюстративные цитаты». Колонку пришлось упразднить: суммарный объём цитат превысил объём основного текста главы, а юридический отдел издательства просил передать, что у него больше нет слов.
+    </div>
+
+    <div class="footnote-section">
+      <div class="footnote"><span class="footnote-mark">11</span><span>О Запретах Манвэ в академической литературе ведётся полемика: существовали ли они в действительности или же являются позднейшей рационализацией уже сложившейся конвенции умолчания? Автор склоняется к первой точке зрения; редактор — к мнению, что наличие или отсутствие официального запрета никогда особенно не останавливало эльфов, судя по источникам. — <em>А. С.</em></span></div>
+      <div class="footnote"><span class="footnote-mark">12</span><span>Я проверил. Лично. Все семьдесят три случая совместного употребления. Это заняло неделю. Вывод однозначен. — <em>Н. П.</em></span></div>
+    </div>
+  </div>
+
+  <!-- CHAPTER VII EXCERPT -->
+  <div class="book-page" style="position:relative;">
+    <div class="running-header">
+      <span>Глава VII · Северные склоны</span>
+      <span class="page-number">214</span>
+    </div>
+
+    <h2 class="chapter-head">Глава Седьмая<br>Северные склоны и их особенности<br>в период весеннего цветения<br><span style="font-size:11px; font-family:'Cormorant Garamond'; font-style:italic; font-weight:300; letter-spacing:0.05em;">с приложением сравнительных наблюдений за летним периодом</span></h2>
+
+    <div class="editorial-note">
+      <span class="note-label">Примечание редактора — А. С.</span>
+      Глава VII была прочитана мной четыре раза. Сначала профессионально — с редакторским карандашом. Затем ещё раз — уже без карандаша. Затем двумя коллегами по издательству, которые попросили не упоминать их имён. Затем юрисконсультом, который потребовал убрать страницы 217–219 полностью. Страницы 217–219 убраны. Остальное перед вами.
+    </div>
+
+    <p class="first dropcap">Северные склоны прогреваются медленнее южных — это физическая данность, от которой исследователь отталкивается как от первого и незыблемого факта. Тем удивительнее, что именно северным склонам эльфийская традиция неизменно отдаёт предпочтение перед южными — с такою настойчивостью, что это требует объяснения, выходящего за рамки простой метеорологии.</p>
+
+    <p>Объяснение это автор искал долго и нашёл — в шести независимых источниках, датируемых разными эпохами, — совершенно одинаковым. Северный склон ценится за то, что он более скрыт от взгляда. Расположен менее очевидно. Открывается постепенно, а не сразу. Солнце достигает его позже, чем южного, — и потому момент, когда оно наконец достигает, переживается совершенно иначе.</p>
+
+    <p>Румил Тирионский, квэнийский натурфилософ, чьи сочинения сохранились лишь фрагментарно, писал:</p>
+
+    <blockquote>
+      <span class="quenya">Ambë norwa úva lúmë, nan i lúmë ya ola — ola alassëa yá nandë ambë harwa.</span><br>
+      «Северный холм не торопит времени, но время, которое на нём восходит, восходит в радости, какой нет у торопливого южного холма.»
+      <span class="blockquote-source">— Румил, «О природе прекрасного» (<span class="quenya">Nárëlúmë Vanyarwa</span>), фрагмент IX.<br>
+      (Примечание пер.: В оригинале — прилагательное <span class="quenya">alassëa</span>, образованное от корня <span class="quenya">AL-</span>, обозначающего также «изобилие» и «удовлетворённость». Перевод «радость» — минимально возможный. — <em>Н. П.</em>)</span>
+    </blockquote>
+
+    <p>Аналогичную оценку высказывает Глорфиндэль — в контексте, который академический читатель, знакомый с хрониками Первой эпохи, оценит по достоинству — в частном письме к Эктелиону, датируемом предположительно периодом расцвета Гондолина. Письмо сохранилось в единственном списке, атрибуция спорна, однако стилистика несомненно соответствует тому, что нам известно об авторе. Цитировать письмо целиком я не стану: оно частное. Процитирую лишь одну фразу, которая, будучи вырвана из контекста, звучит вполне невинно: «Северный склон требует времени, терпения и хорошей обуви.» <sup class="fn">17</sup></p>
+
+    <h3 class="subsection">§ 2. Сезонная динамика: весна как исследовательский период</h3>
+
+    <p class="first">Весна занимает в системе эльфийских наблюдений за холмами место совершенно особое. Это сезон первых визитов, первых впечатлений, — а также, согласно рукописной традиции, сезон наиболее интенсивной научной документации. Не случайно большинство дошедших до нас описаний холмов датируются весенними месяцами: эльфийские авторы были, по всей видимости, людьми — то есть эльфами — системными.</p>
+
+    <p>Сравнивая весенние описания с летними и осенними, исследователь замечает устойчивую закономерность: весной источники склонны к более обстоятельной детализации, тогда как к осени тон становится более кратким и удовлетворённым. Зимние описания холмов в корпусе практически отсутствуют, что я объясняю климатическими соображениями, хотя коллеги из Оксфорда предлагают иную интерпретацию.<sup class="fn">18</sup></p>
+
+    <div class="editorial-note">
+      <span class="note-label">Примечание редактора — А. С.</span>
+      На страницах 217–219, изъятых по требованию юрисконсульта, автор описывает весенний сезон в северных склонах с такой степенью детализации, которую я лично готов квалифицировать как бесстрашную. Жалею об изъятии. Если том второй пройдёт без осложнений, возможно, вернёмся к этому вопросу в третьем.
+    </div>
+
+    <div class="footnote-section">
+      <div class="footnote"><span class="footnote-mark">17</span><span>«Хорошая обувь» — в оригинале <span class="quenya">firyë-telpina calca</span>, буквально «серебряная обувь смертных». Метафора загадочная. Эктелион, по имеющимся сведениям, ответил тем же вечером. — <em>Н. П.</em></span></div>
+      <div class="footnote"><span class="footnote-mark">18</span><span>Интерпретация коллег из Оксфорда была изложена на факультетском семинаре 1952 года и вызвала дискуссию, продолжавшуюся до позднего вечера. Протоколы семинара хранятся. Они не публикуются. — <em>Авт.</em></span></div>
+    </div>
+  </div>
+
+  <!-- APPENDIX -->
+  <div class="book-page">
+    <div class="running-header">
+      <span>Приложения</span>
+      <span class="page-number">311</span>
+    </div>
+
+    <h1 class="section-head">Приложение А<br>Методология полевых исследований: личные замечания</h1>
+    <div class="ornament">— ✦ —</div>
+
+    <p class="first dropcap">Академическое исследование предполагает строгость метода. Строгость метода применительно к предмету настоящего справочника означала, прежде всего, готовность к полевой работе — то есть к непосредственному наблюдению, а не исключительно к работе с текстами. Я хотел бы кратко изложить принципы, которыми руководствовался.</p>
+
+    <p><em>Первый принцип: невмешательство.</em> Исследователь наблюдает. Присутствие наблюдателя не должно искажать наблюдаемое. На практике этот принцип оказался значительно труднее применимым, чем в теории, поскольку наблюдаемые, как правило, замечали наблюдателя — и реагировали по-разному. Синдары реагировали с достоинством. Нандоры — с раздражением. Несколько представительниц Высших эльфов — с таким радушием, что о строгом невмешательстве не могло быть и речи, и методологическая строгость принуждала меня вносить соответствующие уточнения в полевые журналы.<sup class="fn">22</sup></p>
+
+    <p><em>Второй принцип: верификация.</em> Наблюдение, не верифицированное повторным наблюдением, не является надёжным. Именно верификационная необходимость объясняет, почему ряд экспедиций автора, изначально планировавшихся как краткосрочные, растянулся на значительно более длительные сроки. Полевые журналы свидетельствуют, что в период 1948–1952 годов автор неоднократно возвращался к одним и тем же объектам наблюдения — в исключительно научных целях.</p>
+
+    <p><em>Третий принцип: системность записей.</em> Записи должны вестись непосредственно в ходе наблюдения, а не по его завершении, поскольку память несовершенна. Этот принцип оказался наиболее сложным для реализации по причинам, которые достаточно очевидны и в которые я не считаю нужным вдаваться.</p>
+
+    <div class="footnote-section">
+      <div class="footnote"><span class="footnote-mark">22</span><span>«Уточнения» — авторское слово. В полевых журналах, которые мне удалось бегло просмотреть в Бодлиане, соответствующие записи занимают от половины до полутора страниц. Почерк становится менее разборчивым. — <em>А. С.</em></span></div>
+    </div>
+  </div>
+
+  <!-- COLOPHON -->
+  <div class="book-page">
+    <div class="running-header">
+      <span>Выходные данные</span>
+      <span class="page-number">348</span>
+    </div>
+
+    <div style="height:60px;"></div>
+
+    <div class="colophon">
+      Толкин Дж. Р. Р.<br>
+      <strong style="letter-spacing:0.15em;">Справочник по эльфийским холмам. Том I</strong><br>
+      Под редакцией А. Сапковского<br>
+      Перевод с английского Н. Перумова<br>
+      <br>
+      Редактор: А. Громова&nbsp;&nbsp;·&nbsp;&nbsp;Корректор: М. Белова (уволена после главы VII)<br>
+      Художник обложки: И. Тихомиров (попросил не называть его имени после ознакомления с содержанием)<br>
+      <br>
+      Подписано в печать 12.09.2001&nbsp;&nbsp;·&nbsp;&nbsp;Формат 60×90/16&nbsp;&nbsp;·&nbsp;&nbsp;Бумага офсетная<br>
+      Тираж 50 000 экз.&nbsp;&nbsp;·&nbsp;&nbsp;Заказ № 1748<br>
+      <br>
+      Издательство «Просвещение»&nbsp;&nbsp;·&nbsp;&nbsp;Москва, 2001<br>
+      УДК 82-311.9&nbsp;&nbsp;·&nbsp;&nbsp;ББК 84(4Вел)&nbsp;&nbsp;·&nbsp;&nbsp;Т52<br>
+      <br>
+      <span class="stamp">16+&nbsp;&nbsp;·&nbsp;&nbsp;Для читателей старше 18 лет</span><br><br>
+      <span style="font-size:7.5px; opacity:0.6;">
+        На обложке изображён пейзаж Шира. Обычный пейзаж. Холмы там — топографические.<br>
+        Том II («Южные предгорья: сравнительный анализ») выходит в первом квартале 2002 года.<br>
+        Юрисконсульт издательства взял отпуск.
+      </span>
+    </div>
+
+    <div class="star-row" style="margin-top:40px;">✦ · ✦ · ✦</div>
+  </div>
+
+</div>
+</body>
+</html>

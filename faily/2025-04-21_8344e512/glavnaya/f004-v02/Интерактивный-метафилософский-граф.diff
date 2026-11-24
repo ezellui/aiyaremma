@@ -1,0 +1,608 @@
+--- предыдущая/Интерактивный-метафилософский-граф.html
++++ текущая/Интерактивный-метафилософский-граф.html
+@@ -516,8 +516,561 @@
+       { id: 'FPG', name: 'Философский прогресс', type: 'peripheral', description: 'Развитие философского знания во времени.' }
+     ];
+ 
+-    // Определяем данные о связях
+-    linkData = [
++    // Инициализация приложения
++    function initApp() {
++      // Настройка размеров
++      const container = document.getElementById('graph-container');
++      width = container.clientWidth;
++      height = container.clientHeight;
++      
++      // Настройка SVG
++      svg = d3.select('#graph-svg')
++        .attr('width', width)
++        .attr('height', height);
++      
++      // Создаем группу для масштабирования
++      const g = svg.append('g')
++        .attr('class', 'graph-container');
++      
++      // Создаем маркеры для стрелок
++      svg.append("defs").selectAll("marker")
++        .data(Object.keys(linkTypes))
++        .enter().append("marker")
++        .attr("id", d => `arrow-${d}`)
++        .attr("viewBox", "0 -5 10 10")
++        .attr("refX", 15)
++        .attr("refY", 0)
++        .attr("markerWidth", 6)
++        .attr("markerHeight", 6)
++        .attr("orient", "auto")
++        .append("path")
++        .attr("d", "M0,-5L10,0L0,5")
++        .attr("fill", d => linkTypes[d].color);
++      
++      // Настройка физической симуляции
++      simulation = d3.forceSimulation(nodeData)
++        .force("link", d3.forceLink(linkData).id(d => d.id).distance(120))
++        .force("charge", d3.forceManyBody().strength(-300))
++        .force("center", d3.forceCenter(width / 2, height / 2))
++        .force("collision", d3.forceCollide().radius(d => nodeTypes[d.type].radius + 10));
++      
++      // Создаем связи
++      link = g.append("g")
++        .attr("class", "links")
++        .selectAll("path")
++        .data(linkData)
++        .enter().append("path")
++        .attr("class", d => `link link-${d.type}`)
++        .attr("stroke", d => linkTypes[d.type].color)
++        .attr("stroke-width", d => linkTypes[d.type].width)
++        .attr("stroke-dasharray", d => linkTypes[d.type].dasharray === 'none' ? null : linkTypes[d.type].dasharray)
++        .attr("marker-end", d => `url(#arrow-${d.type})`)
++        .attr("fill", "none")
++        .on("mouseover", handleLinkMouseOver)
++        .on("mouseout", handleLinkMouseOut);
++      
++      // Создаем метки для связей
++      linkLabels = g.append("g")
++        .attr("class", "link-labels")
++        .selectAll("text")
++        .data(linkData)
++        .enter().append("text")
++        .attr("class", "link-label")
++        .attr("font-size", "9px")
++        .attr("text-anchor", "middle")
++        .text(d => d.label);
++      
++      // Создаем узлы
++      node = g.append("g")
++        .attr("class", "nodes")
++        .selectAll("g")
++        .data(nodeData)
++        .enter().append("g")
++        .attr("class", "node")
++        .attr("id", d => `node-${d.id}`)
++        .call(d3.drag()
++          .on("start", dragstarted)
++          .on("drag", dragged)
++          .on("end", dragended))
++        .on("mouseover", handleNodeMouseOver)
++        .on("mouseout", handleNodeMouseOut)
++        .on("contextmenu", handleContextMenu);
++      
++      // Добавляем круги к узлам
++      node.append("circle")
++        .attr("r", d => nodeTypes[d.type].radius)
++        .attr("fill", d => nodeTypes[d.type].fill)
++        .attr("stroke", d => nodeTypes[d.type].stroke)
++        .attr("stroke-width", 2);
++      
++      // Добавляем тексты к узлам
++      nodeLabels = node.append("text")
++        .attr("dy", ".35em")
++        .attr("text-anchor", "middle")
++        .attr("font-size", d => {
++          if (d.type === 'central') return "12px";
++          if (d.type === 'recursive' || d.type === 'essential') return "10px";
++          return "9px";
++        })
++        .text(d => d.name)
++        .call(wrap, 80);
++      
++      // Настройка обработчиков масштабирования
++      const zoom = d3.zoom()
++        .scaleExtent([0.1, 4])
++        .on("zoom", zoomed);
++      
++      svg.call(zoom);
++      
++      // Запуск симуляции
++      simulation.on("tick", ticked);
++      
++      // Инициализация интерфейса
++      initUI();
++    }
++    
++    // Функция для обёртывания длинного текста в узлах
++    function wrap(text, width) {
++      text.each(function() {
++        const text = d3.select(this);
++        const words = text.text().split(/\s+/).reverse();
++        let word, line = [];
++        let lineNumber = 0;
++        const lineHeight = 1.1; // em
++        const y = text.attr("y");
++        const dy = parseFloat(text.attr("dy"));
++        let tspan = text.text(null).append("tspan")
++          .attr("x", 0)
++          .attr("y", y)
++          .attr("dy", dy + "em");
++        
++        while (word = words.pop()) {
++          line.push(word);
++          tspan.text(line.join(" "));
++          if (line.length > 1 && tspan.node().getComputedTextLength() > width) {
++            line.pop();
++            tspan.text(line.join(" "));
++            line = [word];
++            tspan = text.append("tspan")
++              .attr("x", 0)
++              .attr("y", y)
++              .attr("dy", ++lineNumber * lineHeight + dy + "em")
++              .text(word);
++          }
++        }
++      });
++    }
++    
++    // Обновление позиций при тике симуляции
++    function ticked() {
++      link.attr("d", d => {
++        const dx = d.target.x - d.source.x;
++        const dy = d.target.y - d.source.y;
++        const dr = Math.sqrt(dx * dx + dy * dy);
++        
++        // Для самореференционных связей (петли)
++        if (d.source === d.target) {
++          const dr = 30;
++          return `M${d.source.x},${d.source.y} A${dr},${dr} 0 1,1 ${d.source.x + 1},${d.source.y + 1}`;
++        }
++        
++        return `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`;
++      });
++      
++      linkLabels.attr("transform", d => {
++        if (d.source === d.target) {
++          // Для петель размещаем метку над петлей
++          return `translate(${d.source.x + 20},${d.source.y - 20})`;
++        }
++        
++        // Для обычных связей — посередине линии
++        const mid_x = (d.source.x + d.target.x) / 2;
++        const mid_y = (d.source.y + d.target.y) / 2;
++        
++        return `translate(${mid_x},${mid_y - 5})`;
++      });
++      
++      node.attr("transform", d => `translate(${d.x},${d.y})`);
++    }
++    
++    // Обработчики событий перетаскивания
++    function dragstarted(event, d) {
++      if (!event.active) simulation.alphaTarget(0.3).restart();
++      d.fx = d.x;
++      d.fy = d.y;
++    }
++    
++    function dragged(event, d) {
++      d.fx = event.x;
++      d.fy = event.y;
++    }
++    
++    function dragended(event, d) {
++      if (!event.active) simulation.alphaTarget(0);
++      // Если узел не зафиксирован, то отпускаем его
++      if (!d.fixed) {
++        d.fx = null;
++        d.fy = null;
++      }
++    }
++    
++    // Обработчик масштабирования
++    function zoomed(event) {
++      transform = event.transform;
++      d3.select('.graph-container').attr("transform", transform);
++    }
++    
++    // Обработчики наведения на узлы
++    function handleNodeMouseOver(event, d) {
++      const tooltip = document.getElementById('tooltip');
++      tooltip.style.left = (event.pageX + 10) + 'px';
++      tooltip.style.top = (event.pageY + 10) + 'px';
++      tooltip.innerHTML = `<strong>${d.name}</strong><br>${d.description}`;
++      tooltip.style.opacity = 1;
++      
++      // Подсветка связанных узлов и связей
++      const connectedNodes = new Set();
++      const connectedLinks = new Set();
++      
++      linkData.forEach(link => {
++        if (link.source.id === d.id || link.source === d.id) {
++          connectedNodes.add(typeof link.target === 'object' ? link.target.id : link.target);
++          connectedLinks.add(link);
++        }
++        if (link.target.id === d.id || link.target === d.id) {
++          connectedNodes.add(typeof link.source === 'object' ? link.source.id : link.source);
++          connectedLinks.add(link);
++        }
++      });
++      
++      node.style('opacity', node => {
++        if (node.id === d.id) return 1;
++        return connectedNodes.has(node.id) ? 0.8 : 0.3;
++      });
++      
++      link.style('opacity', link => 
++        connectedLinks.has(link) ? 1 : 0.1
++      );
++      
++      linkLabels.style('opacity', link => 
++        connectedLinks.has(link) ? 1 : 0.1
++      );
++    }
++    
++    function handleNodeMouseOut() {
++      const tooltip = document.getElementById('tooltip');
++      tooltip.style.opacity = 0;
++      
++      node.style('opacity', 1);
++      link.style('opacity', 0.6);
++      linkLabels.style('opacity', 1);
++    }
++    
++    // Обработчики наведения на связи
++    function handleLinkMouseOver(event, d) {
++      const tooltip = document.getElementById('tooltip');
++      tooltip.style.left = (event.pageX + 10) + 'px';
++      tooltip.style.top = (event.pageY + 10) + 'px';
++      tooltip.innerHTML = `<strong>${d.label}</strong><br>${d.description}`;
++      tooltip.style.opacity = 1;
++      
++      d3.select(this).attr('stroke-width', linkTypes[d.type].width * 2);
++    }
++    
++    function handleLinkMouseOut(event, d) {
++      const tooltip = document.getElementById('tooltip');
++      tooltip.style.opacity = 0;
++      
++      d3.select(this).attr('stroke-width', linkTypes[d.type].width);
++    }
++    
++    // Обработчик контекстного меню
++    function handleContextMenu(event, d) {
++      event.preventDefault();
++      
++      selectedNode = d;
++      
++      const menu = document.getElementById('context-menu');
++      menu.style.left = event.pageX + 'px';
++      menu.style.top = event.pageY + 'px';
++      menu.style.display = 'block';
++      
++      document.getElementById('fix-node').textContent = d.fixed ? 'Открепить узел' : 'Закрепить узел';
++    }
++    
++    // Инициализация пользовательского интерфейса
++    function initUI() {
++      // Закрытие контекстного меню при клике в другом месте
++      document.addEventListener('click', function(event) {
++        if (!event.target.closest('#context-menu')) {
++          document.getElementById('context-menu').style.display = 'none';
++        }
++      });
++      
++      // Обработчики контекстного меню
++      document.getElementById('fix-node').addEventListener('click', function() {
++        if (selectedNode) {
++          selectedNode.fixed = !selectedNode.fixed;
++          if (selectedNode.fixed) {
++            selectedNode.fx = selectedNode.x;
++            selectedNode.fy = selectedNode.y;
++          } else {
++            selectedNode.fx = null;
++            selectedNode.fy = null;
++          }
++          document.getElementById('context-menu').style.display = 'none';
++        }
++      });
++      
++      document.getElementById('node-info').addEventListener('click', function() {
++        if (selectedNode) {
++          showNodeInfo(selectedNode);
++          document.getElementById('context-menu').style.display = 'none';
++        }
++      });
++      
++      document.getElementById('hide-links').addEventListener('click', function() {
++        if (selectedNode) {
++          filterLinksByNode(selectedNode.id);
++          document.getElementById('context-menu').style.display = 'none';
++        }
++      });
++      
++      document.getElementById('show-links').addEventListener('click', function() {
++        resetLinkFilter();
++        document.getElementById('context-menu').style.display = 'none';
++      });
++      
++      // Кнопки управления
++      document.getElementById('reset-btn').addEventListener('click', resetView);
++      document.getElementById('export-png-btn').addEventListener('click', exportPNG);
++      document.getElementById('export-svg-btn').addEventListener('click', exportSVG);
++      document.getElementById('layout-btn').addEventListener('click', toggleLayout);
++      document.getElementById('help-btn').addEventListener('click', showHelp);
++      
++      // Кнопки масштабирования
++      document.getElementById('zoom-in').addEventListener('click', zoomIn);
++      document.getElementById('zoom-out').addEventListener('click', zoomOut);
++      document.getElementById('zoom-reset').addEventListener('click', resetView);
++      
++      // Модальные окна
++      const modals = document.querySelectorAll('.modal');
++      const closeButtons = document.querySelectorAll('.close-modal');
++      
++      closeButtons.forEach(button => {
++        button.addEventListener('click', function() {
++          modals.forEach(modal => {
++            modal.style.display = 'none';
++          });
++        });
++      });
++      
++      // Настройка фильтров
++      setupFilters();
++      
++      // Настройка поиска
++      setupSearch();
++    }
++    
++    // Функция для показа информации об узле
++    function showNodeInfo(node) {
++      const modal = document.getElementById('node-info-modal');
++      const title = document.getElementById('node-info-title');
++      const body = document.getElementById('node-info-body');
++      
++      title.textContent = node.name;
++      
++      // Получаем все связи для узла
++      const incomingLinks = linkData.filter(link => 
++        (typeof link.target === 'object' ? link.target.id : link.target) === node.id
++      );
++      
++      const outgoingLinks = linkData.filter(link => 
++        (typeof link.source === 'object' ? link.source.id : link.source) === node.id
++      );
++      
++      let content = `
++        <p><strong>Описание:</strong> ${node.description}</p>
++        <p><strong>Тип:</strong> ${getNodeTypeName(node.type)}</p>
++        <p><strong>ID:</strong> ${node.id}</p>
++        
++        <h3>Входящие связи (${incomingLinks.length}):</h3>
++        <ul>
++      `;
++      
++      if (incomingLinks.length > 0) {
++        incomingLinks.forEach(link => {
++          const sourceNode = nodeData.find(n => n.id === (typeof link.source === 'object' ? link.source.id : link.source));
++          content += `<li><strong>${sourceNode.name}</strong> → ${link.label} → ${node.name} <br><em>${link.description}</em></li>`;
++        });
++      } else {
++        content += '<li>Нет входящих связей</li>';
++      }
++      
++      content += `
++        </ul>
++        
++        <h3>Исходящие связи (${outgoingLinks.length}):</h3>
++        <ul>
++      `;
++      
++      if (outgoingLinks.length > 0) {
++        outgoingLinks.forEach(link => {
++          const targetNode = nodeData.find(n => n.id === (typeof link.target === 'object' ? link.target.id : link.target));
++          content += `<li><strong>${node.name}</strong> → ${link.label} → ${targetNode.name} <br><em>${link.description}</em></li>`;
++        });
++      } else {
++        content += '<li>Нет исходящих связей</li>';
++      }
++      
++      content += '</ul>';
++      
++      body.innerHTML = content;
++      modal.style.display = 'flex';
++    }
++    
++    // Получение читаемого названия типа узла
++    function getNodeTypeName(type) {
++      const typeNames = {
++        'central': 'Центральное понятие',
++        'recursive': 'Рекурсивное понятие',
++        'essential': 'Сущностное понятие',
++        'secondary': 'Вторичное понятие',
++        'peripheral': 'Периферийное понятие'
++      };
++      
++      return typeNames[type] || type;
++    }
++    
++    // Функции для масштабирования
++    function zoomIn() {
++      const newScale = transform.k * 1.3;
++      if (newScale <= 4) {
++        svg.transition().duration(300).call(
++          d3.zoom().transform,
++          d3.zoomIdentity.translate(transform.x, transform.y).scale(newScale)
++        );
++      }
++    }
++    
++    function zoomOut() {
++      const newScale = transform.k / 1.3;
++      if (newScale >= 0.1) {
++        svg.transition().duration(300).call(
++          d3.zoom().transform,
++          d3.zoomIdentity.translate(transform.x, transform.y).scale(newScale)
++        );
++      }
++    }
++    
++    function resetView() {
++      svg.transition().duration(750).call(
++        d3.zoom().transform,
++        d3.zoomIdentity
++      );
++    }
++    
++    // Функции для экспорта
++    function exportSVG() {
++      const svgContent = document.getElementById('graph-svg').outerHTML;
++      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
++      const url = URL.createObjectURL(blob);
++      
++      const link = document.createElement('a');
++      link.href = url;
++      link.download = 'metafilosofsky-graph.svg';
++      document.body.appendChild(link);
++      link.click();
++      document.body.removeChild(link);
++    }
++    
++    function exportPNG() {
++      const svgNode = document.getElementById('graph-svg');
++      
++      // Создаем копию SVG для экспорта
++      const svgClone = svgNode.cloneNode(true);
++      const container = document.createElement("div");
++      container.appendChild(svgClone);
++      container.style.display = "none";
++      document.body.appendChild(container);
++      
++      // Получаем размеры SVG
++      const bbox = svgNode.getBBox();
++      const width = bbox.width;
++      const height = bbox.height;
++      
++      // Устанавливаем правильные атрибуты для экспорта
++      svgClone.setAttribute("width", width);
++      svgClone.setAttribute("height", height);
++      svgClone.setAttribute("viewBox", `${bbox.x} ${bbox.y} ${width} ${height}`);
++      
++      const svgData = new XMLSerializer().serializeToString(svgClone);
++      const canvas = document.createElement("canvas");
++      canvas.width = width * 2;  // Увеличиваем разрешение
++      canvas.height = height * 2;
++      
++      const ctx = canvas.getContext("2d");
++      ctx.scale(2, 2);  // Увеличиваем разрешение
++      
++      const img = new Image();
++      const svgBlob = new Blob([svgData], { type: "image/svg+xml" });
++      const url = URL.createObjectURL(svgBlob);
++      
++      img.onload = function() {
++        ctx.drawImage(img, 0, 0);
++        URL.revokeObjectURL(url);
++        
++        const imgURI = canvas
++          .toDataURL("image/png")
++          .replace("image/png", "image/octet-stream");
++        
++        const link = document.createElement("a");
++        link.download = "metafilosofsky-graph.png";
++        link.href = imgURI;
++        link.click();
++        
++        document.body.removeChild(container);
++      };
++      
++      img.src = url;
++    }
++    
++    // Функция переключения вида графа
++    function toggleLayout() {
++      forceLayout = !forceLayout;
++      
++      if (forceLayout) {
++        // Возвращаемся к силовой симуляции
++        simulation
++          .force("link", d3.forceLink(linkData).id(d => d.id).distance(120))
++          .force("charge", d3.forceManyBody().strength(-300))
++          .force("center", d3.forceCenter(width / 2, height / 2))
++          .force("collision", d3.forceCollide().radius(d => nodeTypes[d.type].radius + 10))
++          .alphaTarget(0.3)
++          .restart();
++      } else {
++        // Переходим к радиальному размещению
++        simulation.stop();
++        
++        // Размещаем центральные узлы в центре
++        const centralNodes = nodeData.filter(d => d.type === 'central');
++        const recursiveNodes = nodeData.filter(d => d.type === 'recursive');
++        const essentialNodes = nodeData.filter(d => d.type === 'essential');
++        const secondaryNodes = nodeData.filter(d => d.type === 'secondary');
++        const peripheralNodes = nodeData.filter(d => d.type === 'peripheral');
++        
++        // Центральные узлы
++        const centerX = width / 2;
++        const centerY = height / 2;
++        centralNodes.forEach((d, i) => {
++          const angle = (i / centralNodes.length) * 2 * Math.PI;
++          d.x = centerX + Math.cos(angle) * 30;
++          d.y = centerY + Math.sin(angle) * 30;
++          d.fx = d.x;
++          d.fy = d.y;
++        });
++        
++        // Рек
+       // Рекурсивные связи
+       { source: 'FR', target: 'FR', type: 'recursive', label: 'Самореференция', description: 'Способность философской рефлексии делать себя предметом анализа.' },
+       { source: 'MF', target: 'FR', type: 'recursive', label: 'Взаимоконституирование', description: 'Взаимное определение метафилософии и философской рефлексии.' },
+@@ -552,4 +1105,40 @@
+       
+       // Герменевтическое отношение
+       { source: 'GFT', target: 'IF', type: 'hermeneutic', label: 'Интерпретирует', description: 'Герменевтика философских текстов интерпретирует историчность философии.' },
+-      { source: 'IF', target: 'GFT', type: 'hermeneutic', label: 'Обогащает', description: 'Историчность философии обогащает гер
++      { source: 'IF', target: 'GFT', type: 'hermeneutic', label: 'Обогащает', description: 'Историчность философии обогащает герменевтику философских текстов.' },
++      { source: 'GFT', target: 'FT', type: 'hermeneutic', label: 'Интерпретирует', description: 'Герменевтика философских текстов интерпретирует философскую традицию.' },
++      { source: 'GFT', target: 'SPF', type: 'hermeneutic', label: 'Интерпретирует', description: 'Герменевтика философских текстов интерпретирует самоопределение философии.' },
++      
++      // Методологическое обоснование
++      { source: 'MP', target: 'KA', type: 'methodological', label: 'Обосновывает', description: 'Методология философии обосновывает концептуальный аппарат.' },
++      { source: 'KA', target: 'FA', type: 'methodological', label: 'Обосновывает', description: 'Концептуальный аппарат обосновывает философский аргумент.' },
++      { source: 'KFI', target: 'FA', type: 'methodological', label: 'Верифицирует', description: 'Критерии философской истины верифицируют философский аргумент.' },
++      { source: 'FA', target: 'KFI', type: 'methodological', label: 'Реализует', description: 'Философский аргумент реализует критерии философской истины.' },
++      { source: 'MP', target: 'MF', type: 'methodological', label: 'Обосновывает', description: 'Методология философии обосновывает метафилософию.' },
++      
++      // Историческая преемственность
++      { source: 'IF', target: 'PF', type: 'historical', label: 'Определяет', description: 'Историчность философии определяет понимание её природы.' },
++      { source: 'IF', target: 'FT', type: 'historical', label: 'Формирует', description: 'Историчность философии формирует философскую традицию.' },
++      { source: 'FT', target: 'IF', type: 'historical', label: 'Обогащает', description: 'Философская традиция обогащает историчность философии.' },
++      { source: 'IF', target: 'IDF', type: 'historical', label: 'Формирует', description: 'Историчность философии формирует идентичность философа.' },
++      { source: 'IF', target: 'FPG', type: 'historical', label: 'Обеспечивает', description: 'Историчность философии обеспечивает философский прогресс.' },
++      { source: 'IF', target: 'SPF', type: 'historical', label: 'Трансформирует', description: 'Историчность философии трансформирует самоопределение философии.' },
++      
++      // Трансценденция
++      { source: 'GPZ', target: 'FR', type: 'transcendence', label: 'Трансцендирует', description: 'Границы философского знания трансцендируются философской рефлексией.' },
++      { source: 'MP', target: 'FPR', type: 'transcendence', label: 'Реализуется в', description: 'Методология философии реализуется в философской практике.' },
++      { source: 'LF', target: 'FI', type: 'transcendence', label: 'Питается', description: 'Легитимация философии питается философской интуицией.' },
++      { source: 'DIS', target: 'FPG', type: 'transcendence', label: 'Обеспечивает', description: 'Диалектика изучения и создания обеспечивает философский прогресс.' },
++      { source: 'SPF', target: 'FR', type: 'transcendence', label: 'Трансцендирует', description: 'Самоопределение философии трансцендируется философской рефлексией.' },
++      
++      // Легитимация
++      { source: 'LF', target: 'GPZ', type: 'legitimation', label: 'Легитимирует', description: 'Легитимация философии обосновывает границы философского знания.' },
++      { source: 'LF', target: 'PF', type: 'legitimation', label: 'Обосновывает', description: 'Легитимация философии обосновывает природу философии.' },
++      { source: 'LF', target: 'PF', type: 'legitimation', label: 'Легитимирует', description: 'Легитимация философии легитимирует природу философии.' },
++      { source: 'MF', target: 'SPF', type: 'legitimation', label: 'Легитимирует', description: 'Метафилософия легитимирует самоопределение философии.' },
++      
++      // Феноменологическая редукция
++      { source: 'FR', target: 'DIS', type: 'reduction', label: 'Редуцирует к', description: 'Философская рефлексия редуцирует к диалектике изучения и создания.' },
++      { source: 'FTV', target: 'FR', type: 'reduction', label: 'Питает', description: 'Философское творчество питает философскую рефлексию.' },
++      { source: 'MF', target: 'SPF', type: 'reduction', label: 'Редуцирует к', description: 'Метафилософия редуцирует к самоопределению философии.' }
++    ];

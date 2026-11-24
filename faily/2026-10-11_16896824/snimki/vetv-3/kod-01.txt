@@ -1,0 +1,22 @@
+Photorealistic archival photograph of a confiscated 1936 map, shot from above on a dark worn wooden table, soft directional museum lighting, landscape 3:2.
+
+WORLD CONTEXT (needed to get the details right): This image belongs to a fictional alternate history. In it, Russia became the "R.S.F.G.R." — a mycelium-state where citizens dissolve into a "Great Mycelium", the dead are recorded as spores, and Lenin is not dead but sleeping, identified with the sleeping god Cthulhu under the Kara Sea, near a city called R'lyeh. That state's documents use pre-1918 Russian spelling (with letters ѣ, і and a hard sign ъ at word ends), purple ink stamps with an octopus emblem, and spiral motifs instead of hammer and sickle. To them, our ordinary world is the "dry world" — a forbidden, frightening place where everything is normal, rational, and individual. A secret folklore text in their archive describes finding "the confiscated map of the dry world": its edges do not fade into haze but close neatly upon themselves, the world simply ends without any vortex, and its cities are named after real people who had surnames — which horrifies the finder. This photograph shows that map, as kept in their archive under case number 611-С.
+
+THE OBJECT: A real-looking Soviet political world map from 1936, printed on thin, dry, crisp off-white paper, unfolded, with sharp fold creases forming a grid of panels and slightly torn fold intersections. The paper is clean and dry — no mold, no stains, no organic growth (this dryness matters). The world is drawn in an oval equal-area projection (Mollweide-like): a single clean closed oval outline, latitude and longitude lines inside it, and only plain paper outside the oval. Countries in flat, muted printed colors (pale pink, pale yellow, pale green, light ochre), oceans light blue with fine ruled water lines. The USSR is large, pale pink, prominent across the upper middle. The sea north of western Siberia (the Kara Sea) is plain empty blue — nothing there.
+
+TEXT PRINTED ON THE MAP (modern Russian spelling, no ъ at word ends, no ѣ). Render exactly, character for character, and add no other text:
+- Title across the top margin in bold condensed sans-serif capitals: «ПОЛИТИЧЕСКАЯ КАРТА МИРА»
+- Under the title, smaller: «1936»
+- City labels with small black dots, legible, inside the USSR: «Москва», «Ленинград», «Сталинград», «Свердловск», «Горький», «Куйбышев», «Калинин», «Сталинабад», «Фрунзе»
+- All other countries and seas: unlabeled, or with tiny unreadable printed marks only.
+
+ARCHIVE MARKINGS ADDED ON TOP (pre-1918 spelling — the letters ѣ, і, ъ are intentional, keep them exactly):
+- A round violet rubber-stamp impression, slightly uneven ink, with an octopus in the center and this text around the rim: «НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ»
+- A rectangular violet stamp, slightly crooked: «ИЗЪЯТО»
+- A small yellowed paper label pasted in the lower right corner, handwritten in brown ink with an old-fashioned hand: «Дѣло № 611-С. Карта сухого міра»
+- Graphite pencil annotations by an archivist: each of the city names Ленинград, Сталинград, Свердловск, Горький, Куйбышев and Калинин is circled in pencil; a pencil arrow from these circles leads to a margin note in hurried handwriting: «Города — по именамъ людей!»
+- A pencil circle drawn around the empty Kara Sea, with a short note beside it: «Воронки нѣтъ»
+
+STYLE: documentary realism, like a museum archive catalogue photo. Natural paper texture, slight shadow under the lifted fold corners, a small brass paperclip at the top edge. Muted, slightly desaturated colors. No modern objects, no digital graphics, no borders or captions outside the photographed paper.
+
+AVOID: any tentacles, monsters, fungi or mold on the map itself; extra invented words or random letters; misspelling the Russian text; replacing ѣ or і with other letters; adding ъ to the printed modern-spelling city names.

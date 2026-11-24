@@ -1,0 +1,42 @@
+Photorealistic archival photograph of a single aged official document lying on a dark charcoal-grey cloth surface, soft directional daylight from the upper left, shallow depth of field, slight paper curl, one rusty paper clip at the top left corner. Portrait orientation. The style must match a series of fictional museum artifacts: real-looking old paper, real ink, real rubber stamps, no fantasy illustration style, no humor, completely serious bureaucratic tone.
+
+WORLD CONTEXT (for correct interpretation, do not render this paragraph as text):
+This is an alternate history. After 1921 the Russian revolution merged with a Lovecraftian cult: the state is the "R.S.F.G.R." (Russian Socialist Federative Fungal Republic), ruled from the polar city of R'lyeh where Cthulhu sleeps, and Lenin is revered as the "Sleeper". The population is gradually "dissolved" into the Great Mycelium, a continent-sized fungal network that is also the state itself. Neighbouring countries are not conquered but "grafted" onto the Mycelium like plant grafts and become vassal states. This document, dated 1958, is a medical-agronomical commission report stating that the graft on the Pannonian vassal state has been REJECTED like a transplanted organ: the vassal's living tissue refused the Great Mycelium, so the vassal is lost forever. Officials write in pre-1918 Russian orthography (with the letters ѣ, і and a hard sign ъ at the end of words). Recurring emblems of this world: a red five-pointed star with a cream spiral inside instead of a hammer and sickle; a violet round rubber stamp with a stylized octopus (Cthulhu-like) in the centre; the closing formula "Cthulhu fhtagn — Lenin fhtagn".
+
+THE DOCUMENT:
+A sheet of yellowed, slightly foxed laid paper, about A4, with a horizontal fold line across the middle, two punched filing holes on the left edge, worn and slightly torn corners. Letterpress printing in black and dark red ink, in a 1910s Russian typeface (Didone serif for body text, condensed bold for the title), plus typed and handwritten fill-ins.
+
+Layout from top to bottom:
+1. Small centred header, black: «Р. С. Ф. Г. Р.»
+   below it: «НАРОДНЫЙ КОМИССАРІАТЪ ЗДОРОВАГО БЕЗУМІЯ»
+   below it, italic: «Комиссія по отторженію прививокъ»
+2. A small red five-pointed star with a cream spiral inside it, centred.
+3. Large dark-red condensed title: «ЗАКЛЮЧЕНІЕ»
+   under it, smaller black: «объ отторженіи прививки»
+4. Top right corner, small: «Дѣло № 214-П/1958 · Споролѣтіе XXXVIII»
+5. Two form lines with typed fill-ins on dotted lines:
+   «Привитая грибница: Паннонскій вассалатъ»
+   «Дата прививки: 28.IV.1930»
+6. In the middle of the sheet, two round microscope images printed side by side as old halftone plates, each in a thin black circle, like a 1950s histology atlas:
+   left circle: a dense healthy web of pale, branching, glossy fungal threads (hyphae); caption under it: «Рис. 1. Здоровая гифа»
+   right circle: the same threads broken, shrivelled, brown and dead, with dark necrotic spots; caption: «Рис. 2. Отмершая гифа»
+7. Below the images, bold black text:
+   «ДІАГНОЗЪ: Прививка не прижилась.»
+   then regular text:
+   «Ткань вассалата отторгаетъ Великую Грибницу.»
+   «Повторной прививкѣ не подлежитъ.»
+8. Bottom left: a large violet round rubber stamp, slightly smudged and tilted, ring text «НАРКОМАТЪ ЗДОРОВАГО БЕЗУМІЯ» around a stylized octopus with curling tentacles.
+9. Bottom right: «Замѣститель Народнаго Комиссара Здороваго Безумія» and a flowing ink signature over a dotted line with the printed name «А. П. Ивановъ».
+10. Under the signature: «« 19 » апрѣля 1958 г. · градъ Р'льехъ»
+11. Centred at the very bottom, small italic: «Ктулху фхтагнъ — Ленинъ фхтагнъ.»
+
+Handwritten additions:
+- Across the upper right, diagonal, in thick blue ink in an energetic official hand: «Штриховку съ карты снять.»
+- In grey pencil on the left margin, archive notes: «Арх. 3/V-58» and «л. 41».
+
+TEXT RULES (very important):
+- Render every Russian string exactly as given, letter for letter, including the old letters ѣ (yat, looks like a ь with a crossbar through the ascender), і (dotted i) and the final ъ. Do not "modernize" the spelling, do not replace ѣ with е or ь, do not drop final ъ.
+- Do not add any other words, slogans, or labels anywhere.
+- All text must be sharp and legible; the photograph must look like a real museum scan of a real document.
+
+Avoid: modern fonts, Latin letters inside Russian words, hammer and sickle, cartoon or comic style, glossy digital look, extra decorative tentacles outside the stamp, watermarks.

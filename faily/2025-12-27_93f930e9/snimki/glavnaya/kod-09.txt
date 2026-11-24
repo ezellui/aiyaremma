@@ -1,0 +1,17 @@
+name-analysis-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   └── postgres-connection.js
+│   ├── controllers/
+│   │   └── name-analysis.controller.js
+│   ├── services/
+│   │   └── name-analysis.service.js
+│   └── routes/
+│       └── name-analysis.routes.js
+└── tests/

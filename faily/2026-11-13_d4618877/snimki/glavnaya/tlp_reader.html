@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Логико-философский трактат</title>
+<!--@KATEX_CSS@-->
+<style>
+:root{
+  --paper:#F2F3EF; --paper-2:#E7E9E3; --ink:#1D2320; --ink-2:#56605A; --rule:#CDD2CA;
+  --cloth:#2E5A43; --cloth-ink:#F2F3EF; --brass:#8A6A22; --mark:#E6E09A; --mark-cur:#D4C24E;
+  --link:#245A70; --fig:#FFFFFF;
+  --serif:"Palatino Linotype","Book Antiqua",Palatino,Cambria,"Times New Roman",serif;
+  --sans:"Segoe UI",Tahoma,"Helvetica Neue",Arial,sans-serif;
+  --fs:18px;
+}
+:root[data-theme="dark"]{
+  --paper:#1B201D; --paper-2:#232A26; --ink:#DADFD6; --ink-2:#9AA59C; --rule:#35403A;
+  --cloth:#2F5E47; --cloth-ink:#E9EEE6; --brass:#C9A95A; --mark:#5C5A26; --mark-cur:#8C8327;
+  --link:#8CC0D6; --fig:#E9ECE6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink)}
+body{font-family:var(--serif);font-size:var(--fs);line-height:1.55;display:flex;flex-direction:column}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+button,select,input{font-family:var(--sans);font-size:13px}
+#bar{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 12px;background:var(--cloth);color:var(--cloth-ink);font-family:var(--sans);font-size:13px}
+#bar .brand{font-weight:600;letter-spacing:.02em;margin-right:6px;color:var(--cloth-ink)}
+#bar button{background:transparent;color:var(--cloth-ink);border:1px solid rgba(255,255,255,.35);border-radius:3px;padding:2px 7px;cursor:pointer}
+#bar button.on{background:rgba(255,255,255,.18)}
+#bar select{background:var(--paper);color:var(--ink);border:0;border-radius:3px;padding:2px 4px}
+#qwrap{flex:1 1 220px;max-width:420px}
+#q{width:100%;padding:4px 8px;border:0;border-radius:3px;background:var(--paper);color:var(--ink)}
+.eds{display:flex;gap:4px;align-items:center}
+.eds label{border:1px solid rgba(255,255,255,.35);border-radius:3px;padding:1px 6px;cursor:pointer;user-select:none}
+.eds label.on{background:rgba(255,255,255,.22)}
+.eds input{display:none}
+#main{flex:1;display:flex;min-height:0}
+#nav{width:290px;flex:none;border-right:1px solid var(--rule);display:flex;flex-direction:column;background:var(--paper-2);font-family:var(--sans);font-size:13px}
+#nav.hidden{display:none}
+#nav .top{padding:8px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
+#nav .top input{flex:1;min-width:0;padding:3px 6px;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink)}
+#nav .top button{border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:3px;cursor:pointer;padding:2px 6px}
+#tree{overflow:auto;flex:1;padding:4px 0 30px}
+.tn{display:flex;align-items:baseline;gap:4px;padding:1px 8px 1px 0;cursor:pointer;white-space:nowrap}
+.tn:hover{background:var(--paper)}
+.tn.cur{background:var(--mark)}
+.tn .tw{width:14px;flex:none;text-align:center;color:var(--ink-2);font-size:10px}
+.tn .no{color:var(--brass);font-weight:600;flex:none}
+.tn .tx{overflow:hidden;text-overflow:ellipsis;color:var(--ink-2)}
+.tn.grp .tx{font-style:italic}
+.tsub{display:none} .tsub.open{display:block}
+#nav .front{padding:6px 10px;border-top:1px solid var(--rule)}
+#view{flex:1;overflow:auto;min-width:0}
+.page{max-width:1500px;margin:0 auto;padding:18px 26px 80px}
+.narrow{max-width:46em}
+h1,h2,h3{font-weight:normal;line-height:1.25}
+h2{font-size:1.45em;margin:.4em 0 .5em}
+.crumbs{font-family:var(--sans);font-size:13px;color:var(--ink-2);margin-bottom:10px;display:flex;flex-wrap:wrap;gap:2px 6px;align-items:baseline}
+.crumbs a{color:var(--brass);font-weight:600}
+.crumbs .sep{opacity:.5}
+.cols{display:grid;gap:0 22px}
+.cell{min-width:0}
+.cell .edh{font-family:var(--sans);font-size:11.5px;color:var(--ink-2);border-bottom:1px solid var(--rule);margin-bottom:4px;display:flex;justify-content:space-between;gap:8px}
+.cell .miss{font-style:italic;color:var(--ink-2);font-size:.9em}
+.cell p{margin:.35em 0}
+.pnum{font-family:var(--sans);font-weight:700;color:var(--brass);font-size:1.6em;margin-right:.4em}
+.prop-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.acts{font-family:var(--sans);font-size:12.5px;display:flex;gap:12px;flex-wrap:wrap;margin-left:auto}
+.acts a,.acts button{cursor:pointer;background:none;border:0;color:var(--link);padding:0;font-size:12.5px}
+.comment{margin:14px 0 0;padding:8px 14px;border-left:3px solid var(--brass);background:var(--paper-2);font-size:.92em}
+.comment .ch{font-family:var(--sans);font-size:11.5px;color:var(--brass);font-weight:600;margin-bottom:2px}
+.comment.multi{border-left-style:double;border-left-width:4px}
+.rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px 26px;margin-top:22px;padding-top:12px;border-top:1px solid var(--rule);font-size:.88em}
+.rail h4{font-family:var(--sans);font-size:12px;color:var(--ink-2);margin:0 0 4px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.rail ul{list-style:none;margin:0;padding:0}
+.rail li{margin:3px 0;display:flex;gap:6px}
+.rail li .no{font-family:var(--sans);font-weight:600;color:var(--brass);flex:none;min-width:4.2em}
+.rail li .tx{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.rail .gl{font-family:var(--sans);font-size:11px;color:var(--ink-2);margin:8px 0 2px}
+.pager{display:flex;justify-content:space-between;font-family:var(--sans);font-size:13px;margin-top:26px;padding-top:10px;border-top:1px solid var(--rule)}
+/* дерево и сплошной текст */
+.row{display:grid;gap:0 22px;padding:2px 0}
+.row .cell p:first-child{margin-top:0}
+.row .n{font-family:var(--sans);font-weight:600;color:var(--brass);margin-right:.35em;font-size:.85em;cursor:pointer}
+.row.rep .cell{font-weight:700}
+.row.rep{margin-top:1.1em}
+.row.rep .n{font-weight:800}
+.row.cur{background:var(--mark)}
+.sec{font-size:1.25em;margin:1.8em 0 .5em;padding-top:.6em;border-top:2px solid var(--rule)}
+.sec .n{font-family:var(--sans);font-weight:700;color:var(--brass);margin-right:.4em}
+.sec.row .cell{font-weight:600}
+.colhead{position:sticky;top:0;background:var(--paper);z-index:2;font-family:var(--sans);font-size:12px;color:var(--ink-2);border-bottom:1px solid var(--rule);padding:4px 0;margin-bottom:6px}
+.comment.inrow{margin:6px 0 10px}
+.tree-note{font-family:var(--sans);font-size:13px;color:var(--ink-2);margin-bottom:12px}
+/* формулы, таблицы, схемы */
+.tbl{overflow-x:auto;margin:.4em 0} table{border-collapse:collapse;font-size:.88em}
+td,th{border:1px solid var(--rule);padding:1px 7px;text-align:center}
+td:nth-child(3),td:nth-child(4){text-align:left}
+pre.scheme{font-size:.8em;line-height:1.25;overflow-x:auto;background:var(--paper-2);padding:6px 8px}
+figure{margin:.5em 0} figure img{max-width:100%;max-height:340px;background:var(--fig);padding:4px;border-radius:3px}
+.md-display{overflow-x:auto;margin:.3em 0}
+sup.fn a{font-family:var(--sans);font-size:.75em;color:var(--brass);cursor:pointer}
+mark{background:var(--mark);color:inherit;border-radius:2px}
+mark.cur{background:var(--mark-cur)}
+#pop{position:fixed;z-index:20;max-width:440px;background:var(--paper);border:1px solid var(--rule);box-shadow:0 4px 18px rgba(0,0,0,.18);padding:8px 12px;font-size:14px;display:none;border-radius:4px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--cloth);color:var(--cloth-ink);padding:6px 14px;border-radius:4px;font-family:var(--sans);font-size:13px;display:none;z-index:30}
+.hits{list-style:none;padding:0;margin:0}
+.hits li{padding:8px 0;border-bottom:1px solid var(--rule)}
+.hits .meta{font-family:var(--sans);font-size:12px;color:var(--ink-2)}
+.hits .meta b{color:var(--brass)}
+.help{font-family:var(--sans);font-size:13px;color:var(--ink-2)}
+.opts{font-family:var(--sans);font-size:13px;display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 12px}
+.ednote{font-size:.9em;color:var(--ink-2)}
+.map svg{width:100%;height:auto;max-height:80vh}
+.map circle{cursor:pointer}
+.map text{font-family:var(--sans);pointer-events:none}
+@media (max-width:900px){#nav{position:absolute;z-index:10;height:calc(100% - 44px);box-shadow:2px 0 10px rgba(0,0,0,.2)} .page{padding:12px}}
+@media print{#bar,#nav,.acts,.rail,.pager{display:none!important} #view{overflow:visible} body{display:block}}
+</style>
+</head>
+<body>
+<div id="bar">
+  <button id="navbtn" data-i18n-title="hdr.nav">☰</button>
+  <a class="brand" href="#/" data-i18n="app.short"></a>
+  <div id="qwrap"><input id="q" type="search" data-i18n-placeholder="hdr.search_ph" autocomplete="off" spellcheck="false"></div>
+  <div class="eds" id="eds"></div>
+  <select id="mode" data-i18n-title="hdr.view">
+    <option value="p" data-i18n="view.prop"></option>
+    <option value="tree" data-i18n="view.tree"></option>
+    <option value="seq" data-i18n="view.seq"></option>
+    <option value="map" data-i18n="view.map"></option>
+  </select>
+  <button id="cmt" data-i18n="hdr.comments" data-i18n-title="hdr.comments_title"></button>
+  <button id="smaller" data-i18n-title="hdr.smaller">A−</button>
+  <button id="bigger" data-i18n-title="hdr.bigger">A+</button>
+  <button id="theme" data-i18n-title="hdr.theme">◐</button>
+  <a href="#/about" style="color:var(--cloth-ink)" data-i18n="hdr.about"></a>
+  <select id="lang" data-i18n-title="hdr.lang"></select>
+</div>
+<div id="main">
+  <nav id="nav">
+    <div class="top"><input id="filter" type="search" data-i18n-placeholder="nav.filter_ph" autocomplete="off" spellcheck="false">
+      <button id="expall" data-i18n="nav.expand"></button><button id="colall" data-i18n="nav.collapse"></button></div>
+    <div id="tree"></div>
+    <div class="front"><a href="#/front" data-i18n="nav.front"></a></div>
+  </nav>
+  <div id="view"></div>
+</div>
+<div id="pop"></div>
+<div id="toast"></div>
+<!--@SCRIPTS@-->
+<script>
+"use strict";
+const D = window.TLP_DATA, I = window.I18N, MD = window.TLPmd;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('tlp-' + k); return v === null ? d : v; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('tlp-' + k, v); } catch (e) {} }
+};
+
+/* ---------- язык интерфейса ---------- */
+let LANG = store.get('lang', (navigator.language || 'ru').slice(0, 2));
+if (!I.langs[LANG]) LANG = 'en';
+const plural = {};
+function t(key, params) {
+  const e = I.dict[key];
+  if (!e) { console.warn('i18n: нет ключа', key); return key; }
+  let v = e[LANG] !== undefined ? e[LANG] : (console.warn('i18n: нет перевода', key, LANG), e.ru);
+  params = params || {};
+  if (typeof v === 'object') {
+    const pr = plural[LANG] || (plural[LANG] = new Intl.PluralRules(LANG));
+    const f = pr.select(params.n || 0);
+    v = v[f] !== undefined ? v[f] : v.other !== undefined ? v.other : v.many;
+  }
+  return v.replace(/\{(\w+)\}/g, (m, k) => params[k] !== undefined ? params[k] : m);
+}
+function applyStatic() {
+  document.querySelectorAll('[data-i18n]').forEach(n => { n.textContent = t(n.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-title]').forEach(n => { n.title = t(n.dataset.i18nTitle); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(n => { n.placeholder = t(n.dataset.i18nPlaceholder); });
+  document.documentElement.lang = LANG;
+}
+
+/* ---------- данные ---------- */
+const NUMS = Object.keys(D.props).sort((a, b) => parseFloat(a) - parseFloat(b) || cmpNum(a, b));
+function cmpNum(a, b) {           // десятичный порядок: 2.01 < 2.011 < 2.012 < 2.0121 < 2.013
+  const [ia, da = ''] = a.split('.'), [ib, db = ''] = b.split('.');
+  if (ia !== ib) return ia - ib;
+  return da < db ? -1 : da > db ? 1 : 0;
+}
+NUMS.sort(cmpNum);
+const POS = new Map(NUMS.map((n, i) => [n, i]));
+const EDS = Object.keys(D.editions);
+const CHILDREN = n => (D.props[n].groups || []).flat();
+const DESC = {};
+(function count() { for (let i = NUMS.length - 1; i >= 0; i--) { const n = NUMS[i]; DESC[n] = CHILDREN(n).reduce((s, c) => s + 1 + DESC[c], 0); } })();
+const REFS_IN = {};
+NUMS.forEach(n => (D.props[n].refs || []).forEach(r => (REFS_IN[r] = REFS_IN[r] || []).push(n)));
+const COMM = {};                 // номер -> комментарии, где он последний в «пачке»
+const COMM_ANY = {};             // номер -> комментарии, которые его охватывают
+for (const ed in D.comments) D.comments[ed].forEach(c => {
+  const last = c.covers[c.covers.length - 1];
+  (COMM[last] = COMM[last] || []).push(Object.assign({ed}, c));
+  c.covers.forEach(n => (COMM_ANY[n] = COMM_ANY[n] || []).push(Object.assign({ed}, c)));
+});
+function ancestors(n) { const a = []; let p = D.props[n].parent; while (p) { a.unshift(p); p = D.props[p].parent; } return a; }
+
+/* ---------- состояние ---------- */
+let SHOWN = (store.get('eds', 'de1961,ru2023')).split(',').filter(e => D.editions[e]);
+if (!SHOWN.length) SHOWN = ['ru2023'];
+let SHOW_COMM = store.get('comm', '1') === '1';
+let CUR = null;
+let HL = null;                   // подсветка найденного: RegExp
+
+/* ---------- отрисовка текста ---------- */
+function figFor(ed) {
+  return (name, alt) => { const src = D.figures[ed + '-' + name]; return src ? `<img src="${src}" alt="${esc(alt || name)}">` : `[${esc(name)}]`; };
+}
+function fnFor(ed, where) {
+  return lab => `<sup class="fn"><a data-ed="${ed}" data-fn="${esc(lab)}">${esc(lab.replace(/^p\d+$/, '*'))}</a></sup>`;
+}
+function renderMd(md, ed) {
+  let h = MD.render(md, {fig: figFor(ed), fn: fnFor(ed)});
+  if (HL) h = highlightHtml(h, HL);
+  return h;
+}
+function firstLine(n, ed) {
+  const order = [ed, 'ru2023', 'de1961', 'en1961', 'ru2005'];
+  for (const e of order) { const tx = D.props[n].text[e]; if (tx) return MD.plain(tx).slice(0, 140); }
+  return '';
+}
+const lead = () => SHOWN.find(e => e.startsWith(LANG)) || SHOWN[0] || 'ru2023';
+function cite(n, ed) {
+  const pg = D.props[n].page[ed];
+  return D.editions[ed].cite.replace('{p}', pg || '?');
+}
+
+/* ---------- поиск: свёртка как в HWPh (+ ё = е) ---------- */
+const DROP = new Set('´′`˜¨᾿῾῀΄΅');
+function foldChar(c) {
+  if (DROP.has(c)) return '';
+  if (c === 'ß') return 'ss';
+  if (c === 'ё' || c === 'Ё') return 'е';
+  return c.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+}
+function foldMap(s) { let o = '', idx = []; let i = 0; for (const c of s) { const f = foldChar(c); o += f; for (let k = 0; k < f.length; k++) idx.push(i); i += c.length; } idx.push(s.length); return [o, idx]; }
+const fold = s => foldMap(s)[0];
+function parseQuery(q) {
+  const terms = [];
+  const rx = /(-?)"([^"]+)"|(-?)(\S+)/g; let m;
+  while ((m = rx.exec(q))) {
+    if (m[2]) terms.push({neg: !!m[1], phrase: true, v: fold(m[2]).trim()});
+    else terms.push({neg: !!m[3], phrase: false, v: fold(m[4])});
+  }
+  return terms.filter(x => x.v);
+}
+function termRegex(term) {
+  const B = '(?<![\\p{L}\\p{N}])', E = '(?![\\p{L}\\p{N}])';
+  if (term.phrase) return B + term.v.split(/\s+/).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\W+') + E;
+  const w = term.v.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[\\p{L}\\p{N}]*').replace(/\?/g, '[\\p{L}\\p{N}]');
+  return B + w + E;
+}
+function compileQuery(q) {
+  const terms = parseQuery(q);
+  const pos = terms.filter(x => !x.neg), neg = terms.filter(x => x.neg);
+  return {
+    pos: pos.map(x => new RegExp(termRegex(x), 'u')), neg: neg.map(x => new RegExp(termRegex(x), 'u')),
+    all: pos.length ? new RegExp(pos.map(termRegex).join('|'), 'gu') : null
+  };
+}
+function matches(cq, text) {
+  const f = fold(MD.plain(text));
+  return cq.pos.length && cq.pos.every(r => r.test(f)) && !cq.neg.some(r => r.test(f));
+}
+function snippet(text, cq) {
+  const plain = MD.plain(text); const [f, idx] = foldMap(plain);
+  cq.all.lastIndex = 0; const m = cq.all.exec(f);
+  if (!m) return esc(plain.slice(0, 200));
+  const a = idx[m.index], b = idx[m.index + m[0].length];
+  const s = Math.max(0, a - 90), e = Math.min(plain.length, b + 120);
+  return (s ? '…' : '') + esc(plain.slice(s, a)) + '<mark>' + esc(plain.slice(a, b)) + '</mark>' + esc(plain.slice(b, e)) + (e < plain.length ? '…' : '');
+}
+function highlightHtml(html, cq) {
+  // подсветка внутри текстовых узлов: свёртка по каждому узлу
+  return html.replace(/>([^<]+)</g, (m, txt) => {
+    const [f, idx] = foldMap(txt); let out = '', last = 0;
+    cq.all.lastIndex = 0; let r;
+    while ((r = cq.all.exec(f))) {
+      if (!r[0].length) { cq.all.lastIndex++; continue; }
+      const a = idx[r.index], b = idx[r.index + r[0].length];
+      out += txt.slice(last, a) + '<mark>' + txt.slice(a, b) + '</mark>'; last = b;
+    }
+    return '>' + out + txt.slice(last) + '<';
+  });
+}
+
+/* ---------- левое оглавление ---------- */
+const openNodes = new Set(JSON.parse(store.get('open', '[]')));
+function navNode(n, depth) {
+  const kids = D.props[n].groups || [];
+  const has = kids.length > 0;
+  let h = `<div class="tn" data-n="${n}" style="padding-left:${6 + depth * 12}px"><span class="tw" data-tw="${has ? n : ''}">${has ? (openNodes.has(n) ? '▾' : '▸') : ''}</span><span class="no">${n}</span><span class="tx">${esc(firstLine(n, lead()).slice(0, 80))}</span></div>`;
+  if (has) {
+    h += `<div class="tsub${openNodes.has(n) ? ' open' : ''}" data-sub="${n}">`;
+    kids.forEach(g => g.forEach(c => { h += navNode(c, depth + 1); }));
+    h += '</div>';
+  }
+  return h;
+}
+function drawNav(filter) {
+  const tr = $('#tree');
+  if (filter) {
+    const cq = compileQuery(filter);
+    const list = NUMS.filter(n => n.startsWith(filter) || (cq.pos.length && SHOWN.some(e => D.props[n].text[e] && matches(cq, D.props[n].text[e]))));
+    tr.innerHTML = list.slice(0, 400).map(n => `<div class="tn" data-n="${n}"><span class="tw"></span><span class="no">${n}</span><span class="tx">${esc(firstLine(n, lead()).slice(0, 80))}</span></div>`).join('');
+  } else {
+    tr.innerHTML = NUMS.filter(n => !D.props[n].parent).map(n => navNode(n, 0)).join('');
+  }
+  markNav();
+}
+function markNav() {
+  document.querySelectorAll('.tn.cur').forEach(x => x.classList.remove('cur'));
+  if (!CUR) return;
+  const el = document.querySelector(`.tn[data-n="${CSS.escape(CUR)}"]`);
+  if (el) { el.classList.add('cur'); const r = el.getBoundingClientRect(), p = $('#tree').getBoundingClientRect(); if (r.top < p.top || r.bottom > p.bottom) el.scrollIntoView({block: 'center'}); }
+}
+function revealInNav(n) {
+  let changed = false;
+  ancestors(n).forEach(a => { if (!openNodes.has(a)) { openNodes.add(a); changed = true; } });
+  if (changed) { store.set('open', JSON.stringify([...openNodes])); if (!$('#filter').value) drawNav(''); }
+  markNav();
+}
+
+/* ---------- виды ---------- */
+const view = $('#view');
+function gridCols(k) { return `grid-template-columns:repeat(${k},minmax(0,1fr))`; }
+function edHead(ed, n) {
+  const e = D.editions[ed], pg = n ? D.props[n].page[ed] : null;
+  return `<div class="edh"><span>${esc(e.short)}</span>${pg ? `<span>${t('prop.page', {p: pg})}</span>` : ''}</div>`;
+}
+function cellHtml(n, ed, withHead) {
+  const tx = D.props[n].text[ed];
+  const body = tx ? renderMd(tx, ed) : `<p class="miss">[${t('prop.missing')}]</p>`;
+  return `<div class="cell" lang="${D.editions[ed].lang}">${withHead ? edHead(ed, n) : ''}${body}</div>`;
+}
+function commentsHtml(n, cls) {
+  if (!SHOW_COMM) return '';
+  return (COMM[n] || []).map(c => {
+    const multi = c.covers.length > 1;
+    const head = t('prop.comment') + (multi ? ' ' + t('prop.comment_to', {r: c.covers[0] + '–' + c.covers[c.covers.length - 1]}) : '');
+    return `<div class="comment${multi ? ' multi' : ''} ${cls || ''}" lang="ru"><div class="ch">${esc(head)}</div>${renderMd(c.text, c.ed)}</div>`;
+  }).join('');
+}
+function railList(arr, label) {
+  if (!arr || !arr.length) return '';
+  return `<div><h4>${label}</h4><ul>${arr.map(n => `<li><a class="no" href="#/p/${n}">${n}</a><span class="tx">${esc(firstLine(n, lead()))}</span></li>`).join('')}</ul></div>`;
+}
+
+function showProp(n) {
+  if (!D.props[n]) { view.innerHTML = `<div class="page narrow"><p>${esc(t('err.no_prop', {n}))}</p></div>`; return; }
+  CUR = n; revealInNav(n);
+  const p = D.props[n], i = POS.get(n);
+  const prev = NUMS[i - 1], next = NUMS[i + 1];
+  const anc = ancestors(n);
+  const crumbs = anc.map(a => `<a href="#/p/${a}" title="${esc(firstLine(a, lead()))}">${a}</a><span class="sep">›</span>`).join('') + `<b>${n}</b>`;
+  const cols = SHOWN.map(ed => cellHtml(n, ed, true)).join('');
+  const groups = (p.groups || []).map((g, gi) => (p.groups.length > 1 ? `<div class="gl">${t('prop.group', {g: gi + 1})}: ${g[0]}${g.length > 1 ? '–' + g[g.length - 1] : ''}</div>` : '') +
+    `<ul>${g.map(c => `<li><a class="no" href="#/p/${c}">${c}</a><span class="tx">${esc(firstLine(c, lead()))}</span></li>`).join('')}</ul>`).join('');
+  const sib = p.parent ? (D.props[p.parent].groups.find(g => g.includes(n)) || []).filter(x => x !== n) : NUMS.filter(x => !D.props[x].parent && x !== n);
+  document.title = `${n} — ${t('app.title')}`;
+  view.innerHTML = `<div class="page">
+    <div class="crumbs" title="${esc(t('prop.ancestors'))}">${crumbs}</div>
+    <div class="prop-head"><span class="pnum">${n}</span>
+      <span class="ednote">${DESC[n] ? esc(t('prop.descendants', {n: DESC[n]})) : ''}</span>
+      <div class="acts"><a href="#/tree?at=${n}">${t('prop.open_tree')}</a><button id="copy">${t('prop.copy')}</button></div></div>
+    <div class="cols" style="${gridCols(SHOWN.length)}">${cols}</div>
+    ${commentsHtml(n)}
+    <div class="rail">
+      ${groups ? `<div><h4>${t('prop.children')}</h4>${groups}</div>` : ''}
+      ${railList(sib, t('prop.siblings'))}
+      ${railList(p.refs, t('prop.refs'))}
+      ${railList(REFS_IN[n], t('prop.refs_in'))}
+    </div>
+    <div class="pager"><span>${prev ? `<a href="#/p/${prev}">← ${prev} ${t('prop.prev')}</a>` : ''}</span>
+      <span>${p.parent ? `<a href="#/p/${p.parent}">↑ ${p.parent}</a>` : ''}</span>
+      <span>${next ? `<a href="#/p/${next}">${t('prop.next')} ${next} →</a>` : ''}</span></div>
+  </div>`;
+  $('#copy').onclick = () => copyProp(n);
+  view.scrollTop = 0;
+  scrollToMark();
+}
+
+function copyProp(n) {
+  const parts = SHOWN.filter(ed => D.props[n].text[ed]).map(ed =>
+    `${n} ${MD.plain(D.props[n].text[ed])}\n— ${cite(n, ed)}`);
+  copyText(parts.join('\n\n'));
+}
+function copyText(s) {
+  const done = () => toast(t('prop.copied'));
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(s).then(done, () => fallback());
+  else fallback();
+  function fallback() { const ta = document.createElement('textarea'); ta.value = s; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} ta.remove(); }
+}
+function toast(msg) { const el = $('#toast'); el.textContent = msg; el.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => { el.style.display = 'none'; }, 1400); }
+
+/* дерево как в 2023: корень 1–7, раздел, затем для каждой группы детей — повтор узла и члены группы */
+function layout() {
+  const ev = [];
+  const roots = NUMS.filter(n => !D.props[n].parent);
+  ev.push({k: 'root', items: roots});
+  const walk = (n, firstUnderSection) => {
+    (D.props[n].groups || []).forEach((g, gi) => {
+      ev.push({k: 'block', n, g, rep: !(firstUnderSection && gi === 0)});
+      g.forEach(m => { if ((D.props[m].groups || []).length) walk(m, false); });
+    });
+  };
+  roots.forEach(r => { if ((D.props[r].groups || []).length) { ev.push({k: 'section', n: r}); walk(r, true); } });
+  return ev;
+}
+const LAYOUT = layout();
+function rowHtml(n, cls, withComments) {
+  const cells = SHOWN.map(ed => {
+    const tx = D.props[n].text[ed];
+    const body = tx ? renderMd(tx, ed) : `<p class="miss">[${t('prop.missing')}]</p>`;
+    // номер — в начало первого абзаца
+    const num = `<a class="n" href="#/p/${n}">${n}</a>`;
+    return `<div class="cell" lang="${D.editions[ed].lang}">${body.replace(/^<p>/, '<p>' + num)}${/^<p>/.test(body) ? '' : num}</div>`;
+  }).join('');
+  return `<div class="row ${cls || ''}" id="r-${cls === 'rep' ? 'h' : 'm'}-${n.replace(/\./g, '_')}" style="${gridCols(SHOWN.length)}">${cells}</div>` +
+    (withComments ? commentsHtml(n, 'inrow') : '');
+}
+function colHead() { return `<div class="colhead cols" style="${gridCols(SHOWN.length)}">${SHOWN.map(ed => `<div>${esc(D.editions[ed].title)}</div>`).join('')}</div>`; }
+function showTree(at) {
+  CUR = at || CUR; markNav();
+  let h = `<div class="page"><h2>${t('view.tree')}</h2><div class="tree-note">${t('tree.note')}</div>${colHead()}`;
+  for (const e of LAYOUT) {
+    if (e.k === 'root') { h += `<div class="sec"><span>${t('tree.root')}</span></div>`; e.items.forEach(n => { h += rowHtml(n, '', true); }); }
+    else if (e.k === 'section') {
+      const cells = SHOWN.map(ed => { const tx = D.props[e.n].text[ed]; return `<div class="cell" lang="${D.editions[ed].lang}">${tx ? renderMd(tx.split(/\n\n/)[0], ed) : ''}</div>`; }).join('');
+      h += `<div class="sec row" id="r-s-${e.n}" style="${gridCols(SHOWN.length)}">${cells.replace(/<p>/, `<p><span class="n">${e.n}.</span>`)}</div>`;
+    } else {
+      if (e.rep) h += rowHtml(e.n, 'rep', false);
+      e.g.forEach(m => { h += rowHtml(m, '', true); });
+    }
+  }
+  view.innerHTML = h + '</div>';
+  if (at) {
+    // к ветви, где узел повторён со своими комментариями; иначе — к нему как члену ветви
+    const el = document.getElementById('r-h-' + at.replace(/\./g, '_')) || document.getElementById('r-m-' + at.replace(/\./g, '_')) || document.getElementById('r-s-' + at);
+    if (el) { el.classList.add('cur'); el.scrollIntoView({block: 'start'}); view.scrollTop -= 40; }
+  } else view.scrollTop = 0;
+}
+function showSeq(at) {
+  let h = `<div class="page"><h2>${t('view.seq')}</h2>${colHead()}`;
+  NUMS.forEach(n => { h += rowHtml(n, '', true); });
+  view.innerHTML = h + '</div>';
+  const id = at || CUR;
+  if (id) { const el = document.getElementById('r-m-' + id.replace(/\./g, '_')); if (el) { el.classList.add('cur'); el.scrollIntoView({block: 'start'}); view.scrollTop -= 40; } }
+  else view.scrollTop = 0;
+}
+
+/* карта: радиальное дерево, площадь круга ~ число потомков */
+function showMap() {
+  const roots = NUMS.filter(n => !D.props[n].parent);
+  const W = 1200, H = 1200, cx = W / 2, cy = H / 2;
+  const leaves = {}; NUMS.slice().reverse().forEach(n => { const k = CHILDREN(n); leaves[n] = k.length ? k.reduce((s, c) => s + leaves[c], 0) : 1; });
+  const total = roots.reduce((s, r) => s + leaves[r], 0);
+  const depth = n => ancestors(n).length;
+  const pos = {};
+  let acc = 0;
+  const place = (n, a0) => {
+    const span = leaves[n] / total * Math.PI * 2;
+    const a = a0 + span / 2, r = 70 + depth(n) * 92;
+    pos[n] = [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    let s = a0; CHILDREN(n).forEach(c => { place(c, s); s += leaves[c] / total * Math.PI * 2; });
+  };
+  roots.forEach(r => { place(r, acc); acc += leaves[r] / total * Math.PI * 2; });
+  let lines = '', dots = '', labels = '';
+  NUMS.forEach(n => {
+    const p = D.props[n].parent, [x, y] = pos[n];
+    if (p) lines += `<line x1="${pos[p][0].toFixed(1)}" y1="${pos[p][1].toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--rule)" stroke-width="1"/>`;
+    const rad = 2.2 + Math.sqrt(DESC[n]) * 2.1;
+    dots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad.toFixed(1)}" fill="${n === CUR ? 'var(--mark-cur)' : 'var(--brass)'}" fill-opacity="${D.props[n].parent ? .75 : 1}" data-n="${n}"><title>${n} ${esc(firstLine(n, lead()))}</title></circle>`;
+    if (!D.props[n].parent || DESC[n] >= 8) labels += `<text x="${(x + rad + 2).toFixed(1)}" y="${(y + 4).toFixed(1)}" font-size="${D.props[n].parent ? 11 : 16}" fill="var(--ink)">${n}</text>`;
+  });
+  view.innerHTML = `<div class="page map"><h2>${t('map.title')}</h2><div class="tree-note">${t('map.note')}</div>
+    <svg viewBox="0 0 ${W} ${H}">${lines}${dots}${labels}</svg></div>`;
+  view.querySelector('svg').addEventListener('click', e => { const n = e.target.dataset && e.target.dataset.n; if (n) location.hash = '#/p/' + n; });
+}
+
+function showFront() {
+  CUR = null; markNav();
+  let h = `<div class="page"><div class="cols" style="${gridCols(SHOWN.length)}">`;
+  SHOWN.forEach(ed => {
+    const f = D.front[ed] || {};
+    let c = `<div class="cell" lang="${D.editions[ed].lang}">${edHead(ed)}`;
+    if (!f.dedication && !f.motto && !(f.preface || []).length) c += `<p class="miss">${t('front.none')}</p>`;
+    if (f.dedication) c += `<h3>${t('front.dedication')}</h3>${renderMd(f.dedication, ed)}`;
+    if (f.motto) c += `<h3>${t('front.motto')}</h3>${renderMd(f.motto.replace(/\n/g, '  \n'), ed)}`;
+    if ((f.preface || []).length) c += `<h3>${f.preface_title ? renderMd(f.preface_title, ed).replace(/^<p>|<\/p>$/g, '') : t('front.preface')}</h3>${f.preface.map(x => renderMd(x, ed)).join('')}`;
+    if ((f.comment || []).length && SHOW_COMM) c += `<div class="comment"><div class="ch">${t('front.comment')}</div>${f.comment.map(x => renderMd(x, ed)).join('')}</div>`;
+    h += c + '</div>';
+  });
+  view.innerHTML = h + '</div></div>';
+  view.scrollTop = 0;
+}
+
+function showAbout() {
+  CUR = null; markNav();
+  let h = `<div class="page narrow"><h2>${t('about.title')}</h2><p>${t('about.p1')}</p>`;
+  EDS.forEach(ed => {
+    const e = D.editions[ed];
+    h += `<h3>${esc(e.title)}</h3><div class="ednote">${renderMd(e.note.replace(/^> ?/gm, ''), ed)}</div>`;
+    if (e.missing.length) h += `<p class="ednote">${esc(t('about.missing', {list: e.missing.join(', ')}))}</p>`;
+  });
+  h += `<p class="help">${t('about.keys')}</p><p class="help">${t('search.help')}</p></div>`;
+  view.innerHTML = h; view.scrollTop = 0;
+}
+
+let SEARCH_ALL = store.get('sall', '0') === '1';
+let SEARCH_COMM = store.get('scomm', '1') === '1';
+function showSearch(q) {
+  CUR = null; markNav();
+  $('#q').value = q;
+  if (/^[1-7](\.\d+)?$/.test(q.trim())) { location.replace('#/p/' + q.trim()); return; }
+  const cq = compileQuery(q);
+  const eds = SEARCH_ALL ? EDS : SHOWN;
+  const hits = [];
+  if (cq.pos.length) {
+    NUMS.forEach(n => eds.forEach(ed => { const tx = D.props[n].text[ed]; if (tx && matches(cq, tx)) hits.push({n, ed, tx}); }));
+    if (SEARCH_COMM) for (const ed in D.comments) D.comments[ed].forEach(c => { if (matches(cq, c.text)) hits.push({n: c.covers[c.covers.length - 1], ed, tx: c.text, comm: c.covers}); });
+  }
+  hits.sort((a, b) => cmpNum(a.n, b.n) || EDS.indexOf(a.ed) - EDS.indexOf(b.ed));
+  let h = `<div class="page narrow"><div class="opts">
+    <label><input type="checkbox" id="sall" ${SEARCH_ALL ? 'checked' : ''}> ${t('search.all_eds')}</label>
+    <label><input type="checkbox" id="scomm" ${SEARCH_COMM ? 'checked' : ''}> ${t('search.in_comments')}</label></div>
+    <p class="help">${t('search.help')}</p>
+    <h3>${hits.length ? esc(t('search.results', {n: hits.length})) : t('search.none')}</h3><ul class="hits">`;
+  hits.slice(0, 1500).forEach(x => {
+    h += `<li><div class="meta"><a href="#/p/${x.n}?q=${encodeURIComponent(q)}"><b>${x.n}</b></a> · ${esc(D.editions[x.ed].short)}${x.comm ? ' · ' + t('search.hit_comment') + ' ' + esc(t('prop.comment_to', {r: x.comm.length > 1 ? x.comm[0] + '–' + x.comm[x.comm.length - 1] : x.comm[0]})) : ''}</div>
+      <div lang="${D.editions[x.ed].lang}">${snippet(x.tx, cq)}</div></li>`;
+  });
+  view.innerHTML = h + '</ul></div>';
+  $('#sall').onchange = e => { SEARCH_ALL = e.target.checked; store.set('sall', SEARCH_ALL ? '1' : '0'); showSearch(q); };
+  $('#scomm').onchange = e => { SEARCH_COMM = e.target.checked; store.set('scomm', SEARCH_COMM ? '1' : '0'); showSearch(q); };
+  view.scrollTop = 0;
+}
+function scrollToMark() { const m = view.querySelector('mark'); if (m) { m.classList.add('cur'); m.scrollIntoView({block: 'center'}); } }
+
+/* ---------- маршруты ---------- */
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1) || '/');
+  const [path, qs] = h.split('?');
+  const params = new URLSearchParams(qs || '');
+  HL = params.get('q') ? compileQuery(params.get('q')) : null;
+  if (HL && !HL.all) HL = null;
+  const mode = path.startsWith('/tree') ? 'tree' : path.startsWith('/seq') ? 'seq' : path.startsWith('/map') ? 'map' : 'p';
+  $('#mode').value = mode;
+  let m;
+  if ((m = path.match(/^\/p\/([1-7](?:\.\d+)?)$/))) showProp(m[1]);
+  else if (path === '/tree') showTree(params.get('at'));
+  else if (path === '/seq') showSeq(params.get('at'));
+  else if (path === '/map') showMap();
+  else if (path === '/front') showFront();
+  else if (path === '/about') showAbout();
+  else if (path === '/search') showSearch(params.get('q') || '');
+  else showProp(CUR || '1');
+}
+
+/* ---------- шапка ---------- */
+function drawEds() {
+  $('#eds').innerHTML = EDS.map(ed => `<label class="${SHOWN.includes(ed) ? 'on' : ''}" title="${esc(D.editions[ed].title)}"><input type="checkbox" value="${ed}" ${SHOWN.includes(ed) ? 'checked' : ''}>${esc(D.editions[ed].short)}</label>`).join('');
+}
+$('#eds').addEventListener('change', e => {
+  const ed = e.target.value;
+  if (e.target.checked) { SHOWN.push(ed); SHOWN.sort((a, b) => EDS.indexOf(a) - EDS.indexOf(b)); }
+  else if (SHOWN.length > 1) SHOWN = SHOWN.filter(x => x !== ed);
+  store.set('eds', SHOWN.join(','));
+  drawEds(); drawNav($('#filter').value); route();
+});
+$('#mode').onchange = e => {
+  const v = e.target.value, at = CUR;
+  location.hash = v === 'p' ? '#/p/' + (at || '1') : v === 'map' ? '#/map' : `#/${v}${at ? '?at=' + at : ''}`;
+};
+$('#cmt').onclick = () => { SHOW_COMM = !SHOW_COMM; store.set('comm', SHOW_COMM ? '1' : '0'); $('#cmt').classList.toggle('on', SHOW_COMM); route(); };
+const applySize = () => document.documentElement.style.setProperty('--fs', store.get('fs', '18') + 'px');
+$('#smaller').onclick = () => { store.set('fs', Math.max(13, +store.get('fs', '18') - 1)); applySize(); };
+$('#bigger').onclick = () => { store.set('fs', Math.min(28, +store.get('fs', '18') + 1)); applySize(); };
+const applyTheme = () => { const th = store.get('theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); document.documentElement.dataset.theme = th; };
+$('#theme').onclick = () => { store.set('theme', document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); applyTheme(); };
+$('#navbtn').onclick = () => { $('#nav').classList.toggle('hidden'); store.set('nav', $('#nav').classList.contains('hidden') ? '0' : '1'); };
+$('#lang').innerHTML = Object.entries(I.langs).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+$('#lang').onchange = e => { LANG = e.target.value; store.set('lang', LANG); applyStatic(); drawNav($('#filter').value); route(); };
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') { const v = $('#q').value.trim(); if (v) location.hash = '#/search?q=' + encodeURIComponent(v); } });
+$('#filter').addEventListener('input', e => drawNav(e.target.value.trim()));
+$('#expall').onclick = () => { NUMS.forEach(n => { if ((D.props[n].groups || []).length) openNodes.add(n); }); store.set('open', JSON.stringify([...openNodes])); drawNav(''); };
+$('#colall').onclick = () => { openNodes.clear(); store.set('open', '[]'); drawNav(''); };
+$('#tree').addEventListener('click', e => {
+  const tw = e.target.closest('[data-tw]');
+  if (tw && tw.dataset.tw) {
+    const n = tw.dataset.tw;
+    openNodes.has(n) ? openNodes.delete(n) : openNodes.add(n);
+    store.set('open', JSON.stringify([...openNodes]));
+    tw.textContent = openNodes.has(n) ? '▾' : '▸';
+    document.querySelector(`[data-sub="${CSS.escape(n)}"]`).classList.toggle('open', openNodes.has(n));
+    return;
+  }
+  const tn = e.target.closest('.tn');
+  if (tn) {
+    const mode = $('#mode').value;
+    location.hash = mode === 'tree' ? '#/tree?at=' + tn.dataset.n : mode === 'seq' ? '#/seq?at=' + tn.dataset.n : '#/p/' + tn.dataset.n;
+    if (innerWidth < 900) $('#nav').classList.add('hidden');
+  }
+});
+
+/* сноски: всплывают при наведении */
+const pop = $('#pop');
+document.addEventListener('mouseover', e => {
+  const a = e.target.closest('sup.fn a');
+  if (!a) return;
+  const note = (D.notes[a.dataset.ed] || {})[a.dataset.fn];
+  pop.innerHTML = note ? renderMdPlain(note, a.dataset.ed) : `<i>${t('note.none')}</i>`;
+  pop.style.display = 'block';
+  const r = a.getBoundingClientRect();
+  pop.style.left = Math.min(innerWidth - pop.offsetWidth - 10, Math.max(8, r.left - 20)) + 'px';
+  pop.style.top = (r.bottom + 6 + pop.offsetHeight > innerHeight ? r.top - pop.offsetHeight - 6 : r.bottom + 6) + 'px';
+});
+document.addEventListener('mouseout', e => { if (e.target.closest('sup.fn a')) pop.style.display = 'none'; });
+function renderMdPlain(md, ed) { return MD.render(md, {fig: figFor(ed), fn: lab => `<sup>${esc(lab)}</sup>`}); }
+
+/* клавиши */
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input,textarea,select')) { if (e.key === 'Escape') e.target.blur(); return; }
+  if (e.key === '/') { e.preventDefault(); $('#q').focus(); $('#q').select(); return; }
+  if (e.key === 't') { location.hash = '#/tree' + (CUR ? '?at=' + CUR : ''); return; }
+  if (e.key === 's') { location.hash = '#/seq' + (CUR ? '?at=' + CUR : ''); return; }
+  if ($('#mode').value !== 'p' || !CUR) return;
+  const i = POS.get(CUR);
+  if (e.key === 'ArrowRight' && NUMS[i + 1]) location.hash = '#/p/' + NUMS[i + 1];
+  if (e.key === 'ArrowLeft' && NUMS[i - 1]) location.hash = '#/p/' + NUMS[i - 1];
+  if (e.key === 'ArrowUp' && D.props[CUR].parent) { e.preventDefault(); location.hash = '#/p/' + D.props[CUR].parent; }
+});
+
+/* старт */
+$('#lang').value = LANG;
+applyStatic(); applySize(); applyTheme();
+if (store.get('nav', '1') === '0') $('#nav').classList.add('hidden');
+$('#cmt').classList.toggle('on', SHOW_COMM);
+drawEds(); drawNav('');
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>

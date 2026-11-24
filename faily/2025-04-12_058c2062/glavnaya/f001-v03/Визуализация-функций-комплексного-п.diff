@@ -1,0 +1,67 @@
+--- предыдущая/Визуализация-функций-комплексного-переменного.html
++++ текущая/Визуализация-функций-комплексного-переменного.html
+@@ -129,6 +129,12 @@
+                 <span id="grid-value">5</span>
+             </div>
+             
++            <div class="slider-group">
++                <label for="grid-thickness-slider">Толщина линий уровня:</label>
++                <input type="range" id="grid-thickness-slider" min="0.01" max="0.2" step="0.01" value="0.05">
++                <span id="grid-thickness-value">0.05</span>
++            </div>
++            
+             <div class="checkbox-group">
+                 <input type="checkbox" id="show-grid" checked>
+                 <label for="show-grid">Показывать линии уровня</label>
+@@ -155,6 +161,8 @@
+         const scaleValue = document.getElementById('scale-value');
+         const gridSlider = document.getElementById('grid-slider');
+         const gridValue = document.getElementById('grid-value');
++        const gridThicknessSlider = document.getElementById('grid-thickness-slider');
++        const gridThicknessValue = document.getElementById('grid-thickness-value');
+         const showGrid = document.getElementById('show-grid');
+         const brightnessSlider = document.getElementById('brightness-slider');
+         const brightnessValue = document.getElementById('brightness-value');
+@@ -171,6 +179,10 @@
+             gridValue.textContent = gridSlider.value;
+         });
+         
++        gridThicknessSlider.addEventListener('input', () => {
++            gridThicknessValue.textContent = gridThicknessSlider.value;
++        });
++        
+         brightnessSlider.addEventListener('input', () => {
+             brightnessValue.textContent = brightnessSlider.value;
+         });
+@@ -184,6 +196,7 @@
+             const height = canvas.height;
+             const scale = parseFloat(scaleSlider.value);
+             const gridDensity = parseInt(gridSlider.value);
++            const gridThickness = parseFloat(gridThicknessSlider.value);
+             const showGridLines = showGrid.checked;
+             const brightness = parseFloat(brightnessSlider.value);
+             
+@@ -286,8 +299,21 @@
+                         );
+                         
+                         // Если точка близка к линии уровня, делаем ее темнее
+-                        if (modulusGrid < 0.05 || phaseGrid < 0.05) {
+-                            value *= 0.5;
++                        // Используем параметр толщины линий для регулировки
++                        if (modulusGrid < gridThickness || phaseGrid < gridThickness) {
++                            // Применяем плавное затемнение на основе расстояния до линии уровня
++                            const modulusFactor = modulusGrid < gridThickness 
++                                ? (1 - modulusGrid / gridThickness) 
++                                : 0;
++                            const phaseFactor = phaseGrid < gridThickness 
++                                ? (1 - phaseGrid / gridThickness) 
++                                : 0;
++                            
++                            // Выбираем максимальный фактор затемнения
++                            const darkFactor = Math.max(modulusFactor, phaseFactor);
++                            
++                            // Применяем затемнение пропорционально коэффициенту
++                            value *= (1 - 0.7 * darkFactor);
+                         }
+                     }
+                     

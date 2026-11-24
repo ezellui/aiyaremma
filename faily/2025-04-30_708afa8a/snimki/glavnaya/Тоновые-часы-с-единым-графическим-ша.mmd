@@ -1,0 +1,188 @@
+
+graph TB
+    title[<b>Тоновые часы - полный набор из 12 рядов с единым графическим шаблоном</b>]
+    
+    %% Основные ноты (по кругу кварт)
+    subgraph Основные_ноты[Круг кварт]
+        B(("B"))
+        E(("E"))
+        A(("A"))
+        D(("D"))
+        G(("G"))
+        C(("C"))
+        F(("F"))
+        Bb(("Bb"))
+        Eb(("Eb"))
+        Ab(("Ab"))
+        Db(("Db"))
+        Gb(("Gb"))
+    end
+    
+    %% Квартовые связи между базовыми нотами
+    B -. "P4" .-> E
+    E -. "P4" .-> A
+    A -. "P4" .-> D
+    D -. "P4" .-> G
+    G -. "P4" .-> C
+    C -. "P4" .-> F
+    F -. "P4" .-> Bb
+    Bb -. "P4" .-> Eb
+    Eb -. "P4" .-> Ab
+    Ab -. "P4" .-> Db
+    Db -. "P4" .-> Gb
+    Gb -. "P4" .-> B
+    
+    %% 12 рядов с целотоновыми трезвучиями (соблюдая единый графический шаблон)
+    %% Ряд 1
+    subgraph row1[Ряд 1]
+        direction LR
+        B1[/"B1"/] -- "T" --> Db2[/"Db2"/] -- "T" --> Eb2[/"Eb2"/]
+    end
+    
+    %% Ряд 2
+    subgraph row2[Ряд 2]
+        direction LR
+        E2[/"E2"/] -- "T" --> Gb2[/"Gb2"/] -- "T" --> Ab2[/"Ab2"/]
+    end
+    
+    %% Ряд 3
+    subgraph row3[Ряд 3]
+        direction LR
+        A2[/"A2"/] -- "T" --> B2[/"B2"/] -- "T" --> Db3[/"Db3"/]
+    end
+    
+    %% Ряд 4
+    subgraph row4[Ряд 4]
+        direction LR
+        D3[/"D3"/] -- "T" --> E3[/"E3"/] -- "T" --> Gb3[/"Gb3"/]
+    end
+    
+    %% Ряд 5
+    subgraph row5[Ряд 5]
+        direction LR
+        G3[/"G3"/] -- "T" --> A3[/"A3"/] -- "T" --> B3[/"B3"/]
+    end
+    
+    %% Ряд 6
+    subgraph row6[Ряд 6]
+        direction LR
+        C4[/"C4"/] -- "T" --> D4[/"D4"/] -- "T" --> E4[/"E4"/]
+    end
+    
+    %% Ряд 7
+    subgraph row7[Ряд 7]
+        direction LR
+        F4[/"F4"/] -- "T" --> G4[/"G4"/] -- "T" --> A4[/"A4"/]
+    end
+    
+    %% Ряд 8
+    subgraph row8[Ряд 8]
+        direction LR
+        Bb4[/"Bb4"/] -- "T" --> C5[/"C5"/] -- "T" --> D5[/"D5"/]
+    end
+    
+    %% Ряд 9
+    subgraph row9[Ряд 9]
+        direction LR
+        Eb5[/"Eb5"/] -- "T" --> F5[/"F5"/] -- "T" --> G5[/"G5"/]
+    end
+    
+    %% Ряд 10
+    subgraph row10[Ряд 10]
+        direction LR
+        Ab5[/"Ab5"/] -- "T" --> Bb5[/"Bb5"/] -- "T" --> C6[/"C6"/]
+    end
+    
+    %% Ряд 11
+    subgraph row11[Ряд 11]
+        direction LR
+        Db6[/"Db6"/] -- "T" --> Eb6[/"Eb6"/] -- "T" --> F6[/"F6"/]
+    end
+    
+    %% Ряд 12
+    subgraph row12[Ряд 12]
+        direction LR
+        Gb6[/"Gb6"/] -- "T" --> Ab6[/"Ab6"/] -- "T" --> Bb6[/"Bb6"/]
+    end
+    
+    %% Соединяем основные ноты с начальными нотами каждого ряда
+    B -.-> B1
+    E -.-> E2
+    A -.-> A2
+    D -.-> D3
+    G -.-> G3
+    C -.-> C4
+    F -.-> F4
+    Bb -.-> Bb4
+    Eb -.-> Eb5
+    Ab -.-> Ab5
+    Db -.-> Db6
+    Gb -.-> Gb6
+    
+    %% Организация рядов в четкой структуре с последовательными квартовыми связями
+    row1 -. "P4" .-> row2
+    row2 -. "P4" .-> row3
+    row3 -. "P4" .-> row4
+    row4 -. "P4" .-> row5
+    row5 -. "P4" .-> row6
+    row6 -. "P4" .-> row7
+    row7 -. "P4" .-> row8
+    row8 -. "P4" .-> row9
+    row9 -. "P4" .-> row10
+    row10 -. "P4" .-> row11
+    row11 -. "P4" .-> row12
+    row12 -. "P4" .-> row1
+    
+    %% Легенда
+    legend[<b>Легенда:</b>]
+    t_legend["T = Целый тон (2 полутона)"]
+    p4_legend["P4 = Чистая кварта (5 полутонов)"]
+    
+    legend --- t_legend
+    legend --- p4_legend
+    
+    %% Стили
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px
+    classDef baseNote fill:#5b9bd5,stroke:#333,stroke-width:2px,color:white
+    classDef row1Class fill:#e6194B,stroke:#333,color:white
+    classDef row2Class fill:#3cb44b,stroke:#333,color:white
+    classDef row3Class fill:#ffe119,stroke:#333,color:black
+    classDef row4Class fill:#4363d8,stroke:#333,color:white
+    classDef row5Class fill:#f58231,stroke:#333,color:white
+    classDef row6Class fill:#911eb4,stroke:#333,color:white
+    classDef row7Class fill:#42d4f4,stroke:#333,color:black
+    classDef row8Class fill:#f032e6,stroke:#333,color:white
+    classDef row9Class fill:#a9a9a9,stroke:#333,color:white
+    classDef row10Class fill:#469990,stroke:#333,color:white
+    classDef row11Class fill:#e6beff,stroke:#333,color:black
+    classDef row12Class fill:#9A6324,stroke:#333,color:white
+    classDef legendStyle fill:#f0f0f0,stroke:#333,stroke-width:1px
+    classDef titleClass fill:#e6f2ff,stroke:#333,stroke-width:2px
+    
+    class B,E,A,D,G,C,F,Bb,Eb,Ab,Db,Gb baseNote
+    class B1,Db2,Eb2 row1Class
+    class E2,Gb2,Ab2 row2Class
+    class A2,B2,Db3 row3Class
+    class D3,E3,Gb3 row4Class
+    class G3,A3,B3 row5Class
+    class C4,D4,E4 row6Class
+    class F4,G4,A4 row7Class
+    class Bb4,C5,D5 row8Class
+    class Eb5,F5,G5 row9Class
+    class Ab5,Bb5,C6 row10Class
+    class Db6,Eb6,F6 row11Class
+    class Gb6,Ab6,Bb6 row12Class
+    class row1 row1Class
+    class row2 row2Class
+    class row3 row3Class
+    class row4 row4Class
+    class row5 row5Class
+    class row6 row6Class
+    class row7 row7Class
+    class row8 row8Class
+    class row9 row9Class
+    class row10 row10Class
+    class row11 row11Class
+    class row12 row12Class
+    class legend,t_legend,p4_legend legendStyle
+    class title titleClass

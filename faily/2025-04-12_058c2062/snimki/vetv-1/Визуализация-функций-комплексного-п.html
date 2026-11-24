@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Визуализация функций комплексного переменного</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.0.0/math.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slider-group label {
+            min-width: 150px;
+        }
+        .slider-group input[type="range"] {
+            flex-grow: 1;
+        }
+        .slider-group span {
+            min-width: 60px;
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        .canvas-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+        }
+        .help-text {
+            background-color: #e8f0fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Визуализация функций комплексного переменного</h1>
+        
+        <div class="help-text">
+            <h3>Как пользоваться:</h3>
+            <p>1. Введите функцию комплексного переменного (используйте z как переменную)</p>
+            <p>2. Функция должна быть записана в формате, понятном библиотеке math.js, например:</p>
+            <ul>
+                <li>z^2 или z**2 - функция f(z) = z²</li>
+                <li>1/z - функция f(z) = 1/z</li>
+                <li>sin(z) - синус</li>
+                <li>cos(z) - косинус</li>
+                <li>exp(z) - экспонента</li>
+                <li>(z^2 + 1)/(z^2 - 1) - рациональная функция</li>
+                <li>z^3 - 1 - многочлен</li>
+                <li>log(z) - натуральный логарифм</li>
+                <li>sqrt(z) или z^0.5 - квадратный корень</li>
+                <li>z^n - степенная функция (для любого n)</li>
+                <li>sin(z)*cos(z) - произведение функций</li>
+            </ul>
+            <p><b>Примечание:</b> Программа автоматически преобразует выражения:
+            ^ в **, 2z в 2*z, z2 в z**2, z(a+b) в z*(a+b), (a+b)(c+d) в (a+b)*(c+d).</p>
+        </div>
+        
+        <div class="control-panel">
+            <div class="input-group">
+                <label for="function-input">Функция f(z):</label>
+                <input type="text" id="function-input" value="z^2" placeholder="Введите функцию, например: z^2">
+            </div>
+            
+            <div class="slider-group">
+                <label for="scale-slider">Масштаб:</label>
+                <input type="range" id="scale-slider" min="0.1" max="10" step="0.1" value="2">
+                <span id="scale-value">2</span>
+            </div>
+            
+            <div class="slider-group">
+                <label for="grid-slider">Плотность линий уровня:</label>
+                <input type="range" id="grid-slider" min="0" max="20" step="1" value="5">
+                <span id="grid-value">5</span>
+            </div>
+            
+            <div class="slider-group">
+                <label for="grid-thickness-slider">Толщина линий уровня:</label>
+                <input type="range" id="grid-thickness-slider" min="0.01" max="0.2" step="0.01" value="0.05">
+                <span id="grid-thickness-value">0.05</span>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="show-grid" checked>
+                <label for="show-grid">Показывать линии уровня</label>
+            </div>
+            
+            <div class="slider-group">
+                <label for="brightness-slider">Яркость:</label>
+                <input type="range" id="brightness-slider" min="0.1" max="2" step="0.1" value="1">
+                <span id="brightness-value">1</span>
+            </div>
+            
+            <button id="render-button">Визуализировать</button>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="complex-canvas" width="800" height="800"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Получение элементов DOM
+        const functionInput = document.getElementById('function-input');
+        const scaleSlider = document.getElementById('scale-slider');
+        const scaleValue = document.getElementById('scale-value');
+        const gridSlider = document.getElementById('grid-slider');
+        const gridValue = document.getElementById('grid-value');
+        const gridThicknessSlider = document.getElementById('grid-thickness-slider');
+        const gridThicknessValue = document.getElementById('grid-thickness-value');
+        const showGrid = document.getElementById('show-grid');
+        const brightnessSlider = document.getElementById('brightness-slider');
+        const brightnessValue = document.getElementById('brightness-value');
+        const renderButton = document.getElementById('render-button');
+        const canvas = document.getElementById('complex-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Обновление значений слайдеров
+        scaleSlider.addEventListener('input', () => {
+            scaleValue.textContent = scaleSlider.value;
+        });
+        
+        gridSlider.addEventListener('input', () => {
+            gridValue.textContent = gridSlider.value;
+        });
+        
+        gridThicknessSlider.addEventListener('input', () => {
+            gridThicknessValue.textContent = gridThicknessSlider.value;
+        });
+        
+        brightnessSlider.addEventListener('input', () => {
+            brightnessValue.textContent = brightnessSlider.value;
+        });
+        
+        // Обработчик для кнопки рендеринга
+        renderButton.addEventListener('click', renderDomainColoring);
+        
+        // Основная функция для отрисовки domain coloring
+        function renderDomainColoring() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const scale = parseFloat(scaleSlider.value);
+            const gridDensity = parseInt(gridSlider.value);
+            const gridThickness = parseFloat(gridThicknessSlider.value);
+            const showGridLines = showGrid.checked;
+            const brightness = parseFloat(brightnessSlider.value);
+            
+            // Очищаем холст перед рисованием
+            ctx.clearRect(0, 0, width, height);
+            
+            // Получение введенной функции
+            const functionStr = functionInput.value;
+            let complexFunction;
+            
+            try {
+                // Преобразуем выражение для правильной обработки math.js
+                let processedFunctionStr = preprocessMathExpression(functionStr);
+                console.log("Преобразованное выражение:", processedFunctionStr);
+                
+                // Парсинг функции с помощью math.js
+                complexFunction = math.compile(processedFunctionStr);
+            } catch (error) {
+                alert("Ошибка в функции: " + error.message + "\n\nПроверьте синтаксис и попробуйте снова.");
+                console.error("Ошибка при компиляции функции:", error);
+                return;
+            }
+            
+            // Функция для предобработки математического выражения
+            function preprocessMathExpression(str) {
+                // Двухэтапный подход к обработке математических выражений
+                
+                // Шаг 1: Простые замены операторов и подготовка к парсингу
+                let processed = str
+                    .replace(/\^/g, "**");                   // ^ -> **
+                
+                // Шаг 2: Добавление операторов умножения
+                processed = processed
+                    .replace(/([0-9])([a-zA-Z])/g, "$1*$2")  // 2z -> 2*z
+                    .replace(/\)(\()/g, ")*(")               // )( -> )*(
+                    .replace(/([a-zA-Z0-9])(\()/g, "$1*$2")  // z( или 2( -> z*( или 2*(
+                    .replace(/\)([a-zA-Z0-9])/g, ")*$1")     // )z или )2 -> )*z или )*2
+                    .replace(/([a-zA-Z])([0-9])/g, "$1**$2") // z2 -> z**2
+                
+                return processed;
+            }
+            
+            // Создание изображения для рисования пикселей
+            const imageData = ctx.createImageData(width, height);
+            const data = imageData.data;
+            
+            // Итерация по каждому пикселю
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    // Преобразование координат экрана в комплексную плоскость
+                    const zReal = (x - width / 2) / (width / (4 * scale));
+                    const zImag = (height / 2 - y) / (height / (4 * scale));
+                    
+                    // Вычисление значения функции
+                    let fValue;
+                    try {
+                        fValue = complexFunction.evaluate({ z: math.complex(zReal, zImag) });
+                    } catch (error) {
+                        console.error("Ошибка вычисления для z =", zReal, "+", zImag, "i:", error.message);
+                        
+                        // Если произошла ошибка, устанавливаем пиксель в темно-красный цвет (для диагностики)
+                        const i = (y * width + x) * 4;
+                        data[i] = 80;      // R
+                        data[i + 1] = 0;   // G
+                        data[i + 2] = 0;   // B
+                        data[i + 3] = 255; // A
+                        continue;
+                    }
+                    
+                    // Получение модуля и аргумента результата
+                    let modulus, phase;
+                    
+                    try {
+                        // Для комплексных чисел используем math.abs и math.arg
+                        modulus = math.abs(fValue);
+                        phase = math.arg(fValue);
+                    } catch (error) {
+                        // Если функция вернула обычное число, а не комплексное
+                        if (typeof fValue === 'number') {
+                            modulus = Math.abs(fValue);
+                            phase = fValue >= 0 ? 0 : Math.PI;
+                        } else {
+                            // Если возникла другая ошибка, пропускаем пиксель
+                            const i = (y * width + x) * 4;
+                            data[i] = 0;
+                            data[i + 1] = 0;
+                            data[i + 2] = 80; // Темно-синий для диагностики
+                            data[i + 3] = 255;
+                            continue;
+                        }
+                    }
+                    
+                    // Нормализация модуля для визуализации (используем формулу, которая лучше работает с большими значениями)
+                    const modulusColor = Math.atan(modulus) * 2 / Math.PI;
+                    
+                    // Вычисление компонентов цвета на основе HSV модели
+                    // Фаза определяет оттенок, модуль влияет на яркость
+                    // Нормализуем фазу к диапазону от 0 до 360 градусов
+                    let hue = ((phase + Math.PI) / (2 * Math.PI)) * 360;
+                    // Обеспечиваем, что hue всегда положительный и меньше 360
+                    if (hue < 0) hue += 360;
+                    if (hue >= 360) hue -= 360;
+                    
+                    let saturation = 1;
+                    let value = brightness * (0.5 + 0.5 * modulusColor);
+                    
+                    // Вычисление линий уровня для модуля и фазы
+                    if (showGridLines && gridDensity > 0) {
+                        // Используем логарифмический масштаб для модуля
+                        const logModulus = Math.log(modulus + 0.00001) / Math.log(10);
+                        const scaledLogModulus = logModulus * gridDensity;
+                        const modulusGrid = Math.abs(scaledLogModulus - Math.round(scaledLogModulus));
+                        
+                        // Нормализуем фазу к диапазону от 0 до 2π для линий уровня
+                        const normalizedPhase = (phase + 2 * Math.PI) % (2 * Math.PI);
+                        const scaledPhase = normalizedPhase / (2 * Math.PI / gridDensity);
+                        const phaseGrid = Math.min(
+                            Math.abs(scaledPhase - Math.floor(scaledPhase)),
+                            Math.abs(scaledPhase - Math.ceil(scaledPhase))
+                        );
+                        
+                        // Если точка близка к линии уровня, делаем ее темнее
+                        // Используем параметр толщины линий для регулировки
+                        if (modulusGrid < gridThickness || phaseGrid < gridThickness) {
+                            // Применяем плавное затемнение на основе расстояния до линии уровня
+                            const modulusFactor = modulusGrid < gridThickness 
+                                ? (1 - modulusGrid / gridThickness) 
+                                : 0;
+                            const phaseFactor = phaseGrid < gridThickness 
+                                ? (1 - phaseGrid / gridThickness) 
+                                : 0;
+                            
+                            // Выбираем максимальный фактор затемнения
+                            const darkFactor = Math.max(modulusFactor, phaseFactor);
+                            
+                            // Применяем затемнение пропорционально коэффициенту
+                            value *= (1 - 0.7 * darkFactor);
+                        }
+                    }
+                    
+                    // Преобразование HSV в RGB
+                    const rgb = hsvToRgb(hue, saturation, value);
+                    
+                    // Установка цвета пикселя
+                    const i = (y * width + x) * 4;
+                    data[i] = rgb[0];     // R
+                    data[i + 1] = rgb[1]; // G
+                    data[i + 2] = rgb[2]; // B
+                    data[i + 3] = 255;    // A (непрозрачность)
+                }
+            }
+            
+            // Отрисовка изображения на холсте
+            ctx.putImageData(imageData, 0, 0);
+            
+            // Добавление координатных осей
+            drawAxes();
+        }
+        
+        // Функция для рисования осей координат
+        function drawAxes() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const scale = parseFloat(scaleSlider.value);
+            
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            
+            // Рисуем ось X
+            ctx.beginPath();
+            ctx.moveTo(0, height / 2);
+            ctx.lineTo(width, height / 2);
+            ctx.stroke();
+            
+            // Рисуем ось Y
+            ctx.beginPath();
+            ctx.moveTo(width / 2, 0);
+            ctx.lineTo(width / 2, height);
+            ctx.stroke();
+            
+            // Добавление меток на осях
+            ctx.fillStyle = 'white';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Метки на оси X
+            for (let x = -scale * 2; x <= scale * 2; x += scale / 2) {
+                if (x === 0) continue; // Пропускаем нулевую метку
+                
+                const screenX = width / 2 + x * (width / (4 * scale));
+                
+                ctx.beginPath();
+                ctx.moveTo(screenX, height / 2 - 5);
+                ctx.lineTo(screenX, height / 2 + 5);
+                ctx.stroke();
+                
+                ctx.fillText(x.toFixed(1), screenX, height / 2 + 15);
+            }
+            
+            // Метки на оси Y
+            for (let y = -scale * 2; y <= scale * 2; y += scale / 2) {
+                if (y === 0) continue; // Пропускаем нулевую метку
+                
+                const screenY = height / 2 - y * (height / (4 * scale));
+                
+                ctx.beginPath();
+                ctx.moveTo(width / 2 - 5, screenY);
+                ctx.lineTo(width / 2 + 5, screenY);
+                ctx.stroke();
+                
+                ctx.fillText(y.toFixed(1) + 'i', width / 2 - 20, screenY);
+            }
+            
+            // Метка для начала координат
+            ctx.fillText('0', width / 2 - 10, height / 2 + 15);
+        }
+        
+        // Функция для конвертации HSV в RGB
+        function hsvToRgb(h, s, v) {
+            let r, g, b;
+            
+            // Нормализуем h к диапазону 0-1
+            h = h / 360;
+            if (h < 0) h += 1;
+            if (h > 1) h -= Math.floor(h);
+            
+            const i = Math.floor(h * 6);
+            const f = h * 6 - i;
+            const p = v * (1 - s);
+            const q = v * (1 - f * s);
+            const t = v * (1 - (1 - f) * s);
+            
+            switch (i % 6) {
+                case 0: r = v; g = t; b = p; break;
+                case 1: r = q; g = v; b = p; break;
+                case 2: r = p; g = v; b = t; break;
+                case 3: r = p; g = q; b = v; break;
+                case 4: r = t; g = p; b = v; break;
+                case 5: r = v; g = p; b = q; break;
+            }
+            
+            return [
+                Math.round(r * 255),
+                Math.round(g * 255),
+                Math.round(b * 255)
+            ];
+        }
+        
+        // Инициализация при загрузке страницы
+        window.onload = renderDomainColoring;
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+# Service Configuration
+NODE_ENV=development
+PORT=4006
+SERVICE_NAME=claude-service
+
+# Database Configuration
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=philos_concepts
+POSTGRES_USER=philos
+POSTGRES_PASSWORD=password
+
+# MongoDB
+MONGO_URL=mongodb://philos:password@localhost:27017/philos_concepts
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# RabbitMQ
+RABBITMQ_URL=amqp://philos:password@localhost:5672
+
+# Claude API
+CLAUDE_API_KEY=your_claude_api_key_here
+CLAUDE_API_URL=https://api.anthropic.com/v1/messages
+CLAUDE_MODEL=claude-sonnet-4-20250514
+CLAUDE_MAX_TOKENS=4096
+
+# User Service
+USER_SERVICE_URL=http://localhost:4001
+
+# Logging
+LOG_LEVEL=debug
+
+# CORS
+CORS_ORIGIN=*
+
+# Timeouts
+SYNC_REQUEST_TIMEOUT=30000
+ASYNC_REQUEST_TIMEOUT=300000

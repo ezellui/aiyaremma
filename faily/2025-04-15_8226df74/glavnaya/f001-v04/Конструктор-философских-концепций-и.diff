@@ -1,0 +1,268 @@
+--- предыдущая/Конструктор-философских-концепций-и-интерпретаций.html
++++ текущая/Конструктор-философских-концепций-и-интерпретаций.html
+@@ -720,79 +720,122 @@
+               return;
+             }
+             
+-            // Префиксы для названий на основе онтологических категорий
++            // Префиксы для названий на основе онтологических категорий с учётом рода
+             const ontologyPrefixes = {
+-              existence: "Экзист",
+-              substance: "Субстанц",
+-              essence: "Эссенц",
+-              matter: "Матер",
+-              form: "Форм",
+-              potentiality: "Потенц",
+-              actuality: "Актуал"
++              existence: {prefix: "Экзистенц", gender: "feminine"},
++              substance: {prefix: "Субстанц", gender: "feminine"},
++              essence: {prefix: "Эссенц", gender: "feminine"},
++              matter: {prefix: "Матер", gender: "feminine"},
++              form: {prefix: "Форм", gender: "feminine"},
++              potentiality: {prefix: "Потенц", gender: "feminine"},
++              actuality: {prefix: "Актуал", gender: "feminine"}
+             };
+             
+-            // Суффиксы для названий на основе эпистемологических категорий
++            // Суффиксы для названий на основе эпистемологических категорий с учётом рода
+             const epistemologySuffixes = {
+-              knowledge: "гнозия",
+-              belief: "пистия",
+-              reason: "логия",
+-              empiricism: "эмпирика",
+-              rationalism: "рационализм",
+-              truth: "аллетика",
+-              justification: "верификация"
++              knowledge: {suffix: "гнозия", gender: "feminine"},
++              belief: {suffix: "пистия", gender: "feminine"},
++              reason: {suffix: "логия", gender: "feminine"},
++              empiricism: {suffix: "эмпирика", gender: "feminine"},
++              rationalism: {suffix: "рационализм", gender: "masculine"},
++              truth: {suffix: "алетейя", gender: "feminine"},
++              justification: {suffix: "верификация", gender: "feminine"}
+             };
+             
+-            // Модификаторы на основе аксиологических категорий
++            // Модификаторы на основе аксиологических категорий с учётом рода и падежа
+             const axiologyModifiers = {
+-              value: "ценностный ",
+-              ethics: "этический ",
+-              aesthetics: "эстетический ",
+-              good: "агатовый ",
+-              beauty: "эстетичный ",
+-              virtue: "аретический "
++              // Массив [мужской род, женский род, средний род]
++              value: ["ценностный", "ценностная", "ценностное"],
++              ethics: ["этический", "этическая", "этическое"],
++              aesthetics: ["эстетический", "эстетическая", "эстетическое"],
++              good: ["благостный", "благостная", "благостное"],
++              beauty: ["прекрасный", "прекрасная", "прекрасное"],
++              virtue: ["добродетельный", "добродетельная", "добродетельное"]
+             };
+             
+-            // Модификаторы на основе логических категорий
++            // Модификаторы на основе логических категорий с учётом рода и падежа
+             const logicModifiers = {
+-              necessity: "необходимостный ",
+-              possibility: "возможностный ",
+-              universality: "универсальный ",
+-              particularity: "партикулярный ",
+-              causality: "каузальный ",
+-              teleology: "телеологический "
++              necessity: ["необходимостный", "необходимостная", "необходимостное"],
++              possibility: ["возможностный", "возможностная", "возможностное"],
++              universality: ["универсальный", "универсальная", "универсальное"],
++              particularity: ["частный", "частная", "частное"],
++              causality: ["причинный", "причинная", "причинное"],
++              teleology: ["целевой", "целевая", "целевое"]
+             };
+             
+-            // Модификаторы на основе антропологических категорий
++            // Модификаторы на основе антропологических категорий с учётом рода
+             const anthropologyModifiers = {
+-              consciousness: "сознательный ",
+-              freedom: "свободный ",
+-              will: "волевой ",
+-              identity: "идентичный ",
+-              person: "персоналистический ",
+-              society: "социальный ",
+-              history: "исторический "
++              consciousness: ["сознательный", "сознательная", "сознательное"],
++              freedom: ["свободный", "свободная", "свободное"],
++              will: ["волевой", "волевая", "волевое"],
++              identity: ["идентичностный", "идентичностная", "идентичностное"],
++              person: ["личностный", "личностная", "личностное"],
++              society: ["социальный", "социальная", "социальное"],
++              history: ["исторический", "историческая", "историческое"]
+             };
+             
+             // Строим имя концепции
+             let name = "";
+-            
+-            // Добавляем модификаторы, если они есть
+-            const modifiers = [];
+-            Object.entries(axiologyModifiers).forEach(([category, modifier]) => {
+-              if (selectedCategories[category]) {
+-                modifiers.push(modifier);
++            let genderOfName = "feminine"; // По умолчанию женский род (для "философия")
++            
++            // Выбираем префикс из онтологических категорий
++            let prefix = null;
++            let hasPrefixSelected = false;
++            
++            Object.entries(ontologyPrefixes).forEach(([category, prefixData]) => {
++              if (!hasPrefixSelected && selectedCategories[category]) {
++                prefix = prefixData;
++                hasPrefixSelected = true;
++                genderOfName = prefixData.gender;
+               }
+             });
+             
+-            Object.entries(logicModifiers).forEach(([category, modifier]) => {
+-              if (selectedCategories[category]) {
+-                modifiers.push(modifier);
++            // Если нет онтологического префикса, используем по умолчанию "Филос"
++            if (!hasPrefixSelected) {
++              prefix = { prefix: "Филос", gender: "feminine" };
++            }
++            
++            // Выбираем суффикс из эпистемологических категорий
++            let suffix = null;
++            let hasSuffixSelected = false;
++            
++            Object.entries(epistemologySuffixes).forEach(([category, suffixData]) => {
++              if (!hasSuffixSelected && selectedCategories[category]) {
++                suffix = suffixData;
++                hasSuffixSelected = true;
++                genderOfName = suffixData.gender; // Род определяется последним компонентом
+               }
+             });
+             
+-            Object.entries(anthropologyModifiers).forEach(([category, modifier]) => {
++            // Если нет эпистемологического суффикса, используем по умолчанию "офия"
++            if (!hasSuffixSelected) {
++              suffix = { suffix: "офия", gender: "feminine" };
++            }
++            
++            // Добавляем модификаторы, согласованные по роду
++            const modifiers = [];
++            
++            // Определяем индекс рода для модификаторов: 0 - мужской, 1 - женский, 2 - средний
++            const genderIndex = genderOfName === "masculine" ? 0 : genderOfName === "feminine" ? 1 : 2;
++            
++            // Добавляем выбранные модификаторы из аксиологических категорий
++            Object.entries(axiologyModifiers).forEach(([category, modifierForms]) => {
+               if (selectedCategories[category]) {
+-                modifiers.push(modifier);
++                modifiers.push(modifierForms[genderIndex]);
++              }
++            });
++            
++            // Добавляем выбранные модификаторы из логических категорий
++            Object.entries(logicModifiers).forEach(([category, modifierForms]) => {
++              if (selectedCategories[category]) {
++                modifiers.push(modifierForms[genderIndex]);
++              }
++            });
++            
++            // Добавляем выбранные модификаторы из антропологических категорий
++            Object.entries(anthropologyModifiers).forEach(([category, modifierForms]) => {
++              if (selectedCategories[category]) {
++                modifiers.push(modifierForms[genderIndex]);
+               }
+             });
+             
+@@ -807,38 +850,10 @@
+               modifiers.length = 2;
+             }
+             
+-            // Добавляем выбранные модификаторы
+-            name += modifiers.join("");
+-            
+-            // Добавляем префикс из онтологических категорий
+-            let hasPrefix = false;
+-            Object.entries(ontologyPrefixes).forEach(([category, prefix]) => {
+-              if (!hasPrefix && selectedCategories[category]) {
+-                name += prefix;
+-                hasPrefix = true;
+-              }
+-            });
+-            
+-            // Если нет префикса, добавляем стандартный
+-            if (!hasPrefix) {
+-              name += "Филос";
+-            }
+-            
+-            // Добавляем суффикс из эпистемологических категорий
+-            let hasSuffix = false;
+-            Object.entries(epistemologySuffixes).forEach(([category, suffix]) => {
+-              if (!hasSuffix && selectedCategories[category]) {
+-                name += suffix;
+-                hasSuffix = true;
+-              }
+-            });
+-            
+-            // Если нет суффикса, добавляем стандартный
+-            if (!hasSuffix) {
+-              name += "офия";
+-            }
+-            
+-            // Добавляем тип на основе доминирующей категории
++            // Добавляем выбранные модификаторы в порядке: модификаторы + префикс + суффикс
++            name = modifiers.join(" ") + (modifiers.length > 0 ? " " : "") + prefix.prefix + suffix.suffix;
++            
++            // Добавляем классификатор на основе доминирующей группы
+             let dominantGroup = "";
+             let maxCount = 0;
+             
+@@ -854,26 +869,31 @@
+             const anthropologyCount = Object.keys(anthropologyModifiers).filter(category => 
+               selectedCategories[category]).length;
+             
+-            // Определяем доминирующую группу
++            // Определяем доминирующую группу с учетом рода основного термина
+             if (ontologyCount > maxCount) {
+               maxCount = ontologyCount;
+-              dominantGroup = " (онтологическая)";
++              dominantGroup = genderOfName === "masculine" ? " (онтологический)" : 
++                             genderOfName === "feminine" ? " (онтологическая)" : " (онтологическое)";
+             }
+             if (epistemologyCount > maxCount) {
+               maxCount = epistemologyCount;
+-              dominantGroup = " (эпистемологическая)";
++              dominantGroup = genderOfName === "masculine" ? " (эпистемологический)" : 
++                             genderOfName === "feminine" ? " (эпистемологическая)" : " (эпистемологическое)";
+             }
+             if (axiologyCount > maxCount) {
+               maxCount = axiologyCount;
+-              dominantGroup = " (аксиологическая)";
++              dominantGroup = genderOfName === "masculine" ? " (аксиологический)" : 
++                             genderOfName === "feminine" ? " (аксиологическая)" : " (аксиологическое)";
+             }
+             if (logicCount > maxCount) {
+               maxCount = logicCount;
+-              dominantGroup = " (логическая)";
++              dominantGroup = genderOfName === "masculine" ? " (логический)" : 
++                             genderOfName === "feminine" ? " (логическая)" : " (логическое)";
+             }
+             if (anthropologyCount > maxCount) {
+               maxCount = anthropologyCount;
+-              dominantGroup = " (антропологическая)";
++              dominantGroup = genderOfName === "masculine" ? " (антропологический)" : 
++                             genderOfName === "feminine" ? " (антропологическая)" : " (антропологическое)";
+             }
+             
+             // Добавляем доминирующую группу к названию
+@@ -899,6 +919,12 @@
+               name = "Аксиология";
+             } else if (selectedCategories.causality && selectedCategories.necessity && !selectedCategories.freedom) {
+               name = "Детерминизм";
++            } else if (selectedCategories.value && selectedCategories.society && selectedCategories.history) {
++              name = "Социальная философия";
++            } else if (selectedCategories.beauty && selectedCategories.aesthetics) {
++              name = "Эстетика";
++            } else if (selectedCategories.freedom && selectedCategories.will && !selectedCategories.necessity) {
++              name = "Либертарианство";
+             }
+             
+             setConceptName(name);

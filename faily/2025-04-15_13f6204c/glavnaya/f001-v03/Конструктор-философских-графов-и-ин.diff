@@ -1,0 +1,658 @@
+--- предыдущая/Конструктор-философских-графов-и-интерпретаций.html
++++ текущая/Конструктор-философских-графов-и-интерпретаций.html
+@@ -483,4 +483,654 @@
+               .attr("fill", d => categoryDict[d.id].color)
+               .attr("stroke", "#fff");
+             
+-            //
++            // Добавляем текст для узлов
++            node.append("text")
++              .attr("text-anchor", "middle")
++              .attr("dy", 3)
++              .attr("fill", "white")
++              .attr("font-weight", "bold")
++              .attr("font-size", "10px")
++              .text(d => categoryDict[d.id].name.length > 10 ? categoryDict[d.id].name.substring(0, 8) + "..." : categoryDict[d.id].name);
++            
++            // Обновляем позиции при движении симуляции
++            simulation.on("tick", () => {
++              // Ограничиваем перемещение узлов в пределах SVG
++              nodes.forEach(d => {
++                d.x = Math.max(30, Math.min(containerWidth - 30, d.x));
++                d.y = Math.max(30, Math.min(containerHeight - 30, d.y));
++              });
++            
++              // Обновляем позиции узлов
++              node.attr("transform", d => `translate(${d.x},${d.y})`);
++            
++              // Обновляем позиции ссылок
++              link
++                .attr("x1", d => d.source.x)
++                .attr("y1", d => d.source.y)
++                .attr("x2", d => d.target.x)
++                .attr("y2", d => d.target.y);
++            
++              // Обновляем позиции меток для ссылок
++              linkLabels
++                .attr("x", d => (d.source.x + d.target.x) / 2)
++                .attr("y", d => (d.source.y + d.target.y) / 2);
++            });
++            
++            // Функции для обработки перетаскивания узлов
++            function dragstarted(event, d) {
++              if (!event.active) simulation.alphaTarget(0.3).restart();
++              d.fx = d.x;
++              d.fy = d.y;
++            }
++            
++            function dragged(event, d) {
++              d.fx = event.x;
++              d.fy = event.y;
++            }
++            
++            function dragended(event, d) {
++              if (!event.active) simulation.alphaTarget(0);
++              d.fx = null;
++              d.fy = null;
++            }
++          };
++          
++          // Обработчик клика по узлу
++          const handleNodeClick = (event, node) => {
++            event.stopPropagation();
++            
++            // Если узел уже выбран, снимаем выбор
++            if (selectedNode && selectedNode.id === node.id) {
++              setSelectedNode(null);
++              return;
++            }
++            
++            // Если нет выбранного узла, выбираем текущий
++            if (!selectedNode) {
++              setSelectedNode(node);
++              return;
++            }
++            
++            // Если есть выбранный узел и выбран другой узел, показываем меню выбора типа связи
++            if (selectedNode && selectedNode.id !== node.id) {
++              // Проверяем, существует ли уже связь между этими узлами
++              const existingLink = links.find(
++                link => (link.source === selectedNode.id && link.target === node.id) || 
++                        (link.source === node.id && link.target === selectedNode.id)
++              );
++              
++              if (existingLink) {
++                // Если связь уже существует, удаляем её
++                setLinks(links.filter(link => 
++                  !(link.source === selectedNode.id && link.target === node.id) && 
++                  !(link.source === node.id && link.target === selectedNode.id)
++                ));
++                setSelectedNode(null);
++              } else {
++                // Иначе показываем меню выбора типа связи
++                setConnectionMenu({
++                  visible: true,
++                  x: event.pageX,
++                  y: event.pageY,
++                  sourceNode: selectedNode,
++                  targetNode: node
++                });
++              }
++            }
++          };
++          
++          // Обработчик создания связи
++          const handleCreateConnection = (connectionType) => {
++            const { sourceNode, targetNode } = connectionMenu;
++            
++            // Создаем новую связь
++            const newLink = {
++              source: sourceNode.id,
++              target: targetNode.id,
++              type: connectionType
++            };
++            
++            // Добавляем связь к списку связей
++            setLinks([...links, newLink]);
++            
++            // Скрываем меню и сбрасываем выбранный узел
++            setConnectionMenu({
++              visible: false,
++              x: 0,
++              y: 0,
++              sourceNode: null,
++              targetNode: null
++            });
++            
++            setSelectedNode(null);
++            
++            // Обновляем выводы на основе нового графа
++            updateConclusions();
++          };
++          
++          // Обработчик клика по фону (для отмены выбора)
++          const handleBackgroundClick = () => {
++            setSelectedNode(null);
++            setConnectionMenu({
++              visible: false,
++              x: 0,
++              y: 0,
++              sourceNode: null,
++              targetNode: null
++            });
++          };
++          
++          // Добавление категории в граф
++          const addCategory = (categoryId) => {
++            // Проверяем, не добавлена ли уже эта категория
++            if (nodes.some(node => node.id === categoryId)) {
++              return;
++            }
++            
++            // Создаем новый узел
++            const newNode = {
++              id: categoryId,
++              name: categoryDict[categoryId].name
++            };
++            
++            // Добавляем узел к списку узлов
++            setNodes([...nodes, newNode]);
++            
++            // Обновляем выводы
++            updateConclusions();
++          };
++          
++          // Удаление категории из графа
++          const removeCategory = (categoryId) => {
++            // Удаляем узел
++            setNodes(nodes.filter(node => node.id !== categoryId));
++            
++            // Удаляем все связи, связанные с этим узлом
++            setLinks(links.filter(link => 
++              link.source !== categoryId && link.target !== categoryId
++            ));
++            
++            // Если выбранный узел - это удаляемый узел, снимаем выбор
++            if (selectedNode && selectedNode.id === categoryId) {
++              setSelectedNode(null);
++            }
++            
++            // Обновляем выводы
++            updateConclusions();
++          };
++          
++          // Состояние для выводов
++          const [conclusions, setConclusions] = React.useState([]);
++          
++          // Состояние для сложных философских импликаций
++          const [implications, setImplications] = React.useState([]);
++          
++          // Состояние для совместимых парадигм
++          const [compatibleParadigms, setCompatibleParadigms] = React.useState([]);
++          
++          // Состояние для совместимых философских школ
++          const [compatibleSchools, setCompatibleSchools] = React.useState([]);
++          
++          // Состояние для релевантных философских дилемм
++          const [relevantDilemmas, setRelevantDilemmas] = React.useState([]);
++          
++          // Обновление названия концепции и выводов при изменении графа
++          React.useEffect(() => {
++            if (nodes.length > 0) {
++              generateConceptName();
++              updateConclusions();
++            } else {
++              setConceptName("Ваша философская концепция");
++              setConclusions([]);
++              setImplications([]);
++              setCompatibleParadigms([]);
++              setCompatibleSchools([]);
++              setRelevantDilemmas([]);
++            }
++          }, [nodes, links]);
++          
++          // Функция для генерации названия концепции на основе графа
++          const generateConceptName = () => {
++            if (nodes.length === 0) {
++              setConceptName("Ваша философская концепция");
++              return;
++            }
++            
++            // Количество узлов и связей
++            const nodesCount = nodes.length;
++            const linksCount = links.length;
++            
++            // Префиксы для названий на основе онтологических категорий
++            const ontologyPrefixes = {
++              existence: {prefix: "Экзистенц", gender: "feminine"},
++              substance: {prefix: "Субстанц", gender: "feminine"},
++              essence: {prefix: "Эссенц", gender: "feminine"},
++              matter: {prefix: "Матер", gender: "feminine"},
++              form: {prefix: "Форм", gender: "feminine"},
++              potentiality: {prefix: "Потенц", gender: "feminine"},
++              actuality: {prefix: "Актуал", gender: "feminine"}
++            };
++            
++            // Суффиксы для названий на основе эпистемологических категорий
++            const epistemologySuffixes = {
++              knowledge: {suffix: "гнозия", gender: "feminine"},
++              belief: {suffix: "пистия", gender: "feminine"},
++              reason: {suffix: "логия", gender: "feminine"},
++              empiricism: {suffix: "эмпирика", gender: "feminine"},
++              rationalism: {suffix: "рационализм", gender: "masculine"},
++              truth: {suffix: "алетейя", gender: "feminine"},
++              justification: {suffix: "верификация", gender: "feminine"}
++            };
++            
++            // Модификаторы на основе типов связей
++            const connectionModifiers = {
++              foundation: "фундаментальная",
++              opposition: "диалектическая",
++              dialectic: "антиномическая",
++              causation: "каузальная",
++              conceptual: "понятийная",
++              hierarchical: "иерархическая",
++              complementary: "комплементарная",
++              emergence: "эмерджентная",
++              identity: "тождественная",
++              reduction: "редукционистская"
++            };
++            
++            // Определяем доминирующие группы категорий
++            const ontologyCount = nodes.filter(node => 
++              ["existence", "substance", "essence", "matter", "form", "potentiality", "actuality", "nature"].includes(node.id)
++            ).length;
++            
++            const epistemologyCount = nodes.filter(node => 
++              ["knowledge", "belief", "reason", "empiricism", "rationalism", "truth", "justification", "understanding"].includes(node.id)
++            ).length;
++            
++            const axiologyCount = nodes.filter(node => 
++              ["value", "ethics", "aesthetics", "good", "beauty", "virtue"].includes(node.id)
++            ).length;
++            
++            const logicCount = nodes.filter(node => 
++              ["necessity", "possibility", "universality", "particularity", "causality", "teleology", "dialectics", "pluralism"].includes(node.id)
++            ).length;
++            
++            const anthropologyCount = nodes.filter(node => 
++              ["consciousness", "freedom", "will", "identity", "person", "society", "history", "language", "power", "interpretation"].includes(node.id)
++            ).length;
++            
++            // Доминирующие связи
++            const connectionCounts = {};
++            links.forEach(link => {
++              if (!connectionCounts[link.type]) {
++                connectionCounts[link.type] = 0;
++              }
++              connectionCounts[link.type]++;
++            });
++            
++            let dominantConnectionType = "";
++            let maxConnectionCount = 0;
++            
++            for (const [type, count] of Object.entries(connectionCounts)) {
++              if (count > maxConnectionCount) {
++                maxConnectionCount = count;
++                dominantConnectionType = type;
++              }
++            }
++            
++            // Строим имя концепции
++            let name = "";
++            let prefix = "";
++            let suffix = "";
++            let genderOfName = "feminine"; // По умолчанию женский род (для "философия")
++            
++            // Выбираем префикс из онтологических категорий
++            if (ontologyCount > 0) {
++              const ontologicalNodes = nodes.filter(node => 
++                ["existence", "substance", "essence", "matter", "form", "potentiality", "actuality", "nature"].includes(node.id)
++              );
++              
++              if (ontologicalNodes.length > 0) {
++                const randomIndex = Math.floor(Math.random() * ontologicalNodes.length);
++                const nodeId = ontologicalNodes[randomIndex].id;
++                
++                if (ontologyPrefixes[nodeId]) {
++                  prefix = ontologyPrefixes[nodeId].prefix;
++                  genderOfName = ontologyPrefixes[nodeId].gender;
++                } else {
++                  prefix = "Онто";
++                }
++              }
++            } else {
++              prefix = "Филос";
++            }
++            
++            // Выбираем суффикс из эпистемологических категорий
++            if (epistemologyCount > 0) {
++              const epistemologicalNodes = nodes.filter(node => 
++                ["knowledge", "belief", "reason", "empiricism", "rationalism", "truth", "justification", "understanding"].includes(node.id)
++              );
++              
++              if (epistemologicalNodes.length > 0) {
++                const randomIndex = Math.floor(Math.random() * epistemologicalNodes.length);
++                const nodeId = epistemologicalNodes[randomIndex].id;
++                
++                if (epistemologySuffixes[nodeId]) {
++                  suffix = epistemologySuffixes[nodeId].suffix;
++                  genderOfName = epistemologySuffixes[nodeId].gender; // Род определяется последним компонентом
++                } else {
++                  suffix = "логия";
++                }
++              }
++            } else {
++              suffix = "офия";
++            }
++            
++            // Модификатор на основе доминирующего типа связи
++            let modifier = "";
++            if (dominantConnectionType && connectionModifiers[dominantConnectionType]) {
++              modifier = connectionModifiers[dominantConnectionType];
++            }
++            
++            // Формируем название
++            name = prefix + suffix;
++            
++            // Первая буква заглавная
++            name = name.charAt(0).toUpperCase() + name.slice(1);
++            
++            // Добавляем модификатор и классификатор на основе доминирующей группы
++            let groupClassifier = "";
++            
++            const countsArray = [
++              {group: "онтологическая", count: ontologyCount},
++              {group: "эпистемологическая", count: epistemologyCount},
++              {group: "аксиологическая", count: axiologyCount},
++              {group: "логическая", count: logicCount},
++              {group: "антропологическая", count: anthropologyCount}
++            ];
++            
++            countsArray.sort((a, b) => b.count - a.count);
++            
++            if (countsArray[0].count > 0) {
++              groupClassifier = countsArray[0].group;
++            }
++            
++            // Формируем окончательное название
++            if (modifier && groupClassifier) {
++              name = modifier + " " + name + " (" + groupClassifier + ")";
++            } else if (modifier) {
++              name = modifier + " " + name;
++            } else if (groupClassifier) {
++              name = name + " (" + groupClassifier + ")";
++            }
++            
++            // Специальные случаи для известных философских направлений
++            if (hasNodePair("matter", "existence") && hasLinkOfType("matter", "existence", "foundation")) {
++              name = "Материализм";
++            } else if (hasNodePair("consciousness", "form") && hasLinkOfType("consciousness", "form", "foundation")) {
++              name = "Идеализм";
++            } else if (hasNodePair("matter", "consciousness") && hasLinkOfType("matter", "consciousness", "opposition")) {
++              name = "Дуализм";
++            } else if (hasNodePair("empiricism", "knowledge") && hasLinkOfType("empiricism", "knowledge", "foundation")) {
++              name = "Эмпиризм";
++            } else if (hasNodePair("rationalism", "reason") && hasNodePair("reason", "knowledge")) {
++              name = "Рационализм";
++            } else if (hasNodePair("existence", "freedom") && hasNodePair("freedom", "identity")) {
++              name = "Экзистенциализм";
++            } else if (hasNodePair("dialectics", "matter") && hasNodePair("dialectics", "history")) {
++              name = "Диалектический материализм";
++            }
++            
++            setConceptName(name);
++          };
++          
++          // Функция для проверки наличия пары узлов
++          const hasNodePair = (nodeId1, nodeId2) => {
++            return nodes.some(node => node.id === nodeId1) && nodes.some(node => node.id === nodeId2);
++          };
++          
++          // Функция для проверки наличия связи определенного типа между узлами
++          const hasLinkOfType = (nodeId1, nodeId2, linkType) => {
++            return links.some(link => 
++              (link.source === nodeId1 && link.target === nodeId2 && link.type === linkType) ||
++              (link.source === nodeId2 && link.target === nodeId1 && link.type === linkType)
++            );
++          };
++          
++          // Функция для генерации философских выводов на основе графа
++          const updateConclusions = () => {
++            if (nodes.length === 0) {
++              setConclusions([]);
++              setImplications([]);
++              setCompatibleParadigms([]);
++              setCompatibleSchools([]);
++              setRelevantDilemmas([]);
++              return;
++            }
++            
++            const newConclusions = [];
++            const complexImplications = [];
++            
++            // Анализ отдельных узлов
++            nodes.forEach(node => {
++              const category = categoryDict[node.id];
++              
++              switch(node.id) {
++                case "existence":
++                  newConclusions.push("Система включает категорию бытия как фундаментальную для онтологии.");
++                  break;
++                case "consciousness":
++                  newConclusions.push("Система признает сознание как важную философскую категорию, требующую особого рассмотрения.");
++                  break;
++                case "matter":
++                  newConclusions.push("Система включает материю как одну из базовых онтологических категорий.");
++                  break;
++                case "freedom":
++                  newConclusions.push("Система придает значение категории свободы в контексте человеческого существования.");
++                  break;
++                case "knowledge":
++                  newConclusions.push("Система рассматривает проблематику знания и его обоснования.");
++                  break;
++              }
++            });
++            
++            // Анализ связей между узлами
++            links.forEach(link => {
++              const sourceCategory = categoryDict[link.source];
++              const targetCategory = categoryDict[link.target];
++              const connectionType = connectionTypeDict[link.type];
++              
++              // Анализируем конкретные сочетания категорий и типов связей
++              if (link.source === "matter" && link.target === "existence" && link.type === "foundation") {
++                newConclusions.push("Система постулирует материалистическую онтологию, где материя является основанием бытия.");
++              }
++              
++              if (link.source === "consciousness" && link.target === "form" && link.type === "foundation") {
++                newConclusions.push("Система развивает идеалистическую онтологию, где сознание первично по отношению к форме.");
++              }
++              
++              if (link.source === "matter" && link.target === "consciousness" && link.type === "opposition") {
++                newConclusions.push("Система рассматривает материю и сознание как противоположные начала, что характерно для дуалистической онтологии.");
++              }
++              
++              if (link.source === "matter" && link.target === "consciousness" && link.type === "emergence") {
++                newConclusions.push("Система представляет сознание как эмерджентное свойство материи, что соответствует эмерджентному материализму.");
++              }
++              
++              if (link.source === "empiricism" && link.target === "knowledge" && link.type === "foundation") {
++                newConclusions.push("Система основывает эпистемологию на эмпиризме, признавая опыт фундаментом знания.");
++              }
++              
++              if (link.source === "rationalism" && link.target === "knowledge" && link.type === "foundation") {
++                newConclusions.push("Система основывает эпистемологию на рационализме, признавая разум фундаментом знания.");
++              }
++              
++              if (link.source === "truth" && link.target === "knowledge" && link.type === "foundation") {
++                newConclusions.push("Система рассматривает истину как основу знания, что указывает на приверженность классической теории истины.");
++              }
++              
++              if (link.source === "existence" && link.target === "freedom" && link.type === "foundation") {
++                newConclusions.push("Система рассматривает свободу как фундаментальную характеристику человеческого бытия, что характерно для экзистенциалистской традиции.");
++              }
++              
++              if (link.source === "dialectics" && link.target === "history" && link.type === "conceptual") {
++                newConclusions.push("Система концептуализирует историю через призму диалектики, что указывает на диалектическое понимание исторического процесса.");
++              }
++              
++              if (link.source === "necessity" && link.target === "freedom" && link.type === "dialectic") {
++                newConclusions.push("Система устанавливает диалектическое единство необходимости и свободы, преодолевая их противоречие.");
++                complexImplications.push("Диалектика свободы и необходимости: свобода понимается как осознанная необходимость, а не как произвол.");
++              }
++              
++              if (link.source === "universality" && link.target === "particularity" && link.type === "dialectic") {
++                newConclusions.push("Система устанавливает диалектическое единство всеобщего и особенного, что указывает на диалектическую методологию.");
++                complexImplications.push("Опосредование универсального и частного: конкретные явления рассматриваются как воплощения универсальных принципов.");
++              }
++              
++              // Общие выводы на основе типов связей
++              switch(link.type) {
++                case "foundation":
++                  newConclusions.push(`Категория ${sourceCategory.name} является основанием для категории ${targetCategory.name}.`);
++                  break;
++                case "opposition":
++                  newConclusions.push(`Категории ${sourceCategory.name} и ${targetCategory.name} находятся в отношении противоположности.`);
++                  break;
++                case "dialectic":
++                  newConclusions.push(`Между категориями ${sourceCategory.name} и ${targetCategory.name} устанавливается диалектическое единство.`);
++                  break;
++                case "causation":
++                  newConclusions.push(`Категория ${sourceCategory.name} причинно обуславливает категорию ${targetCategory.name}.`);
++                  break;
++                case "emergence":
++                  newConclusions.push(`Категория ${targetCategory.name} возникает из категории ${sourceCategory.name} как эмерджентное свойство.`);
++                  break;
++              }
++            });
++            
++            // Анализ сложных структур в графе
++            // Сложные триады категорий
++            if (hasNodePair("matter", "form") && hasNodePair("form", "actuality")) {
++              complexImplications.push("Гилеморфизм: материя актуализируется через форму, что соответствует аристотелевской традиции.");
++            }
++            
++            if (hasNodePair("empiricism", "rationalism") && (hasNodePair("empiricism", "knowledge") && hasNodePair("rationalism", "knowledge"))) {
++              complexImplications.push("Синтез эмпиризма и рационализма: система стремится преодолеть односторонность как эмпиризма, так и рационализма в теории познания.");
++            }
++            
++            if (hasNodePair("freedom", "necessity") && hasNodePair("necessity", "causality") && hasLinkOfType("freedom", "necessity", "dialectic")) {
++              complexImplications.push("Диалектическое понимание свободы: свобода не противоречит необходимости, но предполагает понимание причинных связей и действие на их основе.");
++            }
++            
++            // Поиск философских контуров (циклов) в графе
++            // Например, Гегелевская триада: Тезис -> Антитезис -> Синтез
++            const findCycles = () => {
++              // Простая функция для поиска циклов длины 3
++              links.forEach(link1 => {
++                links.forEach(link2 => {
++                  if (link1.target === link2.source) {
++                    links.forEach(link3 => {
++                      if (link2.target === link3.source && link3.target === link1.source) {
++                        // Обнаружен цикл из трех связей
++                        const category1 = categoryDict[link1.source].name;
++                        const category2 = categoryDict[link2.source].name;
++                        const category3 = categoryDict[link3.source].name;
++                        
++                        complexImplications.push(`Философский контур: ${category1} -> ${category2} -> ${category3} -> ${category1}, указывающий на циклическую взаимозависимость категорий.`);
++                      }
++                    });
++                  }
++                });
++              });
++            };
++            
++            findCycles();
++            
++            // Удаляем дубликаты
++            const uniqueConclusions = [...new Set(newConclusions)];
++            
++            setConclusions(uniqueConclusions);
++            setImplications(complexImplications);
++            
++            // Обновляем совместимые парадигмы
++            findCompatibleParadigms();
++            
++            // Обновляем совместимые философские школы
++            findCompatibleSchools();
++            
++            // Обновляем релевантные философские дилеммы
++            findRelevantDilemmas();
++          };
++          
++          // Функция для поиска совместимых философских парадигм
++          const findCompatibleParadigms = () => {
++            const compatible = [];
++            
++            philosophicalParadigms.forEach(paradigm => {
++              // Проверяем, содержит ли граф все необходимые узлы парадигмы
++              const hasAllNodes = paradigm.nodes.every(nodeId => 
++                nodes.some(node => node.id === nodeId)
++              );
++              
++              if (hasAllNodes) {
++                // Проверяем, содержит ли граф все необходимые связи парадигмы
++                const hasAllLinks = paradigm.links.every(paradigmLink => 
++                  links.some(link => 
++                    (link.source === paradigmLink.source && link.target === paradigmLink.target && link.type === paradigmLink.type) ||
++                    (link.source === paradigmLink.target && link.target === paradigmLink.source && link.type === paradigmLink.type)
++                  )
++                );
++                
++                // Если граф содержит все узлы и все связи, парадигма совместима
++                if (hasAllLinks) {
++                  compatible.push(paradigm);
++                }
++              }
++            });
++            
++            setCompatibleParadigms(compatible);
++          };
++          
++          // Функция для поиска совместимых философских школ
++          const findCompatibleSchools = () => {
++            const compatible = [];
++            
++            philosophicalSchools.forEach(school => {
++              // Проверяем, есть ли несовместимые узлы
++              const hasIncompatible = school.incompatibleNodes.some(nodeId => 
++                nodes.some(node => node.id === nodeId)
++              );
++              
++              if (!hasIncompatible) {
++                // Проверяем, есть ли совместимые узлы
++                const hasCompatible = school.compatibleNodes.some(nodeId => 
++                  nodes.some(node => node.id === nodeId)
++                );
++                
++                if (hasCompatible || nodes.length === 0) {
++                  compatible.push(school);
++                }
++              }
++            });
++            
++            setCompatibleSchools(compatible);
++          };
++          
++          // Функция для поиска релевантных философских дилемм
++          const findRelevantDilemmas = () => {
++            const relevant = [];
++            
++            philosophicalDilemmas.forEach(dilemma => {
++              // Проверяем, содержит ли граф узлы, связанные с дилеммой
++              const isRelevant = dilemma.relatedNodes.some(nodeId => 
++                nodes.some(node => node.id === nodeId)
++              );
++              
++              if (isRelevant) {
++                relevant.push(dilemma);
++              }
++            });
++            
++            setRelevantDilemmas(relevant);
++          };
++          
++          // Функция для применения предустановленной парадигмы
++          const applyParadigm = (paradigmName) => {
++            const paradigm = philosophicalParadigms.find(p

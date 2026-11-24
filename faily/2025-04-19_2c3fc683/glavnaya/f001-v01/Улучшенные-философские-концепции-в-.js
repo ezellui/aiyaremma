@@ -1,0 +1,150 @@
+// Предустановленные философские концепции
+const philosophicalConcepts = [
+    // 1. Феноменология Гуссерля
+    {
+        name: "Феноменология Гуссерля",
+        description: "Философия Эдмунда Гуссерля, исследующая структуры сознания и их отношение к феноменам. Ключевые понятия: интенциональность сознания – направленность на предметы, эпохе (феноменологическая редукция), трансцендентальное эго, жизненный мир (Lebenswelt).",
+        nodes: [
+            { id: 1, text: "Сознание", x: 400, y: 100, color: "#3498db" },
+            { id: 2, text: "Интенциональность", x: 600, y: 100, color: "#9b59b6" },
+            { id: 3, text: "Феномен", x: 600, y: 200, color: "#2ecc71" },
+            { id: 4, text: "Трансцендентальное Эго", x: 200, y: 100, color: "#e74c3c" },
+            { id: 5, text: "Жизненный мир", x: 400, y: 300, color: "#f39c12" },
+            { id: 6, text: "Ноэзис", x: 300, y: 200, color: "#1abc9c" },
+            { id: 7, text: "Ноэма", x: 500, y: 200, color: "#34495e" },
+            { id: 8, text: "Сущность", x: 700, y: 300, color: "#8e44ad" },
+            { id: 9, text: "Время", x: 200, y: 300, color: "#16a085" },
+            { id: 10, text: "Бытие", x: 300, y: 400, color: "#d35400" },
+            { id: 11, text: "Истина", x: 600, y: 400, color: "#7f8c8d" },
+            { id: 12, text: "Трансцендентное", x: 700, y: 150, color: "#27ae60" },
+            { id: 13, text: "Имманентное", x: 250, y: 200, color: "#f1c40f" }
+        ],
+        edges: [
+            { id: 1, source: 1, target: 2, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 2, source: 1, target: 3, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 3, source: 4, target: 1, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 4, source: 4, target: 13, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 5, source: 1, target: 5, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 6, source: 1, target: 6, type: "Тождество (А тождественно Б)", bidirectional: false },
+            { id: 7, source: 3, target: 7, type: "Тождество (А тождественно Б)", bidirectional: false },
+            { id: 8, source: 6, target: 7, type: "Диалектическое противоречие (А переходит в своё иное - Б)", bidirectional: true },
+            { id: 9, source: 7, target: 3, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 10, source: 3, target: 8, type: "Феноменологическая (А является феноменом Б)", bidirectional: false },
+            { id: 11, source: 9, target: 1, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 12, source: 5, target: 10, type: "Феноменологическая (А является феноменом Б)", bidirectional: false },
+            { id: 13, source: 1, target: 12, type: "Эпистемическая (А познаёт Б)", bidirectional: false },
+            { id: 14, source: 8, target: 11, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 15, source: 10, target: 11, type: "Феноменологическая (А является феноменом Б)", bidirectional: false },
+            { id: 16, source: 5, target: 12, type: "Герменевтическая (А истолковывает Б)", bidirectional: false },
+            { id: 17, source: 2, target: 12, type: "Телеологическая (А целеустремлено к Б)", bidirectional: false }
+        ]
+    },
+    // 2. Диалектический материализм Маркса
+    {
+        name: "Диалектический материализм Маркса",
+        description: "Философское учение Карла Маркса и Фридриха Энгельса, согласно которому материя первична по отношению к сознанию, а развитие происходит через диалектические противоречия. Ключевые понятия: общественное бытие, общественное сознание, базис, надстройка, отчуждение, прибавочная стоимость.",
+        nodes: [
+            { id: 1, text: "Материя", x: 400, y: 100, color: "#3498db" },
+            { id: 2, text: "Сознание", x: 600, y: 100, color: "#2ecc71" },
+            { id: 3, text: "Бытие", x: 200, y: 150, color: "#e74c3c" },
+            { id: 4, text: "Практика", x: 300, y: 200, color: "#9b59b6" },
+            { id: 5, text: "Диалектика", x: 500, y: 200, color: "#f39c12" },
+            { id: 6, text: "Общественные отношения", x: 400, y: 300, color: "#1abc9c" },
+            { id: 7, text: "Производительные силы", x: 250, y: 350, color: "#34495e" },
+            { id: 8, text: "Надстройка", x: 550, y: 350, color: "#8e44ad" },
+            { id: 9, text: "Необходимость", x: 300, y: 450, color: "#16a085" },
+            { id: 10, text: "Свобода", x: 500, y: 450, color: "#d35400" },
+            { id: 11, text: "Отчуждение", x: 700, y: 250, color: "#7f8c8d" },
+            { id: 12, text: "Субстанция", x: 200, y: 250, color: "#27ae60" },
+            { id: 13, text: "Историческая закономерность", x: 400, y: 400, color: "#f1c40f" }
+        ],
+        edges: [
+            { id: 1, source: 1, target: 2, type: "Причинность (А вызывает Б)", bidirectional: false },
+            { id: 2, source: 1, target: 3, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 3, source: 3, target: 2, type: "Причинность (А вызывает Б)", bidirectional: false },
+            { id: 4, source: 3, target: 6, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 5, source: 4, target: 3, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: true },
+            { id: 6, source: 4, target: 1, type: "Эпистемическая (А познаёт Б)", bidirectional: false },
+            { id: 7, source: 5, target: 1, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 8, source: 5, target: 13, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 9, source: 7, target: 6, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 10, source: 6, target: 2, type: "Причинность (А вызывает Б)", bidirectional: false },
+            { id: 11, source: 6, target: 8, type: "Причинность (А вызывает Б)", bidirectional: false },
+            { id: 12, source: 7, target: 8, type: "Диалектическое противоречие (А переходит в своё иное - Б)", bidirectional: true },
+            { id: 13, source: 9, target: 10, type: "Диалектическое противоречие (А переходит в своё иное - Б)", bidirectional: true },
+            { id: 14, source: 1, target: 12, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 15, source: 6, target: 11, type: "Причинность (А вызывает Б)", bidirectional: false },
+            { id: 16, source: 13, target: 10, type: "Телеологическая (А целеустремлено к Б)", bidirectional: false },
+            { id: 17, source: 1, target: 9, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 18, source: 2, target: 13, type: "Эпистемическая (А познаёт Б)", bidirectional: false }
+        ]
+    },
+    // 3. Онтология Хайдеггера
+    {
+        name: "Онтология Хайдеггера",
+        description: "Философия Мартина Хайдеггера, исследующая вопрос о смысле бытия. Центральные понятия: Dasein (присутствие), бытие-в-мире, временность, историчность, подручность, забота, язык как дом бытия.",
+        nodes: [
+            { id: 1, text: "Бытие", x: 400, y: 100, color: "#3498db" },
+            { id: 2, text: "Сущее", x: 600, y: 100, color: "#2ecc71" },
+            { id: 3, text: "Dasein (Присутствие)", x: 300, y: 200, color: "#e74c3c" },
+            { id: 4, text: "Время", x: 200, y: 300, color: "#9b59b6" },
+            { id: 5, text: "Мир", x: 600, y: 250, color: "#f39c12" },
+            { id: 6, text: "Язык", x: 700, y: 300, color: "#1abc9c" },
+            { id: 7, text: "Забота", x: 300, y: 300, color: "#34495e" },
+            { id: 8, text: "Бытие-к-смерти", x: 450, y: 400, color: "#8e44ad" },
+            { id: 9, text: "Подручность", x: 550, y: 350, color: "#16a085" },
+            { id: 10, text: "Историчность", x: 350, y: 450, color: "#d35400" },
+            { id: 11, text: "Разомкнутость", x: 200, y: 400, color: "#7f8c8d" },
+            { id: 12, text: "Экзистенция", x: 500, y: 150, color: "#27ae60" },
+            { id: 13, text: "Ничто", x: 700, y: 150, color: "#f1c40f" }
+        ],
+        edges: [
+            { id: 1, source: 1, target: 2, type: "Диалектическое противоречие (А переходит в своё иное - Б)", bidirectional: true },
+            { id: 2, source: 3, target: 1, type: "Герменевтическая (А истолковывает Б)", bidirectional: false },
+            { id: 3, source: 3, target: 5, type: "Феноменологическая (А является феноменом Б)", bidirectional: false },
+            { id: 4, source: 4, target: 1, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: true },
+            { id: 5, source: 6, target: 1, type: "Репрезентационная (А представляет/отражает Б)", bidirectional: false },
+            { id: 6, source: 3, target: 7, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 7, source: 3, target: 8, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 8, source: 3, target: 12, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 9, source: 2, target: 9, type: "Феноменологическая (А является феноменом Б)", bidirectional: false },
+            { id: 10, source: 4, target: 10, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 11, source: 10, target: 3, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 12, source: 3, target: 11, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 13, source: 6, target: 3, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 14, source: 3, target: 4, type: "Феноменологическая (А является феноменом Б)", bidirectional: false },
+            { id: 15, source: 1, target: 13, type: "Диалектическое противоречие (А переходит в своё иное - Б)", bidirectional: true },
+            { id: 16, source: 7, target: 8, type: "Телеологическая (А целеустремлено к Б)", bidirectional: false },
+            { id: 17, source: 5, target: 9, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false }
+        ]
+    },
+    // 4. Платоновский идеализм
+    {
+        name: "Платоновский идеализм",
+        description: "Философская система Платона, утверждающая первичность идей (форм) по отношению к материальному миру. Ключевые понятия: мир идей, мир вещей, анамнезис (припоминание), благо, эйдос, пещера, душа.",
+        nodes: [
+            { id: 1, text: "Идея (Эйдос)", x: 400, y: 100, color: "#3498db" },
+            { id: 2, text: "Единое", x: 300, y: 50, color: "#2ecc71" },
+            { id: 3, text: "Благо", x: 500, y: 50, color: "#e74c3c" },
+            { id: 4, text: "Душа", x: 300, y: 200, color: "#9b59b6" },
+            { id: 5, text: "Материальный мир", x: 500, y: 300, color: "#f39c12" },
+            { id: 6, text: "Знание", x: 200, y: 250, color: "#1abc9c" },
+            { id: 7, text: "Мнение", x: 600, y: 250, color: "#34495e" },
+            { id: 8, text: "Истина", x: 300, y: 350, color: "#8e44ad" },
+            { id: 9, text: "Бытие", x: 400, y: 200, color: "#16a085" },
+            { id: 10, text: "Становление", x: 500, y: 200, color: "#d35400" },
+            { id: 11, text: "Разум", x: 200, y: 150, color: "#7f8c8d" },
+            { id: 12, text: "Красота", x: 600, y: 50, color: "#27ae60" },
+            { id: 13, text: "Справедливость", x: 700, y: 100, color: "#f1c40f" }
+        ],
+        edges: [
+            { id: 1, source: 2, target: 1, type: "Иерархическая (А подчиняет Б)", bidirectional: false },
+            { id: 2, source: 3, target: 1, type: "Иерархическая (А подчиняет Б)", bidirectional: false },
+            { id: 3, source: 1, target: 9, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 4, source: 5, target: 10, type: "Тождество (А тождественно Б)", bidirectional: true },
+            { id: 5, source: 1, target: 5, type: "Конституирующая (А формирует/конституирует Б)", bidirectional: false },
+            { id: 6, source: 4, target: 1, type: "Эпистемическая (А познаёт Б)", bidirectional: false },
+            { id: 7, source: 4, target: 5, type: "Эпистемическая (А познаёт Б)", bidirectional: false },
+            { id: 8, source: 6, target: 1, type: "Репрезентационная (А представляет/отражает Б)", bidirectional: false },
+            { id: 9, source: 7, target: 5, type: "Репрезентационная (А представляет/отражает Б)", bidirectional: false },
+            { id:

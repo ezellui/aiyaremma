@@ -1,12 +1,12 @@
 ---
 name: concepts-omnidirectional
-description: Ranatar/philosophical-concepts-omnidirectional — архитектурная спецификация философской платформы, общий предок philosynth и philosphaira
+description: USER/philosophical-concepts-omnidirectional — архитектурная спецификация философской платформы, общий предок philosynth и philosphaira
 sources: [chat]
 aliases: [philosophical-concepts-omnidirectional, omnidirectional, сервис философских концепций]
 ---
 
 - [stated] Третий репозиторий пользователя рядом с [[philosynth]] и [[philosphaira]]:
-  github.com/Ranatar/philosophical-concepts-omnidirectional (последний коммит 15.09.2025)
+  github.com/USER/philosophical-concepts-omnidirectional (последний коммит 15.09.2025)
 - [stated] Содержит не код, а проект платформы: README-руководство по развёртыванию,
   philosophy-service-documentation.md, philosophical-concepts-schema.md,
   architecture/ (mermaid-схемы, tsx-прототипы, claude-requests.js, docker-compose)

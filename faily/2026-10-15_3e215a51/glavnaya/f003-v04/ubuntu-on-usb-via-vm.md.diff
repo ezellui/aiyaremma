@@ -1,0 +1,584 @@
+--- предыдущая/ubuntu-on-usb-via-vm.md
++++ текущая/ubuntu-on-usb-via-vm.md
+@@ -1,6 +1,6 @@
+ # Полноценная Ubuntu на флешке — через виртуальную серверную Ubuntu на Win7
+ 
+-Инструкция рассчитана на конкретную конфигурацию: хост — Windows 7 64-bit на i7-4770 / 8 ГБ, гостевая виртуалка — Ubuntu Server 24.04 без графики, 4 ядра, 5 ГБ RAM, доступ по SSH (PuTTY, WinSCP). Цель — собрать на отдельной USB-флешке полноценную Ubuntu, которая будет грузиться на другой машине (не на хосте). Схема «вытащил флешку из хоста — вставил в целевую машину — загрузился».
++Инструкция рассчитана на конкретную конфигурацию: хост — Windows 7 64-bit на i7-4770 / 8 ГБ, гостевая виртуалка — Ubuntu Server 24.04 без графики, 4 ядра, 5 ГБ RAM, доступ по SSH (PuTTY, WinSCP). Цель — собрать на отдельной USB-флешке полноценную Ubuntu, которая будет грузиться на любой целевой машине — и с UEFI, и со старым BIOS. Схема «вытащил флешку из хоста — вставил в целевую машину — загрузился».
+ 
+ Внутри виртуалки работа идёт в терминале (PuTTY). Хост нужен только для проброса USB.
+ 
+@@ -14,7 +14,6 @@
+ - Виртуалка Ubuntu Server 24.04 (noble), 4 ядра, 5120 МБ, уже умеет SSH на хост. Это у вас есть.
+ - Доступ по SSH через PuTTY под пользователем с `sudo`.
+ - Флешка для сборки — минимум **16 ГБ**, желательно **32 ГБ и больше**. Критично: **USB 3.0** и втыкать в **синий порт** на корпусе. На USB 2.0 система потом будет мучительно тормозить.
+-- Целевая машина — предположительно UEFI (все современные). Если это старый BIOS-only компьютер — в конце инструкции про это сказано отдельно.
+ - Скрипт `mkubuntu-usb.sh` — переложить в виртуалку (через WinSCP в домашнюю папку).
+ 
+ Всё, что ниже, предполагает, что на флешке **ничего нужного нет**. Разметка затирает её целиком.
+@@ -60,7 +59,7 @@
+ sudo ./mkubuntu-usb.sh --device /dev/sdb
+ ```
+ 
+-Параметры по умолчанию: пользователь `USER`, hostname `ubuntu-usb`, релиз `noble` (24.04), часовой пояс `Europe/Samara`, рабочее окружение `xubuntu-core`, UEFI, без обменного раздела.
++Параметры по умолчанию: пользователь `USER`, hostname `ubuntu-usb`, релиз `noble` (24.04), часовой пояс `Europe/Samara`, рабочее окружение `xubuntu-core`, **прошивка `both` (универсальная: UEFI + BIOS)**, без обменного раздела.
+ 
+ Перед разметкой скрипт покажет сводку и попросит подтверждение словом `yes`. Пароль нового пользователя задаётся интерактивно (`passwd`) — скрипт попросит ввести его дважды в нужный момент.
+ 
+@@ -70,21 +69,27 @@
+ sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB
+ ```
+ 
+-Это даст такую разметку:
+-
+-| Раздел  | Размер    | Файловая система | Назначение                                                 |
+-|---------|-----------|------------------|------------------------------------------------------------|
+-| `sdb1`  | 32 ГБ     | exFAT (`SHARED`) | Обменный, виден из Windows/Android/macOS                   |
+-| `sdb2`  | ~512 МБ   | FAT32 (`ESP`)    | ESP — загрузчик UEFI (стандарт UEFI, иначе нельзя)         |
+-| `sdb3`  | ~31,5 ГБ  | ext4 (`ubuntu-usb`) | Корень Ubuntu                                           |
+-
+-Обменный раздел идёт первым — так его видят даже старые Android, которые на съёмном носителе читают только первый раздел. Внутри Ubuntu он автоматически монтируется в `/media/shared` (это пишется в `/etc/fstab` с `uid=1000`, чтобы пользователь мог туда писать без sudo).
+-
+-Если целевой Android/прошивка не умеет exFAT — используйте FAT32 (но тогда файлы > 4 ГБ не поддерживаются):
+-
+-```bash
+-sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB --data-fs fat32
+-```
++Это даст такую разметку (универсальный гибрид UEFI+BIOS):
++
++| Раздел | Размер   | Файловая система     | Назначение                                                 |
++|--------|----------|----------------------|------------------------------------------------------------|
++| `sdb1` | 32 ГБ    | exFAT (`SHARED`)     | Обменный, виден из Windows/Android/macOS                   |
++| `sdb2` | 2 МБ     | — (`bios_grub`)      | BIOS Boot Partition — для GRUB `core.img` на старых BIOS   |
++| `sdb3` | ~513 МБ  | FAT32 (`ESP`)        | ESP — загрузчик UEFI                                       |
++| `sdb4` | ~31,5 ГБ | ext4 (`ubuntu-usb`)  | Корень Ubuntu                                              |
++
++Обменный раздел идёт первым — так его видят даже старые Android, которые на съёмном носителе читают только первый раздел. Внутри Ubuntu он автоматически монтируется в `/media/shared` (пишется в `/etc/fstab` с `uid=1000`, чтобы пользователь мог туда писать без sudo).
++
++### Универсальная загрузка — как это работает
++
++Прошивка на целевой машине сама выбирает путь:
++
++- **UEFI** — читает ESP, находит `/EFI/BOOT/BOOTX64.EFI`, запускает его. GRUB загружается в UEFI-режиме.
++- **Старый BIOS** — читает MBR (на GPT‑диске это Protective MBR, parted его автоматически кладёт при `mklabel gpt`), оттуда переходит к GRUB `core.img`, который лежит в разделе с флагом `bios_grub` (sdb2).
++
++Эти два пути независимы. Один и тот же `/boot/grub/grub.cfg` обслуживает оба варианта, после загрузки система в обоих случаях одна и та же.
++
++Цена универсальности — +2 МБ (BIOS Boot Partition) по сравнению с чисто-UEFI сборкой. Поэтому `--firmware both` сделан дефолтом; переключать есть смысл только если вы точно знаете, что одна из прошивок не понадобится никогда.
+ 
+ ### Справка скрипта (вывод `--help`)
+ 
+@@ -108,7 +113,11 @@
+                            ubuntu-desktop-minimal | xubuntu-core |
+                            lubuntu-desktop | none
+                          (default: xubuntu-core)
+-  --firmware MODE        uefi | bios (default: uefi)
++  --firmware MODE        both (default)  — универсальная: грузится и на UEFI,
++                                          и на BIOS. GPT + BIOS Boot Partition
++                                          (2 МБ, bios_grub) + ESP + root
++                         uefi            — только UEFI (без BIOS Boot Partition)
++                         bios            — только BIOS (MBR, без ESP)
+   --mount-point PATH     Куда монтировать флешку при сборке
+                          (default: /mnt/target)
+ 
+@@ -131,20 +140,19 @@
+   -h, --help             Показать эту справку
+ 
+ Примеры:
+-  # Простая сборка без обменного раздела
++  # Универсальная флешка (UEFI+BIOS), без обменного раздела — вариант по умолчанию
+   sudo ./mkubuntu-usb.sh --device /dev/sdb
+ 
+-  # 64 ГБ флешка: 32 ГБ exFAT (обмен) + ESP + остаток под Ubuntu
++  # 64 ГБ: 32 ГБ обмен (exFAT) + BIOS Boot + ESP + Ubuntu
+   sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 32GiB
+ 
+-  # Своё имя пользователя и легковесный desktop
+-  sudo ./mkubuntu-usb.sh --device /dev/sdb --user alice \
+-                         --desktop lubuntu-desktop --data-size 16GiB
++  # Только UEFI, если точно знаете, что BIOS-машин не будет
++  sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware uefi --data-size 32GiB
+ 
+   # Для старого Android, который не умеет exFAT
+   sudo ./mkubuntu-usb.sh --device /dev/sdb --data-size 20GiB --data-fs fat32
+ 
+-  # BIOS-only целевая машина, без desktop, без подтверждения
++  # BIOS-only целевая машина (MBR), без desktop, без подтверждения
+   sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios --desktop none -y
+ ```
+ 
+@@ -157,6 +165,7 @@
+ - **Корректная работа с `/dev/sdbN` vs `/dev/nvme0n1pN`.** Правильно определяет префикс раздела.
+ - **Trap на очистку.** Если упал посередине — отмонтирует всё, что успел смонтировать.
+ - **Пароль задаётся интерактивно** через `passwd`, не оказывается в логах или истории.
++- **Правильные GRUB‑пакеты для гибрида.** В режиме `both` ставит `grub-pc-bin` + `grub-efi-amd64-bin` (не метапакеты `grub-pc` и `grub-efi-amd64`, которые конфликтуют), и вызывает `grub-install` дважды — один раз для BIOS, один раз для UEFI.
+ 
+ ### После успешного завершения скрипта — переходите к разделу 9.
+ 
+@@ -168,11 +177,12 @@
+ 
+ На одной и той же флешке в разных местах нужны **разные** FS, и это не ошибка:
+ 
+-- **ESP (EFI System Partition), 512 МБ** — обязан быть **FAT32**. Это требование стандарта UEFI; никакая другая FS сюда не подходит, прошивка не прочитает загрузчик. Размер маленький именно потому, что это служебный раздел для `grubx64.efi` и `shimx64.efi`.
++- **ESP (EFI System Partition), 513 МБ** — обязан быть **FAT32**. Это требование стандарта UEFI; никакая другая FS сюда не подходит, прошивка не прочитает загрузчик. Размер маленький именно потому, что это служебный раздел для `grubx64.efi` и `shimx64.efi`.
++- **BIOS Boot Partition, 2 МБ** — **без файловой системы вообще**. parted просто помечает флаг `bios_grub`, а `grub-install --target=i386-pc` пишет туда свой `core.img` сырым байтовым потоком. Этот раздел нужен, потому что на GPT-диске нет 1-мегабайтного «MBR gap», в который GRUB привычно пишет на MBR-дисках.
+ - **Корень Ubuntu** — **ext4**. Нативная Linux FS с журналом, правами, симлинками. Ни FAT, ни NTFS сюда не подходят.
+ - **Обменный раздел** — **exFAT** (или FAT32, если нужна совместимость со старьём). Это то, что я советовал раньше — он большой, видимый из всех систем, и предназначен именно для обмена.
+ 
+-Эти три раздела живут независимо. Обменный никак не связан с ESP — у них разные роли.
++Все эти четыре раздела живут независимо.
+ 
+ ---
+ 
+@@ -183,13 +193,13 @@
+ sudo apt install -y debootstrap parted dosfstools arch-install-scripts exfatprogs
+ ```
+ 
+-`arch-install-scripts` даёт удобный `arch-chroot`, который сам монтирует `/dev`, `/proc`, `/sys` и чистит после себя. С ним chroot проще и надёжнее, чем вручную bind-монтировать. `exfatprogs` нужен для `mkfs.exfat` (если будет обменный раздел).
+-
+----
+-
+-## 4. [Вручную] Разметка флешки под UEFI с обменным разделом
+-
+-Схема: GPT, три раздела.
++`arch-install-scripts` даёт `arch-chroot`. `exfatprogs` нужен для `mkfs.exfat`.
++
++---
++
++## 4. [Вручную] Разметка флешки — универсальная (UEFI+BIOS) с обменным разделом
++
++Схема: GPT, четыре раздела.
+ 
+ ```bash
+ # ВНИМАНИЕ: три раза проверьте, что sdb — это флешка, а не внутренний диск!
+@@ -201,29 +211,51 @@
+ # 1. Обменный раздел — первым, 32 ГБ
+ sudo parted /dev/sdb --script mkpart SHARED 1MiB 32GiB
+ 
+-# 2. ESP — 513 МБ сразу после обменного (с 32GiB до 32769MiB)
+-sudo parted /dev/sdb --script mkpart ESP fat32 32GiB 32769MiB
++# 2. BIOS Boot Partition — 2 МБ, без ФС
++sudo parted /dev/sdb --script mkpart BIOSBOOT 32GiB 32770MiB
++sudo parted /dev/sdb --script set 2 bios_grub on
++
++# 3. ESP — 513 МБ, FAT32
++sudo parted /dev/sdb --script mkpart ESP fat32 32770MiB 33283MiB
++sudo parted /dev/sdb --script set 3 esp on
++
++# 4. Корень — всё остальное, ext4
++sudo parted /dev/sdb --script mkpart primary ext4 33283MiB 100%
++
++# Форматирование (BIOSBOOT не форматируется — там будет сырой core.img)
++sudo mkfs.exfat -L SHARED /dev/sdb1
++sudo mkfs.vfat -F32 -n ESP /dev/sdb3
++sudo mkfs.ext4 -L ubuntu-usb /dev/sdb4
++```
++
++Проверка:
++
++```bash
++sudo parted /dev/sdb --script print
++lsblk -f /dev/sdb
++```
++
++### Без обменного раздела (гибрид без обмена)
++
++Три раздела: BIOSBOOT + ESP + корень.
++
++```bash
++sudo wipefs -a /dev/sdb
++sudo parted /dev/sdb --script mklabel gpt
++sudo parted /dev/sdb --script mkpart BIOSBOOT 1MiB 3MiB
++sudo parted /dev/sdb --script set 1 bios_grub on
++sudo parted /dev/sdb --script mkpart ESP fat32 3MiB 516MiB
+ sudo parted /dev/sdb --script set 2 esp on
+-
+-# 3. Корень — всё остальное
+-sudo parted /dev/sdb --script mkpart primary ext4 32769MiB 100%
+-
+-# Форматирование
+-sudo mkfs.exfat -L SHARED /dev/sdb1
++sudo parted /dev/sdb --script mkpart primary ext4 516MiB 100%
+ sudo mkfs.vfat -F32 -n ESP /dev/sdb2
+ sudo mkfs.ext4 -L ubuntu-usb /dev/sdb3
+ ```
+ 
+-Проверка:
+-
+-```bash
+-sudo parted /dev/sdb --script print
+-lsblk -f /dev/sdb
+-```
+-
+-### Без обменного раздела (простая разметка)
+-
+-Если обменный не нужен — только ESP + корень:
++Нумерация разделов дальше: `sdb3` — корень, `sdb2` — ESP, `sdb1` — BIOS Boot.
++
++### Чисто UEFI (без BIOS)
++
++Без BIOSBOOT:
+ 
+ ```bash
+ sudo wipefs -a /dev/sdb
+@@ -235,30 +267,38 @@
+ sudo mkfs.ext4 -L ubuntu-usb /dev/sdb2
+ ```
+ 
+-Тогда дальше везде вместо `sdb2`/`sdb3` используется `sdb1`/`sdb2`.
++### Чисто BIOS (MBR)
++
++```bash
++sudo wipefs -a /dev/sdb
++sudo parted /dev/sdb --script mklabel msdos
++sudo parted /dev/sdb --script mkpart primary ext4 1MiB 100%
++sudo parted /dev/sdb --script set 1 boot on
++sudo mkfs.ext4 -L ubuntu-usb /dev/sdb1
++```
+ 
+ ---
+ 
+ ## 5. [Вручную] Монтирование и debootstrap
+ 
+-С обменным разделом монтируем только корень и ESP, обменный не трогаем — он сам смонтируется после загрузки через fstab:
++Для универсальной сборки с обменным разделом:
+ 
+ ```bash
+ sudo mkdir -p /mnt/target
+-sudo mount /dev/sdb3 /mnt/target
++sudo mount /dev/sdb4 /mnt/target
+ sudo mkdir -p /mnt/target/boot/efi
+-sudo mount /dev/sdb2 /mnt/target/boot/efi
++sudo mount /dev/sdb3 /mnt/target/boot/efi
+ 
+ sudo debootstrap --arch=amd64 noble /mnt/target http://archive.ubuntu.com/ubuntu/
+ ```
+ 
+-(Без обменного раздела — `sdb2` корень, `sdb1` ESP; подставьте.)
+-
+-`debootstrap` скачает и развернёт базовую Ubuntu 24.04 на флешку. На USB 3.0 — 10–20 минут. Если ругнётся «noble not found» — обновите пакет debootstrap:
+-
+-```bash
+-sudo apt install -y --only-upgrade debootstrap
+-# или вручную:
++BIOSBOOT (sdb2) и SHARED (sdb1) не монтируем — первый ФС не имеет, второй примонтируется автоматически после загрузки.
++
++(Для других схем номера разделов другие — подставьте по разметке.)
++
++`debootstrap` скачает и развернёт базовую Ubuntu 24.04. На USB 3.0 — 10–20 минут. Если ругнётся «noble not found»:
++
++```bash
+ sudo ln -s gutsy /usr/share/debootstrap/scripts/noble
+ ```
+ 
+@@ -266,11 +306,11 @@
+ 
+ ## 6. [Вручную] Подготовка fstab и chroot
+ 
+-С обменным разделом fstab включает три строки:
+-
+-```bash
+-ROOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb3)
+-BOOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb2)
++Для универсальной сборки с обменным разделом (sdb4 — корень, sdb3 — ESP, sdb1 — SHARED):
++
++```bash
++ROOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb4)
++BOOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb3)
+ DATA_UUID=$(sudo blkid -s UUID -o value /dev/sdb1)
+ 
+ sudo tee /mnt/target/etc/fstab > /dev/null <<EOF
+@@ -285,17 +325,15 @@
+ 
+ Опции обменного раздела:
+ 
+-- `uid=1000,gid=1000` — владелец раздела при монтировании будет первым заведённым пользователем (у Ubuntu `adduser` первый пользователь получает UID 1000). Так вы сможете писать на раздел без sudo.
++- `uid=1000,gid=1000` — владелец раздела при монтировании будет первым заведённым пользователем (у Ubuntu `adduser` первый пользователь получает UID 1000).
+ - `umask=0022` — права 755/644 на файлы.
+-- `nofail` — если раздел не найдётся (флешка повреждена, обменный раздел удалён), система не упадёт в rescue mode.
++- `nofail` — если раздел не найдётся, система не упадёт в rescue mode.
+ 
+ Входим в chroot:
+ 
+ ```bash
+ sudo arch-chroot /mnt/target /bin/bash
+ ```
+-
+-(Если `arch-chroot` не нашёлся — см. раздел 12.)
+ 
+ **Все команды ниже — внутри chroot**, пока не выйдем через `exit`.
+ 
+@@ -335,22 +373,34 @@
+ update-locale LANG=ru_RU.UTF-8
+ ```
+ 
+-### Ядро, загрузчик, сеть, базовый инструментарий, поддержка exFAT
++### Ядро, загрузчики (гибрид), сеть, базовый инструментарий
++
++**Критично**: для гибрида UEFI+BIOS ставим `-bin` пакеты обоих GRUB, а не метапакеты `grub-pc` и `grub-efi-amd64`. Эти метапакеты конфликтуют: `grub-pc` объявляет `Conflicts: grub-efi-amd64` и наоборот. А `grub-pc-bin` и `grub-efi-amd64-bin` — просто файлы загрузчиков, они мирно сосуществуют.
+ 
+ ```bash
+ apt install -y \
+   linux-generic \
+-  grub-efi-amd64 grub-efi-amd64-signed shim-signed efibootmgr \
++  grub2-common grub-common \
++  grub-pc-bin \
++  grub-efi-amd64-bin grub-efi-amd64-signed shim-signed efibootmgr \
+   network-manager \
+   sudo nano vim less curl wget ca-certificates \
+   console-setup keyboard-configuration \
+   openssh-server \
+-  exfatprogs    # для автомонтирования обменного раздела
+-```
+-
+-`shim-signed` + подписанный GRUB нужны, если целевая машина с включённым Secure Boot — тогда флешка загрузится без отключения SB в BIOS. Если Secure Boot выключен, лишним не будет.
+-
+-`exfatprogs` — для exFAT (fsck.exfat, mkfs.exfat). Без него ядро exFAT умеет монтировать (с ядра 5.4+ это in-tree), но fsck при загрузке не отработает и nofail не спасёт в некоторых случаях.
++  exfatprogs
++```
++
++Если делаете чисто UEFI — вместо строк про GRUB:
++
++```bash
++apt install -y grub-efi-amd64 grub-efi-amd64-signed shim-signed efibootmgr
++```
++
++Если делаете чисто BIOS:
++
++```bash
++apt install -y grub-pc
++```
+ 
+ ### Рабочее окружение (на выбор)
+ 
+@@ -372,26 +422,17 @@
+ apt install -y lubuntu-desktop
+ ```
+ 
+-Для флешки я бы советовал **xubuntu-core** — ощутимо быстрее на USB, чем GNOME, при полноценной графике. Если нужна «настоящая Ubuntu как с диска» — `ubuntu-desktop-minimal`.
+-
+-Установка займёт 20–40 минут на USB 3.0.
++Для флешки я бы советовал **xubuntu-core** — ощутимо быстрее на USB, чем GNOME, при полноценной графике.
+ 
+ ### Пользователь
+-
+-Создаём пользователя с совпадающим с GitHub логином:
+ 
+ ```bash
+ adduser USER
+ usermod -aG sudo,audio,video,plugdev,netdev USER
++passwd root
+ ```
+ 
+ Этот пользователь получит UID 1000 — именно его мы указали в fstab для обменного раздела.
+-
+-Задать пароль root (на всякий случай, можно потом заблокировать):
+-
+-```bash
+-passwd root
+-```
+ 
+ ### NetworkManager — автозапуск
+ 
+@@ -402,11 +443,15 @@
+ 
+ ---
+ 
+-## 8. [Вручную] Установка GRUB на флешку
+-
+-Ключевой момент — **флаг `--removable`**. Он кладёт загрузчик в `/EFI/BOOT/BOOTX64.EFI` на ESP, откуда его подхватит любой UEFI без записи в NVRAM целевой машины. Без него флешка будет грузиться только на том компьютере, где её «прописали» в NVRAM.
+-
+-```bash
++## 8. [Вручную] Установка GRUB — оба варианта
++
++### Для гибрида (UEFI+BIOS) — два вызова `grub-install`
++
++```bash
++# BIOS: записывает boot.img в MBR + core.img в BIOS Boot Partition
++grub-install --target=i386-pc --recheck /dev/sdb
++
++# UEFI: кладёт загрузчик в ESP/EFI/BOOT/BOOTX64.EFI
+ grub-install \
+   --target=x86_64-efi \
+   --efi-directory=/boot/efi \
+@@ -415,9 +460,23 @@
+   --recheck
+ ```
+ 
+-`--no-nvram` — не писать в NVRAM виртуалки (бесполезно и мусор).
+-
+-### Настройка grub.cfg под съёмный носитель
++Разъяснение флагов UEFI-варианта:
++
++- **`--removable`** — главный флаг для флешки. Кладёт загрузчик в `/EFI/BOOT/BOOTX64.EFI` (стандартный «fallback» путь, который любая UEFI-прошивка подхватывает без записи в NVRAM). Без него флешка грузится только на том компьютере, где её «прописали» в NVRAM.
++- **`--no-nvram`** — не писать в NVRAM виртуалки (бесполезно и мусор).
++
++Разъяснение BIOS-варианта:
++
++- `--target=i386-pc` — классический BIOS GRUB.
++- Указано устройство `/dev/sdb` (а не раздел). GRUB сам находит BIOS Boot Partition (раздел с флагом `bios_grub`) и пишет туда `core.img`, а в MBR — маленький `boot.img`, который передаёт управление `core.img`.
++
++### Для чисто UEFI — только UEFI-команда (без BIOS-строки)
++
++### Для чисто BIOS — только BIOS-команда (без UEFI-строки)
++
++### Настройка grub.cfg
++
++Общий для всех вариантов. `update-grub` сам обслуживает оба загрузчика:
+ 
+ ```bash
+ sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT=0/' /etc/default/grub
+@@ -429,29 +488,26 @@
+ update-grub
+ ```
+ 
+-Проверка, что GRUB и ядро реально легли на ESP и корень:
+-
+-```bash
+-ls /boot/efi/EFI/BOOT/
+-ls /boot/ | grep -E "vmlinuz|initrd"
+-```
+-
+-Должны быть `BOOTX64.EFI` (и, если ставили shim, `grubx64.efi`), а в `/boot` — `vmlinuz-*` и `initrd.img-*`.
++Проверка:
++
++```bash
++ls /boot/ | grep -E "vmlinuz|initrd"           # ядро есть
++ls /boot/efi/EFI/BOOT/                          # BOOTX64.EFI есть (для UEFI/гибрида)
++ls /boot/grub/i386-pc/                          # BIOS модули (для BIOS/гибрида)
++```
+ 
+ ### Выход из chroot и отмонтирование
+ 
+ ```bash
+-exit  # выходим из chroot
+-```
+-
+-Теперь уже в виртуалке:
++exit  # выход из chroot
++```
++
++В виртуалке:
+ 
+ ```bash
+ sudo umount -R /mnt/target
+ sync
+ ```
+-
+-`-R` рекурсивно размонтирует всё, что `arch-chroot` подмонтировал внутри. Если ругается «target is busy» — выполните `sudo lsof /mnt/target` и закройте процессы, затем повторите.
+ 
+ ---
+ 
+@@ -462,7 +518,7 @@
+ 3. На хосте — «Безопасно извлечь», физически вынуть.
+ 4. Воткнуть в целевой компьютер.
+ 5. Включить компьютер, вызвать boot menu (обычно F12, F9, F11, Esc — зависит от материнки), выбрать флешку.
+-6. Если в BIOS есть вариант «UEFI: <имя флешки>» — выбирайте UEFI-вариант.
++6. **На гибридной флешке в UEFI‑boot‑menu обычно видно два варианта той же флешки**: «UEFI: <имя>» и просто «<имя>» (Legacy/CSM). Выбирайте UEFI‑вариант — он быстрее стартует и поддерживает Secure Boot. На машине без UEFI будет только один вариант.
+ 
+ ---
+ 
+@@ -489,71 +545,7 @@
+ 
+ ---
+ 
+-## 11. Если целевая машина с чистым BIOS (не UEFI)
+-
+-**Через скрипт** — просто добавить ключ:
+-
+-```bash
+-sudo ./mkubuntu-usb.sh --device /dev/sdb --firmware bios --data-size 32GiB
+-```
+-
+-Разметка в этом случае получится такая:
+-
+-| Раздел | Размер   | FS                  | Назначение |
+-|--------|----------|---------------------|------------|
+-| `sdb1` | 32 ГБ    | exFAT (`SHARED`)    | Обмен      |
+-| `sdb2` | остаток  | ext4 (`ubuntu-usb`) | Ubuntu, с флагом boot для GRUB |
+-
+-ESP в MBR-схеме не нужен — GRUB живёт в MBR и в `/boot/grub`.
+-
+-**Вручную** — разметка:
+-
+-```bash
+-sudo wipefs -a /dev/sdb
+-sudo parted /dev/sdb --script mklabel msdos
+-sudo parted /dev/sdb --script mkpart primary 1MiB 32GiB
+-sudo parted /dev/sdb --script mkpart primary ext4 32GiB 100%
+-sudo parted /dev/sdb --script set 2 boot on
+-sudo mkfs.exfat -L SHARED /dev/sdb1
+-sudo mkfs.ext4 -L ubuntu-usb /dev/sdb2
+-```
+-
+-Монтировать только корень:
+-
+-```bash
+-sudo mount /dev/sdb2 /mnt/target
+-sudo debootstrap --arch=amd64 noble /mnt/target http://archive.ubuntu.com/ubuntu/
+-```
+-
+-Fstab с двумя строками (корень + обмен):
+-
+-```bash
+-ROOT_UUID=$(sudo blkid -s UUID -o value /dev/sdb2)
+-DATA_UUID=$(sudo blkid -s UUID -o value /dev/sdb1)
+-sudo tee /mnt/target/etc/fstab > /dev/null <<EOF
+-UUID=$ROOT_UUID / ext4 defaults,noatime,errors=remount-ro 0 1
+-UUID=$DATA_UUID /media/shared exfat rw,uid=1000,gid=1000,umask=0022,nofail 0 0
+-tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
+-EOF
+-sudo mkdir -p /mnt/target/media/shared
+-```
+-
+-В chroot вместо EFI-пакетов:
+-
+-```bash
+-apt install -y grub-pc exfatprogs
+-```
+-
+-GRUB ставить так:
+-
+-```bash
+-grub-install --target=i386-pc --recheck /dev/sdb
+-update-grub
+-```
+-
+----
+-
+-## 12. Chroot вручную (если `arch-chroot` недоступен)
++## 11. Chroot вручную (если `arch-chroot` недоступен)
+ 
+ Вместо `sudo arch-chroot /mnt/target /bin/bash`:
+ 
+@@ -572,16 +564,18 @@
+ 
+ ---
+ 
+-## 13. Типичные грабли
+-
+-- **Виртуалка не видит флешку.** Extension Pack не той версии / не установлен; USB-контроллер в настройках виртуалки отключён; фильтр не добавлен; Win7 держит флешку занятой (откройте «Безопасное извлечение» на хосте).
+-- **`sdb` на самом деле не флешка.** Если в виртуалке подключены ещё диски (shared disk, snapshot), флешка может оказаться `sdc`. Всегда проверяйте `lsblk` перед разметкой. Скрипт откажется работать, если указать корневой диск, но на другие доп. диски не проверяет — внимание всё равно нужно.
+-- **`debootstrap: noble not found`.** Пакет debootstrap в виртуалке старее кодового имени 24.04 → обновить, или сделать симлинк (см. шаг 5). Скрипт обходит это сам.
+-- **`grub-install` ругается на efi-directory.** Не смонтирован `/boot/efi` внутри chroot. Проверьте `mount | grep efi` — если пусто, выйдите, перемонтируйте, зайдите снова.
+-- **На целевой машине флешки нет в boot menu.** Включите в BIOS загрузку с USB и Legacy/UEFI в соответствии со схемой разметки. Для UEFI убедитесь, что флешка в режиме UEFI (не Legacy) в boot menu.
+-- **GRUB появился, но ядро не стартует.** Обычно `fstab` с неправильным UUID или не установлен `linux-generic`. Можно загрузиться с live-флешки, chroot в флешку, `apt install --reinstall linux-generic`, `update-grub`.
++## 12. Типичные грабли
++
++- **Виртуалка не видит флешку.** Extension Pack не той версии / не установлен; USB-контроллер в настройках виртуалки отключён; фильтр не добавлен; Win7 держит флешку занятой.
++- **`sdb` на самом деле не флешка.** Если в виртуалке подключены ещё диски, флешка может оказаться `sdc`. Проверяйте `lsblk` перед разметкой. Скрипт откажется работать, если указать корневой диск.
++- **`debootstrap: noble not found`.** Пакет debootstrap старее кодового имени 24.04 → обновить или симлинк (см. шаг 5). Скрипт обходит это сам.
++- **`apt` ругается на конфликт `grub-pc` vs `grub-efi-amd64`.** Это как раз та причина, по которой в гибриде ставятся только `-bin` пакеты. Если ставили руками и напоролись — удалите метапакеты (`apt remove grub-pc grub-efi-amd64`) и поставьте только `grub-pc-bin` и `grub-efi-amd64-bin`.
++- **`grub-install` для BIOS ругается «cannot find a GRUB drive for /dev/sdb».** Обычно значит, что BIOS Boot Partition не создан или флаг `bios_grub` не выставлен. Проверьте `parted /dev/sdb print` — должен быть раздел с `bios_grub`.
++- **`grub-install` для UEFI ругается на efi-directory.** Не смонтирован `/boot/efi` внутри chroot. Проверьте `mount | grep efi` — если пусто, выйдите, перемонтируйте, зайдите снова.
++- **На целевой машине флешки нет в boot menu.** Включите в BIOS загрузку с USB. Для старого BIOS с CSM/Legacy — убедитесь, что CSM включён. Для UEFI — убедитесь, что флешка видна как «UEFI: …».
++- **GRUB появился, но ядро не стартует.** Обычно `fstab` с неправильным UUID или не установлен `linux-generic`. Загрузитесь с live-флешки, chroot в флешку, `apt install --reinstall linux-generic`, `update-grub`.
+ - **Чёрный экран после GRUB.** Чаще всего — отсутствует проприетарный драйвер NVIDIA (если на целевой машине NVIDIA). При первой загрузке попробуйте добавить `nomodeset` в параметры ядра через меню GRUB (клавиша `e`, допишите в строку `linux ...`). После входа — поставить `nvidia-driver-535` или свежее.
+-- **Обменный раздел не монтируется автоматически.** Проверьте `dmesg | grep -i exfat` и `systemctl status media-shared.mount`. Чаще всего — не поставлен `exfatprogs` в целевой системе. Воткните флешку в другую машину, cmontируйте вручную, доставьте пакет.
+-- **Windows предлагает отформатировать обменный раздел.** Не соглашайтесь! Если exFAT-раздел повреждён (небезопасное извлечение) — отмонтируйте, запустите `fsck.exfat /dev/sdbN` в Linux, снова подключите.
+-- **Android не видит exFAT.** Старые устройства (до Android 7) не поддерживают exFAT в ядре. Пересоберите с `--data-fs fat32` — но тогда файлы > 4 ГБ класть нельзя.
+-- **Медленно.** Флешка USB 2.0 или дешёвая USB 3.0 без SLC-кэша. Решение одно — лучшая флешка (Samsung FIT Plus, SanDisk Extreme). Для корректного сравнения — `sudo hdparm -t /dev/sdb` на холодную.
++- **Обменный раздел не монтируется автоматически.** Проверьте `dmesg | grep -i exfat` и `systemctl status media-shared.mount`. Чаще всего — не поставлен `exfatprogs`.
++- **Windows предлагает отформатировать обменный раздел.** Не соглашайтесь! Если exFAT повреждён (небезопасное извлечение) — отмонтируйте, запустите `fsck.exfat /dev/sdbN` в Linux, снова подключите.
++- **Android не видит exFAT.** Старые устройства (до Android 7) не поддерживают exFAT. Пересоберите с `--data-fs fat32` — но тогда файлы > 4 ГБ класть нельзя.
++- **Медленно.** Флешка USB 2.0 или дешёвая USB 3.0 без SLC-кэша. Решение одно — лучшая флешка (Samsung FIT Plus, SanDisk Extreme). Для сравнения — `sudo hdparm -t /dev/sdb` на холодную.

@@ -1,0 +1,315 @@
+/**
+ * Task queue service for managing Claude tasks
+ */
+
+const { defaultLogger } = require('../../../shared/lib/logging/logger');
+const { defaultTaskProducer } = require('../../../shared/lib/messaging/producers');
+const TaskRepository = require('../repositories/taskRepository');
+const queueConfig = require('../config/queues');
+
+/**
+ * Service for managing Claude task queue
+ */
+class TaskQueueService {
+  /**
+   * Create a new task queue service
+   * @param {Object} [dependencies={}] - Service dependencies
+   * @param {Object} [logger=defaultLogger] - Logger instance
+   */
+  constructor(dependencies = {}, logger = defaultLogger) {
+    this.logger = logger;
+    this.taskProducer = dependencies.taskProducer || defaultTaskProducer;
+    this.taskRepository = dependencies.taskRepository || new TaskRepository();
+    this.queueConfig = queueConfig;
+  }
+
+  /**
+   * Queue a task for processing
+   * @param {ClaudeTask} task - Task to queue
+   * @returns {Promise<void>}
+   */
+  async queueTask(task) {
+    try {
+      this.logger.info('Queuing task', {
+        taskId: task.taskId,
+        taskType: task.taskType,
+        priority: task.priority,
+      });
+      
+      // Get task settings
+      const taskSettings = this.queueConfig.taskSettings[task.taskType] || {};
+      const priority = this.queueConfig.priorities[taskSettings.priority] || task.priority;
+      
+      // Send to queue
+      await this.taskProducer.sendTask(
+        task.taskType,
+        task.toQueueMessage(),
+        {
+          priority,
+          taskId: task.taskId,
+        }
+      );
+      
+      this.logger.info('Task queued successfully', {
+        taskId: task.taskId,
+        routingKey: task.taskType,
+      });
+    } catch (error) {
+      this.logger.error('Error queuing task', {
+        error: error.message,
+        taskId: task.taskId,
+        taskType: task.taskType,
+      });
+      
+      // Update task status to failed
+      await this.taskRepository.update(task.taskId, {
+        status: 'failed',
+        error: `Failed to queue task: ${error.message}`,
+        completedAt: new Date(),
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Remove a task from the queue
+   * @param {string} taskId - Task ID
+   * @returns {Promise<boolean>} Whether task was removed
+   */
+  async removeTask(taskId) {
+    try {
+      // Note: RabbitMQ doesn't support removing specific messages from a queue
+      // This method is primarily for updating the task status in the database
+      this.logger.info('Marking task as removed from queue', { taskId });
+      
+      // We can't actually remove it from RabbitMQ queue, but we can mark it as cancelled
+      // The consumer will need to check the task status and skip cancelled tasks
+      const task = await this.taskRepository.findById(taskId);
+      
+      if (task && task.status === 'pending') {
+        await this.taskRepository.update(taskId, {
+          status: 'cancelled',
+          completedAt: new Date(),
+        });
+        
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      this.logger.error('Error removing task from queue', {
+        error: error.message,
+        taskId,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Process failed tasks for retry
+   * @param {number} [batchSize=10] - Number of tasks to process
+   * @returns {Promise<number>} Number of tasks requeued
+   */
+  async processRetryableTasks(batchSize = 10) {
+    try {
+      this.logger.info('Processing retryable tasks', { batchSize });
+      
+      // Find failed tasks that can be retried
+      const tasks = await this.taskRepository.findRetryableTasks(batchSize);
+      let requeuedCount = 0;
+      
+      for (const task of tasks) {
+        try {
+          // Calculate delay based on retry count and config
+          const delay = this._calculateRetryDelay(task.retryCount);
+          
+          // Update task for retry
+          task.incrementRetry();
+          task.scheduledFor = new Date(Date.now() + delay);
+          
+          // Update in database
+          await this.taskRepository.update(task.taskId, {
+            status: task.status,
+            retryCount: task.retryCount,
+            error: null,
+            scheduledFor: task.scheduledFor,
+          });
+          
+          // Requeue with delay
+          await this.taskProducer.sendTask(
+            task.taskType,
+            task.toQueueMessage(),
+            {
+              priority: task.priority,
+              delay,
+              taskId: task.taskId,
+            }
+          );
+          
+          requeuedCount++;
+          
+          this.logger.info('Task requeued for retry', {
+            taskId: task.taskId,
+            retryCount: task.retryCount,
+            delay,
+          });
+        } catch (error) {
+          this.logger.error('Error requeuing task for retry', {
+            error: error.message,
+            taskId: task.taskId,
+          });
+        }
+      }
+      
+      this.logger.info('Finished processing retryable tasks', {
+        processed: tasks.length,
+        requeued: requeuedCount,
+      });
+      
+      return requeuedCount;
+    } catch (error) {
+      this.logger.error('Error processing retryable tasks', {
+        error: error.message,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Clean up old completed tasks
+   * @param {number} [daysOld=30] - Delete tasks older than this many days
+   * @returns {Promise<number>} Number of tasks deleted
+   */
+  async cleanupOldTasks(daysOld = 30) {
+    try {
+      this.logger.info('Cleaning up old tasks', { daysOld });
+      
+      const deletedCount = await this.taskRepository.deleteOldTasks(daysOld);
+      
+      this.logger.info('Old tasks cleaned up', {
+        deletedCount,
+        daysOld,
+      });
+      
+      return deletedCount;
+    } catch (error) {
+      this.logger.error('Error cleaning up old tasks', {
+        error: error.message,
+        daysOld,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Get queue statistics
+   * @returns {Promise<Object>} Queue statistics
+   */
+  async getQueueStatistics() {
+    try {
+      const stats = await this.taskRepository.getStatistics();
+      
+      // Enhance with queue-specific information
+      stats.queue = {
+        pending: stats.totals.pendingTasks,
+        processing: stats.totals.processingTasks,
+        completed: stats.totals.completedTasks,
+        failed: stats.totals.failedTasks,
+        cancelled: stats.totals.cancelledTasks,
+      };
+      
+      // Calculate queue health metrics
+      stats.health = {
+        successRate: stats.totals.completionRate,
+        failureRate: stats.totals.failureRate,
+        avgProcessingTime: stats.totals.avgProcessingTime,
+        queueDepth: stats.totals.pendingTasks + stats.totals.processingTasks,
+      };
+      
+      return stats;
+    } catch (error) {
+      this.logger.error('Error getting queue statistics', {
+        error: error.message,
+      });
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Monitor queue health
+   * @returns {Promise<Object>} Health status
+   */
+  async checkQueueHealth() {
+    try {
+      const stats = await this.getQueueStatistics();
+      
+      const health = {
+        status: 'healthy',
+        issues: [],
+        metrics: stats.health,
+      };
+      
+      // Check for issues
+      if (stats.health.failureRate > 30) {
+        health.status = 'warning';
+        health.issues.push('High failure rate');
+      }
+      
+      if (stats.health.queueDepth > 100) {
+        health.status = 'warning';
+        health.issues.push('Large queue backlog');
+      }
+      
+      if (stats.totals.processingTasks > 50) {
+        health.status = 'warning';
+        health.issues.push('Many tasks in processing state');
+      }
+      
+      if (stats.health.avgProcessingTime > 300) {
+        health.status = 'warning';
+        health.issues.push('High average processing time');
+      }
+      
+      if (health.issues.length > 2) {
+        health.status = 'unhealthy';
+      }
+      
+      return health;
+    } catch (error) {
+      this.logger.error('Error checking queue health', {
+        error: error.message,
+      });
+      
+      return {
+        status: 'unknown',
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Calculate retry delay based on retry count
+   * @param {number} retryCount - Current retry count
+   * @returns {number} Delay in milliseconds
+   * @private
+   */
+  _calculateRetryDelay(retryCount) {
+    const config = this.queueConfig.retry;
+    
+    // Exponential backoff with jitter
+    const baseDelay = config.initialDelay * Math.pow(config.factor, retryCount);
+    const delay = Math.min(baseDelay, config.maxDelay);
+    
+    // Add jitter (±20%)
+    const jitter = delay * 0.2 * (Math.random() - 0.5);
+    
+    return Math.round(delay + jitter);
+  }
+}
+
+module.exports = TaskQueueService;

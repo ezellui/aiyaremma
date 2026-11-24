@@ -1,0 +1,82 @@
+--- предыдущая/Стратегия-разработки-Фазы-2.md
++++ текущая/Стратегия-разработки-Фазы-2.md
+@@ -112,6 +112,11 @@
+ - `shared/lib/errors/*` - обработка ошибок
+ - `shared/lib/logging/*` - логирование
+ - `db/postgres/migrations/*claude*` - миграции для таблиц claude_interactions
++- `templates/backend/controllers/*-controller-template.js` - шаблоны контроллеров
++- `templates/backend/services/*-service-template.js` - шаблоны сервисов
++- `templates/backend/repositories/postgres-repository-template.js` - шаблон репозитория
++- `templates/backend/clients/service-client-template.js` - шаблон клиента
++- `templates/backend/tests/*-test-template.js` - шаблоны тестов
+ 
+ ### 3. Graph Service
+ 
+@@ -225,6 +230,11 @@
+ - `shared/lib/validation/schemas/conceptSchemas.js` - схемы валидации
+ - `db/postgres/migrations/*concepts*` - миграции для таблиц концепций
+ - `db/postgres/seeds/*philosophers*`, `db/postgres/seeds/*traditions*` - начальные данные
++- `templates/backend/controllers/crud-controller-template.js` - шаблон CRUD-контроллера
++- `templates/backend/services/crud-service-template.js` - шаблон CRUD-сервиса
++- `templates/backend/repositories/postgres-repository-template.js` - шаблон репозитория
++- `templates/backend/clients/service-client-template.js` - шаблон клиента сервиса
++- `templates/backend/tests/*-test-template.js` - шаблоны тестов
+ 
+ ### 6. API Gateway
+ 
+@@ -257,6 +267,9 @@
+ - `shared/lib/errors/*` - для обработки ошибок
+ - `shared/lib/logging/*` - для логирования
+ - `shared/lib/http/*` - HTTP-утилиты
++- `templates/backend/tests/*-test-template.js` - шаблоны тестов
++- `templates/api-tests/api-test-template.js` - шаблон для тестирования API
++- `templates/docs/api-documentation-template.md` - шаблон документации API
+ 
+ ### 7. Frontend
+ 
+@@ -309,7 +322,31 @@
+ 
+ ### 1. Стиль запросов для каждого этапа
+ 
+-#### Пример запроса для начала разработки сервиса:
++#### Пример запроса для разработки сервисов Claude:
++```
++Разработай основные сервисы для Claude Service.
++Создай:
++1. services/claudeService.js - основная бизнес-логика
++2. services/requestFormatterService.js - форматирование запросов
++3. services/responseProcessorService.js - обработка ответов
++
++Используй контекст:
++
++Архитектурный контекст:
++- architecture/philosophy-service-architecture.md - раздел 5.6
++- architecture/claude-interaction.mmd - диаграмма взаимодействия
++
++Шаблоны и утилиты из Фазы 1:
++- templates/backend/services/specialized-service-template.js - шаблон сервиса
++- shared/lib/errors/* - обработка ошибок
++- shared/lib/logging/* - логирование
++
++Сервисы должны:
++- Следовать архитектурному описанию из документации
++- Использовать паттерны из шаблонов сервисов
++- Правильно форматировать запросы согласно спецификации Claude API
++- Включать обработку ошибок и логирование из шаблона
++```
+ ```
+ Разработай базовую структуру User Service для философского приложения.
+ Создай файлы:
+@@ -356,7 +393,11 @@
+ - templates/backend/repositories/postgres-repository-template.js - шаблон репозитория
+ - shared/lib/db/postgres/queryBuilder.js - построитель запросов
+ 
+-Репозитории должны поддерживать CRUD-операции и использовать подготовленные запросы.
++Репозитории должны:
++- Следовать паттерну из шаблона
++- Поддерживать CRUD-операции
++- Использовать подготовленные запросы
++- Иметь правильную обработку ошибок согласно шаблону
+ ```
+ 
+ ### 2. Тестирование компонентов

@@ -1,0 +1,206 @@
+--- предыдущая/Конструктор-философских-концепций.jsx
++++ текущая/Конструктор-философских-концепций.jsx
+@@ -40,6 +40,8 @@
+   const [selectedRelationType, setSelectedRelationType] = useState(relationTypes[0]);
+   const [isDragging, setIsDragging] = useState(false);
+   const [draggedNode, setDraggedNode] = useState(null);
++  // Флаг для проверки одновременного состояния
++  const [activeMode, setActiveMode] = useState(null); // 'node', 'edge', or null
+   
+   const canvasRef = useRef(null);
+   const containerRef = useRef(null);
+@@ -64,6 +66,8 @@
+   // Эффект для инициализации холста
+   useEffect(() => {
+     const canvas = canvasRef.current;
++    if (!canvas) return;
++    
+     const context = canvas.getContext('2d');
+     
+     // Адаптация размера холста к размеру контейнера
+@@ -83,6 +87,23 @@
+       window.removeEventListener('resize', resizeCanvas);
+     };
+   }, []);
++
++  // Эффект для предотвращения одновременных режимов
++  useEffect(() => {
++    if (isAddingNode && isAddingEdge) {
++      console.warn('Конфликт режимов: попытка активировать два режима одновременно');
++      // В случае конфликта приоритет отдаем последнему активированному режиму (activeMode)
++      if (activeMode === 'node') {
++        setIsAddingEdge(false);
++        setSourceNode(null);
++      } else if (activeMode === 'edge') {
++        setIsAddingNode(false);
++        setCustomNodeName('');
++        setShowCustomCategory(false);
++        setCustomCategory('');
++      }
++    }
++  }, [isAddingNode, isAddingEdge, activeMode]);
+ 
+   // Перерисовка графа при изменении данных
+   useEffect(() => {
+@@ -229,6 +250,8 @@
+   // Обработчики мыши
+   const handleCanvasMouseMove = (e) => {
+     const canvas = canvasRef.current;
++    if (!canvas) return;
++    
+     const rect = canvas.getBoundingClientRect();
+     canvas.mouseX = e.clientX - rect.left;
+     canvas.mouseY = e.clientY - rect.top;
+@@ -239,13 +262,25 @@
+     
+     if (isDragging && draggedNode !== null) {
+       const newNodes = [...nodes];
+-      newNodes[draggedNode].x = canvas.mouseX;
+-      newNodes[draggedNode].y = canvas.mouseY;
+-      setNodes(newNodes);
++      // Проверяем, что индекс действителен
++      if (draggedNode >= 0 && draggedNode < newNodes.length) {
++        newNodes[draggedNode].x = canvas.mouseX;
++        newNodes[draggedNode].y = canvas.mouseY;
++        setNodes(newNodes);
++      } else {
++        // Сбрасываем состояние перетаскивания, если индекс недействителен
++        setIsDragging(false);
++        setDraggedNode(null);
++      }
+     }
+   };
+ 
+   const handleCanvasMouseDown = (e) => {
++    if (editingConceptName || editingDescription) {
++      // Если пользователь редактирует текст, игнорируем клики по холсту
++      return;
++    }
++    
+     const canvas = canvasRef.current;
+     const rect = canvas.getBoundingClientRect();
+     const x = e.clientX - rect.left;
+@@ -271,15 +306,18 @@
+           }
+           setSourceNode(null);
+           setIsAddingEdge(false);
++          setActiveMode(null);
+         } else if (isAddingEdge) {
+           // Начинаем добавление связи
+           setSourceNode(index);
+         } else {
+-          // Начинаем перетаскивание или выбираем узел
+-          setIsDragging(true);
+-          setDraggedNode(index);
+-          setSelectedNode(index);
+-          setSelectedEdge(null);
++          // Начинаем перетаскивание или выбираем узел только если не в режиме добавления
++          if (!isAddingEdge && !isAddingNode) {
++            setIsDragging(true);
++            setDraggedNode(index);
++            setSelectedNode(index);
++            setSelectedEdge(null);
++          }
+         }
+       }
+     });
+@@ -323,6 +361,7 @@
+           };
+           setNodes([...nodes, newNode]);
+           setIsAddingNode(false);
++          setActiveMode(null);
+           setCustomNodeName('');
+           setShowCustomCategory(false);
+           setCustomCategory('');
+@@ -357,6 +396,19 @@
+ 
+   // Функция для сохранения текущей концепции
+   const handleSave = () => {
++    // Проверяем, что у концепции есть название
++    if (!currentConceptName.trim()) {
++      alert('Пожалуйста, введите название концепции перед сохранением');
++      setEditingConceptName(true);
++      return;
++    }
++    
++    // Проверяем, что в концепции есть узлы
++    if (nodes.length === 0) {
++      alert('Нельзя сохранить пустую концепцию. Добавьте хотя бы один узел');
++      return;
++    }
++    
+     const conceptToSave = {
+       name: currentConceptName,
+       description: conceptDescription,
+@@ -365,7 +417,20 @@
+       date: new Date().toLocaleDateString()
+     };
+     
+-    setSavedConcepts([...savedConcepts, conceptToSave]);
++    // Проверяем, не существует ли концепция с таким именем
++    const existingIndex = savedConcepts.findIndex(c => c.name === currentConceptName);
++    if (existingIndex >= 0) {
++      if (window.confirm(`Концепция с названием "${currentConceptName}" уже существует. Заменить?`)) {
++        const updatedConcepts = [...savedConcepts];
++        updatedConcepts[existingIndex] = conceptToSave;
++        setSavedConcepts(updatedConcepts);
++      } else {
++        return;
++      }
++    } else {
++      setSavedConcepts([...savedConcepts, conceptToSave]);
++    }
++    
+     setShowSaved(true);
+   };
+ 
+@@ -706,6 +771,7 @@
+                       };
+                       setNodes([...nodes, newNode]);
+                       setIsAddingNode(false);
++                      setActiveMode(null);
+                       setCustomNodeName('');
+                       setShowCustomCategory(false);
+                       setCustomCategory('');
+@@ -718,7 +784,14 @@
+             ) : (
+               <button 
+                 className="bg-blue-500 text-white px-3 py-2 rounded w-full flex items-center justify-center text-sm mb-3"
+-                onClick={() => setIsAddingNode(true)}
++                onClick={() => {
++                  if (isAddingEdge) {
++                    setIsAddingEdge(false);
++                    setSourceNode(null);
++                  }
++                  setIsAddingNode(true);
++                  setActiveMode('node');
++                }}
+               >
+                 <Plus size={16} className="mr-1" /> Добавить узел
+               </button>
+@@ -772,6 +845,7 @@
+                     className="bg-gray-400 text-white px-2 py-1 rounded text-sm"
+                     onClick={() => {
+                       setIsAddingEdge(false);
++                      setActiveMode(null);
+                       setSourceNode(null);
+                     }}
+                   >
+@@ -782,7 +856,16 @@
+             ) : (
+               <button 
+                 className="bg-green-500 text-white px-3 py-2 rounded w-full flex items-center justify-center text-sm"
+-                onClick={() => setIsAddingEdge(true)}
++                onClick={() => {
++                  if (isAddingNode) {
++                    setIsAddingNode(false);
++                    setCustomNodeName('');
++                    setShowCustomCategory(false);
++                    setCustomCategory('');
++                  }
++                  setIsAddingEdge(true);
++                  setActiveMode('edge');
++                }}
+               >
+                 <Plus size={16} className="mr-1" /> Добавить связь
+               </button>

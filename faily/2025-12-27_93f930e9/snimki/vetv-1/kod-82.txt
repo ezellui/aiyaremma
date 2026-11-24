@@ -1,0 +1,45 @@
+
+## API Endpoints
+
+### Аутентификация
+- `POST /api/auth/register` - Регистрация
+- `POST /api/auth/login` - Вход
+- `POST /api/auth/logout` - Выход
+- `POST /api/auth/refresh` - Обновление токена
+- `GET /api/auth/me` - Текущий пользователь
+
+### Концепции
+- `GET /api/concepts` - Список концепций
+- `GET /api/concepts/:id` - Получение концепции
+- `POST /api/concepts` - Создание концепции
+- `PUT /api/concepts/:id` - Обновление концепции
+- `DELETE /api/concepts/:id` - Удаление концепции
+
+### Графы
+- `GET /api/graphs/concepts/:conceptId` - Граф концепции
+- `POST /api/graphs/concepts/:conceptId/categories` - Создание категории
+- `POST /api/graphs/relationships` - Создание связи
+- `POST /api/graphs/from-theses` - Генерация графа из тезисов
+
+### Тезисы
+- `GET /api/theses/concepts/:conceptId` - Тезисы концепции
+- `POST /api/theses/concepts/:conceptId` - Генерация тезисов
+- `POST /api/theses/:id/elaborate` - Обоснование тезиса
+
+### Синтез
+- `POST /api/synthesis/analyze-compatibility` - Анализ совместимости
+- `POST /api/synthesis` - Синтез концепций
+- `POST /api/synthesis/:id/critique` - Критический анализ
+
+## Переменные окружения
+
+См. `.env.example`
+
+## Запуск
+
+```bash
+# Development
+npm run dev
+
+# Production
+npm start

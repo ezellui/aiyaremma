@@ -1,0 +1,20 @@
+--- предыдущая/convert.py
++++ текущая/convert.py
+@@ -258,7 +258,7 @@
+     issuetag = esc(cov.find(class_='issue-tag').get_text().strip())
+     h1 = esc(cov.find('h1').get_text().strip())
+     csub = esc(cov.find(class_='csub').get_text().strip())
+-    s = ['\\begin{titlepage}\n\\centering\n\\vspace*{1.8cm}\n']
++    s = ['\\thispagestyle{empty}\n\\vspace*{1.8cm}\n\\begin{center}\n']
+     s.append('{\\displayfont\\color{accent}\\spaced{%s}}\\par\\vspace{0.5cm}\n' % venue)
+     s.append('{\\color{gold}\\rule{3.2cm}{0.4pt}}\\par\\vspace{0.5cm}\n')
+     s.append('{\\lightfont\\itshape %s}\\par\\vspace{1.7cm}\n' % issuetag)
+@@ -271,7 +271,7 @@
+         bridge = esc(li.find(class_='cl-bridge').get_text().strip())
+         col = GO2COL.get(go, 'Cmatter')
+         s.append('\\noindent\\textcolor{%s}{\\rule{1.5ex}{1.5ex}}\\hspace{0.7em}{\\displayfont\\large %s}\\hspace{0.5em}{\\itshape\\small %s}\\par\\vspace{0.55em}\n' % (col, title, bridge))
+-    s.append('\\end{minipage}\n\\vfill\n\\end{titlepage}\n')
++    s.append('\\end{minipage}\n\\end{center}\n\\vfill\n\\clearpage\n')
+     return ''.join(s)
+ 
+ def set_accent(cls):

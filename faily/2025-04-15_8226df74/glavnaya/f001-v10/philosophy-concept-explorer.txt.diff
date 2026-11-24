@@ -1,0 +1,548 @@
+--- предыдущая/philosophy-concept-explorer.txt
++++ текущая/philosophy-concept-explorer.txt
+@@ -1,4 +1,122 @@
+-          // Функция обновления выводов
++          return (
++            <div className="p-4 max-w-6xl mx-auto bg-gray-50 rounded-lg shadow-md">
++              <div className="mb-6 bg-white p-4 rounded-lg shadow">
++                <h2 className="text-2xl font-bold text-center text-purple-800 mb-2">{conceptName}</h2>
++                <p className="text-center text-gray-600">Ваша уникальная философская концепция, сформированная на основе          // Функция определения совместимых философских парадигм
++          const findCompatibleParadigms = () => {
++            const compatible = [];
++            
++            for (const paradigm of philosophicalParadigms) {
++              // Проверка, все ли требуемые категории выбраны
++              const allRequired = paradigm.requiredCategories.every(category => selectedCategories[category]);
++              
++              if (allRequired) {
++                compatible.push(paradigm);
++              }
++            }
++            
++            setCompatibleParadigms(compatible);
++          };
++          
++          // Функция определения совместимых философских школ
++          const findCompatibleSchools = () => {
++            const compatible = [];
++            
++            for (const school of philosophicalSchools) {
++              // Проверка совместимости с выбранными категориями
++              const hasIncompatible = school.incompatibleWith.some(category => selectedCategories[category]);
++              
++              // Если нет несовместимых категорий, проверяем, согласуются ли выбранные категории со школой
++              if (!hasIncompatible) {
++                // Считаем школу совместимой, если выбрана хотя бы одна из совместимых с ней категорий
++                const hasCompatible = school.compatibleWith.some(category => selectedCategories[category]);
++                
++                if (hasCompatible || Object.values(selectedCategories).filter(Boolean).length === 0) {
++                  compatible.push(school);
++                }
++              }
++            }
++            
++            setCompatibleSchools(compatible);
++          };
++          
++          // Функция определения релевантных философских дилемм
++          const findRelevantDilemmas = () => {
++            const relevant = [];
++            
++            for (const dilemma of philosophicalDilemmas) {
++              // Считаем дилемму релевантной, если выбрана хотя бы одна из связанных с ней категорий
++              const isRelevant = dilemma.relatedCategories.some(category => selectedCategories[category]);
++              
++              if (isRelevant) {
++                relevant.push(dilemma);
++              }
++            }
++            
++            setRelevantDilemmas(relevant);
++          };
++          
++          // Обработчик изменения категории
++          const handleCategoryChange = (category) => {
++            setSelectedCategories({
++              ...selectedCategories,
++              [category]: !selectedCategories[category]
++            });
++          };
++          
++          // Обработчик выбора предустановленной парадигмы
++          const selectParadigmCategories = (paradigmName) => {
++            const paradigm = philosophicalParadigms.find(p => p.name === paradigmName);
++            
++            if (paradigm) {
++              const newCategories = {};
++              
++              // Инициализируем все категории как false
++              Object.keys(selectedCategories).forEach(category => {
++                newCategories[category] = false;
++              });
++              
++              // Устанавливаем требуемые категории как true
++              paradigm.requiredCategories.forEach(category => {
++                newCategories[category] = true;
++              });
++              
++              setSelectedCategories(newCategories);
++            }
++          };
++          
++          // Обработчик выбора предустановленной философской школы
++          const selectSchoolCategories = (schoolName) => {
++            const school = philosophicalSchools.find(s => s.name === schoolName);
++            
++            if (school) {
++              const newCategories = {};
++              
++              // Инициализируем все категории как false
++              Object.keys(selectedCategories).forEach(category => {
++                newCategories[category] = false;
++              });
++              
++              // Устанавливаем совместимые категории как true
++              school.compatibleWith.forEach(category => {
++                newCategories[category] = true;
++              });
++              
++              setSelectedCategories(newCategories);
++            }
++          };
++          
++          // Сброс всех категорий
++          const resetCategories = () => {
++            const resetState = {};
++            
++            Object.keys(selectedCategories).forEach(category => {
++              resetState[category] = false;
++            });
++            
++            setSelectedCategories(resetState);
++            setConceptName("Ваша философская концепция");
++          };          // Функция обновления выводов
+           const updateConclusions = () => {
+             const newConclusions = [];
+             let complexImplications = []; // Массив для сложных философских импликаций
+@@ -152,7 +270,420 @@
+               newConclusions.push("Система склоняется к фидеизму, придавая вере приоритет над рациональным знанием.");
+               
+               if (selectedCategories.ethics) {
+-                newConclusions.push("Система развивает нарративный подход к          // Функция для генерации названия концепции на основе выбранных категорий
++                newConclusions.push("Система развивает нарративный подход к этике, где моральные ценности обосновываются не знанием, а верой и культурными нарративами.");
++              }
++              
++              if (selectedCategories.existence) {
++                complexImplications.push("Экзистенциальный фидеизм: личностная вера определяет экзистенциальную позицию человека в мире, предшествуя объективному знанию.");
++              }
++            }
++            
++            if (selectedCategories.knowledge && selectedCategories.justification) {
++              newConclusions.push("Система требует обоснования знания, признавая важность эпистемической рациональности.");
++              
++              if (selectedCategories.truth && !selectedCategories.belief) {
++                newConclusions.push("Система тяготеет к эпистемологическому интернализму, где знание требует осознанного доступа к обоснованию.");
++              }
++              
++              if (selectedCategories.causality && !selectedCategories.teleology) {
++                complexImplications.push("Каузальная теория знания: обоснованное знание должно иметь надежную причинную связь с познаваемым объектом.");
++              }
++            }
++            
++            // Проверка аксиологических положений
++            if (selectedCategories.value && selectedCategories.ethics) {
++              newConclusions.push("Система признает моральные ценности и этические принципы важными категориями человеческого существования.");
++              
++              if (selectedCategories.universality && !selectedCategories.particularity) {
++                newConclusions.push("Система тяготеет к этическому универсализму, признавая существование универсальных моральных принципов.");
++                
++                if (selectedCategories.necessity) {
++                  newConclusions.push("Система склоняется к деонтологической этике, где моральные принципы имеют характер необходимых предписаний.");
++                }
++              }
++              
++              if (selectedCategories.particularity && !selectedCategories.universality) {
++                newConclusions.push("Система тяготеет к этическому партикуляризму, отрицая существование универсальных моральных принципов в пользу контекстуального подхода.");
++              }
++              
++              if (selectedCategories.good && !selectedCategories.virtue) {
++                newConclusions.push("Система ориентирована на идею блага как ключевую этическую категорию, развиваясь в направлении консеквенциализма.");
++              }
++              
++              if (selectedCategories.society && selectedCategories.history) {
++                complexImplications.push("Историцизм в этике: моральные ценности имеют историческое измерение и эволюционируют вместе с обществом.");
++              }
++            }
++            
++            if (selectedCategories.good && selectedCategories.virtue) {
++              newConclusions.push("Система тяготеет к этике добродетели, связывая благо с нравственным совершенством личности.");
++              
++              if (selectedCategories.person) {
++                newConclusions.push("Система развивает персоналистический подход к добродетели, где нравственное совершенство неотделимо от развития личности.");
++              }
++              
++              if (selectedCategories.teleology) {
++                newConclusions.push("Система рассматривает добродетель телеологически, как реализацию внутреннего назначения и потенциала человека.");
++              }
++              
++              if (selectedCategories.society) {
++                complexImplications.push("Коммунитаризм: добродетели формируются и практикуются в контексте определенного сообщества и его традиций.");
++              }
++            }
++            
++            if (selectedCategories.beauty && selectedCategories.aesthetics) {
++              newConclusions.push("Система придает значение эстетическим ценностям, признавая красоту как важную категорию.");
++              
++              if (selectedCategories.form) {
++                newConclusions.push("Система тяготеет к формализму в эстетике, где красота определяется формальными свойствами объекта.");
++              }
++              
++              if (selectedCategories.essence) {
++                newConclusions.push("Система развивает эссенциалистскую эстетику, где красота является проявлением внутренней сущности объекта.");
++              }
++              
++              if (selectedCategories.consciousness) {
++                complexImplications.push("Феноменологическая эстетика: красота рассматривается как особый способ явления объекта сознанию.");
++              }
++              
++              if (selectedCategories.society && selectedCategories.history) {
++                complexImplications.push("Социально-исторический конструктивизм в эстетике: представления о красоте формируются в определенном социально-историческом контексте.");
++              }
++            }
++            
++            // Проверка логических положений
++            if (selectedCategories.necessity && !selectedCategories.possibility) {
++              newConclusions.push("Система тяготеет к необходимости и детерминизму, минимизируя роль случайности.");
++              
++              if (selectedCategories.causality) {
++                newConclusions.push("Система утверждает причинную необходимость всех явлений, развивая строгий детерминизм.");
++              }
++              
++              if (selectedCategories.freedom) {
++                newConclusions.push("Система сталкивается с необходимостью примирения детерминизма и свободы, склоняясь к компатибилизму.");
++              }
++              
++              if (selectedCategories.knowledge) {
++                complexImplications.push("Эпистемический необходимизм: подлинное знание должно иметь характер необходимости.");
++              }
++            }
++            
++            if (selectedCategories.possibility && !selectedCategories.necessity) {
++              newConclusions.push("Система придает большее значение возможности и открытости будущего, чем жесткой необходимости.");
++              
++              if (selectedCategories.freedom) {
++                newConclusions.push("Система подчеркивает открытость будущего как условие подлинной свободы, склоняясь к либертарианству.");
++              }
++              
++              if (selectedCategories.actuality) {
++                newConclusions.push("Система исследует отношение между возможностью и действительностью, развивая модальную онтологию.");
++              }
++              
++              if (selectedCategories.knowledge) {
++                complexImplications.push("Фаллибилизм: знание всегда содержит элемент возможной ошибки и открыто для пересмотра.");
++              }
++            }
++            
++            if (selectedCategories.universality && !selectedCategories.particularity) {
++              newConclusions.push("Система ориентирована на универсальные принципы, а не на частные случаи.");
++              
++              if (selectedCategories.ethics) {
++                newConclusions.push("Система развивает универсалистскую этику, где моральные принципы имеют всеобщий характер, независимо от культурного контекста.");
++              }
++              
++              if (selectedCategories.knowledge) {
++                newConclusions.push("Система стремится к универсальному знанию, применимому во всех возможных ситуациях.");
++              }
++              
++              if (selectedCategories.society) {
++                complexImplications.push("Космополитизм: общество должно базироваться на универсальных принципах, выходящих за рамки партикулярных традиций.");
++              }
++            }
++            
++            if (selectedCategories.particularity && !selectedCategories.universality) {
++              newConclusions.push("Система ориентирована на уникальность и частность, избегая универсализации.");
++              
++              if (selectedCategories.ethics) {
++                newConclusions.push("Система развивает контекстуальную этику, подчеркивая уникальность каждой моральной ситуации.");
++              }
++              
++              if (selectedCategories.knowledge) {
++                newConclusions.push("Система склоняется к эпистемологическому контекстуализму, где знание зависит от конкретного контекста.");
++              }
++              
++              if (selectedCategories.identity) {
++                complexImplications.push("Партикуляризм идентичности: идентичность формируется через уникальный набор частных характеристик, не сводимых к универсальным категориям.");
++              }
++            }
++            
++            if (selectedCategories.causality && !selectedCategories.teleology) {
++              newConclusions.push("Система придерживается причинного объяснения явлений, не прибегая к телеологии.");
++              
++              if (selectedCategories.matter) {
++                newConclusions.push("Система развивает натуралистический детерминизм, где все явления объясняются материальными причинами.");
++              }
++              
++              if (selectedCategories.knowledge) {
++                newConclusions.push("Система склоняется к каузальной теории познания, где знание требует причинной связи с познаваемым объектом.");
++              }
++              
++              if (selectedCategories.consciousness) {
++                complexImplications.push("Причинная теория сознания: ментальные состояния имеют каузальную эффективность и являются частью природного порядка причинности.");
++              }
++            }
++            
++            if (selectedCategories.teleology && !selectedCategories.causality) {
++              newConclusions.push("Система признает целевые причины явлений, подчеркивая их направленность к определенной цели.");
++              
++              if (selectedCategories.value) {
++                newConclusions.push("Система развивает ценностно-ориентированную телеологию, где цели определяются через ценности.");
++              }
++              
++              if (selectedCategories.history) {
++                newConclusions.push("Система склоняется к телеологической философии истории, где исторический процесс имеет внутреннюю направленность к определенной цели.");
++              }
++              
++              if (selectedCategories.consciousness) {
++                complexImplications.push("Интенциональность: сознание по своей природе телеологично, направлено на предметы и цели.");
++              }
++            }
++            
++            // Проверка антропологических положений
++            if (selectedCategories.consciousness && !selectedCategories.matter) {
++              newConclusions.push("Система подчеркивает примат сознания над материей, тяготея к идеалистической антропологии.");
++              
++              if (selectedCategories.freedom) {
++                newConclusions.push("Система рассматривает свободу как сущностную характеристику сознания, не сводимую к материальным детерминантам.");
++              }
++              
++              if (selectedCategories.essence) {
++                newConclusions.push("Система утверждает, что сущность человека определяется его сознанием, развивая идеалистическую антропологию.");
++              }
++              
++              if (selectedCategories.society) {
++                complexImplications.push("Интерсубъективность: сознание по своей природе имеет социальное измерение и формируется в процессе коммуникации.");
++              }
++            }
++            
++            if (selectedCategories.freedom && selectedCategories.will) {
++              newConclusions.push("Система признает свободу воли как фундаментальную характеристику человека.");
++              
++              if (selectedCategories.necessity) {
++                newConclusions.push("Система сталкивается с необходимостью примирения свободы и необходимости, склоняясь к компатибилизму или диалектическому пониманию свободы.");
++              }
++              
++              if (selectedCategories.necessity && !selectedCategories.possibility) {
++                newConclusions.push("Система тяготеет к компатибилистическому пониманию свободы как действия в соответствии с собственной необходимостью.");
++              }
++              
++              if (selectedCategories.possibility && !selectedCategories.necessity) {
++                newConclusions.push("Система развивает либертарианское понимание свободы, где подлинное свободное действие предполагает открытость альтернативных возможностей.");
++              }
++              
++              if (selectedCategories.ethics) {
++                complexImplications.push("Моральный автономизм: этика базируется на способности человека быть автономным автором своих действий.");
++              }
++            }
++            
++            if (selectedCategories.person && selectedCategories.identity) {
++              newConclusions.push("Система придает значение личности и её идентичности как важным философским категориям.");
++              
++              if (selectedCategories.society) {
++                newConclusions.push("Система исследует диалектику индивидуального и социального в формировании личностной идентичности.");
++              }
++              
++              if (selectedCategories.necessity) {
++                newConclusions.push("Система склоняется к эссенциалистскому пониманию личностной идентичности, где идентичность определяется необходимыми, сущностными чертами.");
++              }
++              
++              if (selectedCategories.possibility) {
++                newConclusions.push("Система развивает экзистенциальное понимание личности, где идентичность является открытым проектом, а не фиксированной сущностью.");
++              }
++              
++              if (selectedCategories.history) {
++                complexImplications.push("Нарративная идентичность: личность формируется через создание автобиографического нарратива, связывающего прошлое, настоящее и будущее.");
++              }
++            }
++            
++            if (selectedCategories.society && selectedCategories.history) {
++              newConclusions.push("Система признает историчность и социальную обусловленность человеческого существования.");
++              
++              if (selectedCategories.causality && !selectedCategories.teleology) {
++                newConclusions.push("Система развивает каузально-детерминистское понимание истории, где исторические процессы подчинены причинным закономерностям.");
++              }
++              
++              if (selectedCategories.teleology) {
++                newConclusions.push("Система склоняется к телеологическому пониманию истории, где исторический процесс имеет внутреннюю цель и направленность.");
++              }
++              
++              if (selectedCategories.freedom) {
++                newConclusions.push("Система сталкивается с вопросом о роли человеческой свободы в истории, развивая диалектику свободы и исторической необходимости.");
++              }
++              
++              if (selectedCategories.knowledge) {
++                complexImplications.push("Социальная эпистемология: знание имеет социально-исторический характер и не может быть полностью абстрагировано от своего контекста.");
++              }
++            }
++            
++            // Проверка дополнительных положений
++            if (selectedCategories.language && selectedCategories.interpretation) {
++              newConclusions.push("Система признает центральную роль языка и интерпретации в понимании мира.");
++              
++              if (selectedCategories.understanding) {
++                newConclusions.push("Система развивает герменевтическую философию, где понимание осуществляется через интерпретацию языковых выражений.");
++              }
++              
++              if (selectedCategories.truth) {
++                newConclusions.push("Система сталкивается с проблемой языковой обусловленности истины, рассматривая вопрос о возможности преодоления лингвистической относительности.");
++              }
++              
++              if (selectedCategories.power) {
++                complexImplications.push("Критическая герменевтика: интерпретация всегда включена в властные отношения и может служить как для эмансипации, так и для доминирования.");
++              }
++            }
++            
++            if (selectedCategories.dialectics) {
++              newConclusions.push("Система признает диалектический характер развития через противоречия.");
++              
++              if (selectedCategories.history) {
++                newConclusions.push("Система развивает диалектическое понимание исторического процесса как движимого внутренними противоречиями.");
++              }
++              
++              if (selectedCategories.matter) {
++                newConclusions.push("Система склоняется к диалектическому материализму, применяя диалектику к пониманию материальных процессов.");
++              }
++              
++              if (selectedCategories.consciousness) {
++                complexImplications.push("Диалектика сознания: сознание развивается через внутренние противоречия и осознание иного как условия самопознания.");
++              }
++            }
++            
++            if (selectedCategories.power && selectedCategories.knowledge) {
++              newConclusions.push("Система исследует взаимосвязь власти и знания в социальных контекстах.");
++              
++              if (selectedCategories.society) {
++                newConclusions.push("Система развивает критическую теорию общества, анализируя властные структуры, опосредующие социальные отношения.");
++              }
++              
++              if (selectedCategories.language) {
++                newConclusions.push("Система признает дискурсивный характер власти, выраженной через языковые практики.");
++              }
++              
++              if (selectedCategories.ethics) {
++                complexImplications.push("Этика дискурса: справедливость требует устранения властной асимметрии в коммуникативном сообществе.");
++              }
++            }
++            
++            if (selectedCategories.pluralism) {
++              newConclusions.push("Система признает множественность начал, принципов или подходов.");
++              
++              if (selectedCategories.truth) {
++                newConclusions.push("Система развивает алетический плюрализм, допуская различные режимы истинности в разных областях дискурса.");
++              }
++              
++              if (selectedCategories.value) {
++                newConclusions.push("Система склоняется к ценностному плюрализму, признавая несводимое многообразие ценностей.");
++              }
++              
++              if (selectedCategories.society) {
++                complexImplications.push("Мультикультурализм: общество должно сохранять и поддерживать разнообразие культурных традиций и идентичностей.");
++              }
++            }
++            
++            // Проверка несовместимостей и противоречий
++            if (selectedCategories.necessity && selectedCategories.freedom) {
++              newConclusions.push("Предупреждение: Система содержит потенциальное противоречие между необходимостью и свободой. Требуется их диалектическое примирение.");
++              
++              if (selectedCategories.will) {
++                complexImplications.push("Антиномия свободы и необходимости: свобода воли требует выхода за пределы причинной необходимости, при этом сама воля должна иметь причину.");
++              }
++            }
++            
++            if (selectedCategories.universality && selectedCategories.particularity) {
++              newConclusions.push("Предупреждение: Система содержит диалектическое напряжение между всеобщностью и частностью, требующее разрешения.");
++              
++              if (selectedCategories.knowledge) {
++                complexImplications.push("Герменевтический круг: понимание целого требует понимания частей, а понимание частей возможно только в контексте целого.");
++              }
++            }
++            
++            if (selectedCategories.rationalism && selectedCategories.belief) {
++              newConclusions.push("Предупреждение: Система содержит напряжение между рационализмом и верой, которое требует прояснения их взаимоотношения.");
++              
++              if (selectedCategories.knowledge) {
++                complexImplications.push("Диалектика веры и разума: вера может быть условием возможности рационального познания, а разум может уточнять и критически переосмысливать содержание веры.");
++              }
++            }
++            
++            if (selectedCategories.empiricism && selectedCategories.essence) {
++              newConclusions.push("Предупреждение: Система содержит напряжение между эмпиризмом и признанием сущностей, требующее объяснения, как чувственный опыт может давать знание о сущностях.");
++            }
++            
++            if (selectedCategories.teleology && selectedCategories.causality) {
++              newConclusions.push("Система признает как каузальное, так и телеологическое объяснение, требуя их согласования или иерархического упорядочивания.");
++              
++              if (selectedCategories.consciousness) {
++                complexImplications.push("Ментальная каузальность: интенциональные состояния сознания имеют как телеологическое, так и каузальное измерение, являясь одновременно направленными к цели и причинами действий.");
++              }
++            }
++            
++            // Предварительная сложная импликация для комбинации множества категорий
++            if (selectedCategories.consciousness && selectedCategories.freedom && 
++                selectedCategories.society && selectedCategories.history && 
++                selectedCategories.existence) {
++              complexImplications.push("Экзистенциальная социальная онтология: бытие человека характеризуется диалектикой индивидуальной свободы и социально-исторической обусловленности.");
++            }
++            
++            if (selectedCategories.matter && selectedCategories.form && 
++                selectedCategories.possibility && selectedCategories.actuality) {
++              complexImplications.push("Динамический гилеморфизм: материя и форма находятся в динамическом взаимодействии, где материя представляет возможность, а форма – актуализацию.");
++            }
++            
++            if (selectedCategories.knowledge && selectedCategories.truth && 
++                selectedCategories.rationalism && selectedCategories.empiricism) {
++              complexImplications.push("Трансцендентальная эпистемология: истинное знание возможно благодаря априорным формам, которые структурируют эмпирический опыт.");
++            }
++            
++            if (selectedCategories.ethics && selectedCategories.value && 
++                selectedCategories.good && selectedCategories.virtue && 
++                selectedCategories.person) {
++              complexImplications.push("Интегральная этика добродетели: нравственное благо реализуется через практику добродетелей, которые являются совершенствами личности и воплощением объективных ценностей.");
++            }
++            
++            if (selectedCategories.necessity && selectedCategories.causality && 
++                selectedCategories.universality && selectedCategories.knowledge) {
++              complexImplications.push("Номологический детерминизм: познание мира возможно благодаря существованию универсальных и необходимых причинных законов.");
++            }
++            
++            if (selectedCategories.language && selectedCategories.interpretation && 
++                selectedCategories.understanding && selectedCategories.existence) {
++              complexImplications.push("Онтологическая герменевтика: язык есть дом бытия, и понимание бытия возможно только через интерпретацию языка.");
++            }
++            
++            if (selectedCategories.power && selectedCategories.society && 
++                selectedCategories.history && selectedCategories.knowledge) {
++              complexImplications.push("Критическая социальная эпистемология: знание историчеси обусловлено и всегда включено в социальные властные отношения.");
++            }
++            
++            if (selectedCategories.dialectics && selectedCategories.history && 
++                selectedCategories.matter && selectedCategories.society) {
++              complexImplications.push("Исторический материализм: общественное бытие развивается через диалектическое преодоление материальных противоречий в истории.");
++            }
++            
++            setConclusions(newConclusions);
++            
++            // Определение совместимых философских парадигм
++            findCompatibleParadigms();
++            
++            // Определение совместимых философских школ
++            findCompatibleSchools();
++            
++            // Определение релевантных философских дилемм
++            findRelevantDilemmas();
++            
++            // Установка сложных философских импликаций
++            setImplications(complexImplications);
++          };          // Функция для генерации названия концепции на основе выбранных категорий
+           const generateConceptName = () => {
+             // Количество выбранных категорий
+             const selectedCount = Object.values(selectedCategories).filter(Boolean).length;

@@ -1,0 +1,20 @@
+synthesis-service/
+├── package.json
+├── Dockerfile
+├── Dockerfile.dev
+├── src/
+│   ├── index.js
+│   ├── config/
+│   │   └── config.js
+│   ├── db/
+│   │   ├── neo4j-connection.js
+│   │   └── mongo-connection.js
+│   ├── controllers/
+│   │   └── synthesis.controller.js
+│   ├── services/
+│   │   ├── synthesis.service.js
+│   │   ├── compatibility.service.js
+│   │   └── critique.service.js
+│   └── routes/
+│       └── synthesis.routes.js
+└── tests/

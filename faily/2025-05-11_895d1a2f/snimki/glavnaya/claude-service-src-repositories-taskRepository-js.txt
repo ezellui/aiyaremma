@@ -1,0 +1,472 @@
+/**
+ * Repository for Claude tasks
+ */
+
+const { defaultLogger } = require('../../../shared/lib/logging/logger');
+const { client } = require('../../../shared/lib/db/postgres/client');
+const { 
+  select, 
+  insert, 
+  update, 
+  delete: del 
+} = require('../../../shared/lib/db/postgres/queryBuilder');
+const ClaudeTask = require('../models/taskModel');
+
+/**
+ * Repository for managing Claude tasks in PostgreSQL
+ */
+class TaskRepository {
+  /**
+   * Create a new TaskRepository
+   * @param {Object} [options={}] - Repository options
+   * @param {Object} [logger=defaultLogger] - Logger instance
+   */
+  constructor(options = {}, logger = defaultLogger) {
+    this.tableName = 'claude_tasks';
+    this.client = options.client || client;
+    this.logger = logger;
+  }
+
+  /**
+   * Find all tasks with pagination and filtering
+   * @param {number} page - Page number
+   * @param {number} pageSize - Page size
+   * @param {string} [sortBy] - Sort field
+   * @param {string} [sortOrder='desc'] - Sort order ('asc' or 'desc')
+   * @param {Object} [filters={}] - Filter criteria
+   * @returns {Promise<Object>} Promise resolving to { items, total } object
+   */
+  async findAll(page, pageSize, sortBy = 'created_at', sortOrder = 'desc', filters = {}) {
+    try {
+      // Build the query
+      const queryBuilder = select(this.tableName)
+        .paginate({ page, pageSize });
+      
+      // Add filters
+      if (filters.userId) {
+        queryBuilder.whereEquals('user_id', filters.userId);
+      }
+      
+      if (filters.conceptId) {
+        queryBuilder.whereEquals('concept_id', filters.conceptId);
+      }
+      
+      if (filters.taskType) {
+        queryBuilder.whereEquals('task_type', filters.taskType);
+      }
+      
+      if (filters.status) {
+        queryBuilder.whereEquals('status', filters.status);
+      }
+      
+      if (filters.priority) {
+        queryBuilder.whereEquals('priority', filters.priority);
+      }
+      
+      if (filters.dateFrom) {
+        queryBuilder.where('created_at', '>=', filters.dateFrom);
+      }
+      
+      if (filters.dateTo) {
+        queryBuilder.where('created_at', '<=', filters.dateTo);
+      }
+      
+      // Add sorting
+      queryBuilder.orderBy(sortBy, sortOrder);
+      
+      // Execute the query
+      const query = queryBuilder.build();
+      const result = await this.client.query(query.text, query.params);
+      
+      // Get total count
+      const countQuery = queryBuilder.buildCount();
+      const countResult = await this.client.query(countQuery.text, countQuery.params);
+      const total = parseInt(countResult.rows[0].total, 10);
+      
+      // Convert rows to models
+      const items = result.rows.map(row => ClaudeTask.fromDatabase(row));
+      
+      return { items, total };
+    } catch (error) {
+      this.logger.error(`Error finding tasks: ${error.message}`, {
+        page,
+        pageSize,
+        sortBy,
+        sortOrder,
+        filters,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find a task by ID
+   * @param {string} taskId - Task ID
+   * @returns {Promise<ClaudeTask|null>} Promise resolving to task or null if not found
+   */
+  async findById(taskId) {
+    try {
+      const query = select(this.tableName)
+        .whereEquals('task_id', taskId)
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      if (result.rows.length === 0) {
+        return null;
+      }
+      
+      return ClaudeTask.fromDatabase(result.rows[0]);
+    } catch (error) {
+      this.logger.error(`Error finding task by ID ${taskId}: ${error.message}`, {
+        taskId,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find tasks by user ID
+   * @param {string} userId - User ID
+   * @param {Object} [options={}] - Query options
+   * @returns {Promise<Array<ClaudeTask>>} Promise resolving to array of tasks
+   */
+  async findByUserId(userId, options = {}) {
+    try {
+      const queryBuilder = select(this.tableName)
+        .whereEquals('user_id', userId)
+        .orderBy('created_at', 'desc');
+      
+      if (options.limit) {
+        queryBuilder.limit(options.limit);
+      }
+      
+      if (options.status) {
+        queryBuilder.whereEquals('status', options.status);
+      }
+      
+      if (options.taskType) {
+        queryBuilder.whereEquals('task_type', options.taskType);
+      }
+      
+      const query = queryBuilder.build();
+      const result = await this.client.query(query.text, query.params);
+      
+      return result.rows.map(row => ClaudeTask.fromDatabase(row));
+    } catch (error) {
+      this.logger.error(`Error finding tasks by user ID ${userId}: ${error.message}`, {
+        userId,
+        options,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find pending tasks ready for processing
+   * @param {number} [limit] - Maximum number of tasks to retrieve
+   * @returns {Promise<Array<ClaudeTask>>} Promise resolving to array of tasks
+   */
+  async findPendingTasks(limit = 10) {
+    try {
+      const query = select(this.tableName)
+        .whereEquals('status', 'pending')
+        .whereRaw('(scheduled_for IS NULL OR scheduled_for <= NOW())')
+        .orderBy('priority', 'desc')
+        .orderBy('created_at', 'asc')
+        .limit(limit)
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      return result.rows.map(row => ClaudeTask.fromDatabase(row));
+    } catch (error) {
+      this.logger.error(`Error finding pending tasks: ${error.message}`, {
+        limit,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Find failed tasks that can be retried
+   * @param {number} [limit] - Maximum number of tasks to retrieve
+   * @returns {Promise<Array<ClaudeTask>>} Promise resolving to array of tasks
+   */
+  async findRetryableTasks(limit = 10) {
+    try {
+      const query = select(this.tableName)
+        .whereEquals('status', 'failed')
+        .whereRaw('retry_count < max_retries')
+        .orderBy('priority', 'desc')
+        .orderBy('created_at', 'asc')
+        .limit(limit)
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      return result.rows.map(row => ClaudeTask.fromDatabase(row));
+    } catch (error) {
+      this.logger.error(`Error finding retryable tasks: ${error.message}`, {
+        limit,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new task
+   * @param {ClaudeTask} task - Task to create
+   * @returns {Promise<ClaudeTask>} Promise resolving to created task
+   */
+  async create(task) {
+    try {
+      task.validate();
+      
+      const query = insert(this.tableName, task.toDatabase())
+        .returning('*')
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      return ClaudeTask.fromDatabase(result.rows[0]);
+    } catch (error) {
+      this.logger.error(`Error creating task: ${error.message}`, {
+        task,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Update a task
+   * @param {string} taskId - Task ID
+   * @param {Partial<ClaudeTask>} updates - Update data
+   * @returns {Promise<ClaudeTask>} Promise resolving to updated task
+   */
+  async update(taskId, updates) {
+    try {
+      // Convert updates to database format if needed
+      const dbUpdates = {};
+      
+      if (updates.status !== undefined) {
+        dbUpdates.status = updates.status;
+      }
+      
+      if (updates.progress !== undefined) {
+        dbUpdates.progress = updates.progress;
+      }
+      
+      if (updates.result !== undefined) {
+        dbUpdates.result = updates.result;
+      }
+      
+      if (updates.error !== undefined) {
+        dbUpdates.error = updates.error;
+      }
+      
+      if (updates.startedAt !== undefined) {
+        dbUpdates.started_at = updates.startedAt;
+      }
+      
+      if (updates.completedAt !== undefined) {
+        dbUpdates.completed_at = updates.completedAt;
+      }
+      
+      if (updates.retryCount !== undefined) {
+        dbUpdates.retry_count = updates.retryCount;
+      }
+      
+      if (updates.scheduledFor !== undefined) {
+        dbUpdates.scheduled_for = updates.scheduledFor;
+      }
+      
+      if (updates.interactionId !== undefined) {
+        dbUpdates.interaction_id = updates.interactionId;
+      }
+      
+      if (updates.metadata !== undefined) {
+        dbUpdates.metadata = updates.metadata;
+      }
+      
+      const query = update(this.tableName, dbUpdates)
+        .whereEquals('task_id', taskId)
+        .returning('*')
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      if (result.rows.length === 0) {
+        return null;
+      }
+      
+      return ClaudeTask.fromDatabase(result.rows[0]);
+    } catch (error) {
+      this.logger.error(`Error updating task ${taskId}: ${error.message}`, {
+        taskId,
+        updates,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a task
+   * @param {string} taskId - Task ID
+   * @returns {Promise<boolean>} Promise resolving to whether the task was deleted
+   */
+  async delete(taskId) {
+    try {
+      const query = del(this.tableName)
+        .whereEquals('task_id', taskId)
+        .returning('task_id')
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      return result.rows.length > 0;
+    } catch (error) {
+      this.logger.error(`Error deleting task ${taskId}: ${error.message}`, {
+        taskId,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete old completed tasks
+   * @param {number} daysOld - Delete tasks older than this many days
+   * @returns {Promise<number>} Promise resolving to number of deleted tasks
+   */
+  async deleteOldTasks(daysOld = 30) {
+    try {
+      const query = del(this.tableName)
+        .whereIn('status', ['completed', 'failed', 'cancelled'])
+        .where('completed_at', '<', `NOW() - INTERVAL '${daysOld} days'`)
+        .returning('task_id')
+        .build();
+      
+      const result = await this.client.query(query.text, query.params);
+      
+      return result.rows.length;
+    } catch (error) {
+      this.logger.error(`Error deleting old tasks: ${error.message}`, {
+        daysOld,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get task statistics
+   * @param {string} [userId] - Filter by user ID
+   * @param {Date} [startDate] - Start date for statistics
+   * @param {Date} [endDate] - End date for statistics
+   * @returns {Promise<Object>} Promise resolving to statistics
+   */
+  async getStatistics(userId = null, startDate = null, endDate = null) {
+    try {
+      let query = `
+        SELECT 
+          COUNT(*) as total_tasks,
+          COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_tasks,
+          COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_tasks,
+          COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_tasks,
+          COUNT(CASE WHEN status = 'processing' THEN 1 END) as processing_tasks,
+          COUNT(CASE WHEN status = 'cancelled' THEN 1 END) as cancelled_tasks,
+          AVG(CASE WHEN completed_at IS NOT NULL AND started_at IS NOT NULL 
+              THEN EXTRACT(EPOCH FROM (completed_at - started_at)) END) as avg_processing_time,
+          task_type,
+          priority
+        FROM ${this.tableName}
+        WHERE 1=1
+      `;
+      
+      const params = [];
+      let paramIndex = 1;
+      
+      if (userId) {
+        query += ` AND user_id = $${paramIndex++}`;
+        params.push(userId);
+      }
+      
+      if (startDate) {
+        query += ` AND created_at >= $${paramIndex++}`;
+        params.push(startDate);
+      }
+      
+      if (endDate) {
+        query += ` AND created_at <= $${paramIndex++}`;
+        params.push(endDate);
+      }
+      
+      query += ' GROUP BY task_type, priority ORDER BY total_tasks DESC';
+      
+      const result = await this.client.query(query, params);
+      
+      // Calculate totals
+      const totals = result.rows.reduce((acc, row) => ({
+        totalTasks: acc.totalTasks + parseInt(row.total_tasks, 10),
+        completedTasks: acc.completedTasks + parseInt(row.completed_tasks, 10),
+        failedTasks: acc.failedTasks + parseInt(row.failed_tasks, 10),
+        pendingTasks: acc.pendingTasks + parseInt(row.pending_tasks, 10),
+        processingTasks: acc.processingTasks + parseInt(row.processing_tasks, 10),
+        cancelledTasks: acc.cancelledTasks + parseInt(row.cancelled_tasks, 10),
+      }), {
+        totalTasks: 0,
+        completedTasks: 0,
+        failedTasks: 0,
+        pendingTasks: 0,
+        processingTasks: 0,
+        cancelledTasks: 0,
+      });
+      
+      // Calculate overall statistics
+      totals.completionRate = totals.totalTasks > 0 
+        ? (totals.completedTasks / totals.totalTasks) * 100 
+        : 0;
+      
+      totals.failureRate = totals.totalTasks > 0 
+        ? (totals.failedTasks / totals.totalTasks) * 100 
+        : 0;
+      
+      totals.avgProcessingTime = result.rows.length > 0
+        ? result.rows.reduce((sum, row) => sum + (parseFloat(row.avg_processing_time) || 0), 0) / result.rows.length
+        : 0;
+      
+      return {
+        totals,
+        byTaskType: result.rows.map(row => ({
+          taskType: row.task_type,
+          priority: row.priority,
+          count: parseInt(row.total_tasks, 10),
+          completedCount: parseInt(row.completed_tasks, 10),
+          failedCount: parseInt(row.failed_tasks, 10),
+          pendingCount: parseInt(row.pending_tasks, 10),
+          processingCount: parseInt(row.processing_tasks, 10),
+          cancelledCount: parseInt(row.cancelled_tasks, 10),
+          avgProcessingTime: parseFloat(row.avg_processing_time) || 0,
+        })),
+      };
+    } catch (error) {
+      this.logger.error(`Error getting task statistics: ${error.message}`, {
+        userId,
+        startDate,
+        endDate,
+        stack: error.stack
+      });
+      throw error;
+    }
+  }
+}
+
+module.exports = TaskRepository;

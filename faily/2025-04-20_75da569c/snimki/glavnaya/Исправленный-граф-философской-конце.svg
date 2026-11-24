@@ -1,0 +1,168 @@
+
+<svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Стили для элементов графа -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#000" />
+    </marker>
+    <marker id="doublearrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8844CC" />
+    </marker>
+  </defs>
+  
+  <!-- Категории (узлы) -->
+  
+  <!-- Центральные категории -->
+  <circle cx="500" cy="400" r="40" fill="#FFD700" stroke="#000" stroke-width="2"/>
+  <text x="500" y="400" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold">Сингулярность</text>
+  
+  <circle cx="500" cy="200" r="35" fill="#FF9966" stroke="#000" stroke-width="2"/>
+  <text x="500" y="200" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold">Множественность</text>
+  
+  <circle cx="300" cy="300" r="35" fill="#99CCFF" stroke="#000" stroke-width="2"/>
+  <text x="300" y="300" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold">Различие</text>
+  
+  <circle cx="700" cy="300" r="35" fill="#99CCFF" stroke="#000" stroke-width="2"/>
+  <text x="700" y="300" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold">Повторение</text>
+  
+  <circle cx="300" cy="500" r="35" fill="#AAFFAA" stroke="#000" stroke-width="2"/>
+  <text x="300" y="500" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold">Виртуальное</text>
+  
+  <circle cx="700" cy="500" r="35" fill="#AAFFAA" stroke="#000" stroke-width="2"/>
+  <text x="700" y="500" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold">Актуальное</text>
+  
+  <circle cx="500" cy="600" r="35" fill="#FF9999" stroke="#000" stroke-width="2"/>
+  <text x="500" y="600" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold">Становление</text>
+  
+  <!-- Второстепенные категории -->
+  <circle cx="150" cy="400" r="30" fill="#DDDDDD" stroke="#000" stroke-width="2"/>
+  <text x="150" y="400" text-anchor="middle" dominant-baseline="middle" font-size="11">Потенция</text>
+  
+  <circle cx="850" cy="400" r="30" fill="#DDDDDD" stroke="#000" stroke-width="2"/>
+  <text x="850" y="400" text-anchor="middle" dominant-baseline="middle" font-size="11">Энтелехия</text>
+  
+  <circle cx="250" cy="180" r="30" fill="#DDDDDD" stroke="#000" stroke-width="2"/>
+  <text x="250" y="180" text-anchor="middle" dominant-baseline="middle" font-size="11">Целое</text>
+  
+  <circle cx="750" cy="180" r="30" fill="#DDDDDD" stroke="#000" stroke-width="2"/>
+  <text x="750" y="180" text-anchor="middle" dominant-baseline="middle" font-size="11">Единое</text>
+  
+  <circle cx="400" cy="100" r="30" fill="#EECCFF" stroke="#000" stroke-width="2"/>
+  <text x="400" y="100" text-anchor="middle" dominant-baseline="middle" font-size="11">Время</text>
+  
+  <circle cx="600" cy="100" r="30" fill="#EECCFF" stroke="#000" stroke-width="2"/>
+  <text x="600" y="100" text-anchor="middle" dominant-baseline="middle" font-size="11">Пространство</text>
+  
+  <circle cx="200" cy="600" r="30" fill="#FFDDAA" stroke="#000" stroke-width="2"/>
+  <text x="200" y="600" text-anchor="middle" dominant-baseline="middle" font-size="11">Интенсивность</text>
+  
+  <circle cx="800" cy="600" r="30" fill="#FFDDAA" stroke="#000" stroke-width="2"/>
+  <text x="800" y="600" text-anchor="middle" dominant-baseline="middle" font-size="11">Контингентность</text>
+  
+  <circle cx="350" cy="700" r="30" fill="#CCFFFF" stroke="#000" stroke-width="2"/>
+  <text x="350" y="700" text-anchor="middle" dominant-baseline="middle" font-size="11">Имманентное</text>
+  
+  <circle cx="650" cy="700" r="30" fill="#CCFFFF" stroke="#000" stroke-width="2"/>
+  <text x="650" y="700" text-anchor="middle" dominant-baseline="middle" font-size="11">Трансцендентное</text>
+  
+  <circle cx="100" cy="250" r="28" fill="#CCDDEE" stroke="#000" stroke-width="2"/>
+  <text x="100" y="250" text-anchor="middle" dominant-baseline="middle" font-size="10">Ризома</text>
+  
+  <circle cx="900" cy="250" r="28" fill="#CCDDEE" stroke="#000" stroke-width="2"/>
+  <text x="900" y="250" text-anchor="middle" dominant-baseline="middle" font-size="10">Структура</text>
+  
+  <circle cx="200" cy="80" r="28" fill="#FFEECC" stroke="#000" stroke-width="2"/>
+  <text x="200" y="80" text-anchor="middle" dominant-baseline="middle" font-size="10">Знак</text>
+  
+  <circle cx="800" cy="80" r="28" fill="#FFEECC" stroke="#000" stroke-width="2"/>
+  <text x="800" y="80" text-anchor="middle" dominant-baseline="middle" font-size="10">Значение</text>
+  
+  <!-- Связи между категориями -->
+  
+  <!-- Связи центральных категорий -->
+  <line x1="500" y1="240" x2="500" y2="360" stroke="#8844CC" stroke-width="3" marker-end="url(#doublearrow)" marker-start="url(#doublearrow)"/>
+  <text x="460" y="300" text-anchor="end" font-size="11" fill="#8844CC">Диалектическое противоречие</text>
+  
+  <line x1="340" y1="300" x2="460" y2="200" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="380" y="230" text-anchor="middle" font-size="10">Конституирующая</text>
+  
+  <line x1="540" y1="200" x2="660" y2="300" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="620" y="230" text-anchor="middle" font-size="10">Конституирующая</text>
+  
+  <line x1="330" y1="320" x2="470" y2="380" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="380" y="330" text-anchor="middle" font-size="10">Дополнение</text>
+  
+  <line x1="670" y1="320" x2="530" y2="380" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="620" y="330" text-anchor="middle" font-size="10">Дополнение</text>
+  
+  <line x1="310" y1="465" x2="470" y2="410" stroke="#8844CC" stroke-width="2.5" marker-end="url(#doublearrow)" marker-start="url(#doublearrow)"/>
+  <text x="360" y="455" text-anchor="middle" font-size="10" fill="#8844CC">Феноменологическая</text>
+  
+  <line x1="690" y1="465" x2="530" y2="410" stroke="#8844CC" stroke-width="2.5" marker-end="url(#doublearrow)" marker-start="url(#doublearrow)"/>
+  <text x="640" y="455" text-anchor="middle" font-size="10" fill="#8844CC">Феноменологическая</text>
+  
+  <line x1="330" y1="535" x2="475" y2="580" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="390" y="570" text-anchor="middle" font-size="10">Причинность</text>
+  
+  <line x1="670" y1="535" x2="525" y2="580" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="610" y="570" text-anchor="middle" font-size="10">Причинность</text>
+  
+  <line x1="500" y1="440" x2="500" y2="565" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="515" y="500" text-anchor="start" font-size="10">Репрезентационная</text>
+  
+  <line x1="285" y1="335" x2="290" y2="465" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="260" y="400" text-anchor="middle" font-size="10">Эволюционная</text>
+  
+  <line x1="715" y1="335" x2="710" y2="465" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="740" y="400" text-anchor="middle" font-size="10">Эволюционная</text>
+  
+  <!-- Связи второстепенных категорий -->
+  <line x1="178" y1="385" x2="270" y2="500" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="200" y="455" text-anchor="middle" font-size="9">Телеологическая</text>
+  
+  <line x1="822" y1="385" x2="730" y2="500" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="800" y="455" text-anchor="middle" font-size="9">Телеологическая</text>
+  
+  <line x1="230" y1="615" x2="335" y2="680" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="270" y="660" text-anchor="middle" font-size="9">Феноменологическая</text>
+  
+  <line x1="770" y1="615" x2="665" y2="680" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="730" y="660" text-anchor="middle" font-size="9">Феноменологическая</text>
+  
+  <line x1="280" y1="185" x2="370" y2="115" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="305" y="135" text-anchor="middle" font-size="9">Конституирующая</text>
+  
+  <line x1="720" y1="185" x2="630" y2="115" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="695" y="135" text-anchor="middle" font-size="9">Конституирующая</text>
+  
+  <line x1="125" y1="235" x2="275" y2="185" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="185" y="195" text-anchor="middle" font-size="9">Герменевтическая</text>
+  
+  <line x1="875" y1="235" x2="775" y2="185" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="840" y="195" text-anchor="middle" font-size="9">Иерархическая</text>
+  
+  <line x1="430" y1="100" x2="570" y2="100" stroke="#8844CC" stroke-width="1.5" marker-end="url(#doublearrow)" marker-start="url(#doublearrow)"/>
+  <text x="500" y="85" text-anchor="middle" font-size="9" fill="#8844CC">Дополнение</text>
+  
+  <line x1="225" y1="85" x2="375" y2="95" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="290" y="75" text-anchor="middle" font-size="9">Репрезентационная</text>
+  
+  <line x1="775" y1="85" x2="625" y2="95" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="710" y="75" text-anchor="middle" font-size="9">Репрезентационная</text>
+  
+  <line x1="200" y1="95" x2="225" y2="165" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="190" y="135" text-anchor="middle" font-size="9">Аксиологическая</text>
+  
+  <line x1="370" y1="680" x2="520" y2="620" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="420" y="635" text-anchor="middle" font-size="9">Причинность</text>
+  
+  <line x1="630" y1="680" x2="520" y2="620" stroke="#000000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="580" y="635" text-anchor="middle" font-size="9">Причинность</text>
+  
+  <line x1="510" y1="600" x2="375" y2="700" stroke="#8844CC" stroke-width="1.5" marker-end="url(#doublearrow)" marker-start="url(#doublearrow)"/>
+  <text x="430" y="665" text-anchor="middle" font-size="9" fill="#8844CC">Диалектическое противоречие</text>
+  
+  <line x1="490" y1="600" x2="625" y2="700" stroke="#8844CC" stroke-width="1.5" marker-end="url(#doublearrow)" marker-start="url(#doublearrow)"/>
+  <text x="570" y="665" text-anchor="middle" font-size="9" fill="#8844CC">Диалектическое противоречие</text>
+
+</svg>

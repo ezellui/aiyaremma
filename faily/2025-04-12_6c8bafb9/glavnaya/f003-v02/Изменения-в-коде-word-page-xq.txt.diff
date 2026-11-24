@@ -1,0 +1,119 @@
+--- предыдущая/Изменения-в-коде-word-page-xq.txt
++++ текущая/Изменения-в-коде-word-page-xq.txt
+@@ -28,7 +28,7 @@
+  declare function local:print-word-control($show-lang as xs:boolean, $show-link as xs:string?) as element() {
+      <print-word> { (
+          if ($show-lang) then attribute show-lang {'y'} else (),
+-@@ -129,7 +147,13 @@ declare function local:print-element-in($word as element()?, $pubmode) as node()
++@@ -129,19 +147,142 @@ declare function local:print-element-in($word as element()?, $pubmode) as node()
+  declare function local:print-inflections($ref as element()?, $inflections as xs:string) as node()* {
+      let $inflect-list := tokenize($inflections, ' ')
+      let $word := $ref/ancestor-or-self::word[1]
+@@ -45,4 +45,106 @@
+ +    else text { ($translated-inflection), if ($pos = count($inflect-list)) then () else ' ' }
+ +};
+ +
+-+declare function local:print-inflections_old($ref as
+++@@ -301,7 +342,7 @@ let $word-page := (
+++    { if ($word/@tengwar) then <span> [<b>{$word/@tengwar/string()}</b>]</span> else () }
+++    {c:print-speech($word)}
+++-    {if ($word/class/@form) then (' (', local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, ' ', $word/class/@variant))), ') ') else ()}
++++    {if ($word/class/@form) then (' (', local:print-inflections($word, local:normalize-and-translate-with-forms($word/class/@mark, $word/class/@form, $word/class/@variant)), ') ') else ()}
+++    {c:print-gloss($word)}
+++    {let $rule := if ($word/@rule) then $word else $word/rule return
+++    if ($rule) then concat('; [', $rule/@from, '] &gt; [', $rule/@rule, ']') else ()}
+++
+++@@ -359,7 +400,7 @@ let $word-page := (
+++    { if ($word/@tengwar) then <span> [<b>{$word/@tengwar/string()}</b>]</span> else () }
+++    {c:print-speech($word)}
+++-    {if ($word/class/@form) then (' (', local:print-inflections($word, normalize-space(concat($word/class/@mark, $word/class/@form, ' ', $word/class/@variant))), ') ') else ()}
++++    {if ($word/class/@form) then (' (', local:print-inflections($word, local:normalize-and-translate-with-forms($word/class/@mark, $word/class/@form, $word/class/@variant)), ') ') else ()}
+++    {c:print-neo-gloss($word)}
+++    { if (not($word/@created or $word/@vetted)) then () else
+++      concat(' [',
+++
+++@@ -448,7 +489,7 @@ let $word-page := (
+++for $form in if ($note/form) then $note/form/@form else $note/@form
+++return (
+++-<tr><th colspan="10">Примеры ({string($form)})</th></tr>,
++++<tr><th colspan="10">Примеры ({c:print-inflect-value(string($form))})</th></tr>,
+++
+++@@ -457,8 +498,8 @@ let $exclude := $form/../@exclude
+++let $exclude2 := $form/../@exclude2
+++let $from := $note/@from
+++let $refs := xdb:matchAllKeys($word, $key, $form)
+++-    [c:get-lang(.)=c:get-langs($note)]
+++-    [not($speech) or c:get-speech(.) = $speech]
++++    [c:get-lang(.)=c:get-langs($note)]
++++    [not($speech) or c:get-speech(.) = $speech]
+++    [not($exclude) or not(contains(*[name()=$from]/@form, $exclude) or contains(*[name()=$from]/@variant, $exclude))]
+++    [not($exclude2) or not(contains(*[name()=$from]/@form, $exclude2) or contains(*[name()=$from]/@variant, $exclude2))]
+++let $has-glosses := ($note/@show-glosses | $refs[c:get-gloss(.)]) and not($note/@show-glosses = 'false')
+++
+++@@ -466,7 +507,7 @@ let $has-variants := $note/@show-variants | $refs/*[name()=$from][1][normalize-s
+++let $has-sources := $refs/@source
+++let $show-form := $note/@show-form
+++for $ref in $refs
+++-let $variants := $ref/*[name()=$from]/normalize-space(replace(replace(concat(' ', @form, ' ', @variant, ' '), ' ', '  '), concat(' ', replace($omit, ' ', '  '), ' '), ''))
++++let $variants := $ref/*[name()=$from]/normalize-space(replace(replace(concat(' ', c:print-inflect-value(@form), ' ', c:print-inflect-value(@variant), ' '), ' ', '  '), concat(' ', replace(c:print-inflect-value($omit), ' ', '  '), ' '), ''))
+++let $from-source := $ref/*[name()=$from][1]
+++let $ref-form := if ($show-form) then $ref/ancestor-or-self::word[1]/*[name()=$show-form]/@form/string() else ()
+++order by $ref-form, $variants
+++
+++@@ -537,7 +578,7 @@ let $inflect-refs := $valid-refs[inflect[not(@source) or c:get-ref(.)]
+++    if ($inflect-word)
+++    then (<a href="{$link}">{$inflection}</a>, if ($pos = count($inflect-list)) then () else text {' '})
+++    else text { ($inflection), if ($pos = count($inflect-list)) then () else ' ' }
+++};
+++
+++// Удаляем неиспользуемые функции
++
++@@ -645,7 +686,7 @@ let $change-refs := $valid-refs[
+++    <span>
+++            ←&#160;{c:print-word($from-ref, <print-word/>)}
+++-            {if ($from-ref/inflect/@form) then concat(' (', $from-ref/inflect/@form, ')') else () }
++++            {if ($from-ref/inflect/@form) then concat(' (', c:print-inflect-value($from-ref/inflect/@form), ')') else () }
+++        </span>
+++    else
+++        <span>[←&#160;{c:print-word($from-ref, <print-word/>)}]</span>
+++
+++@@ -694,7 +735,7 @@ let $ref := $refs[1]
+++let $form := $ref/inflect/@form/string()
+++let $print-word := if ($ref/@l) then <print-word show-lang="y"/> else <print-word/>
+++order by $form, $ref/@v
+++return
+++    <tr>{ (
+++        <td><i>{c:print-word($ref, $print-word)}</i></td>,
+++        <td>{ (
+++-            local:print-inflections($word, $form),
+++-            if (not($ref/inflect/@variant)) then () else
+++-            ('; ', local:print-inflections($word, string($ref/inflect/@variant)))
++++            local:print-inflections($word, $form),
++++            if (not($ref/inflect/@variant)) then () else
++++            ('; ', local:print-inflections($word, string($ref/inflect/@variant)))
+++        ) }</td>,
+++        (: if (not($has-variants)) then () else
+++        <td>{ local:print-inflections($word, string($ref/inflect/@variant)) }</td>, :)
+++
+++@@ -753,7 +794,7 @@ let $element-words := $elements/c:get-word(.)
+++            <td>
+++                {if ($element/@v='?') then <i>?</i> else c:print-word($element-word, $print-word)}
+++                {$element/@mark/string()}
+++            </td>,
+++            if (count($glosses) gt 0) then <td>{c:print-gloss($element-word)}</td> else (),
+++-            if ($has-forms) then <td>{local:print-inflections($element-word, string($form))}</td> else (),
++++            if ($has-forms) then <td>{local:print-inflections($element-word, c:print-inflect-value(string($form)))}</td> else (),
+++            if ($has-references) then <td>{(
+++                local:print-ref-set($matching-refs, $ref-set)
+++            )}</td> else ()
+++
+++@@ -772,7 +813,7 @@ let $element-words := $elements/c:get-word(.)
+++        <tr> {(
+++            <td>{c:print-word($element, $print-word)}</td>,
+++            if (count($glosses) gt 0) then <td>{c:print-gloss($element)}</td> else (),
+++-            if ($has-forms) then <td>{local:print-inflections($element, string($form))}</td> else (),
++++            if ($has-forms) then <td>{local:print-inflections($element, c:print-inflect-value(string($form)))}</td> else (),
+++            <td>{(
+++                local:print-ref-set($refs, $ref-set)
+++            )}</td>
+++        )} </tr>

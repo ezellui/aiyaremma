@@ -1,0 +1,163 @@
+/* Легенда типов напряжения */
+.legend {
+    display: inline-block;
+    margin-left: 20px;
+    font-size: 0.9em;
+}
+
+.legend-item {
+    margin-right: 15px;
+}
+
+.badge {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+.badge.immanent { background: #E74C3C; }
+.badge.polemical { background: #F39C12; }
+.badge.dialectical { background: #9B59B6; }
+
+/* Визуализация доминирующего типа */
+.tension-item.immanent { border-left: 4px solid #E74C3C; }
+.tension-item.polemical { border-left: 4px solid #F39C12; }
+.tension-item.dialectical { border-left: 4px solid #9B59B6; }
+
+/* Полоса разбивки напряжения */
+.tension-bar {
+    display: flex;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+    background: #ecf0f1;
+}
+
+.tension-segment {
+    transition: all 0.3s ease;
+}
+
+.tension-segment:hover {
+    opacity: 0.8;
+}
+
+.tension-segment.immanent { background: #E74C3C; }
+.tension-segment.polemical { background: #F39C12; }
+.tension-segment.dialectical { background: #9B59B6; }
+
+/* Детали напряжения */
+.tension-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+    color: #7f8c8d;
+    margin-top: 4px;
+}
+
+.detail-item {
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #ecf0f1;
+}
+
+.resolution-ratio {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* Вкладки */
+.tension-tabs {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1em;
+    color: #7f8c8d;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    color: #2c3e50;
+}
+
+.tab-btn.active {
+    color: #2c3e50;
+    font-weight: bold;
+    border-bottom: 3px solid #3498db;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Раскрывающиеся детали */
+.metric-main.clickable {
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.metric-main.clickable:hover {
+    background: #f8f9fa;
+}
+
+.expand-icon {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.tension-item.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+.tension-detail-panel {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.detail-section {
+    margin-bottom: 15px;
+}
+
+.detail-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 1em;
+}
+
+.detail-section ul {
+    margin: 5px 0;
+    padding-left: 20px;
+}
+
+.detail-section li {
+    margin: 3px 0;
+    font-size: 0.9em;
+}
+
+.analytics-info {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    margin-top: 8px;
+    padding: 8px;
+    background: white;
+    border-radius: 4px;
+}

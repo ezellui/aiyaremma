@@ -1,0 +1,69 @@
+--- предыдущая/Исправленный-граф-философской-концепции-Множествен.mmd
++++ текущая/Исправленный-граф-философской-концепции-Множествен.mmd
+@@ -1,29 +1,29 @@
+ 
+ graph TD
+-    %% Определение узлов (категорий) с классами для стилизации
+-    Sing["Сингулярность"] :::central
+-    Mult["Множественность"] :::primary
+-    Dif["Различие"] :::primary
+-    Rep["Повторение"] :::primary
+-    Virt["Виртуальное"] :::primary
+-    Act["Актуальное"] :::primary
+-    Becom["Становление"] :::primary
++    %% Определение узлов (категорий)
++    Sing["Сингулярность"]
++    Mult["Множественность"]
++    Dif["Различие"]
++    Rep["Повторение"]
++    Virt["Виртуальное"]
++    Act["Актуальное"]
++    Becom["Становление"]
+     
+     %% Второстепенные категории
+-    Pot["Потенция"] :::secondary
+-    Ent["Энтелехия"] :::secondary
+-    Whole["Целое"] :::secondary
+-    One["Единое"] :::secondary
+-    Time["Время"] :::tertiary
+-    Space["Пространство"] :::tertiary
+-    Int["Интенсивность"] :::secondary
+-    Cont["Контингентность"] :::secondary
+-    Imm["Имманентное"] :::tertiary
+-    Trans["Трансцендентное"] :::tertiary
+-    Rhiz["Ризома"] :::tertiary
+-    Struct["Структура"] :::tertiary
+-    Sign["Знак"] :::tertiary
+-    Mean["Значение"] :::tertiary
++    Pot["Потенция"]
++    Ent["Энтелехия"]
++    Whole["Целое"]
++    One["Единое"]
++    Time["Время"]
++    Space["Пространство"]
++    Int["Интенсивность"]
++    Cont["Контингентность"]
++    Imm["Имманентное"]
++    Trans["Трансцендентное"]
++    Rhiz["Ризома"]
++    Struct["Структура"]
++    Sign["Знак"]
++    Mean["Значение"]
+     
+     %% Связи центральных категорий
+     Mult <-->|"Диалектическое противоречие"| Sing
+@@ -71,7 +71,13 @@
+     Becom <-->|"Диалектическое противоречие"| Imm
+     Becom <-->|"Диалектическое противоречие"| Trans
+     
+-    %% Определение стилей для категорий
++    %% Определение стилей через class (вместо :::)
++    class Sing central
++    class Mult,Dif,Rep,Virt,Act,Becom primary
++    class Pot,Ent,Whole,One,Int,Cont secondary
++    class Time,Space,Imm,Trans,Rhiz,Struct,Sign,Mean tertiary
++    
++    %% Стили для категорий
+     classDef central fill:#FFD700,stroke:#000,stroke-width:2px,font-weight:bold
+     classDef primary fill:#FF9966,stroke:#000,stroke-width:1.5px
+     classDef secondary fill:#DDDDDD,stroke:#000
